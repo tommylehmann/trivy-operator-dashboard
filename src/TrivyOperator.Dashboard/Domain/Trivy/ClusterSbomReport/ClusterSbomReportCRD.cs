@@ -2,7 +2,7 @@
 
 namespace TrivyOperator.Dashboard.Domain.Trivy.ClusterSbomReport;
 
-public class SbomReportCRD : CustomResourceDefinition
+public class ClusterSbomReportCrd : CustomResourceDefinition
 {
     public override string Version { get; } = "v1alpha1";
     public override string Group { get; } = "aquasecurity.github.io";

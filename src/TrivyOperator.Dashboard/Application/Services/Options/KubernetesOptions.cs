@@ -12,4 +12,5 @@ public record KubernetesOptions
     public bool? TrivyUseRbacAssessmentReport { get; init; }
     public bool? TrivyUseSbomReport { get; init; }
     public bool? TrivyUseClusterSbomReport { get; init; }
+    public bool? TrivyUseClusterComplianceReport {  get; init; }
 }

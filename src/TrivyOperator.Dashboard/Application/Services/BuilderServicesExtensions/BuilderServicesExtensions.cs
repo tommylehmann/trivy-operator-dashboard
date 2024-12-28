@@ -1,4 +1,5 @@
 ﻿using k8s.Models;
+using Polly;
 using TrivyOperator.Dashboard.Application.Services.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Alerts;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues;
@@ -282,4 +283,22 @@ public static class BuilderServicesExtensions
 
     public static void AddUiCommons(this IServiceCollection services) =>
         services.AddScoped<IBackendSettingsService, BackendSettingsService>();
+
+    public static void AddPolly(this IServiceCollection services, ILogger logger, double maxBackoffSeconds = 60.0)
+    {
+        services.AddSingleton<AsyncPolicy>(provider =>
+        {
+            double scaleFactor = maxBackoffSeconds / Math.Log(10 + 1);
+            return Policy
+                .Handle<HttpRequestException>(ex => ex.InnerException is IOException) //&& ex.InnerException?.InnerException is System.Net.Sockets.SocketException)
+                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(scaleFactor * Math.Log(retryAttempt + 1)),
+                async (exception, timeSpan) =>
+                    {
+                        logger.LogDebug("Retry due to: {exceptionMessage}, waiting {durationSeconds} seconds",
+                            exception.Message,
+                            timeSpan.TotalSeconds);
+                        await Task.CompletedTask;
+                    });
+        });
+    }
 }

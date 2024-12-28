@@ -13,7 +13,7 @@ public class ClusterSbomReportDomainService(IKubernetesClientFactory kubernetesC
 
     public async Task<IList<ClusterSbomReportCr>> GetClusterSbomReportCrs()
     {
-        SbomReportCRD myCrd = new();
+        ClusterSbomReportCrd myCrd = new();
         CustomResourceList<ClusterSbomReportCr> csr =
             await kubernetesClient.CustomObjects.ListClusterCustomObjectAsync<CustomResourceList<ClusterSbomReportCr>>(
                 myCrd.Group,

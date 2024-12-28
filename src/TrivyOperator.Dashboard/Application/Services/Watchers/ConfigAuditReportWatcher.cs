@@ -1,6 +1,7 @@
 ﻿using k8s;
 using k8s.Autorest;
 using k8s.Models;
+using Polly;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
@@ -14,17 +15,20 @@ public class ConfigAuditReportWatcher(
     IKubernetesClientFactory kubernetesClientFactory,
     IBackgroundQueue<ConfigAuditReportCr> backgroundQueue,
     IServiceProvider serviceProvider,
+    AsyncPolicy retryPolicy,
     ILogger<ConfigAuditReportWatcher> logger)
     : NamespacedWatcher<CustomResourceList<ConfigAuditReportCr>, ConfigAuditReportCr,
         IBackgroundQueue<ConfigAuditReportCr>, WatcherEvent<ConfigAuditReportCr>>(
         kubernetesClientFactory,
         backgroundQueue,
         serviceProvider,
+        retryPolicy,
         logger)
 {
     protected override async Task<HttpOperationResponse<CustomResourceList<ConfigAuditReportCr>>>
         GetKubernetesObjectWatchList(
             IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+            string? lastResourceVersion,
             CancellationToken cancellationToken)
     {
         ConfigAuditReportCrd myCrd = new();
@@ -36,7 +40,8 @@ public class ConfigAuditReportWatcher(
                 GetNamespaceFromSourceEvent(sourceKubernetesObject),
                 myCrd.PluralName,
                 watch: true,
-                timeoutSeconds: int.MaxValue,
+                resourceVersion: lastResourceVersion,
+                timeoutSeconds: GetWatcherRandomTimeout(),
                 cancellationToken: cancellationToken);
     }
 }

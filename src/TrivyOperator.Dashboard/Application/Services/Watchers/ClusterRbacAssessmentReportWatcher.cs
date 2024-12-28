@@ -1,6 +1,7 @@
 ﻿using k8s;
 using k8s.Autorest;
 using k8s.Models;
+using Polly;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
@@ -14,17 +15,20 @@ public class ClusterRbacAssessmentReportWatcher(
     IKubernetesClientFactory kubernetesClientFactory,
     IBackgroundQueue<ClusterRbacAssessmentReportCr> backgroundQueue,
     IServiceProvider serviceProvider,
+    AsyncPolicy retryPolicy,
     ILogger<ClusterRbacAssessmentReportWatcher> logger)
     : ClusterScopedWatcher<CustomResourceList<ClusterRbacAssessmentReportCr>, ClusterRbacAssessmentReportCr,
         IBackgroundQueue<ClusterRbacAssessmentReportCr>, WatcherEvent<ClusterRbacAssessmentReportCr>>(
         kubernetesClientFactory,
         backgroundQueue,
         serviceProvider,
+        retryPolicy,
         logger)
 {
     protected override async Task<HttpOperationResponse<CustomResourceList<ClusterRbacAssessmentReportCr>>>
         GetKubernetesObjectWatchList(
             IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+            string? lastResourceVersion,
             CancellationToken cancellationToken)
     {
         ClusterRbacAssessmentReportCrd myCrd = new();
@@ -35,7 +39,8 @@ public class ClusterRbacAssessmentReportWatcher(
                 myCrd.Version,
                 myCrd.PluralName,
                 watch: true,
-                timeoutSeconds: int.MaxValue,
+                resourceVersion: lastResourceVersion,
+                timeoutSeconds: GetWatcherRandomTimeout(),
                 cancellationToken: cancellationToken);
     }
 }

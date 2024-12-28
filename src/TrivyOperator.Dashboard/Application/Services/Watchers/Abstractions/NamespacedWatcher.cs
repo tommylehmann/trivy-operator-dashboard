@@ -1,5 +1,6 @@
 ﻿using k8s;
 using k8s.Models;
+using Polly;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -11,12 +12,14 @@ public abstract class
         IKubernetesClientFactory kubernetesClientFactory,
         TBackgroundQueue backgroundQueue,
         IServiceProvider serviceProvider,
+        AsyncPolicy retryPolicy,
         ILogger<NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
             logger)
     : KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         kubernetesClientFactory,
         backgroundQueue,
         serviceProvider,
+        retryPolicy,
         logger), INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>, new()
     where TKubernetesObjectList : IKubernetesObject, IItems<TKubernetesObject>
