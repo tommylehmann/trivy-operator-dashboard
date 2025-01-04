@@ -3,19 +3,26 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Domain.Services.Abstractions;
 
-public abstract class TrivyReportDomainService<TKubernetesObject>
-    where TKubernetesObject : class
+public abstract class TrivyReportDomainService<TKubernetesObject>(IKubernetesClientFactory kubernetesClientFactory,
+    ICustomResourceDefinitionFactory customResourceDefinitionFactory)
+    where TKubernetesObject : CustomResource, new()
 {
-    protected CustomResourceDefinition TrivyReportCrd => this.customResourceDefinitionFactory.Get<TKubernetesObject>();
-
-    protected TrivyReportDomainService(IKubernetesClientFactory kubernetesClientFactory,
-        ICustomResourceDefinitionFactory customResourceDefinitionFactory)
-    {
-        this.kubernetesClientFactory = kubernetesClientFactory;
-        this.customResourceDefinitionFactory = customResourceDefinitionFactory;
+    protected CustomResourceDefinition TrivyReportCrd
+    { 
+        get 
+        {
+            if (_trivyReportCrd == null)
+            {
+                _trivyReportCrd = customResourceDefinitionFactory.Get<TKubernetesObject>();
+            }
+            return _trivyReportCrd;
+        }
     }
+
     public abstract Task<IList<TKubernetesObject>> GetReports();
 
-    protected IKubernetesClientFactory kubernetesClientFactory;
-    protected ICustomResourceDefinitionFactory customResourceDefinitionFactory;
+    protected IKubernetesClientFactory kubernetesClientFactory = kubernetesClientFactory;
+    protected ICustomResourceDefinitionFactory customResourceDefinitionFactory = customResourceDefinitionFactory;
+
+    private CustomResourceDefinition? _trivyReportCrd;
 }
