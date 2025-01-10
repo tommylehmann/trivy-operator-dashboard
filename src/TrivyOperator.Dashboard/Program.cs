@@ -75,9 +75,11 @@ builder.Services.AddCors(
 
 builder.Services.AddPolly(Logger);
 
+
 builder.Services.AddCommons(
     configuration.GetSection(queuesConfigurationSectionKey),
     configuration.GetSection(kubernetesConfigurationSectionKey));
+builder.Services.AddDomainServices();
 builder.Services.AddAlertsServices();
 builder.Services.AddWatcherStateServices();
 builder.Services.AddV1NamespaceServices(configuration.GetSection(kubernetesConfigurationSectionKey));

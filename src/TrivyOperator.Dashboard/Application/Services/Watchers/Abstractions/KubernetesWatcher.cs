@@ -18,7 +18,8 @@ public abstract class
         IServiceProvider serviceProvider,
         AsyncPolicy retryPolicy,
         ILogger<KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
-            logger) : IKubernetesWatcher<TKubernetesObject> where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
+            logger) : IKubernetesWatcher<TKubernetesObject>
+    where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
     where TKubernetesObjectList : IItems<TKubernetesObject>
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
