@@ -39,12 +39,14 @@ public static class BuilderServicesExtensions
         services.AddSingleton<IBackgroundQueue<V1Namespace>, BackgroundQueue<V1Namespace>>();
         if (string.IsNullOrWhiteSpace(kubernetesConfiguration.GetValue<string>("NamespaceList")))
         {
-            services.AddSingleton<IClusterScopedResourceDomainService<V1Namespace, V1NamespaceList>, NamespaceDomainService>();
+            // wtf!?
+            services.AddSingleton<IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList>, NamespaceDomainService>();
+            services.AddSingleton<IClusterScopedResourceWatchDomainService<V1Namespace, V1NamespaceList>, NamespaceDomainService>();
             services.AddSingleton<IClusterScopedWatcher<V1Namespace>, NamespaceWatcher>();
         }
         else
         {
-            services.AddSingleton<IClusterScopedResourceDomainService<V1Namespace, V1NamespaceList>, StaticNamespaceDomainService>();
+            services.AddSingleton<IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList>, StaticNamespaceDomainService>();
             services.AddSingleton<IClusterScopedWatcher<V1Namespace>, StaticNamespaceWatcher>();
         }
 
@@ -311,12 +313,12 @@ public static class BuilderServicesExtensions
 
         //services.AddScoped<IClusterScopedResourceDomainService<V1Namespace, V1NamespaceList>, NamespaceDomainService>();
 
-        services.AddScoped<IClusterScopedResourceDomainService<ClusterComplianceReportCr, CustomResourceList<ClusterComplianceReportCr>>, ClusterScopedTrivyReportDomainService<ClusterComplianceReportCr>>();
-        services.AddScoped<IClusterScopedResourceDomainService<ClusterRbacAssessmentReportCr, CustomResourceList<ClusterRbacAssessmentReportCr>>, ClusterScopedTrivyReportDomainService<ClusterRbacAssessmentReportCr>>();
-        services.AddScoped<IClusterScopedResourceDomainService<ClusterSbomReportCr, CustomResourceList<ClusterSbomReportCr>>, ClusterScopedTrivyReportDomainService<ClusterSbomReportCr>>();
-        services.AddScoped<IClusterScopedResourceDomainService<ClusterVulnerabilityReportCr, CustomResourceList<ClusterVulnerabilityReportCr>>, ClusterScopedTrivyReportDomainService<ClusterVulnerabilityReportCr>>();
+        services.AddScoped<IClusterScopedResourceWatchDomainService<ClusterComplianceReportCr, CustomResourceList<ClusterComplianceReportCr>>, ClusterScopedTrivyReportDomainService<ClusterComplianceReportCr>>();
+        services.AddScoped<IClusterScopedResourceWatchDomainService<ClusterRbacAssessmentReportCr, CustomResourceList<ClusterRbacAssessmentReportCr>>, ClusterScopedTrivyReportDomainService<ClusterRbacAssessmentReportCr>>();
+        services.AddScoped<IClusterScopedResourceWatchDomainService<ClusterSbomReportCr, CustomResourceList<ClusterSbomReportCr>>, ClusterScopedTrivyReportDomainService<ClusterSbomReportCr>>();
+        services.AddScoped<IClusterScopedResourceWatchDomainService<ClusterVulnerabilityReportCr, CustomResourceList<ClusterVulnerabilityReportCr>>, ClusterScopedTrivyReportDomainService<ClusterVulnerabilityReportCr>>();
 
-        services.AddScoped<INamespacedResourceDomainService<ConfigAuditReportCr, CustomResourceList<ConfigAuditReportCr>>, NamespacedTrivyReportDomainService<ConfigAuditReportCr>>();
+        services.AddScoped<INamespacedResourceWatchDomainService<ConfigAuditReportCr, CustomResourceList<ConfigAuditReportCr>>, NamespacedTrivyReportDomainService<ConfigAuditReportCr>>();
         //services.AddScoped<INamespacedResourceDomainService<ExposedSecretReportCr, CustomResourceList<ExposedSecretReportCr>>, NamespacedTrivyReportDomainService<ExposedSecretReportCr>>();
         //services.AddScoped<INamespacedResourceDomainService<RbacAssessmentReportCr, CustomResourceList<RbacAssessmentReportCr>>, NamespacedTrivyReportDomainService<RbacAssessmentReportCr>>();
         //services.AddScoped<INamespacedResourceDomainService<SbomReportCr, CustomResourceList<SbomReportCr>>, NamespacedTrivyReportDomainService<SbomReportCr>>();

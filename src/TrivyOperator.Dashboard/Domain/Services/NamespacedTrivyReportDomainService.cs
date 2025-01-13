@@ -9,7 +9,7 @@ namespace TrivyOperator.Dashboard.Domain.Services;
 
 public class NamespacedTrivyReportDomainService<TKubernetesObject>(IKubernetesClientFactory kubernetesClientFactory,
     ICustomResourceDefinitionFactory customResourceDefinitionFactory,
-    IClusterScopedResourceDomainService<V1Namespace, V1NamespaceList> namespaceDomainService)
+    IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList> namespaceDomainService)
         : NamespacedResourceDomainService<TKubernetesObject, CustomResourceList<TKubernetesObject>>(kubernetesClientFactory, namespaceDomainService)
         where TKubernetesObject : CustomResource
 {

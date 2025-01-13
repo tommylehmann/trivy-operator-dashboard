@@ -15,7 +15,7 @@ public class NamespaceWatcher(
     IBackgroundQueue<V1Namespace> backgroundQueue,
     IServiceProvider serviceProvider,
     AsyncPolicy retryPolicy,
-    IClusterScopedResourceDomainService<V1Namespace, V1NamespaceList> namespaceDomainService,
+    IClusterScopedResourceWatchDomainService<V1Namespace, V1NamespaceList> namespaceDomainService,
     ILogger<NamespaceWatcher> logger)
     : ClusterScopedWatcher<V1NamespaceList, V1Namespace, IBackgroundQueue<V1Namespace>, WatcherEvent<V1Namespace>>(
         kubernetesClientFactory,

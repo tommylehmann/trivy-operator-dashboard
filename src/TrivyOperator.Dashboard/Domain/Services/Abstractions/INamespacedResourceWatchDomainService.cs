@@ -3,7 +3,7 @@ using k8s.Autorest;
 using k8s.Models;
 
 namespace TrivyOperator.Dashboard.Domain.Services.Abstractions;
-public interface INamespacedResourceDomainService<TKubernetesObject, TKubernetesObjectList>
+public interface INamespacedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>, IMetadata<V1ObjectMeta>
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
 {
