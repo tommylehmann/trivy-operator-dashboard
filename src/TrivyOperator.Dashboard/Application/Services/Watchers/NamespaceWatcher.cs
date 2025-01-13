@@ -5,6 +5,7 @@ using Polly;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
+using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers;
@@ -14,6 +15,7 @@ public class NamespaceWatcher(
     IBackgroundQueue<V1Namespace> backgroundQueue,
     IServiceProvider serviceProvider,
     AsyncPolicy retryPolicy,
+    IClusterScopedResourceDomainService<V1Namespace, V1NamespaceList> namespaceDomainService,
     ILogger<NamespaceWatcher> logger)
     : ClusterScopedWatcher<V1NamespaceList, V1Namespace, IBackgroundQueue<V1Namespace>, WatcherEvent<V1Namespace>>(
         kubernetesClientFactory,
@@ -25,11 +27,12 @@ public class NamespaceWatcher(
     protected override async Task<HttpOperationResponse<V1NamespaceList>> GetKubernetesObjectWatchList(
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
         string? lastResourceVersion,
-        CancellationToken cancellationToken) => 
-            await KubernetesClient.CoreV1.ListNamespaceWithHttpMessagesAsync(
-            watch: true,
-            resourceVersion: lastResourceVersion,
-            allowWatchBookmarks: true,
-            timeoutSeconds: GetWatcherRandomTimeout(),
-            cancellationToken: cancellationToken);
+        CancellationToken cancellationToken) =>
+            //await KubernetesClient.CoreV1.ListNamespaceWithHttpMessagesAsync(
+            //watch: true,
+            //resourceVersion: lastResourceVersion,
+            //allowWatchBookmarks: true,
+            //timeoutSeconds: GetWatcherRandomTimeout(),
+            //cancellationToken: cancellationToken);
+            await namespaceDomainService.GetResourceWatchList(lastResourceVersion, GetWatcherRandomTimeout(), cancellationToken);
 }
