@@ -22,7 +22,7 @@ public abstract class
         retryPolicy,
         logger), IClusterScopedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>, new()
-    where TKubernetesObjectList : IKubernetesObject, IItems<TKubernetesObject>
+    where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
 {

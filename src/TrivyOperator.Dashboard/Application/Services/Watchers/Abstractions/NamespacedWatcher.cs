@@ -1,8 +1,10 @@
 ﻿using k8s;
+using k8s.Autorest;
 using k8s.Models;
 using Polly;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
+using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
@@ -10,6 +12,7 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 public abstract class
     NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         IKubernetesClientFactory kubernetesClientFactory,
+        INamespacedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList> namespacedResourceWatchDomainService,
         TBackgroundQueue backgroundQueue,
         IServiceProvider serviceProvider,
         AsyncPolicy retryPolicy,
@@ -22,7 +25,7 @@ public abstract class
         retryPolicy,
         logger), INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>, new()
-    where TKubernetesObjectList : IKubernetesObject, IItems<TKubernetesObject>
+    where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
 {
@@ -40,6 +43,15 @@ public abstract class
             Watchers.Remove(sourceNamespace);
         }
     }
+
+    protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
+        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        string? lastResourceVersion,
+        CancellationToken cancellationToken)
+        => namespacedResourceWatchDomainService.GetResourceWatchList(
+            namespaceName: GetNamespaceFromSourceEvent(sourceKubernetesObject),
+            timeoutSeconds: GetWatcherRandomTimeout(),
+            cancellationToken: cancellationToken);
 
     protected override async Task EnqueueWatcherEventWithError(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
     {

@@ -22,7 +22,7 @@ public class
     where TKubernetesWatcherEvent : class, IWatcherEvent<TKubernetesObject>, new()
     where TKubernetesWatcher : INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>
-    where TKubernetesObjectList : IItems<TKubernetesObject>
+    where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
 {
     public void Stop(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject = null)
     {

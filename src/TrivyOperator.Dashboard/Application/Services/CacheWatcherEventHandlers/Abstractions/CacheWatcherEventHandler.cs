@@ -19,7 +19,7 @@ public class
     where TKubernetesWatcherEvent : class, IWatcherEvent<TKubernetesObject>, new()
     where TKubernetesWatcher : IKubernetesWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>
-    where TKubernetesObjectList : IItems<TKubernetesObject>
+    where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
 
 {
     protected readonly TCacheRefresh CacheRefresh = cacheRefresh;

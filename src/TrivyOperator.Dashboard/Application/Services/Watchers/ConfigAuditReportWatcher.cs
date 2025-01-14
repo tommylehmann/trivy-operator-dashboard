@@ -5,14 +5,17 @@ using Polly;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
+using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy.ConfigAuditReport;
 using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
+using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class ConfigAuditReportWatcher(
     IKubernetesClientFactory kubernetesClientFactory,
+    INamespacedResourceWatchDomainService<ConfigAuditReportCr, CustomResourceList<ConfigAuditReportCr>> namespacedResourceWatchDomainService,
     IBackgroundQueue<ConfigAuditReportCr> backgroundQueue,
     IServiceProvider serviceProvider,
     AsyncPolicy retryPolicy,
@@ -20,6 +23,7 @@ public class ConfigAuditReportWatcher(
     : NamespacedWatcher<CustomResourceList<ConfigAuditReportCr>, ConfigAuditReportCr,
         IBackgroundQueue<ConfigAuditReportCr>, WatcherEvent<ConfigAuditReportCr>>(
         kubernetesClientFactory,
+        namespacedResourceWatchDomainService,
         backgroundQueue,
         serviceProvider,
         retryPolicy,

@@ -143,6 +143,8 @@ public static class BuilderServicesExtensions
             ConcurrentCache<string, IList<VulnerabilityReportCr>>>();
         services.AddSingleton<IBackgroundQueue<VulnerabilityReportCr>, BackgroundQueue<VulnerabilityReportCr>>();
         services.AddSingleton<INamespacedWatcher<VulnerabilityReportCr>, VulnerabilityReportWatcher>();
+        //services.AddSingleton<INamespacedWatcher<VulnerabilityReportCr>,
+        //    NamespacedWatcher<CustomResourceList<VulnerabilityReportCr>, VulnerabilityReportCr, IBackgroundQueue<VulnerabilityReportCr>, WatcherEvent<VulnerabilityReportCr>>>();
         services.AddSingleton<
             ICacheRefresh<VulnerabilityReportCr, IBackgroundQueue<VulnerabilityReportCr>>,
             CacheRefresh<VulnerabilityReportCr, IBackgroundQueue<VulnerabilityReportCr>>>();
@@ -311,7 +313,7 @@ public static class BuilderServicesExtensions
     {
         services.AddSingleton<ICustomResourceDefinitionFactory, CustomResourceDefinitionFactory>();
 
-        //services.AddScoped<IClusterScopedResourceDomainService<V1Namespace, V1NamespaceList>, NamespaceDomainService>();
+        //services.AddScoped<IClusterScopedResourceWatchDomainService<V1Namespace, V1NamespaceList>, NamespaceDomainService>();
 
         services.AddScoped<IClusterScopedResourceWatchDomainService<ClusterComplianceReportCr, CustomResourceList<ClusterComplianceReportCr>>, ClusterScopedTrivyReportDomainService<ClusterComplianceReportCr>>();
         services.AddScoped<IClusterScopedResourceWatchDomainService<ClusterRbacAssessmentReportCr, CustomResourceList<ClusterRbacAssessmentReportCr>>, ClusterScopedTrivyReportDomainService<ClusterRbacAssessmentReportCr>>();
@@ -319,9 +321,9 @@ public static class BuilderServicesExtensions
         services.AddScoped<IClusterScopedResourceWatchDomainService<ClusterVulnerabilityReportCr, CustomResourceList<ClusterVulnerabilityReportCr>>, ClusterScopedTrivyReportDomainService<ClusterVulnerabilityReportCr>>();
 
         services.AddScoped<INamespacedResourceWatchDomainService<ConfigAuditReportCr, CustomResourceList<ConfigAuditReportCr>>, NamespacedTrivyReportDomainService<ConfigAuditReportCr>>();
-        //services.AddScoped<INamespacedResourceDomainService<ExposedSecretReportCr, CustomResourceList<ExposedSecretReportCr>>, NamespacedTrivyReportDomainService<ExposedSecretReportCr>>();
-        //services.AddScoped<INamespacedResourceDomainService<RbacAssessmentReportCr, CustomResourceList<RbacAssessmentReportCr>>, NamespacedTrivyReportDomainService<RbacAssessmentReportCr>>();
-        //services.AddScoped<INamespacedResourceDomainService<SbomReportCr, CustomResourceList<SbomReportCr>>, NamespacedTrivyReportDomainService<SbomReportCr>>();
-        //services.AddScoped<INamespacedResourceDomainService<VulnerabilityReportCr, CustomResourceList<VulnerabilityReportCr>>, NamespacedTrivyReportDomainService<VulnerabilityReportCr>>();
+        //services.AddScoped<INamespacedResourceWatchDomainService<ExposedSecretReportCr, CustomResourceList<ExposedSecretReportCr>>, NamespacedTrivyReportDomainService<ExposedSecretReportCr>>();
+        //services.AddScoped<INamespacedResourceWatchDomainService<RbacAssessmentReportCr, CustomResourceList<RbacAssessmentReportCr>>, NamespacedTrivyReportDomainService<RbacAssessmentReportCr>>();
+        //services.AddScoped<INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>>, NamespacedTrivyReportDomainService<SbomReportCr>>();
+        services.AddSingleton<INamespacedResourceWatchDomainService<VulnerabilityReportCr, CustomResourceList<VulnerabilityReportCr>>, NamespacedTrivyReportDomainService<VulnerabilityReportCr>>();
     }
 }

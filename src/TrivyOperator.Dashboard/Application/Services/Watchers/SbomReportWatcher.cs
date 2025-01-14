@@ -8,11 +8,14 @@ using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using Polly;
+using TrivyOperator.Dashboard.Domain.Services.Abstractions;
+using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class SbomReportWatcher(
     IKubernetesClientFactory kubernetesClientFactory,
+    INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>> namespacedResourceWatchDomainService,
     IBackgroundQueue<SbomReportCr> backgroundQueue,
     IServiceProvider serviceProvider,
     AsyncPolicy retryPolicy,
@@ -20,6 +23,7 @@ public class SbomReportWatcher(
     : NamespacedWatcher<CustomResourceList<SbomReportCr>, SbomReportCr,
         IBackgroundQueue<SbomReportCr>, WatcherEvent<SbomReportCr>>(
         kubernetesClientFactory,
+        namespacedResourceWatchDomainService,
         backgroundQueue,
         serviceProvider,
         retryPolicy,

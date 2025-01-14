@@ -20,7 +20,7 @@ public abstract class
         ILogger<KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
             logger) : IKubernetesWatcher<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
-    where TKubernetesObjectList : IItems<TKubernetesObject>
+    where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
 
