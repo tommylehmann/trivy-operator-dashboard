@@ -9,7 +9,7 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
-public abstract class
+public class
     NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         IKubernetesClientFactory kubernetesClientFactory,
         INamespacedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList> namespacedResourceWatchDomainService,

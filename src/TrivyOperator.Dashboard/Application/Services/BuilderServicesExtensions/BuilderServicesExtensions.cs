@@ -9,6 +9,7 @@ using TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers;
 using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
+using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
@@ -142,9 +143,13 @@ public static class BuilderServicesExtensions
             IConcurrentCache<string, IList<VulnerabilityReportCr>>,
             ConcurrentCache<string, IList<VulnerabilityReportCr>>>();
         services.AddSingleton<IBackgroundQueue<VulnerabilityReportCr>, BackgroundQueue<VulnerabilityReportCr>>();
-        services.AddSingleton<INamespacedWatcher<VulnerabilityReportCr>, VulnerabilityReportWatcher>();
-        //services.AddSingleton<INamespacedWatcher<VulnerabilityReportCr>,
-        //    NamespacedWatcher<CustomResourceList<VulnerabilityReportCr>, VulnerabilityReportCr, IBackgroundQueue<VulnerabilityReportCr>, WatcherEvent<VulnerabilityReportCr>>>();
+        //services.AddSingleton<INamespacedWatcher<VulnerabilityReportCr>, VulnerabilityReportWatcher>();
+        services.AddSingleton<INamespacedWatcher<VulnerabilityReportCr>,
+            NamespacedWatcher<
+                CustomResourceList<VulnerabilityReportCr>,
+                VulnerabilityReportCr,
+                IBackgroundQueue<VulnerabilityReportCr>,
+                WatcherEvent<VulnerabilityReportCr>>>();
         services.AddSingleton<
             ICacheRefresh<VulnerabilityReportCr, IBackgroundQueue<VulnerabilityReportCr>>,
             CacheRefresh<VulnerabilityReportCr, IBackgroundQueue<VulnerabilityReportCr>>>();
