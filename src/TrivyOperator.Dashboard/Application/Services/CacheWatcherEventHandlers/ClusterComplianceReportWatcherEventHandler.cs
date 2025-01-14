@@ -15,7 +15,7 @@ public class ClusterComplianceReportWatcherEventHandler(
     : ClusterScopedCacheWatcherEventHandler<IBackgroundQueue<ClusterComplianceReportCr>,
         ICacheRefresh<ClusterComplianceReportCr, IBackgroundQueue<ClusterComplianceReportCr>>,
         WatcherEvent<ClusterComplianceReportCr>, IClusterScopedWatcher<ClusterComplianceReportCr>,
-        ClusterComplianceReportCr, CustomResourceList<ClusterComplianceReportCr>>(
+        ClusterComplianceReportCr>(
         cacheRefresh,
         kubernetesWatcher,
         logger);

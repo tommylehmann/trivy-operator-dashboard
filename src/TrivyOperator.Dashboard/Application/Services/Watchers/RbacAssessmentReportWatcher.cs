@@ -33,7 +33,7 @@ public class RbacAssessmentReportWatcher(
         GetKubernetesObjectWatchList(
             IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
             string? lastResourceVersion,
-            CancellationToken cancellationToken)
+            CancellationToken? cancellationToken)
     {
         RbacAssessmentReportCrd myCrd = new();
 
@@ -46,6 +46,6 @@ public class RbacAssessmentReportWatcher(
                 watch: true,
                 resourceVersion: lastResourceVersion,
                 timeoutSeconds: GetWatcherRandomTimeout(),
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken ?? new());
     }
 }

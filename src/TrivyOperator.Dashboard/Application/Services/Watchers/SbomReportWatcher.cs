@@ -33,7 +33,7 @@ public class SbomReportWatcher(
         GetKubernetesObjectWatchList(
             IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
             string? lastResourceVersion,
-            CancellationToken cancellationToken)
+            CancellationToken? cancellationToken)
     {
         SbomReportCrd myCrd = new();
 
@@ -46,7 +46,7 @@ public class SbomReportWatcher(
                 watch: true,
                 resourceVersion: lastResourceVersion,
                 timeoutSeconds: GetWatcherRandomTimeout(),
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken ?? new());
     }
 
     protected override void ProcessReceivedKubernetesObject(SbomReportCr kubernetesObject)

@@ -5,6 +5,7 @@ using Polly;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
+using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy.ClusterComplianceReport;
 using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -13,6 +14,7 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class ClusterComplianceReportWatcher(
     IKubernetesClientFactory kubernetesClientFactory,
+    IClusterScopedResourceWatchDomainService<ClusterComplianceReportCr, CustomResourceList<ClusterComplianceReportCr>> clusterScopResourceWatchDomainService,
     IBackgroundQueue<ClusterComplianceReportCr> backgroundQueue,
     IServiceProvider serviceProvider,
     AsyncPolicy retryPolicy,
@@ -20,6 +22,7 @@ public class ClusterComplianceReportWatcher(
     : ClusterScopedWatcher<CustomResourceList<ClusterComplianceReportCr>, ClusterComplianceReportCr,
         IBackgroundQueue<ClusterComplianceReportCr>, WatcherEvent<ClusterComplianceReportCr>>(
         kubernetesClientFactory,
+        clusterScopResourceWatchDomainService,
         backgroundQueue,
         serviceProvider,
         retryPolicy,
@@ -29,7 +32,7 @@ public class ClusterComplianceReportWatcher(
         GetKubernetesObjectWatchList(
             IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
             string? lastResourceVersion,
-            CancellationToken cancellationToken)
+            CancellationToken? cancellationToken = null)
     {
         ClusterComplianceReportCrd myCrd = new();
 
@@ -41,6 +44,6 @@ public class ClusterComplianceReportWatcher(
                 watch: true,
                 resourceVersion: lastResourceVersion,
                 timeoutSeconds: GetWatcherRandomTimeout(),
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken ?? new());
     }
 }

@@ -15,7 +15,7 @@ public class ClusterRbacAssessmentReportWatcherEventHandler(
     : ClusterScopedCacheWatcherEventHandler<IBackgroundQueue<ClusterRbacAssessmentReportCr>,
         ICacheRefresh<ClusterRbacAssessmentReportCr, IBackgroundQueue<ClusterRbacAssessmentReportCr>>,
         WatcherEvent<ClusterRbacAssessmentReportCr>, IClusterScopedWatcher<ClusterRbacAssessmentReportCr>,
-        ClusterRbacAssessmentReportCr, CustomResourceList<ClusterRbacAssessmentReportCr>>(
+        ClusterRbacAssessmentReportCr>(
         cacheRefresh,
         kubernetesWatcher,
         logger);

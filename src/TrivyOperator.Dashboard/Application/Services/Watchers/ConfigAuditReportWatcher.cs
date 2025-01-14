@@ -33,7 +33,7 @@ public class ConfigAuditReportWatcher(
         GetKubernetesObjectWatchList(
             IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
             string? lastResourceVersion,
-            CancellationToken cancellationToken)
+            CancellationToken? cancellationToken)
     {
         ConfigAuditReportCrd myCrd = new();
 
@@ -46,6 +46,6 @@ public class ConfigAuditReportWatcher(
                 watch: true,
                 resourceVersion: lastResourceVersion,
                 timeoutSeconds: GetWatcherRandomTimeout(),
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken ?? new());
     }
 }

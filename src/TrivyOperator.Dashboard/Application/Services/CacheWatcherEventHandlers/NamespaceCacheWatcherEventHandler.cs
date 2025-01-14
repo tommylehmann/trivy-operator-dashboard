@@ -13,4 +13,4 @@ public class NamespaceCacheWatcherEventHandler(
     ILogger<NamespaceCacheWatcherEventHandler> logger)
     : ClusterScopedCacheWatcherEventHandler<IBackgroundQueue<V1Namespace>,
         ICacheRefresh<V1Namespace, IBackgroundQueue<V1Namespace>>, WatcherEvent<V1Namespace>,
-        IClusterScopedWatcher<V1Namespace>, V1Namespace, V1NamespaceList>(cacheRefresh, kubernetesWatcher, logger);
+        IClusterScopedWatcher<V1Namespace>, V1Namespace>(cacheRefresh, kubernetesWatcher, logger);

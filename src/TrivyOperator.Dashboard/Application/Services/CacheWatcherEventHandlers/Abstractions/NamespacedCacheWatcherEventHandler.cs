@@ -9,20 +9,18 @@ namespace TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers
 
 public class
     NamespacedCacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcherEvent, TKubernetesWatcher,
-        TKubernetesObject,
-        TKubernetesObjectList>(
+        TKubernetesObject>(
         TCacheRefresh cacheRefresh,
         TKubernetesWatcher kubernetesWatcher,
         ILogger<CacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcherEvent, TKubernetesWatcher,
-            TKubernetesObject, TKubernetesObjectList>> logger)
+            TKubernetesObject>> logger)
     : CacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcherEvent, TKubernetesWatcher,
-            TKubernetesObject, TKubernetesObjectList>(cacheRefresh, kubernetesWatcher, logger),
+            TKubernetesObject>(cacheRefresh, kubernetesWatcher, logger),
         INamespacedCacheWatcherEventHandler where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
     where TCacheRefresh : ICacheRefresh<TKubernetesObject, TBackgroundQueue>
     where TKubernetesWatcherEvent : class, IWatcherEvent<TKubernetesObject>, new()
     where TKubernetesWatcher : INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>
-    where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
 {
     public void Stop(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject = null)
     {

@@ -9,17 +9,15 @@ namespace TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers
 
 public class
     ClusterScopedCacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcherEvent, TKubernetesWatcher,
-        TKubernetesObject,
-        TKubernetesObjectList>(
+        TKubernetesObject>(
         TCacheRefresh cacheRefresh,
         TKubernetesWatcher kubernetesWatcher,
         ILogger<CacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcherEvent, TKubernetesWatcher,
-            TKubernetesObject, TKubernetesObjectList>> logger)
+            TKubernetesObject>> logger)
     : CacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcherEvent, TKubernetesWatcher,
-            TKubernetesObject, TKubernetesObjectList>(cacheRefresh, kubernetesWatcher, logger),
+            TKubernetesObject>(cacheRefresh, kubernetesWatcher, logger),
         IClusterScopedCacheWatcherEventHandler where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
     where TCacheRefresh : ICacheRefresh<TKubernetesObject, TBackgroundQueue>
     where TKubernetesWatcherEvent : class, IWatcherEvent<TKubernetesObject>, new()
     where TKubernetesWatcher : IClusterScopedWatcher<TKubernetesObject>
-    where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>
-    where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>;
+    where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>;

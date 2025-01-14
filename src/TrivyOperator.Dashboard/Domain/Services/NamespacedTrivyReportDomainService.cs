@@ -26,7 +26,7 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(IKubernetesCl
     }
     private CustomResourceDefinition? _trivyReportCrd;
 
-    public override async Task<CustomResourceList<TKubernetesObject>> GetResourceList(string namespaceName, int? pageLimit = null, string? continueToken = null)
+    public override async Task<CustomResourceList<TKubernetesObject>> GetResourceList(string namespaceName, int? pageLimit = null, string? continueToken = null, CancellationToken? cancellationToken = null)
     {
         return await kubernetesClientFactory.GetClient()
             .ListNamespacedCustomObjectAsync<CustomResourceList<TKubernetesObject>>(
@@ -35,10 +35,11 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(IKubernetesCl
                 namespaceName,
                 trivyReportCrd.PluralName,
                 limit: pageLimit,
-                continueParameter: continueToken);
+                continueParameter: continueToken,
+                cancellationToken: cancellationToken ?? new());
     }
 
-    public override async Task<TKubernetesObject> GetResource(string resourceName, string namespaceName)
+    public override async Task<TKubernetesObject> GetResource(string resourceName, string namespaceName, CancellationToken? cancellationToken = null)
     {
         return await kubernetesClientFactory.GetClient()
             .CustomObjects.GetNamespacedCustomObjectAsync<TKubernetesObject>(
@@ -46,14 +47,15 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(IKubernetesCl
                 trivyReportCrd.Version,
                 namespaceName,
                 trivyReportCrd.PluralName,
-                resourceName);
+                resourceName,
+                cancellationToken: cancellationToken ?? new());
     }
 
     public override async Task<HttpOperationResponse<CustomResourceList<TKubernetesObject>>> GetResourceWatchList(
         string namespaceName,
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken cancellationToken = new())
+        CancellationToken? cancellationToken = null)
     {
         return await kubernetesClientFactory.GetClient()
             .CustomObjects
@@ -65,6 +67,6 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(IKubernetesCl
                 watch: true,
                 resourceVersion: lastResourceVersion,
                 timeoutSeconds: timeoutSeconds,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken ?? new());
     }
 }

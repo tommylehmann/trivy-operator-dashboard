@@ -30,6 +30,8 @@ public abstract class
 
     protected readonly Dictionary<string, TaskWithCts> Watchers = [];
 
+    protected readonly int resourceListPageSize = 50;
+
     private static readonly Random _random = new();
 
     public Task Add(CancellationToken cancellationToken, IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject = null)
@@ -163,22 +165,42 @@ public abstract class
             });
         }
     }
+    protected async Task<string> ProcessInitialResources(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject, CancellationToken? cancellationToken = null)
+    {
+        string? continueToken = null;
+        string? lastResourceVersion;
 
-    protected string GetNamespaceFromSourceEvent(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject) =>
-        sourceKubernetesObject is V1Namespace
-            ? sourceKubernetesObject.Metadata.Name
-            : VarUtils.GetCacheRefreshKey(sourceKubernetesObject);
+        do
+        {
+            TKubernetesObjectList customResourceList = await GetInitialResources(sourceKubernetesObject, continueToken, cancellationToken);
+
+            foreach (TKubernetesObject item in customResourceList.Items ?? [])
+            {
+                ProcessReceivedKubernetesObject(item);
+                TKubernetesWatcherEvent kubernetesWatcherEvent =
+                    new() { KubernetesObject = item, WatcherEventType = WatchEventType.Added };
+                await BackgroundQueue.QueueBackgroundWorkItemAsync(kubernetesWatcherEvent);
+            }
+
+            continueToken = customResourceList.Metadata.ContinueProperty;
+            lastResourceVersion = customResourceList.Metadata.ResourceVersion;
+        } while (!string.IsNullOrEmpty(continueToken) && !(cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested));
+
+        return lastResourceVersion;
+    }
+    protected abstract Task<TKubernetesObjectList> GetInitialResources(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject, string? continueToken, CancellationToken? cancellationToken = null);
 
     protected abstract Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
         string? lastResourceVersion,
-        CancellationToken cancellationToken);
-
+        CancellationToken? cancellationToken = null);
     protected abstract Task EnqueueWatcherEventWithError(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject);
-
     protected virtual void ProcessReceivedKubernetesObject(TKubernetesObject kubernetesObject) 
     { }
-
+    protected string GetNamespaceFromSourceEvent(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject) =>
+        sourceKubernetesObject is V1Namespace
+            ? sourceKubernetesObject.Metadata.Name
+            : VarUtils.GetCacheRefreshKey(sourceKubernetesObject);
     protected static int GetWatcherRandomTimeout()
     {
         return _random.Next(60, 91);

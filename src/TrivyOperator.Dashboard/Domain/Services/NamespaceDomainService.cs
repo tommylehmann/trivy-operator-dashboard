@@ -12,17 +12,18 @@ public class NamespaceDomainService(
     ILogger<NamespaceDomainService> logger)
     : ClusterScopedResourceDomainService<V1Namespace, V1NamespaceList>(kubernetesClientFactory)
 {
-    public override async Task<V1Namespace> GetResource(string resourceName)
+    public override async Task<V1Namespace> GetResource(string resourceName, CancellationToken? cancellationToken = null)
     {
-        return await kubernetesClientFactory.GetClient().CoreV1.ReadNamespaceAsync(resourceName);
+        return await kubernetesClientFactory.GetClient().CoreV1.ReadNamespaceAsync(resourceName, cancellationToken: cancellationToken ?? new());
     }
-    public override async Task<V1NamespaceList> GetResourceList(int? pageLimit = null, string? continueToken = null)
+    public override async Task<V1NamespaceList> GetResourceList(int? pageLimit = null, string? continueToken = null, CancellationToken? cancellationToken = null)
     {
         try
         {
             return await kubernetesClientFactory.GetClient().CoreV1.ListNamespaceAsync(
                 limit: pageLimit,
-                continueParameter: continueToken);
+                continueParameter: continueToken,
+                cancellationToken: cancellationToken ?? new());
         }
         catch (HttpOperationException ex) when (ex.Response.StatusCode == HttpStatusCode.Forbidden)
         {
@@ -41,7 +42,7 @@ public class NamespaceDomainService(
     public override Task<HttpOperationResponse<V1NamespaceList>> GetResourceWatchList(
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken? cancellationToken = null)
     {
         return kubernetesClientFactory.GetClient()
             .CoreV1.ListNamespaceWithHttpMessagesAsync(
@@ -49,6 +50,6 @@ public class NamespaceDomainService(
                 resourceVersion: lastResourceVersion,
                 allowWatchBookmarks: true,
                 timeoutSeconds: timeoutSeconds,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken ?? new());
     }
 }

@@ -12,7 +12,7 @@ public class StaticNamespaceDomainService(
     ILogger<StaticNamespaceDomainService> logger)
     : IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList>
 {
-    public Task<IList<V1Namespace>> GetResources()
+    public Task<IList<V1Namespace>> GetResources(CancellationToken? cancellationToken = null)
     {
         string? configKubernetesNamespaces = kubernetesOptions.Value.NamespaceList;
 
@@ -34,11 +34,11 @@ public class StaticNamespaceDomainService(
 
         return Task.FromResult<IList<V1Namespace>>(kubernetesNamespaces);
     }
-    public Task<V1Namespace> GetResource(string resourceName)
+    public Task<V1Namespace> GetResource(string resourceName, CancellationToken? cancellationToken = null)
     {
         return Task.FromResult(CreateNamespace(resourceName));
     }
-    public Task<V1NamespaceList> GetResourceList(int? pageLimit = null, string? continueToken = null)
+    public Task<V1NamespaceList> GetResourceList(int? pageLimit = null, string? continueToken = null, CancellationToken? cancellationToken = null)
     {
         return Task.FromResult(new V1NamespaceList
         {

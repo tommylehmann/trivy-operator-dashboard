@@ -8,5 +8,5 @@ public interface IClusterScopedResourceWatchDomainService<TKubernetesObject, TKu
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>, IMetadata<V1ObjectMeta>
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
 {
-    Task<HttpOperationResponse<TKubernetesObjectList>> GetResourceWatchList(string? lastResourceVersion = null, int? timeoutSeconds = null, CancellationToken cancellationToken = default);
+    Task<HttpOperationResponse<TKubernetesObjectList>> GetResourceWatchList(string? lastResourceVersion = null, int? timeoutSeconds = null, CancellationToken? cancellationToken = null);
 }

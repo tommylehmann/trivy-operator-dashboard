@@ -12,17 +12,17 @@ public abstract class ClusterScopedResourceDomainService<TKubernetesObject, TKub
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>, IMetadata<V1ObjectMeta>
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
 {
-    public override async Task<IList<TKubernetesObject>> GetResources()
+    public override async Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null)
     {
-        return (await GetResourceList()).Items;
+        return (await GetResourceList(cancellationToken: cancellationToken)).Items;
     }
 
-    public abstract Task<TKubernetesObjectList> GetResourceList(int? pageLimit = null, string? continueToken = null);
+    public abstract Task<TKubernetesObjectList> GetResourceList(int? pageLimit = null, string? continueToken = null, CancellationToken? cancellationToken = null);
 
-    public abstract Task<TKubernetesObject> GetResource(string resourceName);
+    public abstract Task<TKubernetesObject> GetResource(string resourceName, CancellationToken? cancellationToken = null);
 
     public abstract Task<HttpOperationResponse<TKubernetesObjectList>> GetResourceWatchList(
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken cancellationToken = new());
+        CancellationToken? cancellationToken = null);
 }

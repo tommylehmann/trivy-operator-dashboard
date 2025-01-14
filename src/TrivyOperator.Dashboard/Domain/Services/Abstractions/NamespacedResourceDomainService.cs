@@ -13,28 +13,32 @@ public abstract class NamespacedResourceDomainService<TKubernetesObject, TKubern
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>, IMetadata<V1ObjectMeta>
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
 {
-    public async override Task<IList<TKubernetesObject>> GetResources()
+    public async override Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null)
     {
-        IEnumerable<V1Namespace> v1Namespaces = await namespaceDomainService.GetResources();
+        IEnumerable<V1Namespace> v1Namespaces = await namespaceDomainService.GetResources(cancellationToken);
         List<TKubernetesObject> trivyReports = [];
         foreach (var v1Namespace in v1Namespaces ?? [])
         {
-            IList<TKubernetesObject> trivyReportsInNamespace = await GetResources(v1Namespace.Name());
+            IList<TKubernetesObject> trivyReportsInNamespace = await GetResources(v1Namespace.Name(), cancellationToken);
+            if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
+            {
+                return [];
+            }
             trivyReports.AddRange(trivyReportsInNamespace);
         }
         return trivyReports;
     }
 
-    public async Task<IList<TKubernetesObject>> GetResources(string namespaceName)
+    public async Task<IList<TKubernetesObject>> GetResources(string namespaceName, CancellationToken? cancellationToken = null)
     {
-        return (await GetResourceList(namespaceName)).Items;
+        return (await GetResourceList(namespaceName, cancellationToken: cancellationToken)).Items;
     }
 
-    public abstract Task<TKubernetesObjectList> GetResourceList(string namespaceName, int? pageLimit = null, string? continueToken = null);
-    public abstract Task<TKubernetesObject> GetResource(string resourceName, string namespaceName);
+    public abstract Task<TKubernetesObjectList> GetResourceList(string namespaceName, int? pageLimit = null, string? continueToken = null, CancellationToken? cancellationToken = null);
+    public abstract Task<TKubernetesObject> GetResource(string resourceName, string namespaceName, CancellationToken? cancellationToken = null);
     public abstract Task<HttpOperationResponse<TKubernetesObjectList>> GetResourceWatchList(
         string namespaceName,
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken cancellationToken = new());
+        CancellationToken? cancellationToken = null);
 }

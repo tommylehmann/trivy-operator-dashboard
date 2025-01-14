@@ -14,5 +14,5 @@ public class SbomReportCacheWatcherEventHandler(
     ILogger<SbomReportCacheWatcherEventHandler> logger)
     : NamespacedCacheWatcherEventHandler<IBackgroundQueue<SbomReportCr>,
         ICacheRefresh<SbomReportCr, IBackgroundQueue<SbomReportCr>>,
-        WatcherEvent<SbomReportCr>, INamespacedWatcher<SbomReportCr>, SbomReportCr,
-        CustomResourceList<SbomReportCr>>(cacheRefresh, kubernetesWatcher, logger);
+        WatcherEvent<SbomReportCr>, INamespacedWatcher<SbomReportCr>, SbomReportCr>
+    (cacheRefresh, kubernetesWatcher, logger);

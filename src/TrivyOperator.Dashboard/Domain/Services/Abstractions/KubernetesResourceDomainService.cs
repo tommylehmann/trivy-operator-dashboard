@@ -10,5 +10,5 @@ public abstract class KubernetesResourceDomainService<TKubernetesObject>(
 {
     private readonly Kubernetes kubernetesClient = kubernetesClientFactory.GetClient();
     protected IKubernetesClientFactory kubernetesClientFactory = kubernetesClientFactory;
-    public abstract Task<IList<TKubernetesObject>> GetResources();
+    public abstract Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null);
 }

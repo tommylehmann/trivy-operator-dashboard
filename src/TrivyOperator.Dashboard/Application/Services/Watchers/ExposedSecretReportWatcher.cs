@@ -33,7 +33,7 @@ public class ExposedSecretReportWatcher(
         GetKubernetesObjectWatchList(
             IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
             string? lastResourceVersion,
-            CancellationToken cancellationToken)
+            CancellationToken? cancellationToken)
     {
         ExposedSecretReportCrd myCrd = new();
 
@@ -46,6 +46,6 @@ public class ExposedSecretReportWatcher(
                 watch: true,
                 resourceVersion: lastResourceVersion,
                 timeoutSeconds: GetWatcherRandomTimeout(),
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken ?? new());
     }
 }

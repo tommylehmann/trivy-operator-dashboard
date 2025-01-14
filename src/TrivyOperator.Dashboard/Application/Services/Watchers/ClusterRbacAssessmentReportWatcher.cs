@@ -5,6 +5,7 @@ using Polly;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
+using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy.ClusterRbacAssessmentReport;
 using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -13,6 +14,7 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class ClusterRbacAssessmentReportWatcher(
     IKubernetesClientFactory kubernetesClientFactory,
+    IClusterScopedResourceWatchDomainService<ClusterRbacAssessmentReportCr, CustomResourceList<ClusterRbacAssessmentReportCr>> clusterScopResourceWatchDomainService,
     IBackgroundQueue<ClusterRbacAssessmentReportCr> backgroundQueue,
     IServiceProvider serviceProvider,
     AsyncPolicy retryPolicy,
@@ -20,6 +22,7 @@ public class ClusterRbacAssessmentReportWatcher(
     : ClusterScopedWatcher<CustomResourceList<ClusterRbacAssessmentReportCr>, ClusterRbacAssessmentReportCr,
         IBackgroundQueue<ClusterRbacAssessmentReportCr>, WatcherEvent<ClusterRbacAssessmentReportCr>>(
         kubernetesClientFactory,
+        clusterScopResourceWatchDomainService,
         backgroundQueue,
         serviceProvider,
         retryPolicy,
@@ -29,7 +32,7 @@ public class ClusterRbacAssessmentReportWatcher(
         GetKubernetesObjectWatchList(
             IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
             string? lastResourceVersion,
-            CancellationToken cancellationToken)
+            CancellationToken? cancellationToken)
     {
         ClusterRbacAssessmentReportCrd myCrd = new();
 
@@ -41,6 +44,6 @@ public class ClusterRbacAssessmentReportWatcher(
                 watch: true,
                 resourceVersion: lastResourceVersion,
                 timeoutSeconds: GetWatcherRandomTimeout(),
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken ?? new());
     }
 }

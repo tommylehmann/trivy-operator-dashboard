@@ -14,5 +14,5 @@ public class ExposedSecretReportCacheWatcherEventHandler(
     ILogger<ExposedSecretReportCacheWatcherEventHandler> logger)
     : NamespacedCacheWatcherEventHandler<IBackgroundQueue<ExposedSecretReportCr>,
         ICacheRefresh<ExposedSecretReportCr, IBackgroundQueue<ExposedSecretReportCr>>,
-        WatcherEvent<ExposedSecretReportCr>, INamespacedWatcher<ExposedSecretReportCr>, ExposedSecretReportCr,
-        CustomResourceList<ExposedSecretReportCr>>(cacheRefresh, kubernetesWatcher, logger);
+        WatcherEvent<ExposedSecretReportCr>, INamespacedWatcher<ExposedSecretReportCr>,
+        ExposedSecretReportCr>(cacheRefresh, kubernetesWatcher, logger);

@@ -12,6 +12,7 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class NamespaceWatcher(
     IKubernetesClientFactory kubernetesClientFactory,
+    IClusterScopedResourceWatchDomainService<V1Namespace, V1NamespaceList> clusterScopResourceWatchDomainService,
     IBackgroundQueue<V1Namespace> backgroundQueue,
     IServiceProvider serviceProvider,
     AsyncPolicy retryPolicy,
@@ -19,6 +20,7 @@ public class NamespaceWatcher(
     ILogger<NamespaceWatcher> logger)
     : ClusterScopedWatcher<V1NamespaceList, V1Namespace, IBackgroundQueue<V1Namespace>, WatcherEvent<V1Namespace>>(
         kubernetesClientFactory,
+        clusterScopResourceWatchDomainService,
         backgroundQueue,
         serviceProvider,
         retryPolicy,
@@ -27,7 +29,7 @@ public class NamespaceWatcher(
     protected override async Task<HttpOperationResponse<V1NamespaceList>> GetKubernetesObjectWatchList(
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
         string? lastResourceVersion,
-        CancellationToken cancellationToken) =>
+        CancellationToken? cancellationToken) =>
             //await KubernetesClient.CoreV1.ListNamespaceWithHttpMessagesAsync(
             //watch: true,
             //resourceVersion: lastResourceVersion,

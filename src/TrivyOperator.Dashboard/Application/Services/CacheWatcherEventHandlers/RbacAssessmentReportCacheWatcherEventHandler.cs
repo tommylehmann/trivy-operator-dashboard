@@ -14,5 +14,5 @@ public class RbacAssessmentReportCacheWatcherEventHandler(
     ILogger<RbacAssessmentReportCacheWatcherEventHandler> logger)
     : NamespacedCacheWatcherEventHandler<IBackgroundQueue<RbacAssessmentReportCr>,
         ICacheRefresh<RbacAssessmentReportCr, IBackgroundQueue<RbacAssessmentReportCr>>,
-        WatcherEvent<RbacAssessmentReportCr>, INamespacedWatcher<RbacAssessmentReportCr>, RbacAssessmentReportCr,
-        CustomResourceList<RbacAssessmentReportCr>>(cacheRefresh, kubernetesWatcher, logger);
+        WatcherEvent<RbacAssessmentReportCr>, INamespacedWatcher<RbacAssessmentReportCr>, RbacAssessmentReportCr>
+    (cacheRefresh, kubernetesWatcher, logger);

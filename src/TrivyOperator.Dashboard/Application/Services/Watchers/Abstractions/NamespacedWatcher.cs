@@ -47,7 +47,7 @@ public class
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
         string? lastResourceVersion,
-        CancellationToken cancellationToken)
+        CancellationToken? cancellationToken)
         => namespacedResourceWatchDomainService.GetResourceWatchList(
             namespaceName: GetNamespaceFromSourceEvent(sourceKubernetesObject),
             timeoutSeconds: GetWatcherRandomTimeout(),
@@ -67,5 +67,12 @@ public class
             new() { KubernetesObject = kubernetesObject, WatcherEventType = WatchEventType.Error };
 
         await BackgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);
+    }
+
+    protected override async Task<TKubernetesObjectList> GetInitialResources(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject, string? continueToken, CancellationToken? cancellationToken = null)
+    {
+        string namespaceName = GetNamespaceFromSourceEvent(sourceKubernetesObject);
+
+        return await namespacedResourceWatchDomainService.GetResourceList(namespaceName, resourceListPageSize, continueToken, cancellationToken);
     }
 }

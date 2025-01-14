@@ -24,7 +24,7 @@ public class ClusterScopedTrivyReportDomainService<TKubernetesObject>(IKubernete
     }
     private CustomResourceDefinition? _trivyReportCrd;
 
-    public override async Task<CustomResourceList<TKubernetesObject>> GetResourceList(int? pageLimit = null, string? continueToken = null)
+    public override async Task<CustomResourceList<TKubernetesObject>> GetResourceList(int? pageLimit = null, string? continueToken = null, CancellationToken? cancellationToken = null)
     {
         return await kubernetesClientFactory.GetClient()
             .ListClusterCustomObjectAsync<CustomResourceList<TKubernetesObject>>(
@@ -32,23 +32,25 @@ public class ClusterScopedTrivyReportDomainService<TKubernetesObject>(IKubernete
                 trivyReportCrd.Version,
                 trivyReportCrd.PluralName,
                 limit: pageLimit,
-                continueParameter: continueToken);
+                continueParameter: continueToken,
+                cancellationToken: cancellationToken ?? new());
     }
 
-    public override async Task<TKubernetesObject> GetResource(string resourceName)
+    public override async Task<TKubernetesObject> GetResource(string resourceName, CancellationToken? cancellationToken = null)
     {
         return await kubernetesClientFactory.GetClient()
             .CustomObjects.GetClusterCustomObjectAsync<TKubernetesObject>(
                 trivyReportCrd.Group,
                 trivyReportCrd.Version,
                 trivyReportCrd.PluralName,
-                resourceName);
+                resourceName,
+                cancellationToken: cancellationToken ?? new());
     }
 
     public override async Task<HttpOperationResponse<CustomResourceList<TKubernetesObject>>> GetResourceWatchList(
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken cancellationToken = new())
+        CancellationToken? cancellationToken = null)
     {
         return await kubernetesClientFactory.GetClient()
             .CustomObjects
@@ -59,6 +61,6 @@ public class ClusterScopedTrivyReportDomainService<TKubernetesObject>(IKubernete
                 watch: true,
                 resourceVersion: lastResourceVersion,
                 timeoutSeconds: timeoutSeconds,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken ?? new());
     }
 }

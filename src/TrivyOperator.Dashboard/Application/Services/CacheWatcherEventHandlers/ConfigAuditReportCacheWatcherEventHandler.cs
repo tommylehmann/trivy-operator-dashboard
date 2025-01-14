@@ -14,7 +14,7 @@ public class ConfigAuditReportCacheWatcherEventHandler(
     ILogger<ConfigAuditReportCacheWatcherEventHandler> logger)
     : NamespacedCacheWatcherEventHandler<IBackgroundQueue<ConfigAuditReportCr>,
         ICacheRefresh<ConfigAuditReportCr, IBackgroundQueue<ConfigAuditReportCr>>, WatcherEvent<ConfigAuditReportCr>,
-        INamespacedWatcher<ConfigAuditReportCr>, ConfigAuditReportCr, CustomResourceList<ConfigAuditReportCr>>(
+        INamespacedWatcher<ConfigAuditReportCr>, ConfigAuditReportCr>(
         cacheRefresh,
         kubernetesWatcher,
         logger);
