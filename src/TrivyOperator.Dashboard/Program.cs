@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Polly;
 using Serilog;
 using Serilog.Extensions.Logging;
 using System.Runtime.InteropServices;
@@ -72,9 +71,6 @@ builder.Services.AddCors(
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()));
-
-builder.Services.AddPolly(Logger);
-
 
 builder.Services.AddCommons(
     configuration.GetSection(queuesConfigurationSectionKey),

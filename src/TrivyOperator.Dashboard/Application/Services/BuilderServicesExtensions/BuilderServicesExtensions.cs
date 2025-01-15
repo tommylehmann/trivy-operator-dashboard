@@ -271,7 +271,6 @@ public static class BuilderServicesExtensions
                 RbacAssessmentReportCr>>();
         services.AddScoped<IRbacAssessmentReportService, RbacAssessmentReportService>();
     }
-
     public static void AddSbomReportServices(this IServiceCollection services, IConfiguration kubernetesConfiguration)
     {
         bool? useServices = kubernetesConfiguration.GetValue<bool?>("TrivyUseSbomReport");
@@ -296,15 +295,6 @@ public static class BuilderServicesExtensions
                 SbomReportCr>>();
         services.AddScoped<ISbomReportService, SbomReportService>();
     }
-
-    //public static void AddClusterSbomReportServices(
-    //    this IServiceCollection services,
-    //    IConfiguration kubernetesConfiguration)
-    //{
-    //    services.AddScoped<IClusterSbomReportDomainService, ClusterSbomReportDomainService>();
-    //    services.AddScoped<IClusterSbomReportService, ClusterSbomReportService>();
-    //}
-
     public static void AddWatcherStateServices(this IServiceCollection services)
     {
         services.AddTransient<IWatcherState, WatcherState>();
@@ -312,14 +302,12 @@ public static class BuilderServicesExtensions
 
         services.AddScoped<IWatcherStateInfoService, WatcherStateInfoService>();
     }
-
     public static void AddAlertsServices(this IServiceCollection services)
     {
         services.AddSignalR();
         services.AddSingleton<IConcurrentCache<string, IList<Alert>>, ConcurrentCache<string, IList<Alert>>>();
         services.AddTransient<IAlertsService, AlertsService>();
     }
-
     public static void AddCommons(
         this IServiceCollection services,
         IConfiguration queuesConfiguration,
@@ -332,33 +320,11 @@ public static class BuilderServicesExtensions
 
         services.AddSingleton<IKubernetesClientFactory, KubernetesClientFactory>();
     }
-
     public static void AddUiCommons(this IServiceCollection services) =>
         services.AddScoped<IBackendSettingsService, BackendSettingsService>();
-
-    public static void AddPolly(this IServiceCollection services, ILogger logger, double maxBackoffSeconds = 60.0)
-    {
-        services.AddSingleton<AsyncPolicy>(provider =>
-        {
-            double scaleFactor = maxBackoffSeconds / Math.Log(10 + 1);
-            return Policy
-                .Handle<HttpRequestException>(ex => ex.InnerException is IOException) //&& ex.InnerException?.InnerException is System.Net.Sockets.SocketException)
-                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(scaleFactor * Math.Log(retryAttempt + 1)),
-                async (exception, timeSpan) =>
-                    {
-                        logger.LogDebug("Retry due to: {exceptionMessage}, waiting {durationSeconds} seconds",
-                            exception.Message,
-                            timeSpan.TotalSeconds);
-                        await Task.CompletedTask;
-                    });
-        });
-    }
-
     public static void AddDomainServices(this IServiceCollection services)
     {
         services.AddSingleton<ICustomResourceDefinitionFactory, CustomResourceDefinitionFactory>();
-
-        //services.AddScoped<IClusterScopedResourceWatchDomainService<V1Namespace, V1NamespaceList>, NamespaceDomainService>();
 
         services.AddSingleton<IClusterScopedResourceWatchDomainService<ClusterComplianceReportCr, CustomResourceList<ClusterComplianceReportCr>>, ClusterScopedTrivyReportDomainService<ClusterComplianceReportCr>>();
         services.AddSingleton<IClusterScopedResourceWatchDomainService<ClusterRbacAssessmentReportCr, CustomResourceList<ClusterRbacAssessmentReportCr>>, ClusterScopedTrivyReportDomainService<ClusterRbacAssessmentReportCr>>();

@@ -1,7 +1,6 @@
 ﻿using k8s;
 using k8s.Autorest;
 using k8s.Models;
-using Polly;
 using System.Net;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
@@ -14,7 +13,6 @@ public abstract class
     KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         TBackgroundQueue backgroundQueue,
         IServiceProvider serviceProvider,
-        AsyncPolicy retryPolicy,
         ILogger<KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
             logger) : IKubernetesWatcher<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
@@ -26,6 +24,7 @@ public abstract class
     protected readonly TBackgroundQueue BackgroundQueue = backgroundQueue;
     protected readonly Dictionary<string, TaskWithCts> Watchers = [];
     protected readonly int resourceListPageSize = 500;
+    protected readonly double maxBackoffSeconds = 60;
     private static readonly Random _random = new();
 
     public Task Add(CancellationToken cancellationToken, IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject = null)
@@ -53,146 +52,153 @@ public abstract class
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
         CancellationToken cancellationToken)
     {
-        bool isRecoveringFromError = false;
-        bool isFreshStart = true;
         bool isBenignError = false;
         string? lastResourceVersion = null;
         string watcherKey = GetNamespaceFromSourceEvent(sourceKubernetesObject);
+        RetryDurationCalculator retryDurationCalculator = new(maxBackoffSeconds);
+        int retryCount = -1; // -1 - first execution, 0 - no errors, 1, 2, 3 - retries
+
         while (!cancellationToken.IsCancellationRequested)
         {
-            await retryPolicy.ExecuteAsync(async () =>
+            try
             {
-                try
+                if (string.IsNullOrEmpty(lastResourceVersion))
                 {
-                    if (string.IsNullOrEmpty(lastResourceVersion))
+                    lastResourceVersion = await ProcessInitialResourcesAndGetLastResourceVersion(sourceKubernetesObject, cancellationToken);
+                    logger.LogDebug("Initial Resources Processed - {kubernetesObjectType} - {watcherKey} - {lastResourceVersion}",
+                    typeof(TKubernetesObject).Name,
+                    watcherKey,
+                    lastResourceVersion);
+                }
+                do
+                {
+                    isBenignError = false;
+                    Task<HttpOperationResponse<TKubernetesObjectList>> kubernetesObjectsResp =
+                        GetKubernetesObjectWatchList(sourceKubernetesObject, lastResourceVersion, cancellationToken);
+                    await foreach ((WatchEventType type, TKubernetesObject item) in kubernetesObjectsResp
+                                        .WatchAsync<TKubernetesObject, TKubernetesObjectList>(
+                                            ex =>
+                                            {
+                                                if (ex is k8s.KubernetesException && ex.Message.StartsWith("too old resource version:"))
+                                                {
+                                                    logger.LogDebug("{kubernetesObjectType} - {watcherKey} - lastResourceVersion set to null",
+                                                        typeof(TKubernetesObject).Name,
+                                                        watcherKey);
+                                                    lastResourceVersion = null;
+                                                }
+                                                logger.LogWarning(ex,
+                                                    "WatchAsync crashed - {kubernetesObjectType} - {watcherKey} - {exceptionMessage}",
+                                                    typeof(TKubernetesObject).Name,
+                                                    watcherKey,
+                                                    ex.Message);
+                                            },
+                                        cancellationToken))
                     {
-                        lastResourceVersion = await ProcessInitialResourcesAndGetLastResourceVersion(sourceKubernetesObject, cancellationToken);
-                        logger.LogDebug("Initial Resources Processed - {kubernetesObjectType} - {watcherKey} - {lastResourceVersion}",
+                        if (retryCount != 0)
+                        {
+                            using IServiceScope scope = serviceProvider.CreateScope();
+                            IWatcherState watcherState = scope.ServiceProvider.GetRequiredService<IWatcherState>();
+                            await watcherState.ProcessWatcherSuccess(typeof(TKubernetesObject), watcherKey);
+                            retryCount = 0;
+                        }
+                        if (type == WatchEventType.Bookmark)
+                        {
+                            lastResourceVersion = item.Metadata.ResourceVersion;
+                            logger.LogInformation("Bookmark Event - {kubernetesObjectType} - {watcherKey} - Resource Version - {resourceVersion}",
+                                typeof(TKubernetesObject).Name,
+                                watcherKey,
+                                lastResourceVersion);
+                        }
+                        else
+                        {
+                            logger.LogInformation("Sending to Queue - {kubernetesObjectType} - {kubernetesWatchEvent} - {watcherKey} - {kubernetesObjectName} - {kubernetesObjectResourceVersion}",
+                            typeof(TKubernetesObject).Name,
+                            type.ToString(),
+                            watcherKey,
+                            item.Metadata.Name,
+                            item.Metadata.ResourceVersion);
+                            ProcessReceivedKubernetesObject(item);
+                            TKubernetesWatcherEvent kubernetesWatcherEvent =
+                                new() { KubernetesObject = item, WatcherEventType = type };
+                            await BackgroundQueue.QueueBackgroundWorkItemAsync(kubernetesWatcherEvent);
+                        }
+                    }
+                    logger.LogDebug("Watch stopped - {kubernetesObjectType} - {watcherKey} - status {watchStatus}",
                         typeof(TKubernetesObject).Name,
                         watcherKey,
-                        lastResourceVersion);
-                    }
-                    do
+                        kubernetesObjectsResp.Status);
+                } while (!cancellationToken.IsCancellationRequested && !string.IsNullOrEmpty(lastResourceVersion));
+
+            }
+            catch (HttpRequestException ex) when (ex.InnerException is EndOfStreamException)// && ex.InnerException.InnerException is System.Net.Sockets.SocketException)
+            {
+                logger.LogDebug(
+                    ex,
+                    "Watcher {kubernetesObjectType} - {watcherKey} crashed - EndOfStreamException - {exceptionMessage}",
+                    typeof(TKubernetesObject).Name,
+                    watcherKey,
+                    ex.Message);
+                isBenignError = true;
+            }
+            catch (HttpOperationException hoe) when (hoe.Response.StatusCode is HttpStatusCode.Unauthorized
+                                                            or HttpStatusCode.Forbidden or HttpStatusCode.NotFound)
+            {
+                using IServiceScope scope = serviceProvider.CreateScope();
+                IWatcherState watcherState = scope.ServiceProvider.GetRequiredService<IWatcherState>();
+                await watcherState.ProcessWatcherError(typeof(TKubernetesObject), watcherKey, hoe);
+            }
+            catch (TaskCanceledException)
+            {
+                using IServiceScope scope = serviceProvider.CreateScope();
+                IWatcherState watcherState = scope.ServiceProvider.GetRequiredService<IWatcherState>();
+                await watcherState.ProcessWatcherCancel(typeof(TKubernetesObject), watcherKey);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(
+                    ex,
+                    "Watcher {kubernetesObjectType} - {watcherKey} crashed - {exceptionMessage}",
+                    typeof(TKubernetesObject).Name,
+                    watcherKey,
+                    ex.Message);
+            }
+
+            if (!isBenignError)
+            {
+                bool enqueueErrorEventIsSuccessful = false;
+                while (!cancellationToken.IsCancellationRequested && !enqueueErrorEventIsSuccessful)
+                {
+                    try
                     {
-                        isBenignError = false;
-                        Task<HttpOperationResponse<TKubernetesObjectList>> kubernetesObjectsResp =
-                            GetKubernetesObjectWatchList(sourceKubernetesObject, lastResourceVersion, cancellationToken);
-                        await foreach ((WatchEventType type, TKubernetesObject item) in kubernetesObjectsResp
-                                           .WatchAsync<TKubernetesObject, TKubernetesObjectList>(
-                                               ex =>
-                                               {
-                                                   if (ex is k8s.KubernetesException && ex.Message.StartsWith("too old resource version:"))
-                                                   {
-                                                       logger.LogDebug("{watcherKey} - lastResourceVersion set to null", watcherKey);
-                                                       lastResourceVersion = null;
-                                                   }
-                                                   logger.LogWarning(ex,
-                                                       "WatchAsync crashed - {exceptionMessage}",
-                                                       ex.Message);
-                                               },
-                                           cancellationToken))
-                        {
-                            if (isRecoveringFromError || isFreshStart)
-                            {
-                                using IServiceScope scope = serviceProvider.CreateScope();
-                                IWatcherState watcherState = scope.ServiceProvider.GetRequiredService<IWatcherState>();
-                                await watcherState.ProcessWatcherSuccess(typeof(TKubernetesObject), watcherKey);
-                                isRecoveringFromError = false;
-                                isFreshStart = false;
-                            }
-                            if (type == WatchEventType.Bookmark)
-                            {
-                                lastResourceVersion = item.Metadata.ResourceVersion;
-                                logger.LogInformation("Bookmark Event - {watcherKey} - Resource Version - {resourceVersion}",
-                                    watcherKey,
-                                    lastResourceVersion);
-                            }
-                            else
-                            {
-                                logger.LogDebug("Sending to Queue - {kubernetesObjectType} - {kubernetesWatchEvent} - {watcherKey} - {kubernetesObjectName} - {kubernetesObjectResourceVersion}",
-                                typeof(TKubernetesObject).Name,
-                                type.ToString(),
-                                watcherKey,
-                                item.Metadata.Name,
-                                item.Metadata.ResourceVersion);
-                                ProcessReceivedKubernetesObject(item);
-                                TKubernetesWatcherEvent kubernetesWatcherEvent =
-                                    new() { KubernetesObject = item, WatcherEventType = type };
-                                await BackgroundQueue.QueueBackgroundWorkItemAsync(kubernetesWatcherEvent);
-                            }
-                        }
-                        logger.LogDebug("Watch stopped - {watcherKey} - status {watchStatus}",
+                        logger.LogDebug("Sending to Queue - {kubernetesObjectType} - EventWithError - {watcherKey} - {kubernetesObjectName}",
+                            typeof(TKubernetesObject).Name,
                             watcherKey,
-                            kubernetesObjectsResp.Status);
-                    } while (!cancellationToken.IsCancellationRequested && !string.IsNullOrEmpty(lastResourceVersion));
+                            sourceKubernetesObject?.Metadata.Name);
 
-                }
-                catch (HttpRequestException ex) when (ex.InnerException is IOException)// && ex.InnerException.InnerException is System.Net.Sockets.SocketException)
-                {
-                    logger.LogDebug(
-                        ex,
-                        "Watcher for key {watcherKey} crashed - IOException - {exceptionMessage}",
-                        watcherKey,
-                        ex.Message);
-                    isBenignError = true;
-                }
-                catch (HttpOperationException hoe) when (hoe.Response.StatusCode is HttpStatusCode.Unauthorized
-                                                             or HttpStatusCode.Forbidden or HttpStatusCode.NotFound)
-                {
-                    using IServiceScope scope = serviceProvider.CreateScope();
-                    IWatcherState watcherState = scope.ServiceProvider.GetRequiredService<IWatcherState>();
-                    await watcherState.ProcessWatcherError(typeof(TKubernetesObject), watcherKey, hoe);
-                }
-                catch (TaskCanceledException)
-                {
-                    using IServiceScope scope = serviceProvider.CreateScope();
-                    IWatcherState watcherState = scope.ServiceProvider.GetRequiredService<IWatcherState>();
-                    await watcherState.ProcessWatcherCancel(typeof(TKubernetesObject), watcherKey);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(
-                        ex,
-                        "Watcher for key {watcherKey} crashed - {exceptionMessage}",
-                        watcherKey,
-                        ex.Message);
-                }
-
-                if (!isBenignError)
-                {
-                    bool enqueueErrorEventIsSuccessful = false;
-                    while (!cancellationToken.IsCancellationRequested && !enqueueErrorEventIsSuccessful)
+                        await EnqueueWatcherEventWithError(sourceKubernetesObject);
+                        enqueueErrorEventIsSuccessful = true;
+                    }
+                    catch (Exception ex)
                     {
-                        try
-                        {
-                            logger.LogDebug("Sending to Queue - {kubernetesObjectType} - EventWithError - {watcherKey} - {kubernetesObjectName}",
-                                typeof(TKubernetesObject).Name,
-                                watcherKey,
-                                sourceKubernetesObject?.Metadata.Name);
-
-                            await EnqueueWatcherEventWithError(sourceKubernetesObject);
-                            enqueueErrorEventIsSuccessful = true;
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.LogError(
-                                ex,
-                                "Watcher for {kubernetesObjectType} and key {watcherKey} could not enqueue EventWithError - {exceptionMessage}",
-                                typeof(TKubernetesObject).Name,
-                                watcherKey,
-                                ex.Message);
-                            await Task.Delay(10000, cancellationToken);
-                        }
-
+                        logger.LogError(
+                            ex,
+                            "Watcher for {kubernetesObjectType} and key {watcherKey} could not enqueue EventWithError - {exceptionMessage}",
+                            typeof(TKubernetesObject).Name,
+                            watcherKey,
+                            ex.Message);
+                        await Task.Delay(10000, cancellationToken);
                     }
 
-                    await Task.Delay(60000, cancellationToken);
-                    isRecoveringFromError = true;
                 }
-            });
+
+                await Task.Delay(60000, cancellationToken);
+                retryDurationCalculator.GetNextRetryDuration(++retryCount);
+            }
         }
     }
-    protected async Task<string> ProcessInitialResourcesAndGetLastResourceVersion(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject, CancellationToken? cancellationToken = null)
+    protected async Task<string> ProcessInitialResourcesAndGetLastResourceVersion(
+        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        CancellationToken? cancellationToken = null)
     {
         string? continueToken = null;
         string? lastResourceVersion;
@@ -215,7 +221,10 @@ public abstract class
 
         return lastResourceVersion;
     }
-    protected abstract Task<TKubernetesObjectList> GetInitialResources(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject, string? continueToken, CancellationToken? cancellationToken = null);
+    protected abstract Task<TKubernetesObjectList> GetInitialResources(
+        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        string? continueToken,
+        CancellationToken? cancellationToken = null);
     protected abstract Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
         string? lastResourceVersion,
