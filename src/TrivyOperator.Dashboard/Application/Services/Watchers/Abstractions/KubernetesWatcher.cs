@@ -65,7 +65,7 @@ public abstract class
                 if (string.IsNullOrEmpty(lastResourceVersion))
                 {
                     lastResourceVersion = await ProcessInitialResourcesAndGetLastResourceVersion(sourceKubernetesObject, cancellationToken);
-                    logger.LogDebug("Initial Resources Processed - {kubernetesObjectType} - {watcherKey} - {lastResourceVersion}",
+                    logger.LogInformation("Initial Resources Processed - {kubernetesObjectType} - {watcherKey} - {lastResourceVersion}",
                     typeof(TKubernetesObject).Name,
                     watcherKey,
                     lastResourceVersion);
@@ -191,8 +191,13 @@ public abstract class
 
                 }
 
-                await Task.Delay(60000, cancellationToken);
-                retryDurationCalculator.GetNextRetryDuration(++retryCount);
+                TimeSpan waitTimeSpan = retryDurationCalculator.GetNextRetryDuration(++retryCount);
+
+                logger.LogDebug("Watcher for {kubernetesObjectType} and key {watcherKey} is wating for {retryCount} (ss:ms)",
+                    typeof(TKubernetesObject).Name,
+                    watcherKey,
+                    waitTimeSpan.ToString(@"ss\:fff"));
+                await Task.Delay(waitTimeSpan, cancellationToken);
             }
         }
     }
