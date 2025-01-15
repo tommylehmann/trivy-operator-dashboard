@@ -11,7 +11,6 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
 public class
     NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
-        IKubernetesClientFactory kubernetesClientFactory,
         INamespacedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList> namespacedResourceWatchDomainService,
         TBackgroundQueue backgroundQueue,
         IServiceProvider serviceProvider,
@@ -19,7 +18,6 @@ public class
         ILogger<NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
             logger)
     : KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
-        kubernetesClientFactory,
         backgroundQueue,
         serviceProvider,
         retryPolicy,
@@ -49,9 +47,10 @@ public class
         string? lastResourceVersion,
         CancellationToken? cancellationToken)
         => namespacedResourceWatchDomainService.GetResourceWatchList(
-            namespaceName: GetNamespaceFromSourceEvent(sourceKubernetesObject),
-            timeoutSeconds: GetWatcherRandomTimeout(),
-            cancellationToken: cancellationToken);
+            GetNamespaceFromSourceEvent(sourceKubernetesObject),
+            lastResourceVersion,
+            GetWatcherRandomTimeout(),
+            cancellationToken);
 
     protected override async Task EnqueueWatcherEventWithError(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
     {

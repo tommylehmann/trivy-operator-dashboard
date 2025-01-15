@@ -60,6 +60,7 @@ public class ClusterScopedTrivyReportDomainService<TKubernetesObject>(IKubernete
                 trivyReportCrd.PluralName,
                 watch: true,
                 resourceVersion: lastResourceVersion,
+                allowWatchBookmarks: true,
                 timeoutSeconds: timeoutSeconds,
                 cancellationToken: cancellationToken ?? new());
     }

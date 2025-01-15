@@ -1,20 +1,14 @@
-﻿using k8s.Autorest;
-using k8s.Models;
-using k8s;
-using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
+﻿using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
-using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using Polly;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
-using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class SbomReportWatcher(
-    IKubernetesClientFactory kubernetesClientFactory,
     INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>> namespacedResourceWatchDomainService,
     IBackgroundQueue<SbomReportCr> backgroundQueue,
     IServiceProvider serviceProvider,
@@ -22,33 +16,12 @@ public class SbomReportWatcher(
     ILogger<SbomReportWatcher> logger)
     : NamespacedWatcher<CustomResourceList<SbomReportCr>, SbomReportCr,
         IBackgroundQueue<SbomReportCr>, WatcherEvent<SbomReportCr>>(
-        kubernetesClientFactory,
         namespacedResourceWatchDomainService,
         backgroundQueue,
         serviceProvider,
         retryPolicy,
         logger)
 {
-    protected override async Task<HttpOperationResponse<CustomResourceList<SbomReportCr>>>
-        GetKubernetesObjectWatchList(
-            IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
-            string? lastResourceVersion,
-            CancellationToken? cancellationToken)
-    {
-        SbomReportCrd myCrd = new();
-
-        return await KubernetesClient.CustomObjects
-            .ListNamespacedCustomObjectWithHttpMessagesAsync<CustomResourceList<SbomReportCr>>(
-                myCrd.Group,
-                myCrd.Version,
-                GetNamespaceFromSourceEvent(sourceKubernetesObject),
-                myCrd.PluralName,
-                watch: true,
-                resourceVersion: lastResourceVersion,
-                timeoutSeconds: GetWatcherRandomTimeout(),
-                cancellationToken: cancellationToken ?? new());
-    }
-
     protected override void ProcessReceivedKubernetesObject(SbomReportCr kubernetesObject)
     {
         if (kubernetesObject.Report != null)

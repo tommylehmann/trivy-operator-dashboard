@@ -1,16 +1,15 @@
 ﻿using k8s;
+using k8s.Autorest;
 using k8s.Models;
 using Polly;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
-using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
-public abstract class
+public class
     ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
-        IKubernetesClientFactory kubernetesClientFactory,
         IClusterScopedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList> clusterScopResourceWatchDomainService,
         TBackgroundQueue backgroundQueue,
         IServiceProvider serviceProvider,
@@ -18,7 +17,6 @@ public abstract class
         ILogger<ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue,
             TKubernetesWatcherEvent>> logger)
     : KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
-        kubernetesClientFactory,
         backgroundQueue,
         serviceProvider,
         retryPolicy,
@@ -28,6 +26,14 @@ public abstract class
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
 {
+    protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
+        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        string? lastResourceVersion,
+        CancellationToken? cancellationToken = null)
+        => clusterScopResourceWatchDomainService.GetResourceWatchList(
+            lastResourceVersion,
+            GetWatcherRandomTimeout(),
+            cancellationToken);
     protected override async Task EnqueueWatcherEventWithError(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
     {
         TKubernetesObject kubernetesObject = new();
@@ -42,4 +48,5 @@ public abstract class
         return await clusterScopResourceWatchDomainService.GetResourceList(resourceListPageSize, continueToken, cancellationToken);
     }
 
+    
 }

@@ -1,12 +1,14 @@
 ﻿using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.Abstractions;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
+using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services;
 
-public class SbomReportService(ISbomReportDomainService service, IConcurrentCache<string, IList<SbomReportCr>> cache) : ISbomReportService
+public class SbomReportService(IConcurrentCache<string, IList<SbomReportCr>> cache,
+    INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>> domainService) : ISbomReportService
 {
     public Task<IEnumerable<SbomReportDto>> GetSbomReportDtos(string? namespaceName = null)
     {
@@ -38,7 +40,7 @@ public class SbomReportService(ISbomReportDomainService service, IConcurrentCach
         {
             try
             {
-                return (await service.GetSbomReportCr(sr.Metadata.Name, sr.Metadata.NamespaceProperty)).ToSbomReportDto();
+                return (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty)).ToSbomReportDto();
             }
             catch { }
         }

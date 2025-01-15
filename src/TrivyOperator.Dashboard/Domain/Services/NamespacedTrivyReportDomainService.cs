@@ -66,6 +66,7 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(IKubernetesCl
                 trivyReportCrd.PluralName,
                 watch: true,
                 resourceVersion: lastResourceVersion,
+                allowWatchBookmarks: true,
                 timeoutSeconds: timeoutSeconds,
                 cancellationToken: cancellationToken ?? new());
     }

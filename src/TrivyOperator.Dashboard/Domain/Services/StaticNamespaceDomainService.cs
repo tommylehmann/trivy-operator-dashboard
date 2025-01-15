@@ -1,7 +1,5 @@
-﻿using k8s.Autorest;
-using k8s.Models;
+﻿using k8s.Models;
 using Microsoft.Extensions.Options;
-using System.Net;
 using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 
