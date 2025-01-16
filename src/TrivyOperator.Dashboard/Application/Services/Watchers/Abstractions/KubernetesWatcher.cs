@@ -9,12 +9,12 @@ using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
-public abstract class
-    KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
+public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         TBackgroundQueue backgroundQueue,
         IServiceProvider serviceProvider,
-        ILogger<KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
-            logger) : IKubernetesWatcher<TKubernetesObject> where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
+        ILogger<KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>> logger)
+    : IKubernetesWatcher<TKubernetesObject>
+    where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
@@ -79,27 +79,26 @@ public abstract class
                     Task<HttpOperationResponse<TKubernetesObjectList>> kubernetesObjectsResp =
                         GetKubernetesObjectWatchList(sourceKubernetesObject, lastResourceVersion, cancellationToken);
                     await foreach ((WatchEventType type, TKubernetesObject item) in kubernetesObjectsResp
-                                       .WatchAsync<TKubernetesObject, TKubernetesObjectList>(
-                                           ex =>
-                                           {
-                                               if (ex is KubernetesException &&
-                                                   ex.Message.StartsWith("too old resource version:"))
-                                               {
-                                                   logger.LogDebug(
-                                                       "{kubernetesObjectType} - {watcherKey} - lastResourceVersion set to null",
-                                                       typeof(TKubernetesObject).Name,
-                                                       watcherKey);
-                                                   lastResourceVersion = null;
-                                               }
+                        .WatchAsync<TKubernetesObject, TKubernetesObjectList>(
+                            ex =>
+                            {
+                                if (ex is KubernetesException && ex.Message.StartsWith("too old resource version:"))
+                                {
+                                    logger.LogDebug(
+                                        "{kubernetesObjectType} - {watcherKey} - lastResourceVersion set to null",
+                                        typeof(TKubernetesObject).Name,
+                                        watcherKey);
+                                    lastResourceVersion = null;
+                                }
 
-                                               logger.LogWarning(
-                                                   ex,
-                                                   "WatchAsync crashed - {kubernetesObjectType} - {watcherKey} - {exceptionMessage}",
-                                                   typeof(TKubernetesObject).Name,
-                                                   watcherKey,
-                                                   ex.Message);
-                                           },
-                                           cancellationToken))
+                                logger.LogWarning(
+                                    ex,
+                                    "WatchAsync crashed - {kubernetesObjectType} - {watcherKey} - {exceptionMessage}",
+                                    typeof(TKubernetesObject).Name,
+                                    watcherKey,
+                                    ex.Message);
+                            },
+                            cancellationToken))
                     {
                         if (retryCount != 0)
                         {
@@ -141,8 +140,7 @@ public abstract class
                         kubernetesObjectsResp.Status);
                 } while (!cancellationToken.IsCancellationRequested && !string.IsNullOrEmpty(lastResourceVersion));
             }
-            catch (HttpRequestException ex) when
-                (ex.InnerException is EndOfStreamException) // && ex.InnerException.InnerException is System.Net.Sockets.SocketException)
+            catch (HttpRequestException ex) when (ex.InnerException is EndOfStreamException)
             {
                 logger.LogDebug(
                     ex,
