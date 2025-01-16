@@ -15,12 +15,11 @@ public class VarUtils
     {
         List<int> excludedSeverityIds = [];
         List<int> knownSeverityIds = [.. (int[])Enum.GetValues(typeof(TrivySeverity))];
-        string[] excldedStringSeverities;
 
         if (!string.IsNullOrWhiteSpace(excludedSeverities))
         {
-            excldedStringSeverities = excludedSeverities.Split(',');
-            foreach (string excludedSeverity in excldedStringSeverities)
+            string[] excludedStringSeverities = excludedSeverities.Split(',');
+            foreach (string excludedSeverity in excludedStringSeverities)
             {
                 if (int.TryParse(excludedSeverity, out int vulnerabilityId))
                 {

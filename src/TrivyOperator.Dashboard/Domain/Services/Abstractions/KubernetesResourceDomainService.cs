@@ -8,7 +8,6 @@ public abstract class KubernetesResourceDomainService<TKubernetesObject>(
     IKubernetesClientFactory kubernetesClientFactory)
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>, IMetadata<V1ObjectMeta>
 {
-    private readonly Kubernetes kubernetesClient = kubernetesClientFactory.GetClient();
-    protected IKubernetesClientFactory kubernetesClientFactory = kubernetesClientFactory;
+    protected readonly IKubernetesClientFactory KubernetesClientFactory = kubernetesClientFactory;
     public abstract Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null);
 }

@@ -31,7 +31,7 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
         string namespaceName,
         int? pageLimit = null,
         string? continueToken = null,
-        CancellationToken? cancellationToken = null) => await kubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
         .ListNamespacedCustomObjectAsync<CustomResourceList<TKubernetesObject>>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
@@ -39,25 +39,25 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
             TrivyReportCrd.PluralName,
             limit: pageLimit,
             continueParameter: continueToken,
-            cancellationToken: cancellationToken ?? new CancellationToken());
+            cancellationToken: cancellationToken ?? CancellationToken.None);
 
     public override async Task<TKubernetesObject> GetResource(
         string resourceName,
         string namespaceName,
-        CancellationToken? cancellationToken = null) => await kubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
         .CustomObjects.GetNamespacedCustomObjectAsync<TKubernetesObject>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
             namespaceName,
             TrivyReportCrd.PluralName,
             resourceName,
-            cancellationToken ?? new CancellationToken());
+            cancellationToken ?? CancellationToken.None);
 
     public override async Task<HttpOperationResponse<CustomResourceList<TKubernetesObject>>> GetResourceWatchList(
         string namespaceName,
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken? cancellationToken = null) => await kubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
         .CustomObjects.ListNamespacedCustomObjectWithHttpMessagesAsync<CustomResourceList<TKubernetesObject>>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
@@ -67,5 +67,5 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
             resourceVersion: lastResourceVersion,
             allowWatchBookmarks: true,
             timeoutSeconds: timeoutSeconds,
-            cancellationToken: cancellationToken ?? new CancellationToken());
+            cancellationToken: cancellationToken ?? CancellationToken.None);
 }

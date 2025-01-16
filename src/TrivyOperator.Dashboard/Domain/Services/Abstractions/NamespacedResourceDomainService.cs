@@ -21,7 +21,7 @@ public abstract class NamespacedResourceDomainService<TKubernetesObject, TKubern
         {
             IList<TKubernetesObject> trivyReportsInNamespace =
                 await GetResources(v1Namespace.Name(), cancellationToken);
-            if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
+            if (cancellationToken is { IsCancellationRequested: true })
             {
                 return [];
             }

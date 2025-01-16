@@ -27,29 +27,29 @@ public class ClusterScopedTrivyReportDomainService<TKubernetesObject>(
     public override async Task<CustomResourceList<TKubernetesObject>> GetResourceList(
         int? pageLimit = null,
         string? continueToken = null,
-        CancellationToken? cancellationToken = null) => await kubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
         .ListClusterCustomObjectAsync<CustomResourceList<TKubernetesObject>>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
             TrivyReportCrd.PluralName,
             limit: pageLimit,
             continueParameter: continueToken,
-            cancellationToken: cancellationToken ?? new CancellationToken());
+            cancellationToken: cancellationToken ?? CancellationToken.None);
 
     public override async Task<TKubernetesObject>
-        GetResource(string resourceName, CancellationToken? cancellationToken = null) => await kubernetesClientFactory
+        GetResource(string resourceName, CancellationToken? cancellationToken = null) => await KubernetesClientFactory
         .GetClient()
         .CustomObjects.GetClusterCustomObjectAsync<TKubernetesObject>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
             TrivyReportCrd.PluralName,
             resourceName,
-            cancellationToken ?? new CancellationToken());
+            cancellationToken ?? CancellationToken.None);
 
     public override async Task<HttpOperationResponse<CustomResourceList<TKubernetesObject>>> GetResourceWatchList(
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken? cancellationToken = null) => await kubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
         .CustomObjects.ListClusterCustomObjectWithHttpMessagesAsync<CustomResourceList<TKubernetesObject>>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
@@ -58,5 +58,5 @@ public class ClusterScopedTrivyReportDomainService<TKubernetesObject>(
             resourceVersion: lastResourceVersion,
             allowWatchBookmarks: true,
             timeoutSeconds: timeoutSeconds,
-            cancellationToken: cancellationToken ?? new CancellationToken());
+            cancellationToken: cancellationToken ?? CancellationToken.None);
 }

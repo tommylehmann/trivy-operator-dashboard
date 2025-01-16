@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TrivyOperator.Dashboard.Application.Services.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.Namespaces.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Controllers;
 

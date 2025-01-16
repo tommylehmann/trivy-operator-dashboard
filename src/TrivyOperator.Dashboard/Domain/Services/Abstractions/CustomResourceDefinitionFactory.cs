@@ -13,44 +13,17 @@ namespace TrivyOperator.Dashboard.Domain.Services.Abstractions;
 
 public class CustomResourceDefinitionFactory : ICustomResourceDefinitionFactory
 {
-    public CustomResourceDefinition Get<TKubernetesObject>()
+    public CustomResourceDefinition Get<TKubernetesObject>() => typeof(TKubernetesObject) switch
     {
-        if (typeof(TKubernetesObject) == typeof(ClusterComplianceReportCr))
-        {
-            return new ClusterComplianceReportCrd();
-        }
-
-        if (typeof(TKubernetesObject) == typeof(ClusterRbacAssessmentReportCr))
-        {
-            return new ClusterRbacAssessmentReportCrd();
-        }
-
-        if (typeof(TKubernetesObject) == typeof(ClusterSbomReportCr))
-        {
-            return new ClusterSbomReportCrd();
-        }
-
-        if (typeof(TKubernetesObject) == typeof(ClusterVulnerabilityReportCr))
-        {
-            return new ClusterVulnerabilityReportCrd();
-        }
-
-        if (typeof(TKubernetesObject) == typeof(ConfigAuditReportCr))
-        {
-            return new ConfigAuditReportCrd();
-        }
-
-        if (typeof(TKubernetesObject) == typeof(ExposedSecretReportCr))
-        {
-            return new ExposedSecretReportCrd();
-        }
-
-        return typeof(TKubernetesObject) == typeof(RbacAssessmentReportCr)
-            ? new RbacAssessmentReportCrd()
-            : typeof(TKubernetesObject) == typeof(SbomReportCr)
-            ? new SbomReportCrd()
-            : typeof(TKubernetesObject) == typeof(VulnerabilityReportCr)
-            ? (CustomResourceDefinition)new VulnerabilityReportCrd()
-            : throw new InvalidOperationException($"Unsupported Kubernetes object type - {typeof(TKubernetesObject)}");
-    }
+        { } t when t == typeof(ClusterComplianceReportCr) => new ClusterComplianceReportCrd(),
+        { } t when t == typeof(ClusterRbacAssessmentReportCr) => new ClusterRbacAssessmentReportCrd(),
+        { } t when t == typeof(ClusterSbomReportCr) => new ClusterSbomReportCrd(),
+        { } t when t == typeof(ClusterVulnerabilityReportCr) => new ClusterVulnerabilityReportCrd(),
+        { } t when t == typeof(ConfigAuditReportCr) => new ConfigAuditReportCrd(),
+        { } t when t == typeof(ExposedSecretReportCr) => new ExposedSecretReportCrd(),
+        { } t when t == typeof(RbacAssessmentReportCr) => new RbacAssessmentReportCrd(),
+        { } t when t == typeof(SbomReportCr) => new SbomReportCrd(),
+        { } t when t == typeof(VulnerabilityReportCr) => new VulnerabilityReportCrd(),
+        _ => throw new InvalidOperationException($"Unsupported Kubernetes object type - {typeof(TKubernetesObject)}"),
+    };
 }

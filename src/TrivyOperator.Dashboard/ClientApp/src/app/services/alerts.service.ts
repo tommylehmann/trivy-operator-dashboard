@@ -86,7 +86,7 @@ export class AlertsService {
 
   private removeAlert(alert: AlertDto) {
     const currentAlerts = this.alertsSubject.value.filter(
-      (a) => a.emiter != alert.emiter && a.emitterKey !== alert.emitterKey,
+      (a) => a.emitter != alert.emitter && a.emitterKey !== alert.emitterKey,
     );
     this.alertsSubject.next(currentAlerts);
   }

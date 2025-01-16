@@ -953,7 +953,7 @@ components:
     AlertDto:
       type: object
       properties:
-        emiter:
+        emitter:
           type: string
           nullable: true
         emitterKey:

@@ -12,10 +12,10 @@ public class NamespaceDomainService(
     ILogger<NamespaceDomainService> logger)
     : ClusterScopedResourceDomainService<V1Namespace, V1NamespaceList>(kubernetesClientFactory)
 {
-    public override async Task<V1Namespace>
-        GetResource(string resourceName, CancellationToken? cancellationToken = null) => await kubernetesClientFactory
-        .GetClient()
-        .CoreV1.ReadNamespaceAsync(resourceName, cancellationToken: cancellationToken ?? new CancellationToken());
+    public override async Task<V1Namespace> GetResource(
+        string resourceName,
+        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
+        .CoreV1.ReadNamespaceAsync(resourceName, cancellationToken: cancellationToken ?? CancellationToken.None);
 
     public override async Task<V1NamespaceList> GetResourceList(
         int? pageLimit = null,
@@ -24,11 +24,11 @@ public class NamespaceDomainService(
     {
         try
         {
-            return await kubernetesClientFactory.GetClient()
+            return await KubernetesClientFactory.GetClient()
                 .CoreV1.ListNamespaceAsync(
                     limit: pageLimit,
                     continueParameter: continueToken,
-                    cancellationToken: cancellationToken ?? new CancellationToken());
+                    cancellationToken: cancellationToken ?? CancellationToken.None);
         }
         catch (HttpOperationException ex) when (ex.Response.StatusCode == HttpStatusCode.Forbidden)
         {
@@ -48,11 +48,11 @@ public class NamespaceDomainService(
     public override Task<HttpOperationResponse<V1NamespaceList>> GetResourceWatchList(
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken? cancellationToken = null) => kubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => KubernetesClientFactory.GetClient()
         .CoreV1.ListNamespaceWithHttpMessagesAsync(
             watch: true,
             resourceVersion: lastResourceVersion,
             allowWatchBookmarks: true,
             timeoutSeconds: timeoutSeconds,
-            cancellationToken: cancellationToken ?? new CancellationToken());
+            cancellationToken: cancellationToken ?? CancellationToken.None);
 }

@@ -142,10 +142,7 @@ static void ConfigureJsonSerializerOptions(JsonSerializerOptions options)
     options.Converters.Add(new DateTimeNullableJsonConverter());
 }
 
-static void ConfigureMvcOptions(MvcOptions options)
-{
-    options.Filters.Add(new ProducesAttribute("application/json"));
-}
+static void ConfigureMvcOptions(MvcOptions options) => options.Filters.Add(new ProducesAttribute("application/json"));
 
 static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
 {
@@ -172,15 +169,9 @@ static void TaskSchedulerUnobservedTaskException(object? sender, UnobservedTaskE
     e.SetObserved();
 }
 
-static void OnStarted()
-{
-    Logger?.LogInformation("OnStarted has been called.");
-}
+static void OnStarted() => Logger?.LogInformation("OnStarted has been called.");
 
-static void OnStopping()
-{
-    Logger?.LogInformation("OnStopping has been called.");
-}
+static void OnStopping() => Logger?.LogInformation("OnStopping has been called.");
 
 static void OnStopped()
 {

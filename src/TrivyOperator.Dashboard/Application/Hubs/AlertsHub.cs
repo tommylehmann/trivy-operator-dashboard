@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using TrivyOperator.Dashboard.Application.Models;
-using TrivyOperator.Dashboard.Application.Services.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Hubs;
 

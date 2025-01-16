@@ -22,11 +22,7 @@ public class StaticNamespaceDomainService(
         }
 
         List<V1Namespace> kubernetesNamespaces = configKubernetesNamespaces.Split(',')
-            .Select(
-                namespaceName =>
-                {
-                    return CreateNamespace(namespaceName.Trim());
-                })
+            .Select(namespaceName => CreateNamespace(namespaceName.Trim()))
             .ToList();
         logger.LogDebug("Found {listCount} kubernetes namespace names.", kubernetesNamespaces.Count);
 
@@ -72,8 +68,6 @@ public class StaticNamespaceDomainService(
     //}
     private static V1Namespace CreateNamespace(string namespaceName) => new()
     {
-        ApiVersion = "v1",
-        Kind = "Namespace",
-        Metadata = new V1ObjectMeta { Name = namespaceName },
+        ApiVersion = "v1", Kind = "Namespace", Metadata = new V1ObjectMeta { Name = namespaceName },
     };
 }
