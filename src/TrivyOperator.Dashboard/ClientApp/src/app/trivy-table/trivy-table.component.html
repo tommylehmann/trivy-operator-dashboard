@@ -21,7 +21,7 @@
     [tableStyle]="trivyTableOptions!.tableStyle"
     [value]="dataDtos!"
     [virtualScroll]="true"
-    [virtualScrollItemSize]="50"
+    [virtualScrollItemSize]="55"
     [(selection)]="selectedDataDtos"
     (onRowCollapse)="onRowExpandCollapse($event)"
     (onRowExpand)="onRowExpandCollapse($event)"
@@ -169,7 +169,7 @@
       </tr>
     </ng-template>
     <ng-template let-columns="columns" let-expanded="expanded" let-rowData let-rowIndex="rowIndex" pTemplate="body">
-      <tr style="height: 50px" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex">
+      <tr style="height: 55px" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex">
         <td *ngIf="trivyTableOptions!.dataKey" style="max-width: 50px">
           <p-button
             pRipple
