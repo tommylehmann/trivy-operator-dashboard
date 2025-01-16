@@ -90,13 +90,10 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                                         watcherKey);
                                     lastResourceVersion = null;
                                 }
-
-                                logger.LogWarning(
-                                    ex,
-                                    "WatchAsync crashed - {kubernetesObjectType} - {watcherKey} - {exceptionMessage}",
-                                    typeof(TKubernetesObject).Name,
-                                    watcherKey,
-                                    ex.Message);
+                                else
+                                {
+                                    throw ex;
+                                }
                             },
                             cancellationToken))
                     {
