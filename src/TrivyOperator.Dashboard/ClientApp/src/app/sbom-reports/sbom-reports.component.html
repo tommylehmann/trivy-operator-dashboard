@@ -5,47 +5,53 @@
     <div class="col-12 md:col-5 lg:col-4 p-1">
       <div class="grid flex">
         <div class="col-4 p-fluid">
-          <p-dropdown [options]="activeNamespaces"
-                      [(ngModel)]="selectedNamespace"
-                      [showClear]="true"
-                      [filter]="true"
-                      class="p-inputtext-sm"
-                      placeholder="Select a Namespace"
-                      (onChange)="filterImageDtos()" />
+          <p-dropdown
+            placeholder="Select a Namespace"
+            class="p-inputtext-sm"
+            [filter]="true"
+            [options]="activeNamespaces"
+            [showClear]="true"
+            [(ngModel)]="selectedNamespace"
+            (onChange)="filterImageDtos()"
+          />
         </div>
         <div class="col-8 p-fluid">
-          <p-dropdown [options]="imageDtos"
-                      [(ngModel)]="selectedImageDto"
-                      [showClear]="true"
-                      [filter]="true"
-                      optionLabel="imageNameTag"
-                      class="p-inputtext-sm"
-                      placeholder="Select a Namespace" />
+          <p-dropdown
+            optionLabel="imageNameTag"
+            placeholder="Select a Namespace"
+            class="p-inputtext-sm"
+            [filter]="true"
+            [options]="imageDtos"
+            [showClear]="true"
+            [(ngModel)]="selectedImageDto"
+          />
         </div>
       </div>
-      <p-card [header]="selectedSbomDetailDto?.name ?? 'none'"
-              [subheader]="selectedSbomDetailDto?.version ?? 'none'">
+      <p-card [header]="selectedSbomDetailDto?.name ?? 'none'" [subheader]="selectedSbomDetailDto?.version ?? 'none'">
         <span>{{ selectedSbomDetailDto?.purl ?? 'none' }}</span>
       </p-card>
-      <app-trivy-table tableHeight="30vh"
-                       [dataDtos]="dependsOnBoms!"
-                       [isLoading]="false"
-                       [trivyTableColumns]="dependsOnTableColumns"
-                       [trivyTableOptions]="dependsOnTableOptions" />
-      <app-trivy-table #mainTable
-                       *ngIf="false"
-                       tableHeight="70vh"
-                       [activeNamespaces]="activeNamespaces"
-                       [dataDtos]="dataDtos!"
-                       [isLoading]="isMainTableLoading"
-                       [trivyTableColumns]="mainTableColumns"
-                       [trivyTableOptions]="mainTableOptions"
-                       (refreshRequested)="onRefreshRequested($event)"
-                       (selectedRowsChanged)="onMainTableSelectionChange($event)" />
+      <app-trivy-table
+        tableHeight="30vh"
+        [dataDtos]="dependsOnBoms!"
+        [isLoading]="false"
+        [trivyTableColumns]="dependsOnTableColumns"
+        [trivyTableOptions]="dependsOnTableOptions"
+      />
+      <app-trivy-table
+        *ngIf="false"
+        #mainTable
+        tableHeight="70vh"
+        [activeNamespaces]="activeNamespaces"
+        [dataDtos]="dataDtos!"
+        [isLoading]="isMainTableLoading"
+        [trivyTableColumns]="mainTableColumns"
+        [trivyTableOptions]="mainTableOptions"
+        (refreshRequested)="onRefreshRequested($event)"
+        (selectedRowsChanged)="onMainTableSelectionChange($event)"
+      />
     </div>
     <div class="col-12 md:col-7 lg:col-8 p-1">
-      <app-fcose [dataDtos]="fullSbomDataDto?.details ?? []"
-                 [(selectedInnerNodeId)]="selectedInnerNodeId" />
+      <app-fcose [dataDtos]="fullSbomDataDto?.details ?? []" [(selectedInnerNodeId)]="selectedInnerNodeId" />
     </div>
   </div>
 </div>

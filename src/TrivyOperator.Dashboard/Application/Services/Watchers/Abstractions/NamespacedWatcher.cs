@@ -7,13 +7,13 @@ using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
-public class
-    NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
-        INamespacedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList> namespacedResourceWatchDomainService,
-        TBackgroundQueue backgroundQueue,
-        IServiceProvider serviceProvider,
-        ILogger<NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
-            logger)
+public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
+    INamespacedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList>
+        namespacedResourceWatchDomainService,
+    TBackgroundQueue backgroundQueue,
+    IServiceProvider serviceProvider,
+    ILogger<NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
+        logger)
     : KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         backgroundQueue,
         serviceProvider,
@@ -41,12 +41,11 @@ public class
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
         string? lastResourceVersion,
-        CancellationToken? cancellationToken)
-        => namespacedResourceWatchDomainService.GetResourceWatchList(
-            GetNamespaceFromSourceEvent(sourceKubernetesObject),
-            lastResourceVersion,
-            GetWatcherRandomTimeout(),
-            cancellationToken);
+        CancellationToken? cancellationToken) => namespacedResourceWatchDomainService.GetResourceWatchList(
+        GetNamespaceFromSourceEvent(sourceKubernetesObject),
+        lastResourceVersion,
+        GetWatcherRandomTimeout(),
+        cancellationToken);
 
     protected override async Task EnqueueWatcherEventWithError(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
     {
@@ -64,10 +63,17 @@ public class
         await BackgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);
     }
 
-    protected override async Task<TKubernetesObjectList> GetInitialResources(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject, string? continueToken, CancellationToken? cancellationToken = null)
+    protected override async Task<TKubernetesObjectList> GetInitialResources(
+        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        string? continueToken,
+        CancellationToken? cancellationToken = null)
     {
         string namespaceName = GetNamespaceFromSourceEvent(sourceKubernetesObject);
 
-        return await namespacedResourceWatchDomainService.GetResourceList(namespaceName, resourceListPageSize, continueToken, cancellationToken);
+        return await namespacedResourceWatchDomainService.GetResourceList(
+            namespaceName,
+            resourceListPageSize,
+            continueToken,
+            cancellationToken);
     }
 }

@@ -3,13 +3,12 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, View
 import cytoscape, { EdgeSingular, ElementDefinition, NodeSingular } from 'cytoscape';
 import fcose, { FcoseLayoutOptions } from 'cytoscape-fcose';
 
+import { MenuItem } from 'primeng/api';
 import { BreadcrumbItemClickEvent, BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
-import { MenuItem } from 'primeng/api';
 
 // TODO: change to dedicated interface
 import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
-
 
 cytoscape.use(fcose);
 
@@ -33,9 +32,11 @@ export class FcoseComponent implements AfterViewInit {
       this.graphDiveIn(value);
     }
   }
+
   get selectedInnerNodeId(): string | undefined {
     return this._selectedInnerNodeId;
   }
+
   @Output() selectedInnerNodeIdChange: EventEmitter<string> = new EventEmitter<string>();
   private _selectedInnerNodeId: string | undefined = this.rootNodeId;
 
@@ -43,10 +44,12 @@ export class FcoseComponent implements AfterViewInit {
     this._rootNodeId = value;
     this.initNavMenuItems();
   }
+
   get rootNodeId(): string {
     return this._rootNodeId;
   }
-  private _rootNodeId: string = "00000000-0000-0000-0000-000000000000";
+
+  private _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
 
   navItems: MenuItem[] = [];
   navHome: MenuItem = { id: this.rootNodeId, icon: 'pi pi-sitemap' };
@@ -75,16 +78,19 @@ export class FcoseComponent implements AfterViewInit {
   get dataDtos(): SbomReportDetailDto[] {
     return this._dataDtos;
   }
+
   @Input() set dataDtos(sbomDto: SbomReportDetailDto[]) {
     this._dataDtos = sbomDto;
   }
+
   private _dataDtos: SbomReportDetailDto[] = [];
 
-  
   private isDivedIn: boolean = false;
+
   private get hoveredNode(): NodeSingular | null {
     return this._hoveredNode;
   }
+
   private set hoveredNode(node: NodeSingular | null) {
     this._hoveredNode = node;
     if (node) {
@@ -96,6 +102,7 @@ export class FcoseComponent implements AfterViewInit {
       this.testText = 'no info...';
     }
   }
+
   private _hoveredNode: NodeSingular | null = null;
 
   ngAfterViewInit() {
@@ -420,8 +427,7 @@ export class FcoseComponent implements AfterViewInit {
         newDetailBomRefIds.push(bomRefId);
       }
     });
-    const newSbomDetailDtos =
-      this.dataDtos.filter((x) => newDetailBomRefIds.includes(x.bomRef ?? '')) ?? [];
+    const newSbomDetailDtos = this.dataDtos.filter((x) => newDetailBomRefIds.includes(x.bomRef ?? '')) ?? [];
     sbomDetailDtos.push(...newSbomDetailDtos);
     newSbomDetailDtos.forEach((sbomDetailDto) => this.getSbomDtos(sbomDetailDto, sbomDetailDtos));
   }
@@ -438,7 +444,7 @@ export class FcoseComponent implements AfterViewInit {
       return;
     }
     if (event.item.id) {
-      this.graphDiveIn(event.item.id)
+      this.graphDiveIn(event.item.id);
     }
   }
 
@@ -453,23 +459,26 @@ export class FcoseComponent implements AfterViewInit {
       return;
     }
 
-    const potentialIndex = this.navItems.map(x => x.id).indexOf(nodeId);
+    const potentialIndex = this.navItems.map((x) => x.id).indexOf(nodeId);
     if (potentialIndex !== -1) {
       this.navItems = this.navItems.slice(0, potentialIndex + 1);
-      this.navItems[potentialIndex].styleClass = "breadcrumb-size";
+      this.navItems[potentialIndex].styleClass = 'breadcrumb-size';
       this.selectedInnerNodeId = nodeId;
       return;
     }
 
     if (this.navItems.length > 0) {
-      this.navItems[this.navItems.length - 1].styleClass = "breadcrumb-pointer";
+      this.navItems[this.navItems.length - 1].styleClass = 'breadcrumb-pointer';
     }
     const newDataDetailDto = this.getDataDetailDtoById(nodeId);
-    this.navItems = [...this.navItems, {
-      id: nodeId,
-      label: newDataDetailDto?.name ?? "no-name",
-      styleClass: 'breadcrumb-size',
-    }];
+    this.navItems = [
+      ...this.navItems,
+      {
+        id: nodeId,
+        label: newDataDetailDto?.name ?? 'no-name',
+        styleClass: 'breadcrumb-size',
+      },
+    ];
     this.selectedInnerNodeId = nodeId;
   }
 

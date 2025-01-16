@@ -3,7 +3,7 @@ using TrivyOperator.Dashboard.Application.Services.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services;
 
-public class SbomReportNullService() : ISbomReportService
+public class SbomReportNullService : ISbomReportService
 {
     public Task<IEnumerable<SbomReportDto>> GetSbomReportDtos(string? namespaceName = null) =>
         Task.FromResult<IEnumerable<SbomReportDto>>([]);

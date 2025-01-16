@@ -40,7 +40,7 @@ public static class SbomReportCrExtensions
             Purl = sbomReportCr.Report?.Components.Metadata.Component.Purl ?? string.Empty,
             Type = sbomReportCr.Report?.Components.Metadata.Component.Type ?? string.Empty,
             Version = sbomReportCr.Report?.Components.Metadata.Component.Version ?? string.Empty,
-            Properties = sbomReportCr.Report?.Components.Metadata.Component.Properties ?? []
+            Properties = sbomReportCr.Report?.Components.Metadata.Component.Properties ?? [],
         };
         Dependency[] alldependencies = sbomReportCr.Report?.Components.Dependencies ?? [];
 
@@ -70,7 +70,7 @@ public static class SbomReportCrExtensions
                     Purl = component.Purl,
                     Version = HttpUtility.HtmlEncode(component.Version),
                     DependsOn = dependencies,
-                    Properties = component.Properties.Select(x => new string[] { x.Name, x.Value }).ToArray(),
+                    Properties = component.Properties.Select(x => new[] { x.Name, x.Value }).ToArray(),
                 };
 
                 return detailDto;
@@ -124,24 +124,26 @@ public static class SbomReportCrExtensions
 
     private static void RemoveSbomDetailDuplicates(SbomReportDto sbomReportDto)
     {
-        IEnumerable<IGrouping<string, SbomReportDetailDto>> groupedByPurl = sbomReportDto.Details
-            .GroupBy(x => string.IsNullOrEmpty(x.Purl) ? Guid.NewGuid().ToString() : x.Purl);
+        IEnumerable<IGrouping<string, SbomReportDetailDto>> groupedByPurl =
+            sbomReportDto.Details.GroupBy(x => string.IsNullOrEmpty(x.Purl) ? Guid.NewGuid().ToString() : x.Purl);
 
-        List<SbomReportDetailDto> uniqueSboms = new List<SbomReportDetailDto>();
-        Dictionary<Guid, Guid> guidMapping = new Dictionary<Guid, Guid>();
+        List<SbomReportDetailDto> uniqueSboms = [];
+        Dictionary<Guid, Guid> guidMapping = [];
 
         foreach (IGrouping<string, SbomReportDetailDto> group in groupedByPurl)
         {
-            var retainedSbom = group.First();
+            SbomReportDetailDto? retainedSbom = group.First();
             uniqueSboms.Add(retainedSbom);
-            
-            foreach (SbomReportDetailDto sbom in group) {
+
+            foreach (SbomReportDetailDto sbom in group)
+            {
                 guidMapping[sbom.BomRef] = retainedSbom.BomRef;
             }
         }
-        foreach (SbomReportDetailDto sbom in uniqueSboms) { 
-            sbom.DependsOn = sbom.DependsOn
-                .Select(dep => guidMapping.ContainsKey(dep) ? guidMapping[dep] : dep)
+
+        foreach (SbomReportDetailDto sbom in uniqueSboms)
+        {
+            sbom.DependsOn = sbom.DependsOn.Select(dep => guidMapping.ContainsKey(dep) ? guidMapping[dep] : dep)
                 .Distinct()
                 .ToArray();
         }

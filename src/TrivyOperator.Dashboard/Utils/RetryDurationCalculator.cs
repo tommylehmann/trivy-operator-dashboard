@@ -3,8 +3,7 @@
 public class RetryDurationCalculator(double maxBackoffSeconds)
 {
     private readonly double scaleFactor = maxBackoffSeconds;
-    public TimeSpan GetNextRetryDuration(int retryAttempt)
-    {
-        return TimeSpan.FromSeconds(scaleFactor * Math.Log(retryAttempt + 1));
-    }
+
+    public TimeSpan GetNextRetryDuration(int retryAttempt) =>
+        TimeSpan.FromSeconds(scaleFactor * Math.Log(retryAttempt + 1));
 }

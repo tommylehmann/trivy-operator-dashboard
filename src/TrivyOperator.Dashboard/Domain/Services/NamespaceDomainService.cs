@@ -12,18 +12,23 @@ public class NamespaceDomainService(
     ILogger<NamespaceDomainService> logger)
     : ClusterScopedResourceDomainService<V1Namespace, V1NamespaceList>(kubernetesClientFactory)
 {
-    public override async Task<V1Namespace> GetResource(string resourceName, CancellationToken? cancellationToken = null)
-    {
-        return await kubernetesClientFactory.GetClient().CoreV1.ReadNamespaceAsync(resourceName, cancellationToken: cancellationToken ?? new());
-    }
-    public override async Task<V1NamespaceList> GetResourceList(int? pageLimit = null, string? continueToken = null, CancellationToken? cancellationToken = null)
+    public override async Task<V1Namespace>
+        GetResource(string resourceName, CancellationToken? cancellationToken = null) => await kubernetesClientFactory
+        .GetClient()
+        .CoreV1.ReadNamespaceAsync(resourceName, cancellationToken: cancellationToken ?? new CancellationToken());
+
+    public override async Task<V1NamespaceList> GetResourceList(
+        int? pageLimit = null,
+        string? continueToken = null,
+        CancellationToken? cancellationToken = null)
     {
         try
         {
-            return await kubernetesClientFactory.GetClient().CoreV1.ListNamespaceAsync(
-                limit: pageLimit,
-                continueParameter: continueToken,
-                cancellationToken: cancellationToken ?? new());
+            return await kubernetesClientFactory.GetClient()
+                .CoreV1.ListNamespaceAsync(
+                    limit: pageLimit,
+                    continueParameter: continueToken,
+                    cancellationToken: cancellationToken ?? new CancellationToken());
         }
         catch (HttpOperationException ex) when (ex.Response.StatusCode == HttpStatusCode.Forbidden)
         {
@@ -31,7 +36,7 @@ public class NamespaceDomainService(
                 ex,
                 "Cannot get Kubernetes Namespaces. Forbidden (403). Error: {responseContent}",
                 ex.Response.Content);
-            return new() { Items = [] };
+            return new V1NamespaceList { Items = [] };
         }
         catch (Exception ex)
         {
@@ -39,17 +44,15 @@ public class NamespaceDomainService(
             throw;
         }
     }
+
     public override Task<HttpOperationResponse<V1NamespaceList>> GetResourceWatchList(
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken? cancellationToken = null)
-    {
-        return kubernetesClientFactory.GetClient()
-            .CoreV1.ListNamespaceWithHttpMessagesAsync(
-                watch: true,
-                resourceVersion: lastResourceVersion,
-                allowWatchBookmarks: true,
-                timeoutSeconds: timeoutSeconds,
-                cancellationToken: cancellationToken ?? new());
-    }
+        CancellationToken? cancellationToken = null) => kubernetesClientFactory.GetClient()
+        .CoreV1.ListNamespaceWithHttpMessagesAsync(
+            watch: true,
+            resourceVersion: lastResourceVersion,
+            allowWatchBookmarks: true,
+            timeoutSeconds: timeoutSeconds,
+            cancellationToken: cancellationToken ?? new CancellationToken());
 }

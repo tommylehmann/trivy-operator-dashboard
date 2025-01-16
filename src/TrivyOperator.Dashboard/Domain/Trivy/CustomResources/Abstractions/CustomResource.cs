@@ -8,6 +8,7 @@ public abstract class CustomResource : IKubernetesObject<V1ObjectMeta>, IMetadat
 {
     [JsonPropertyName("metadata")]
     public V1ObjectMeta Metadata { get; set; } = new();
+
     public string ApiVersion { get; set; } = string.Empty;
     public string Kind { get; set; } = string.Empty;
 }

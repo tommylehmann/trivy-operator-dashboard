@@ -1,25 +1,29 @@
-﻿using k8s.Models;
-using k8s;
-using TrivyOperator.Dashboard.Infrastructure.Abstractions;
+﻿using k8s;
 using k8s.Autorest;
+using k8s.Models;
+using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Domain.Services.Abstractions;
 
-public abstract class ClusterScopedResourceDomainService<TKubernetesObject, TKubernetesObjectList>(
-    IKubernetesClientFactory kubernetesClientFactory)
-    : KubernetesResourceDomainService<TKubernetesObject>(kubernetesClientFactory)
-    , IClusterScopedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList>
+public abstract class
+    ClusterScopedResourceDomainService<TKubernetesObject, TKubernetesObjectList>(
+        IKubernetesClientFactory kubernetesClientFactory)
+    : KubernetesResourceDomainService<TKubernetesObject>(kubernetesClientFactory),
+        IClusterScopedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>, IMetadata<V1ObjectMeta>
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
 {
-    public override async Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null)
-    {
-        return (await GetResourceList(cancellationToken: cancellationToken)).Items;
-    }
+    public override async Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null) =>
+        (await GetResourceList(cancellationToken: cancellationToken)).Items;
 
-    public abstract Task<TKubernetesObjectList> GetResourceList(int? pageLimit = null, string? continueToken = null, CancellationToken? cancellationToken = null);
+    public abstract Task<TKubernetesObjectList> GetResourceList(
+        int? pageLimit = null,
+        string? continueToken = null,
+        CancellationToken? cancellationToken = null);
 
-    public abstract Task<TKubernetesObject> GetResource(string resourceName, CancellationToken? cancellationToken = null);
+    public abstract Task<TKubernetesObject> GetResource(
+        string resourceName,
+        CancellationToken? cancellationToken = null);
 
     public abstract Task<HttpOperationResponse<TKubernetesObjectList>> GetResourceWatchList(
         string? lastResourceVersion = null,

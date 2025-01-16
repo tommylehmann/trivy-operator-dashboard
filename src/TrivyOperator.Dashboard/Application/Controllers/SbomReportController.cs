@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TrivyOperator.Dashboard.Application.Models;
-using TrivyOperator.Dashboard.Application.Services;
 using TrivyOperator.Dashboard.Application.Services.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Controllers;
@@ -22,8 +21,7 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetByUid(Guid uid)
     {
-        SbomReportDto? sbomReportDto =
-            await sbomReportService.GetSbomReportDtoByUid(uid);
+        SbomReportDto? sbomReportDto = await sbomReportService.GetSbomReportDtoByUid(uid);
 
         return sbomReportDto is null ? NotFound() : Ok(sbomReportDto);
     }

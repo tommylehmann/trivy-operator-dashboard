@@ -7,13 +7,13 @@ using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
-public class
-    ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
-        IClusterScopedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList> clusterScopResourceWatchDomainService,
-        TBackgroundQueue backgroundQueue,
-        IServiceProvider serviceProvider,
-        ILogger<ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue,
-            TKubernetesWatcherEvent>> logger)
+public class ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
+    IClusterScopedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList>
+        clusterScopResourceWatchDomainService,
+    TBackgroundQueue backgroundQueue,
+    IServiceProvider serviceProvider,
+    ILogger<ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
+        logger)
     : KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         backgroundQueue,
         serviceProvider,
@@ -26,11 +26,11 @@ public class
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
         string? lastResourceVersion,
-        CancellationToken? cancellationToken = null)
-        => clusterScopResourceWatchDomainService.GetResourceWatchList(
-            lastResourceVersion,
-            GetWatcherRandomTimeout(),
-            cancellationToken);
+        CancellationToken? cancellationToken = null) => clusterScopResourceWatchDomainService.GetResourceWatchList(
+        lastResourceVersion,
+        GetWatcherRandomTimeout(),
+        cancellationToken);
+
     protected override async Task EnqueueWatcherEventWithError(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
     {
         TKubernetesObject kubernetesObject = new();
@@ -40,10 +40,11 @@ public class
         await BackgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);
     }
 
-    protected override async Task<TKubernetesObjectList> GetInitialResources(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject, string? continueToken, CancellationToken? cancellationToken)
-    {
-        return await clusterScopResourceWatchDomainService.GetResourceList(resourceListPageSize, continueToken, cancellationToken);
-    }
-
-    
+    protected override async Task<TKubernetesObjectList> GetInitialResources(
+        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        string? continueToken,
+        CancellationToken? cancellationToken) => await clusterScopResourceWatchDomainService.GetResourceList(
+        resourceListPageSize,
+        continueToken,
+        cancellationToken);
 }

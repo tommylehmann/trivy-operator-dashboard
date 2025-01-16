@@ -9,15 +9,19 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class StaticNamespaceWatcher(
     IBackgroundQueue<V1Namespace> backgroundQueue,
-    IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList> kubernetesNamespaceDomainService) : IClusterScopedWatcher<V1Namespace>
+    IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList> kubernetesNamespaceDomainService)
+    : IClusterScopedWatcher<V1Namespace>
 {
     public async Task Add(CancellationToken cancellationToken, IKubernetesObject<V1ObjectMeta>? sourceKubernetesObjects)
     {
         IList<V1Namespace> kubernetesNamespaces = await kubernetesNamespaceDomainService.GetResources();
         foreach (V1Namespace kubernetesNamespace in kubernetesNamespaces)
         {
-            WatcherEvent<V1Namespace> watcherEvent =
-                new() { KubernetesObject = kubernetesNamespace, WatcherEventType = WatchEventType.Added };
+            WatcherEvent<V1Namespace> watcherEvent = new()
+            {
+                KubernetesObject = kubernetesNamespace,
+                WatcherEventType = WatchEventType.Added,
+            };
 
             await backgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);
         }

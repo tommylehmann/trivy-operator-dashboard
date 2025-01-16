@@ -3,10 +3,12 @@
     <p-button icon="pi pi-search-plus" label="Zoom In" size="small" [text]="true" (onClick)="onZoomIn($event)" />
     <p-button icon="pi pi-search-minus" label="Zoom Out" size="small" [text]="true" (onClick)="onZoomOut($event)" />
     <p-button icon="pi pi-arrows-alt" label="Fit" size="small" [text]="true" (onClick)="onZoomFit($event)" />
-    <p-breadcrumb class="breadcrumb-no-background breadcrumb-no-overflow"
-                  [model]="navItems"
-                  [home]="navHome"
-                  (onItemClick)="onNavItemClick($event)"/>
+    <p-breadcrumb
+      class="breadcrumb-no-background breadcrumb-no-overflow"
+      [home]="navHome"
+      [model]="navItems"
+      (onItemClick)="onNavItemClick($event)"
+    />
   </div>
   <div class="col-12 h-full">
     <div #graphContainer style="width: 100%; height: 75vh"></div>

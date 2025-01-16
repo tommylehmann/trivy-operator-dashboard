@@ -21,34 +21,32 @@ public class StaticNamespaceDomainService(
                 (Exception?)null);
         }
 
-        List<V1Namespace> kubernetesNamespaces = configKubernetesNamespaces
-            .Split(',')
-            .Select(namespaceName =>
-            {
-                return CreateNamespace(namespaceName.Trim());
-            }
-            ).ToList();
+        List<V1Namespace> kubernetesNamespaces = configKubernetesNamespaces.Split(',')
+            .Select(
+                namespaceName =>
+                {
+                    return CreateNamespace(namespaceName.Trim());
+                })
+            .ToList();
         logger.LogDebug("Found {listCount} kubernetes namespace names.", kubernetesNamespaces.Count);
 
         return Task.FromResult<IList<V1Namespace>>(kubernetesNamespaces);
     }
-    public Task<V1Namespace> GetResource(string resourceName, CancellationToken? cancellationToken = null)
-    {
-        return Task.FromResult(CreateNamespace(resourceName));
-    }
-    public Task<V1NamespaceList> GetResourceList(int? pageLimit = null, string? continueToken = null, CancellationToken? cancellationToken = null)
-    {
-        return Task.FromResult(new V1NamespaceList
+
+    public Task<V1Namespace> GetResource(string resourceName, CancellationToken? cancellationToken = null) =>
+        Task.FromResult(CreateNamespace(resourceName));
+
+    public Task<V1NamespaceList> GetResourceList(
+        int? pageLimit = null,
+        string? continueToken = null,
+        CancellationToken? cancellationToken = null) => Task.FromResult(
+        new V1NamespaceList
         {
             ApiVersion = "v1",
             Kind = "NamespaceList",
-            Metadata = new V1ListMeta
-            {
-                ResourceVersion = "1",
-            },
+            Metadata = new V1ListMeta { ResourceVersion = "1" },
             Items = GetResources().Result,
         });
-    }
     // failed attempt to implement this method. will not work for a "kubernetes watch" scenario.
     //public Task<HttpOperationResponse<V1NamespaceList>> GetResourceWatchList(
     //    string? lastResourceVersion = null,
@@ -72,16 +70,10 @@ public class StaticNamespaceDomainService(
 
     //    return tcs.Task;
     //}
-    private static V1Namespace CreateNamespace(string namespaceName)
+    private static V1Namespace CreateNamespace(string namespaceName) => new()
     {
-        return new V1Namespace
-        {
-            ApiVersion = "v1",
-            Kind = "Namespace",
-            Metadata = new V1ObjectMeta
-            {
-                Name = namespaceName,
-            }
-        };
-    }
+        ApiVersion = "v1",
+        Kind = "Namespace",
+        Metadata = new V1ObjectMeta { Name = namespaceName },
+    };
 }

@@ -1,5 +1,5 @@
-﻿using k8s.Models;
-using k8s;
+﻿using k8s;
+using k8s.Models;
 
 namespace TrivyOperator.Dashboard.Infrastructure.Abstractions;
 

@@ -2,10 +2,9 @@
   font-size: 14px;
 }
 
-
 .breadcrumb-pointer a {
   cursor: pointer;
-  @extend .breadcrumb-size
+  @extend .breadcrumb-size;
 }
 
 .breadcrumb-no-background .p-breadcrumb {

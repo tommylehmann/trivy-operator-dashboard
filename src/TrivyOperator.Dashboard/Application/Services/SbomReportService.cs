@@ -7,8 +7,10 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services;
 
-public class SbomReportService(IConcurrentCache<string, IList<SbomReportCr>> cache,
-    INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>> domainService) : ISbomReportService
+public class SbomReportService(
+    IConcurrentCache<string, IList<SbomReportCr>> cache,
+    INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>> domainService)
+    : ISbomReportService
 {
     public Task<IEnumerable<SbomReportDto>> GetSbomReportDtos(string? namespaceName = null)
     {
@@ -40,7 +42,8 @@ public class SbomReportService(IConcurrentCache<string, IList<SbomReportCr>> cac
         {
             try
             {
-                return (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty)).ToSbomReportDto();
+                return (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
+                    .ToSbomReportDto();
             }
             catch { }
         }
