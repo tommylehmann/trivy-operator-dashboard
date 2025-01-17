@@ -82,7 +82,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                         .WatchAsync<TKubernetesObject, TKubernetesObjectList>(
                             ex =>
                             {
-                                if (ex is KubernetesException && ex.Message.StartsWith("too old resource version:"))
+                                if (ex is KubernetesException && ex.Message.StartsWith("too old resource version"))
                                 {
                                     logger.LogDebug(
                                         "{kubernetesObjectType} - {watcherKey} - lastResourceVersion set to null",
@@ -140,7 +140,6 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
             catch (HttpRequestException ex) when (ex.InnerException is EndOfStreamException)
             {
                 logger.LogDebug(
-                    ex,
                     "Watcher {kubernetesObjectType} - {watcherKey} crashed - EndOfStreamException - {exceptionMessage}",
                     typeof(TKubernetesObject).Name,
                     watcherKey,

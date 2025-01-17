@@ -1,4 +1,5 @@
-﻿using TrivyOperator.Dashboard.Domain.Trivy.ClusterComplianceReport;
+﻿using TrivyOperator.Dashboard.Domain.Services.Abstractions;
+using TrivyOperator.Dashboard.Domain.Trivy.ClusterComplianceReport;
 using TrivyOperator.Dashboard.Domain.Trivy.ClusterRbacAssessmentReport;
 using TrivyOperator.Dashboard.Domain.Trivy.ClusterSbomReport;
 using TrivyOperator.Dashboard.Domain.Trivy.ClusterVulnerabilityReport;
@@ -9,7 +10,7 @@ using TrivyOperator.Dashboard.Domain.Trivy.RbacAssessmentReport;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 
-namespace TrivyOperator.Dashboard.Domain.Services.Abstractions;
+namespace TrivyOperator.Dashboard.Domain.Services;
 
 public class CustomResourceDefinitionFactory : ICustomResourceDefinitionFactory
 {
