@@ -37,23 +37,33 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            IWatcherEvent<TKubernetesObject> watcherEvent = await backgroundQueue.DequeueAsync(cancellationToken);
-            switch (watcherEvent.WatcherEventType)
+            try
             {
-                case WatchEventType.Added:
-                    ProcessAddEvent(watcherEvent, cancellationToken);
-                    break;
-                case WatchEventType.Deleted:
-                    ProcessDeleteEvent(watcherEvent);
-                    break;
-                case WatchEventType.Error:
-                    ProcessErrorEvent(watcherEvent);
-                    break;
-                case WatchEventType.Modified:
-                    ProcessModifiedEvent(watcherEvent, cancellationToken);
-                    break;
-                    //default:
-                    //    break;
+                IWatcherEvent<TKubernetesObject> watcherEvent = await backgroundQueue.DequeueAsync(cancellationToken);
+                switch (watcherEvent.WatcherEventType)
+                {
+                    case WatchEventType.Added:
+                        ProcessAddEvent(watcherEvent, cancellationToken);
+                        break;
+                    case WatchEventType.Deleted:
+                        ProcessDeleteEvent(watcherEvent);
+                        break;
+                    case WatchEventType.Error:
+                        ProcessErrorEvent(watcherEvent);
+                        break;
+                    case WatchEventType.Modified:
+                        ProcessModifiedEvent(watcherEvent, cancellationToken);
+                        break;
+                        //default:
+                        //    break;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(
+                    ex,
+                    "Error processing event for {kubernetesObjectType}.",
+                    typeof(TKubernetesObject).Name);
             }
         }
     }
@@ -72,8 +82,8 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
 
         if (cache.TryGetValue(watcherKey, out IList<TKubernetesObject>? kubernetesObjects))
         {
-            IEnumerable<TKubernetesObject> existingKubernetesObjects =
-                kubernetesObjects.Where(x => x.Uid == watcherEvent.KubernetesObject.Uid) ?? [];
+            IList<TKubernetesObject> existingKubernetesObjects =
+                kubernetesObjects.Where(x => x.Name() == watcherEvent.KubernetesObject.Name()).ToList() ?? [];
             foreach (TKubernetesObject existingKubernetesObject in existingKubernetesObjects)
             {
                 kubernetesObjects.Remove(existingKubernetesObject);
@@ -99,8 +109,8 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
 
         if (cache.TryGetValue(watcherKey, out IList<TKubernetesObject>? kubernetesObjects))
         {
-            IEnumerable<TKubernetesObject> existingKubernetesObjects =
-                kubernetesObjects.Where(x => x.Uid == watcherEvent.KubernetesObject.Uid) ?? [];
+            IList<TKubernetesObject> existingKubernetesObjects =
+                kubernetesObjects.Where(x => x.Name() == watcherEvent.KubernetesObject.Name()).ToList() ?? [];
             foreach (TKubernetesObject existingKubernetesObject in existingKubernetesObjects)
             {
                 kubernetesObjects.Remove(existingKubernetesObject);

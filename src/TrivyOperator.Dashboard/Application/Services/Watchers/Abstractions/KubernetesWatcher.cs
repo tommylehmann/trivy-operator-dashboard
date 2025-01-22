@@ -177,10 +177,9 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                     try
                     {
                         logger.LogDebug(
-                            "Sending to Queue - {kubernetesObjectType} - EventWithError - {watcherKey} - {kubernetesObjectName}",
+                            "Sending to Queue - {kubernetesObjectType} - EventWithError - {watcherKey}",
                             typeof(TKubernetesObject).Name,
-                            watcherKey,
-                            sourceKubernetesObject?.Metadata.Name);
+                            watcherKey);
 
                         await EnqueueWatcherEventWithError(sourceKubernetesObject);
                         enqueueErrorEventIsSuccessful = true;
