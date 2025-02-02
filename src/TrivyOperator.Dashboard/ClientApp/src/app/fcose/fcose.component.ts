@@ -1,4 +1,6 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 import cytoscape, { EdgeSingular, ElementDefinition, NodeSingular } from 'cytoscape';
 import fcose, { FcoseLayoutOptions } from 'cytoscape-fcose';
@@ -6,6 +8,7 @@ import fcose, { FcoseLayoutOptions } from 'cytoscape-fcose';
 import { MenuItem } from 'primeng/api';
 import { BreadcrumbItemClickEvent, BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 
 // TODO: change to dedicated interface
 import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
@@ -17,11 +20,11 @@ cytoscape.use(fcose);
 @Component({
   selector: 'app-fcose',
   standalone: true,
-  imports: [BreadcrumbModule, ButtonModule],
+  imports: [BreadcrumbModule, ButtonModule, InputTextModule, ReactiveFormsModule],
   templateUrl: './fcose.component.html',
   styleUrl: './fcose.component.scss',
 })
-export class FcoseComponent implements AfterViewInit {
+export class FcoseComponent implements AfterViewInit, OnInit {
   @ViewChild('graphContainer', { static: true }) graphContainer!: ElementRef;
   testText: string = '';
 
@@ -104,6 +107,17 @@ export class FcoseComponent implements AfterViewInit {
   }
 
   private _hoveredNode: NodeSingular | null = null;
+
+  inputFilterByNameControl = new FormControl();
+  private inputFilterByNameValue: string = "";
+
+  ngOnInit() {
+    console.log("ngOnInit");
+    this.inputFilterByNameControl.valueChanges.pipe(debounceTime(500)).subscribe((value) => {
+      console.log("debounce");
+      this.onInputChange(value);
+    });
+  }
 
   ngAfterViewInit() {
     this.setupCyLayout();
@@ -228,6 +242,19 @@ export class FcoseComponent implements AfterViewInit {
           selector: '.hidden',
           style: {
             opacity: 0,
+          },
+        },
+        {
+          selector: '.filtered-highlighted',
+          style: {
+            width: 'mapData(label.length, 1, 30, 20, 240)',
+            height: '24px',
+          },
+        },
+        {
+          selector: '.filtered-unhighlighted',
+          style: {
+            opacity: 0.4,
           },
         },
       ],
@@ -356,9 +383,37 @@ export class FcoseComponent implements AfterViewInit {
         if (newRootNode) {
           this.highlightNode(newRootNode);
         }
+        if (this.inputFilterByNameValue) {
+          this.onNodesHighlightByName(this.inputFilterByNameValue);
+        }
       }, 500);
     }, 350);
     this.isDivedIn = true;
+    
+  }
+
+  private onNodesHighlightByName(value: string) {
+    value = value.toLowerCase();
+    this.cy.batch(() => {
+      if (value) {
+        this.cy.nodes().forEach((node: NodeSingular) => {
+          const label = node.data('label').toLowerCase();
+          if (label.includes(value)) {
+            node.addClass('filtered-highlighted');
+            node.removeClass('filtered-unhighlighted');
+          } else {
+            node.addClass('filtered-unhighlighted');
+            node.removeClass('filtered-highlighted');
+          }
+        });
+      }
+      else {
+        this.cy.nodes().forEach((node: NodeSingular) => {
+          node.removeClass('filtered-highlighted');
+          node.removeClass('filtered-unhighlighted');
+        })
+      }
+    });
   }
 
   private getElementsByNodeId(nodeId: string): ElementDefinition[] {
@@ -484,5 +539,11 @@ export class FcoseComponent implements AfterViewInit {
 
   private getDataDetailDtoById(id: string): SbomReportDetailDto | undefined {
     return this.dataDtos.find((x) => x.bomRef == id);
+  }
+
+  onInputChange(value: string) {
+    this.inputFilterByNameValue = value;
+    console.log('Input changed to:', value);
+    this.onNodesHighlightByName(value);
   }
 }
