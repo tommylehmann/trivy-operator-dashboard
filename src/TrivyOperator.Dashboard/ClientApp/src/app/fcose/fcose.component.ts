@@ -112,9 +112,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private inputFilterByNameValue: string = "";
 
   ngOnInit() {
-    console.log("ngOnInit");
     this.inputFilterByNameControl.valueChanges.pipe(debounceTime(500)).subscribe((value) => {
-      console.log("debounce");
       this.onInputChange(value);
     });
   }
@@ -397,13 +395,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.cy.batch(() => {
       if (value) {
         this.cy.nodes().forEach((node: NodeSingular) => {
-          const label = node.data('label').toLowerCase();
-          if (label.includes(value)) {
-            node.addClass('filtered-highlighted');
-            node.removeClass('filtered-unhighlighted');
-          } else {
-            node.addClass('filtered-unhighlighted');
-            node.removeClass('filtered-highlighted');
+          if (!node.isParent()) {
+            const label = node.data('label').toLowerCase();
+            if (label.includes(value)) {
+              node.removeClass('filtered-unhighlighted');
+              node.addClass('filtered-highlighted');
+            } else {
+              node.removeClass('filtered-highlighted');
+              node.addClass('filtered-unhighlighted');
+            }
           }
         });
       }
@@ -556,7 +556,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   onInputChange(value: string) {
     this.inputFilterByNameValue = value;
-    console.log('Input changed to:', value);
     this.onNodesHighlightByName(value);
   }
 }
