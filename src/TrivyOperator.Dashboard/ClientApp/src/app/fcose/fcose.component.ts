@@ -421,7 +421,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     const rootSbomDto = this.dataDtos.find((x) => x.bomRef == nodeId);
     if (rootSbomDto) {
       sbomDetailDtos.push(rootSbomDto);
-      this.getSbomDtos(rootSbomDto, sbomDetailDtos);
+      this.getParentsSbomDtos(rootSbomDto, sbomDetailDtos);
+      this.getChildrenSbomDtos(rootSbomDto, sbomDetailDtos);
     }
 
     const groupMap = new Map<string, number>();
@@ -468,7 +469,19 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     return elements;
   }
 
-  private getSbomDtos(sbomDetailDto: SbomReportDetailDto, sbomDetailDtos: SbomReportDetailDto[]) {
+  private getParentsSbomDtos(sbomDetailDto: SbomReportDetailDto, sbomDetailDtos: SbomReportDetailDto[]) {
+    const parents = this.dataDtos
+      .filter((x) => x.dependsOn?.includes(sbomDetailDto.bomRef ?? ""))
+      .map((y) => {
+        const parentSbom: SbomReportDetailDto = JSON.parse(JSON.stringify(y));
+        parentSbom.dependsOn = [sbomDetailDto.bomRef ?? ""];
+        return parentSbom;
+      }) ?? [];
+
+    sbomDetailDtos.push(...parents);
+  }
+
+  private getChildrenSbomDtos(sbomDetailDto: SbomReportDetailDto, sbomDetailDtos: SbomReportDetailDto[]) {
     if (!sbomDetailDto) {
       return;
     }
@@ -484,7 +497,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     });
     const newSbomDetailDtos = this.dataDtos.filter((x) => newDetailBomRefIds.includes(x.bomRef ?? '')) ?? [];
     sbomDetailDtos.push(...newSbomDetailDtos);
-    newSbomDetailDtos.forEach((sbomDetailDto) => this.getSbomDtos(sbomDetailDto, sbomDetailDtos));
+    newSbomDetailDtos.forEach((sbomDetailDto) => this.getChildrenSbomDtos(sbomDetailDto, sbomDetailDtos));
   }
 
   private initNavMenuItems() {
