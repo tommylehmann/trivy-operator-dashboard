@@ -6,10 +6,10 @@ namespace TrivyOperator.Dashboard.Application.Models;
 public class SbomReportDto
 {
     public string Uid { get; set; } = Guid.NewGuid().ToString();
-    public string? ResourceName { get; init; } = string.Empty;
-    public string? ResourceNamespace { get; init; } = string.Empty;
-    public string? ResourceKind { get; init; } = string.Empty;
-    public string? ResourceContainerName { get; init; } = string.Empty;
+    public string ResourceName { get; init; } = string.Empty;
+    public string ResourceNamespace { get; init; } = string.Empty;
+    public string ResourceKind { get; init; } = string.Empty;
+    public string ResourceContainerName { get; init; } = string.Empty;
     public string ImageName { get; set; } = string.Empty;
     public string ImageTag { get; set; } = string.Empty;
     public string Repository { get; set; } = string.Empty;
@@ -24,6 +24,11 @@ public class SbomReportDetailDto
     public string Version { get; set; } = string.Empty;
     public Guid[] DependsOn { get; set; } = [];
     public string[][] Properties { get; set; } = [];
+    public long CriticalCount { get; set; } = -1;
+    public long HighCount { get; set; } = -1;
+    public long MediumCount { get; set; } = -1;
+    public long LowCount { get; set; } = -1;
+    public long UnknownCount { get; set; } = -1;
 }
 
 public static class SbomReportCrExtensions

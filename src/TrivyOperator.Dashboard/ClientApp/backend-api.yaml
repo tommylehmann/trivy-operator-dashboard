@@ -1993,6 +1993,28 @@ components:
             type: string
             format: uuid
           nullable: true
+        properties:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+          nullable: true
+        criticalCount:
+          type: integer
+          format: int64
+        highCount:
+          type: integer
+          format: int64
+        mediumCount:
+          type: integer
+          format: int64
+        lowCount:
+          type: integer
+          format: int64
+        unknownCount:
+          type: integer
+          format: int64
       additionalProperties: false
     SbomReportDto:
       type: object

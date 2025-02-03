@@ -6,5 +6,7 @@ public interface ISbomReportService
 {
     Task<IEnumerable<SbomReportDto>> GetSbomReportDtos(string? namespaceName = null);
     Task<SbomReportDto?> GetSbomReportDtoByUid(Guid uid);
+    Task<SbomReportDto?> GetSbomReportDtoByUidNamespace(Guid uid, string namespaceName);
+    Task<SbomReportDto?> GetSbomReportDtoByResourceName(string namespaceName, string resourceName);
     Task<IEnumerable<string>> GetActiveNamespaces();
 }

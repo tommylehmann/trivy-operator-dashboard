@@ -99,7 +99,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (node) {
       const x = this.getDataDetailDtoById(node.id());
       if (x) {
-        this.testText = `<b>Name:</b> ${x.name} - <b>Version:</b> ${x.version} - <b>Dependencies:</b> ${x.dependsOn?.length ?? 0}`;
+        this.testText = `<b>Name:</b> ${x.name} - <b>Version:</b> ${x.version}
+        - <b>Dependencies:</b> ${x.dependsOn?.length ?? 0}
+        - C (${x.criticalCount ?? 0}) / H (${x.highCount ?? 0}) / M (${x.mediumCount ?? 0}) / L (${x.lowCount ?? 0})`;
       }
     } else {
       this.testText = 'no info...';
