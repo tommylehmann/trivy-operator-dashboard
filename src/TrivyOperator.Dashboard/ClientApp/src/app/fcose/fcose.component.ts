@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 
@@ -9,9 +10,12 @@ import { MenuItem } from 'primeng/api';
 import { BreadcrumbItemClickEvent, BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { TagModule } from 'primeng/tag';
 
 // TODO: change to dedicated interface
 import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
+
+import { SeverityUtils } from '../utils/severity.utils';
 
 cytoscape.use(fcose);
 
@@ -20,13 +24,12 @@ cytoscape.use(fcose);
 @Component({
   selector: 'app-fcose',
   standalone: true,
-  imports: [BreadcrumbModule, ButtonModule, InputTextModule, ReactiveFormsModule],
+  imports: [BreadcrumbModule, ButtonModule, InputTextModule, TagModule, CommonModule, ReactiveFormsModule],
   templateUrl: './fcose.component.html',
   styleUrl: './fcose.component.scss',
 })
 export class FcoseComponent implements AfterViewInit, OnInit {
   @ViewChild('graphContainer', { static: true }) graphContainer!: ElementRef;
-  testText: string = '';
 
   @Input() set selectedInnerNodeId(value: string | undefined) {
     this._selectedInnerNodeId = value;
@@ -90,25 +93,17 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   private isDivedIn: boolean = false;
 
-  private get hoveredNode(): NodeSingular | null {
+  get hoveredNode(): NodeSingular | null {
     return this._hoveredNode;
   }
 
   private set hoveredNode(node: NodeSingular | null) {
     this._hoveredNode = node;
-    if (node) {
-      const x = this.getDataDetailDtoById(node.id());
-      if (x) {
-        this.testText = `<b>Name:</b> ${x.name} - <b>Version:</b> ${x.version}
-        - <b>Dependencies:</b> ${x.dependsOn?.length ?? 0}
-        - C (${x.criticalCount ?? 0}) / H (${x.highCount ?? 0}) / M (${x.mediumCount ?? 0}) / L (${x.lowCount ?? 0})`;
-      }
-    } else {
-      this.testText = 'no info...';
-    }
+    this.hoveredNodeDto = this.getDataDetailDtoById(node?.id());
   }
 
   private _hoveredNode: NodeSingular | null = null;
+  hoveredNodeDto: SbomReportDetailDto | undefined = undefined;
 
   inputFilterByNameControl = new FormControl();
   private inputFilterByNameValue: string = "";
@@ -552,12 +547,16 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.selectedInnerNodeId = nodeId;
   }
 
-  private getDataDetailDtoById(id: string): SbomReportDetailDto | undefined {
+  getDataDetailDtoById(id: string | undefined | null): SbomReportDetailDto | undefined {
     return this.dataDtos.find((x) => x.bomRef == id);
   }
 
   onInputChange(value: string) {
     this.inputFilterByNameValue = value;
     this.onNodesHighlightByName(value);
+  }
+
+  severityWrapperGetCssColor(severityId: number): string {
+    return SeverityUtils.getCssColor(severityId);
   }
 }

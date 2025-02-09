@@ -72,7 +72,7 @@ export class SbomReportsComponent {
   private _selectedInnerNodeId: string | undefined = undefined;
 
   selectedSbomDetailDto: SbomReportDetailDto | undefined = undefined;
-  dependsOnBoms: DependsOn[] = [];
+  dependsOnBoms: SbomReportDetailDto[] = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;
@@ -137,7 +137,7 @@ export class SbomReportsComponent {
         isFiltrable: true,
         isSortable: true,
         multiSelectType: 'none',
-        style: 'width: 400px; max-width: 480px;',
+        style: 'white-space: nowrap; text-overflow: ellipsis',
         renderType: 'standard',
       },
       {
@@ -146,9 +146,65 @@ export class SbomReportsComponent {
         isFiltrable: true,
         isSortable: true,
         multiSelectType: 'none',
-        style: 'white-space: normal;',
+        style: 'width: 120px; max-width: 120px;',
         renderType: 'standard',
       },
+      {
+        field: 'criticalCount',
+        header: 'C',
+        isFiltrable: false,
+        isSortable: true,
+        isSortIconVisible: false,
+        multiSelectType: 'none',
+        style: 'width: 40px; max-width: 40px;',
+        renderType: 'severityValue',
+        extraFields: ['CRITICAL'],
+      },
+      {
+        field: 'highCount',
+        header: 'H',
+        isFiltrable: false,
+        isSortable: true,
+        isSortIconVisible: false,
+        multiSelectType: 'none',
+        style: 'width: 40px; max-width: 40px;',
+        renderType: 'severityValue',
+        extraFields: ['HIGH'],
+      },
+      {
+        field: 'mediumCount',
+        header: 'M',
+        isFiltrable: false,
+        isSortable: true,
+        isSortIconVisible: false,
+        multiSelectType: 'none',
+        style: 'width: 40px; max-width: 40px;',
+        renderType: 'severityValue',
+        extraFields: ['MEDIUM'],
+      },
+      {
+        field: 'lowCount',
+        header: 'L',
+        isFiltrable: false,
+        isSortable: true,
+        isSortIconVisible: false,
+        multiSelectType: 'none',
+        style: 'width: 40px; max-width: 40px;',
+        renderType: 'severityValue',
+        extraFields: ['LOW'],
+      },
+      {
+        field: 'unknownCount',
+        header: 'U',
+        isFiltrable: false,
+        isSortable: true,
+        isSortIconVisible: false,
+        multiSelectType: 'none',
+        style: 'width: 40px; max-width: 40px;',
+        renderType: 'severityValue',
+        extraFields: ['UNKNOWN'],
+      },
+
     ];
     this.dependsOnTableOptions = {
       isClearSelectionVisible: false,
@@ -231,21 +287,20 @@ export class SbomReportsComponent {
   }
 
   getDependsOnBoms(bomRef: string) {
-    this.dependsOnBoms =
-      this.fullSbomDataDto?.details
-        ?.find((x) => x.bomRef == bomRef)
-        ?.dependsOn?.map((dep) => {
-          const depBom = this.fullSbomDataDto?.details?.find((y) => y.bomRef == dep);
-          if (depBom) {
-            return {
-              bomRef: depBom.bomRef ?? '',
-              name: depBom.name ?? '',
-              version: depBom.version ?? '',
-            } as DependsOn;
-          }
-          return { bomRef: 'unknown', name: '', version: '' } as DependsOn;
-        })
-        .filter((x) => x.bomRef !== 'unknown') ?? [];
-    //this.dependsOnBoms = depBoms ? depBoms : [];
+    const details = this.fullSbomDataDto?.details;
+    let sboms: SbomReportDetailDto[] = [];
+
+    if (details) {
+      const foundItem = details.find((x) => x.bomRef == bomRef);
+
+      if (foundItem && foundItem.dependsOn) {
+        sboms = foundItem.dependsOn.map((dep) => {
+          return details.find((y) => y.bomRef == dep);
+        }).filter((x) => x !== undefined);
+      }
+    }
+
+    this.dependsOnBoms = sboms;
+
   }
 }

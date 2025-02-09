@@ -26,6 +26,7 @@ export interface ExportColumn {
 
 export interface TrivyTableColumn extends Column {
   isSortable: boolean;
+  isSortIconVisible?: boolean;
   isFiltrable: boolean;
   style: string;
   multiSelectType: 'none' | 'namespaces' | 'severities';
@@ -33,6 +34,7 @@ export interface TrivyTableColumn extends Column {
     | 'standard'
     | 'severityBadge'
     | 'severityMultiTags'
+    | 'severityValue'
     | 'imageNameTag'
     | 'link'
     | 'date'

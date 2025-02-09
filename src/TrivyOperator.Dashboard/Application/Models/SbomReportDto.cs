@@ -24,11 +24,11 @@ public class SbomReportDetailDto
     public string Version { get; set; } = string.Empty;
     public Guid[] DependsOn { get; set; } = [];
     public string[][] Properties { get; set; } = [];
-    public long CriticalCount { get; set; } = -1;
-    public long HighCount { get; set; } = -1;
-    public long MediumCount { get; set; } = -1;
-    public long LowCount { get; set; } = -1;
-    public long UnknownCount { get; set; } = -1;
+    public long CriticalCount { get; set; } = 0;
+    public long HighCount { get; set; } = 0;
+    public long MediumCount { get; set; } = 0;
+    public long LowCount { get; set; } = 0;
+    public long UnknownCount { get; set; } = 0;
 }
 
 public static class SbomReportCrExtensions

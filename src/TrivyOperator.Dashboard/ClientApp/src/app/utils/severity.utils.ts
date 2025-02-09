@@ -24,6 +24,11 @@ export class SeverityUtils {
     return documentStyle.getPropertyValue(color);
   }
 
+  public static getCssColorByName(severityName: string): string {
+    const severityId = this.severityDtos.find(x => x.name == severityName)?.id ?? 4;
+    return this.getCssColor(severityId);
+  }
+
   public static getColor(severityId: number): string {
     switch (severityId) {
       case 0:

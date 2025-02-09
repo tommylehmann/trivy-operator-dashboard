@@ -93,67 +93,55 @@
     <ng-template let-columns pTemplate="header">
       <tr>
         <th *ngIf="trivyTableOptions!.rowExpansionRender" style="width: 50px"></th>
-        <th
-          *ngFor="let col of columns"
-          pReorderableColumn
-          pResizableColumn
-          style="{{ col.style }}"
-          [pSortableColumn]="col.isSortable ? col.field : null"
-        >
+        <th *ngFor="let col of columns"
+            pReorderableColumn
+            pResizableColumn
+            style="{{ col.style }}"
+            [pSortableColumn]="col.isSortable ? col.field : null">
           {{ col.header }}
-          <p-sortIcon *ngIf="col.isSortable" field="{{ col.field }}" />
-          <p-columnFilter
-            *ngIf="col.isFiltrable && col.multiSelectType === 'none'"
-            display="menu"
-            field="{{ col.field }}"
-            type="text"
-          />
-          <p-columnFilter
-            *ngIf="col.isFiltrable && col.multiSelectType === 'namespaces'"
-            display="menu"
-            field="{{ col.field }}"
-            matchMode="in"
-            [showAddButton]="false"
-            [showMatchModes]="false"
-            [showOperator]="false"
-          >
+          <p-sortIcon *ngIf="col.isSortable && (col.isSortIconVisible ?? col.isSortable)" field="{{ col.field }}" />
+          <p-columnFilter *ngIf="col.isFiltrable && col.multiSelectType === 'none'"
+                          display="menu"
+                          field="{{ col.field }}"
+                          type="text" />
+          <p-columnFilter *ngIf="col.isFiltrable && col.multiSelectType === 'namespaces'"
+                          display="menu"
+                          field="{{ col.field }}"
+                          matchMode="in"
+                          [showAddButton]="false"
+                          [showMatchModes]="false"
+                          [showOperator]="false">
             <ng-template let-filter="filterCallback" pTemplate="filter">
-              <p-multiSelect
-                optionLabel=""
-                placeholder="Any"
-                styleClass="text-sm"
-                [options]="activeNamespaces!"
-                [style]="{ width: '300px' }"
-                [(ngModel)]="filterSelectedActiveNamespaces"
-                (onChange)="filter($event.value)"
-              >
+              <p-multiSelect optionLabel=""
+                             placeholder="Any"
+                             styleClass="text-sm"
+                             [options]="activeNamespaces!"
+                             [style]="{ width: '300px' }"
+                             [(ngModel)]="filterSelectedActiveNamespaces"
+                             (onChange)="filter($event.value)">
               </p-multiSelect>
               <ng-template let-option pTemplate="item">
                 <div [class]="'text-sm'">{{ option }}</div>
               </ng-template>
             </ng-template>
           </p-columnFilter>
-          <p-columnFilter
-            *ngIf="col.isFiltrable && col.multiSelectType === 'severities'"
-            display="menu"
-            field="{{ col.field }}"
-            matchMode="in"
-            [showAddButton]="false"
-            [showMatchModes]="false"
-            [showOperator]="false"
-          >
+          <p-columnFilter *ngIf="col.isFiltrable && col.multiSelectType === 'severities'"
+                          display="menu"
+                          field="{{ col.field }}"
+                          matchMode="in"
+                          [showAddButton]="false"
+                          [showMatchModes]="false"
+                          [showOperator]="false">
             <ng-template let-filter="filterCallback" pTemplate="filter">
-              <p-multiSelect
-                optionLabel="name"
-                placeholder="Any"
-                styleClass="text-sm"
-                [filter]="false"
-                [options]="filterSeverityOptions"
-                [showHeader]="false"
-                [showToggleAll]="false"
-                [(ngModel)]="filterSelectedSeverityIds"
-                (onChange)="filter($event.value)"
-              >
+              <p-multiSelect optionLabel="name"
+                             placeholder="Any"
+                             styleClass="text-sm"
+                             [filter]="false"
+                             [options]="filterSeverityOptions"
+                             [showHeader]="false"
+                             [showToggleAll]="false"
+                             [(ngModel)]="filterSelectedSeverityIds"
+                             (onChange)="filter($event.value)">
                 <ng-template let-severityIds pTemplate="selectedItems">
                   <div>{{ severityWrapperGetNames(severityIds, 2) }}</div>
                 </ng-template>
@@ -188,49 +176,43 @@
           <span *ngIf="col.renderType == 'date'">{{ rowData[col.field] | date: 'yyyy-MM-dd' }}</span>
           <div *ngIf="col.renderType == 'imageNameTag'">
             <span>{{ rowData[col.field] }}:{{ rowData[col.extraFields[0]] }}</span>
-            <p-tag
-              *ngIf="rowData[col.extraFields[1]]"
-              value="EOSL"
-              [rounded]="true"
-              [style]="{ 'margin-left': '10px', background: severityWrapperGetCssColor(1) }"
-            />
+            <p-tag *ngIf="rowData[col.extraFields[1]]"
+                   value="EOSL"
+                   [rounded]="true"
+                   [style]="{ 'margin-left': '10px', background: severityWrapperGetCssColor(1) }" />
           </div>
-          <a *ngIf="col.renderType == 'link'" href="{{ rowData[col.extraFields[0]] }}" target="_blank">{{
+          <a *ngIf="col.renderType == 'link'" href="{{ rowData[col.extraFields[0]] }}" target="_blank">
+            {{
             rowData[col.field]
-          }}</a>
-          <p-tag
-            *ngIf="col.renderType == 'severityBadge'"
-            [rounded]="true"
-            [style]="{ background: severityWrapperGetCssColor(rowData[col.field]) }"
-            [value]="severityWrapperGetCapitalizedName(rowData[col.field])"
-          />
+            }}
+          </a>
+          <p-tag *ngIf="col.renderType == 'severityBadge'"
+                 [rounded]="true"
+                 [style]="{ background: severityWrapperGetCssColor(rowData[col.field]) }"
+                 [value]="severityWrapperGetCapitalizedName(rowData[col.field])" />
           <div *ngIf="col.renderType == 'severityMultiTags'" style="display: flex; justify-content: space-between">
-            <p-tag
-              [rounded]="true"
-              [style]="{ background: severityWrapperGetCssColor(0) }"
-              [value]="rowData[col.field]"
-            />
+            <p-tag [rounded]="true"
+                   [style]="{ background: severityWrapperGetCssColor(0) }"
+                   [value]="rowData[col.field]" />
             <div *ngFor="let extraField of col.extraFields; let i = index">
-              <p-tag
-                [rounded]="true"
-                [style]="{ background: severityWrapperGetCssColor(i + 1) }"
-                [value]="rowData[col.extraFields[i]]"
-              />
+              <p-tag [rounded]="true"
+                     [style]="{ background: severityWrapperGetCssColor(i + 1) }"
+                     [value]="rowData[col.extraFields[i]]" />
             </div>
           </div>
-          <p-tag
-            *ngIf="col.renderType == 'eosl' && rowData[col.field]"
-            icon="pi pi-exclamation-circle"
-            [rounded]="true"
-            [style]="{ background: severityWrapperGetCssColor(1) }"
-            [value]="'true'"
-          />
-          <p-tag
-            *ngIf="col.renderType == 'semaphore'"
-            [rounded]="true"
-            [style]="{ background: semaphoreStatusHelper.getCssColor(rowData[col.field]) }"
-            [value]="rowData[col.field]"
-          />
+          <p-tag *ngIf="col.renderType == 'eosl' && rowData[col.field]"
+                 icon="pi pi-exclamation-circle"
+                 [rounded]="true"
+                 [style]="{ background: severityWrapperGetCssColor(1) }"
+                 [value]="'true'" />
+          <p-tag *ngIf="col.renderType == 'semaphore'"
+                 [rounded]="true"
+                 [style]="{ background: semaphoreStatusHelper.getCssColor(rowData[col.field]) }"
+                 [value]="rowData[col.field]" />
+          <p-tag *ngIf="col.renderType == 'severityValue'"
+                 [rounded]="true"
+                 [style]="{ background: severityWrapperGetCssColorByName(col.extraFields[0] ?? '') }"
+                 [value]="rowData[col.field]" />
           <span *ngIf="col.renderType == 'multiline'" [innerHTML]="rowData[col.field].join('<br>')"></span>
         </td>
       </tr>

@@ -285,6 +285,10 @@ export class TrivyTableComponent<TData> implements OnInit {
   severityWrapperGetCssColor(severityId: number): string {
     return SeverityUtils.getCssColor(severityId);
   }
+
+  severityWrapperGetCssColorByName(severityName: string): string {
+    return SeverityUtils.getCssColorByName(severityName);
+  }
 }
 
 // clear filters on reset table: https://stackoverflow.com/questions/51395624/reset-filter-value-on-primeng-table
