@@ -23,3 +23,19 @@ h4.no-margins {
   margin-block-start: 0;
   margin-block-end: 0;
 }
+
+/* tests */
+.custom-small-row tr {
+  height: 25px; /* Adjust the height as needed */
+}
+
+.custom-small-row td {
+  padding: 0px; /* Adjust padding for a more compact look */
+  padding-left: 4px;
+  height: 25px !important; /* Ensure cell height matches row height */
+  line-height: 1em; /* Adjust line height if needed */
+}
+
+.custom-card .p-card-body {
+  padding: 8px !important;
+}

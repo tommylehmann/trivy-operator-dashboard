@@ -12,6 +12,7 @@ import { TrivyFilterData, TrivyTableColumn, TrivyTableOptions } from '../trivy-t
 
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
 
 export interface ImageDto {
   uid: string;
@@ -27,7 +28,7 @@ export interface DependsOn {
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, CardModule],
+  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, CardModule, TableModule],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
@@ -137,7 +138,7 @@ export class SbomReportsComponent {
         isFiltrable: true,
         isSortable: true,
         multiSelectType: 'none',
-        style: 'white-space: nowrap; text-overflow: ellipsis',
+        style: 'white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 290px; max-width: 290px',
         renderType: 'standard',
       },
       {
@@ -146,7 +147,7 @@ export class SbomReportsComponent {
         isFiltrable: true,
         isSortable: true,
         multiSelectType: 'none',
-        style: 'width: 120px; max-width: 120px;',
+        style: 'width: 130px; max-width: 130px;',
         renderType: 'standard',
       },
       {
@@ -302,5 +303,15 @@ export class SbomReportsComponent {
 
     this.dependsOnBoms = sboms;
 
+  }
+
+  public sanitizePropertyName(value: string | null | undefined): string | null | undefined {
+    return value?.replaceAll(':', ' ')
+      .replaceAll('.', '-')
+      .replaceAll('@', '-');
+  }
+
+  public sanitizePropertyValue(value: string | null | undefined): string | null | undefined {
+    return value?.replaceAll('@', ' [@] ');
   }
 }

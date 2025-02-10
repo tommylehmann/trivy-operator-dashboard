@@ -27,8 +27,35 @@
           />
         </div>
       </div>
-      <p-card [header]="selectedSbomDetailDto?.name ?? 'none'" [subheader]="selectedSbomDetailDto?.version ?? 'none'">
-        <span>{{ selectedSbomDetailDto?.purl ?? 'none' }}</span>
+      <!--<p-card [header]="selectedSbomDetailDto?.name ?? 'none'" [subheader]="selectedSbomDetailDto?.version ?? 'none'">-->
+      <p-card styleClass="custom-card">
+        <div class="flex flex-column pb-2">
+          <span>{{ selectedSbomDetailDto?.name ?? 'none' }} - {{ selectedSbomDetailDto?.version ?? 'none' }}</span>
+          <!--<span>{{ selectedSbomDetailDto?.purl ?? 'none' }}</span>-->
+        </div>
+        <p-table [value]="selectedSbomDetailDto?.properties || []"
+                 [scrollable]="true"
+                 scrollHeight="200px"
+                 [resizableColumns]="true"
+                 columnResizeMode="expand"
+                 styleClass="p-datatable-sm text-xs">
+          <!--<ng-template pTemplate="header">
+            <tr>
+              <th pResizableColumn>Name</th>
+              <th pResizableColumn>Value</th>
+            </tr>
+          </ng-template>-->
+          <ng-template pTemplate="body" let-rowData>
+            <tr>
+              <td style="white-space: pre-wrap; word-wrap: break-word; width: 100px; max-width: 100px;">
+                {{ sanitizePropertyName(rowData[0].substring(19)) }}
+              </td>
+              <td style="white-space: pre-wrap; word-wrap: break-word;">
+                {{ sanitizePropertyValue(rowData[1]) }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </p-card>
       <app-trivy-table
         tableHeight="30vh"
