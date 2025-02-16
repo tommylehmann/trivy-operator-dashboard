@@ -312,6 +312,7 @@ export class SbomReportsComponent {
   }
 
   public sanitizePropertyValue(value: string | null | undefined): string | null | undefined {
-    return value?.replaceAll('@', ' [@] ');
+    return value?.replaceAll('@', ' [@] ')
+      .replaceAll('sha256:', ' [sha256:] ');
   }
 }
