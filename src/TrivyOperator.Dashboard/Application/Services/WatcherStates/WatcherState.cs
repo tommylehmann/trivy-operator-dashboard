@@ -1,6 +1,7 @@
 ﻿using TrivyOperator.Dashboard.Application.Services.Alerts;
 using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.WatcherStates.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
@@ -12,7 +13,7 @@ public class WatcherState(
     IBackgroundQueue<WatcherStateInfo> backgroundQueue,
     IConcurrentCache<string, WatcherStateInfo> cache,
     IAlertsService alertService,
-    ILogger<WatcherState> logger)
+    ILogger<WatcherState> logger) : IWatcherState
 {
     protected Task? WatcherStateTask;
 
@@ -37,7 +38,11 @@ public class WatcherState(
             try
             {
                 WatcherStateInfo? watcherStateInfo = await backgroundQueue.DequeueAsync(cancellationToken);
-                switch(watcherStateInfo?.Status)
+                logger.LogWarning(
+                    "ZZZ Sending to Queue - {kubernetesObjectType} - WatchState - {watcherKey}",
+                    watcherStateInfo?.WatchedKubernetesObjectType.Name,
+                    watcherStateInfo?.WatcherKey);
+                switch (watcherStateInfo?.Status)
                 {
                     case WatcherStateStatus.Red:
                     case WatcherStateStatus.Yellow:
@@ -62,10 +67,10 @@ public class WatcherState(
 
     private async Task ProcessAddEvent(WatcherStateInfo watcherStateInfo, CancellationToken cancellationToken)
     {
-        string cacheKey = GetCacheKey(watcherStateInfo);
-        cache[cacheKey] = watcherStateInfo;
+        //string cacheKey = GetCacheKey(watcherStateInfo);
+        //cache[cacheKey] = watcherStateInfo;
 
-        await SetAlert(watcherStateInfo, cancellationToken);
+        //await SetAlert(watcherStateInfo, cancellationToken);
     }
 
     private ValueTask ProcessDeleteEvent(WatcherStateInfo watcherStateInfo)

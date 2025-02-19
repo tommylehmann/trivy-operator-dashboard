@@ -316,10 +316,14 @@ public static class BuilderServicesExtensions
 
     public static void AddWatcherStateServices(this IServiceCollection services)
     {
-        services.AddTransient<IWatcherStateOld, WatcherStateOld>();
+        
         services.AddSingleton<IConcurrentCache<string, WatcherStateInfo>, ConcurrentCache<string, WatcherStateInfo>>();
-
+        services.AddSingleton<IBackgroundQueue<WatcherStateInfo>, BackgroundQueue<WatcherStateInfo>>();
+        services.AddSingleton<IWatcherState, WatcherState>();
         services.AddScoped<IWatcherStateInfoService, WatcherStateInfoService>();
+
+        // old
+        services.AddTransient<IWatcherStateOld, WatcherStateOld>();
     }
 
     public static void AddAlertsServices(this IServiceCollection services)

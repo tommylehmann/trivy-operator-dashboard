@@ -3,6 +3,7 @@ using k8s.Autorest;
 using k8s.Models;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
@@ -11,12 +12,12 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     INamespacedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList>
         namespacedResourceWatchDomainService,
     TBackgroundQueue backgroundQueue,
-    IServiceProvider serviceProvider,
+    IBackgroundQueue<WatcherStateInfo> backgroundQueueWatcherState,
     ILogger<NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
         logger)
     : KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         backgroundQueue,
-        serviceProvider,
+        backgroundQueueWatcherState,
         logger), INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>, new()
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>

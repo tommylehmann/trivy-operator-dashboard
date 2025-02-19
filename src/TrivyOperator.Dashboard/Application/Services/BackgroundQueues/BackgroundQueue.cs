@@ -63,8 +63,8 @@ public class BackgroundQueue<TObject> : IBackgroundQueue<TObject>
 
     protected virtual void LogDequeue(TObject dequeuedObject)
     {
-        logger.LogDebug(
-            "Dequeued {objectType}",
+        logger.LogWarning(
+            "YYY Dequeued {objectType}",
             typeof(TObject).Name);
     }
 }
