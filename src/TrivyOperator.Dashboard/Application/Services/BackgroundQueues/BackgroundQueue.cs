@@ -1,14 +1,16 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Options;
 using System.Threading.Channels;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
 
 namespace TrivyOperator.Dashboard.Application.Services.BackgroundQueues;
 
-public class BackgroundQueue<TObject> : IBackgroundQueue<TObject> where TObject : class
+public class BackgroundQueue<TObject> : IBackgroundQueue<TObject>
+    where TObject : class
 {
-    private readonly ILogger<BackgroundQueue<TObject>> logger;
-    private readonly Channel<TObject> queue;
+    protected readonly ILogger<BackgroundQueue<TObject>> logger;
+    protected readonly Channel<TObject> queue;
 
     public BackgroundQueue(IOptions<BackgroundQueueOptions> options, ILogger<BackgroundQueue<TObject>> logger)
     {
@@ -24,20 +26,30 @@ public class BackgroundQueue<TObject> : IBackgroundQueue<TObject> where TObject 
     public async ValueTask QueueBackgroundWorkItemAsync(TObject enqueuedObject)
     {
         ArgumentNullException.ThrowIfNull(enqueuedObject, nameof(enqueuedObject));
-
-        logger.LogDebug(
-            "Queueing {objectType}",
-            typeof(TObject).Name);
+        LogQueue(enqueuedObject);
+        
         await queue.Writer.WriteAsync(enqueuedObject);
     }
 
     public async ValueTask<TObject> DequeueAsync(CancellationToken cancellationToken)
     {
-        TObject enqueuedObject = await queue.Reader.ReadAsync(cancellationToken);
+        TObject dequeuedObject = await queue.Reader.ReadAsync(cancellationToken);
+        LogDequeue(dequeuedObject);
+
+        return dequeuedObject;
+    }
+
+    protected virtual void LogQueue(TObject enqueuedObject)
+    {
+        logger.LogDebug(
+            "Queueing {objectType}",
+            typeof(TObject).Name);
+    }
+
+    protected virtual void LogDequeue(TObject dequeuedObject)
+    {
         logger.LogDebug(
             "Dequeued {objectType}",
             typeof(TObject).Name);
-
-        return enqueuedObject;
     }
 }
