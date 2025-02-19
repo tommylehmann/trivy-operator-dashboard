@@ -21,7 +21,7 @@ public static class WatcherStateInfoExtensions
             : new WatcherStateInfoDto
             {
                 KubernetesObjectType = watcherStateInfo.WatchedKubernetesObjectType.Name,
-                NamespaceName = watcherStateInfo.NamespaceName,
+                NamespaceName = watcherStateInfo.WatcherKey,
                 Status = watcherStateInfo.Status.ToString(),
                 MitigationMessage = GetMitigationMessage(watcherStateInfo),
                 LastException = watcherStateInfo.LastException?.Message ?? string.Empty,

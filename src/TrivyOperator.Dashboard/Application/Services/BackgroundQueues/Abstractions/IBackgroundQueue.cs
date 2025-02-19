@@ -2,6 +2,6 @@
 
 public interface IBackgroundQueue<TObject> where TObject : class
 {
-    ValueTask<TObject> DequeueAsync(CancellationToken cancellationToken);
+    ValueTask<TObject?> DequeueAsync(CancellationToken cancellationToken);
     ValueTask QueueBackgroundWorkItemAsync(TObject enqueuedObject);
 }

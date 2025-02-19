@@ -27,16 +27,31 @@ public class BackgroundQueue<TObject> : IBackgroundQueue<TObject>
     {
         ArgumentNullException.ThrowIfNull(enqueuedObject, nameof(enqueuedObject));
         LogQueue(enqueuedObject);
-        
-        await queue.Writer.WriteAsync(enqueuedObject);
+
+        try
+        {
+            await queue.Writer.WriteAsync(enqueuedObject);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Could not enqueue {objectType}", typeof(TObject).Name);
+        }
     }
 
-    public async ValueTask<TObject> DequeueAsync(CancellationToken cancellationToken)
+    public async ValueTask<TObject?> DequeueAsync(CancellationToken cancellationToken)
     {
-        TObject dequeuedObject = await queue.Reader.ReadAsync(cancellationToken);
-        LogDequeue(dequeuedObject);
+        try
+        {
+            TObject dequeuedObject = await queue.Reader.ReadAsync(cancellationToken);
+            LogDequeue(dequeuedObject);
 
-        return dequeuedObject;
+            return dequeuedObject;
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Could not dequeue {objectType}", typeof(TObject).Name);
+        }
+        return null;
     }
 
     protected virtual void LogQueue(TObject enqueuedObject)

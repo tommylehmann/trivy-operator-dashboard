@@ -5,5 +5,6 @@ public enum WatcherStateStatus
     Green,
     Yellow,
     Red,
+    Deleted,
     Unknown,
 }

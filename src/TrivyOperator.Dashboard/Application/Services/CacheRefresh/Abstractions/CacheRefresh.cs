@@ -38,8 +38,8 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
         {
             try
             {
-                IWatcherEvent<TKubernetesObject> watcherEvent = await backgroundQueue.DequeueAsync(cancellationToken);
-                switch (watcherEvent.WatcherEventType)
+                IWatcherEvent<TKubernetesObject>? watcherEvent = await backgroundQueue.DequeueAsync(cancellationToken);
+                switch (watcherEvent?.WatcherEventType)
                 {
                     case WatchEventType.Added:
                         ProcessAddEvent(watcherEvent, cancellationToken);

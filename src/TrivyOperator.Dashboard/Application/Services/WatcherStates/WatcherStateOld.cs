@@ -25,8 +25,6 @@ public class WatcherStateOld(
             watcherKey,
             (int)exception.Response.StatusCode);
         await AddOrUpdateKey(watchedKubernetesObjectType, watcherKey, exception);
-
-        await Task.Delay(60000);
     }
 
     public async ValueTask ProcessWatcherSuccess(Type watchedKubernetesObjectType, string watcherKey) =>
@@ -57,7 +55,7 @@ public class WatcherStateOld(
             WatcherStateInfo newWatcherStateDetails = new()
             {
                 WatchedKubernetesObjectType = watchedKubernetesObjectType,
-                NamespaceName = watcherKey == VarUtils.DefaultCacheRefreshKey ? null : watcherKey,
+                WatcherKey = watcherKey == VarUtils.DefaultCacheRefreshKey ? string.Empty : watcherKey,
                 Status = newException == null ? WatcherStateStatus.Green : WatcherStateStatus.Red,
                 LastException = newException,
             };

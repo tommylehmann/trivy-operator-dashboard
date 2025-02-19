@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System.Linq;
 using TrivyOperator.Dashboard.Application.Hubs;
 using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
@@ -32,7 +33,10 @@ public class AlertsService(
 
         await alertsHubContext.Clients.All.SendAsync("ReceiveAddedAlert", alert.ToAlertDto(emitter));
 
-        logger.LogDebug($"Added alert for {emitter} and {alert.EmitterKey} with severity {alert.Severity}.");
+        logger.LogDebug("Added alert for {emitter} and {emitterKey} with severity {alertSeverity}.",
+            emitter,
+            alert.EmitterKey,
+            alert.Severity);
     }
 
     public async Task RemoveAlert(string emitter, Alert alert)
@@ -40,7 +44,10 @@ public class AlertsService(
         cache.TryGetValue(emitter, out IList<Alert>? alerts);
         if (alerts != null)
         {
-            RemoveAlertByKey(alerts, alert.EmitterKey);
+            if (alerts.FirstOrDefault(x => x.EmitterKey == alert.EmitterKey) is not null)
+            {
+                RemoveAlertByKey(alerts, alert.EmitterKey);
+            }
         }
 
         await alertsHubContext.Clients.All.SendAsync("ReceiveRemovedAlert", alert.ToAlertDto(emitter));
