@@ -12,14 +12,13 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
     IConcurrentCache<string, IList<TKubernetesObject>> cache,
     ILogger<CacheRefresh<TKubernetesObject, TBackgroundQueue>> logger)
     : ICacheRefresh<TKubernetesObject, TBackgroundQueue> where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
-    where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
+    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
-    protected TBackgroundQueue backgroundQueue = backgroundQueue;
     protected Task? CacheRefreshTask;
 
     public void StartEventsProcessing(CancellationToken cancellationToken)
     {
-        if (CacheRefreshTask is not null)
+        if (IsQueueProcessingStarted())
         {
             logger.LogWarning(
                 "Processing for {kubernetesObjectType} already started. Ignoring...",

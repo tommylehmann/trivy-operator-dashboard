@@ -4,7 +4,7 @@ using k8s.Models;
 using System.Net;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.WatcherStates;
+using TrivyOperator.Dashboard.Application.Services.WatcherStates.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
@@ -17,7 +17,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
-    where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
+    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 
 {
     private static readonly Random random = new();
@@ -100,7 +100,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                         if (retryCount != 0)
                         {
                             using IServiceScope scope = serviceProvider.CreateScope();
-                            IWatcherState watcherState = scope.ServiceProvider.GetRequiredService<IWatcherState>();
+                            IWatcherStateOld watcherState = scope.ServiceProvider.GetRequiredService<IWatcherStateOld>();
                             await watcherState.ProcessWatcherSuccess(typeof(TKubernetesObject), watcherKey);
                             retryCount = 0;
                         }
@@ -150,13 +150,13 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                                                          or HttpStatusCode.Forbidden or HttpStatusCode.NotFound)
             {
                 using IServiceScope scope = serviceProvider.CreateScope();
-                IWatcherState watcherState = scope.ServiceProvider.GetRequiredService<IWatcherState>();
+                IWatcherStateOld watcherState = scope.ServiceProvider.GetRequiredService<IWatcherStateOld>();
                 await watcherState.ProcessWatcherError(typeof(TKubernetesObject), watcherKey, hoe);
             }
             catch (TaskCanceledException)
             {
                 using IServiceScope scope = serviceProvider.CreateScope();
-                IWatcherState watcherState = scope.ServiceProvider.GetRequiredService<IWatcherState>();
+                IWatcherStateOld watcherState = scope.ServiceProvider.GetRequiredService<IWatcherStateOld>();
                 await watcherState.ProcessWatcherCancel(typeof(TKubernetesObject), watcherKey);
             }
             catch (Exception ex)

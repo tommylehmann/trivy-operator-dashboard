@@ -21,7 +21,7 @@ public class ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBac
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>, new()
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
-    where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
+    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,

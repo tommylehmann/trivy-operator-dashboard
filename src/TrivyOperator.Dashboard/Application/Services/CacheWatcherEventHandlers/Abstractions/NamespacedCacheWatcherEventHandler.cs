@@ -16,7 +16,7 @@ public class
             TKubernetesObject>> logger)
     : CacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcherEvent, TKubernetesWatcher,
             TKubernetesObject>(cacheRefresh, kubernetesWatcher, logger),
-        INamespacedCacheWatcherEventHandler where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
+        INamespacedCacheWatcherEventHandler where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
     where TCacheRefresh : ICacheRefresh<TKubernetesObject, TBackgroundQueue>
     where TKubernetesWatcherEvent : class, IWatcherEvent<TKubernetesObject>, new()
     where TKubernetesWatcher : INamespacedWatcher<TKubernetesObject>

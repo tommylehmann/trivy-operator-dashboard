@@ -10,10 +10,10 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 public class SbomReportWatcher(
     INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>>
         namespacedResourceWatchDomainService,
-    IBackgroundQueue<SbomReportCr> backgroundQueue,
+    IKubernetesBackgroundQueue<SbomReportCr> backgroundQueue,
     IServiceProvider serviceProvider,
     ILogger<SbomReportWatcher> logger)
-    : NamespacedWatcher<CustomResourceList<SbomReportCr>, SbomReportCr, IBackgroundQueue<SbomReportCr>,
+    : NamespacedWatcher<CustomResourceList<SbomReportCr>, SbomReportCr, IKubernetesBackgroundQueue<SbomReportCr>,
         WatcherEvent<SbomReportCr>>(namespacedResourceWatchDomainService, backgroundQueue, serviceProvider, logger)
 {
     protected override void ProcessReceivedKubernetesObject(SbomReportCr kubernetesObject)

@@ -8,11 +8,11 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh;
 
 public class NamespaceCacheRefresh(
-    IBackgroundQueue<V1Namespace> backgroundQueue,
+    IKubernetesBackgroundQueue<V1Namespace> backgroundQueue,
     IConcurrentCache<string, IList<V1Namespace>> cache,
     IEnumerable<INamespacedCacheWatcherEventHandler> services,
     ILogger<NamespaceCacheRefresh> logger)
-    : CacheRefresh<V1Namespace, IBackgroundQueue<V1Namespace>>(backgroundQueue, cache, logger)
+    : CacheRefresh<V1Namespace, IKubernetesBackgroundQueue<V1Namespace>>(backgroundQueue, cache, logger)
 {
     protected override void ProcessAddEvent(
         IWatcherEvent<V1Namespace> watcherEvent,

@@ -21,7 +21,7 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>, new()
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
-    where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
+    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
     public void Delete(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
     {

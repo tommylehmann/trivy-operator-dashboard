@@ -6,7 +6,7 @@ namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions
 
 public interface ICacheRefresh<TKubernetesObject, TBackgroundQueue>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
-    where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
+    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
     void StartEventsProcessing(CancellationToken cancellationToken);
     bool IsQueueProcessingStarted();
