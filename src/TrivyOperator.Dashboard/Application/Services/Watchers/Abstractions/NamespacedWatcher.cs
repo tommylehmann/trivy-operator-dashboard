@@ -24,21 +24,6 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
-    public void Delete(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
-    {
-        string sourceNamespace = GetNamespaceFromSourceEvent(sourceKubernetesObject);
-        logger.LogInformation(
-            "Deleting Watcher for {kubernetesObjectType} and key {watcherKey}.",
-            typeof(TKubernetesObject).Name,
-            sourceNamespace);
-        if (Watchers.TryGetValue(sourceNamespace, out TaskWithCts taskWithCts))
-        {
-            taskWithCts.Cts.Cancel();
-            // TODO: do I have to wait for Task.IsCanceled?
-            Watchers.Remove(sourceNamespace);
-        }
-    }
-
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
         IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
         string? lastResourceVersion,

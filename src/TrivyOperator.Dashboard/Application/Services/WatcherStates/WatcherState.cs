@@ -38,8 +38,8 @@ public class WatcherState(
             try
             {
                 WatcherStateInfo? watcherStateInfo = await backgroundQueue.DequeueAsync(cancellationToken);
-                logger.LogWarning(
-                    "ZZZ Sending to Queue - {kubernetesObjectType} - WatchState - {watcherKey}",
+                logger.LogDebug(
+                    "Sending to Queue - {kubernetesObjectType} - WatchState - {watcherKey}",
                     watcherStateInfo?.WatchedKubernetesObjectType.Name,
                     watcherStateInfo?.WatcherKey);
                 switch (watcherStateInfo?.Status)
@@ -55,22 +55,30 @@ public class WatcherState(
                         break;
                 }
             }
+            catch (OperationCanceledException)
+            {
+                // Prevent throwing if stoppingToken was signaled
+            }
             catch (Exception ex)
             {
                 logger.LogError(
                     ex,
                     "Error processing event for Watcher State.");
+                await Task.Delay(10000, cancellationToken);
             }
-            await Task.Delay(10000, cancellationToken);
+            
         }
     }
 
     private async Task ProcessAddEvent(WatcherStateInfo watcherStateInfo, CancellationToken cancellationToken)
     {
-        //string cacheKey = GetCacheKey(watcherStateInfo);
-        //cache[cacheKey] = watcherStateInfo;
+        string cacheKey = GetCacheKey(watcherStateInfo);
+        cache[cacheKey] = watcherStateInfo;
+        logger.LogDebug("Processing event for {cacherKey} with state {watcherStateStatus}",
+            cacheKey,
+            watcherStateInfo.Status);
 
-        //await SetAlert(watcherStateInfo, cancellationToken);
+        await SetAlert(watcherStateInfo, cancellationToken);
     }
 
     private ValueTask ProcessDeleteEvent(WatcherStateInfo watcherStateInfo)

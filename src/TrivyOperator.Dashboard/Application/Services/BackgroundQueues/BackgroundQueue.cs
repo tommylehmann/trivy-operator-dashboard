@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging.Console;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using System.Threading.Channels;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
@@ -15,7 +14,7 @@ public class BackgroundQueue<TObject> : IBackgroundQueue<TObject>
     public BackgroundQueue(IOptions<BackgroundQueueOptions> options, ILogger<BackgroundQueue<TObject>> logger)
     {
         this.logger = logger;
-        BoundedChannelOptions boundedChannelOptions = new(options.Value.Capacity)
+        BoundedChannelOptions boundedChannelOptions = new(options.Value.Capacity ?? 500)
         {
             FullMode = BoundedChannelFullMode.Wait,
         };
@@ -63,8 +62,8 @@ public class BackgroundQueue<TObject> : IBackgroundQueue<TObject>
 
     protected virtual void LogDequeue(TObject dequeuedObject)
     {
-        logger.LogWarning(
-            "YYY Dequeued {objectType}",
+        logger.LogDebug(
+            "Dequeued {objectType}",
             typeof(TObject).Name);
     }
 }

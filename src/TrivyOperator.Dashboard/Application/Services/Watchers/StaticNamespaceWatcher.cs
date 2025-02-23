@@ -9,7 +9,8 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class StaticNamespaceWatcher(
     IKubernetesBackgroundQueue<V1Namespace> backgroundQueue,
-    IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList> kubernetesNamespaceDomainService)
+    IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList> kubernetesNamespaceDomainService,
+    ILogger<StaticNamespaceWatcher> logger)
     : IClusterScopedWatcher<V1Namespace>
 {
     public async Task Add(CancellationToken cancellationToken, IKubernetesObject<V1ObjectMeta>? sourceKubernetesObjects)
@@ -25,5 +26,10 @@ public class StaticNamespaceWatcher(
 
             await backgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);
         }
+    }
+
+    public void Delete(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
+    {
+        logger.LogWarning("Delete called. Ignoring...");
     }
 }
