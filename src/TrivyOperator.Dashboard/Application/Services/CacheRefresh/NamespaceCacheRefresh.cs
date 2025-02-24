@@ -21,7 +21,7 @@ public class NamespaceCacheRefresh(
         base.ProcessAddEvent(watcherEvent, cancellationToken);
         foreach (INamespacedCacheWatcherEventHandler service in services)
         {
-            service.Start(cancellationToken, watcherEvent.KubernetesObject);
+            service.Start(cancellationToken, watcherEvent.KubernetesObject.Metadata.Name);
         }
     }
 
@@ -30,7 +30,7 @@ public class NamespaceCacheRefresh(
         base.ProcessDeleteEvent(watcherEvent);
         foreach (INamespacedCacheWatcherEventHandler service in services)
         {
-            service.Stop(watcherEvent.KubernetesObject);
+            service.Stop(watcherEvent.KubernetesObject.Metadata.Name);
         }
     }
 }

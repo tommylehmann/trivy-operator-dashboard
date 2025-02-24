@@ -24,23 +24,25 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
+    
+
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
-        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        string watcherKey,
         string? lastResourceVersion,
         CancellationToken? cancellationToken) => namespacedResourceWatchDomainService.GetResourceWatchList(
-        GetNamespaceFromSourceEvent(sourceKubernetesObject),
+        watcherKey,
         lastResourceVersion,
         GetWatcherRandomTimeout(),
         cancellationToken);
 
-    protected override async Task EnqueueWatcherEventWithError(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
+    protected override async Task EnqueueWatcherEventWithError(string watcherKey)
     {
         TKubernetesObject kubernetesObject = new()
         {
             Metadata = new V1ObjectMeta
             {
                 Name = "fakeObject",
-                NamespaceProperty = GetNamespaceFromSourceEvent(sourceKubernetesObject),
+                NamespaceProperty = watcherKey,
             },
         };
         TKubernetesWatcherEvent watcherEvent =
@@ -50,14 +52,12 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     }
 
     protected override async Task<TKubernetesObjectList> GetInitialResources(
-        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        string watcherKey,
         string? continueToken,
         CancellationToken? cancellationToken = null)
     {
-        string namespaceName = GetNamespaceFromSourceEvent(sourceKubernetesObject);
-
         return await namespacedResourceWatchDomainService.GetResourceList(
-            namespaceName,
+            watcherKey,
             resourceListPageSize,
             continueToken,
             cancellationToken);

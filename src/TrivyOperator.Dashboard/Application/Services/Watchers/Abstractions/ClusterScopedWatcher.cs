@@ -5,6 +5,7 @@ using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
@@ -25,14 +26,14 @@ public class ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBac
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
-        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        string watcherKey,
         string? lastResourceVersion,
         CancellationToken? cancellationToken = null) => clusterScopResourceWatchDomainService.GetResourceWatchList(
         lastResourceVersion,
         GetWatcherRandomTimeout(),
         cancellationToken);
 
-    protected override async Task EnqueueWatcherEventWithError(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject)
+    protected override async Task EnqueueWatcherEventWithError(string watcherKey = VarUtils.DefaultCacheRefreshKey)
     {
         TKubernetesObject kubernetesObject = new();
         WatcherEvent<TKubernetesObject> watcherEvent =
@@ -42,7 +43,7 @@ public class ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBac
     }
 
     protected override async Task<TKubernetesObjectList> GetInitialResources(
-        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject,
+        string watcherKey,
         string? continueToken,
         CancellationToken? cancellationToken) => await clusterScopResourceWatchDomainService.GetResourceList(
         resourceListPageSize,

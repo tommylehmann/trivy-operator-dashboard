@@ -16,15 +16,16 @@ public class
             TKubernetesObject>> logger)
     : CacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcherEvent, TKubernetesWatcher,
             TKubernetesObject>(cacheRefresh, kubernetesWatcher, logger),
-        INamespacedCacheWatcherEventHandler where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
+        INamespacedCacheWatcherEventHandler
+    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
     where TCacheRefresh : ICacheRefresh<TKubernetesObject, TBackgroundQueue>
     where TKubernetesWatcherEvent : class, IWatcherEvent<TKubernetesObject>, new()
     where TKubernetesWatcher : INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>
 {
-    public void Stop(IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject = null)
+    public void Stop(string watcherKey)
     {
-        Logger.LogDebug("Removing Watcher for {kubernetesObjectType}.", typeof(TKubernetesObject).Name);
-        KubernetesWatcher.Delete(sourceKubernetesObject);
+        Logger.LogDebug("Removing Watcher for {kubernetesObjectType} - {watcherKey}.", typeof(TKubernetesObject).Name, watcherKey);
+        KubernetesWatcher.Delete(watcherKey);
     }
 }

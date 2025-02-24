@@ -342,6 +342,7 @@ public static class BuilderServicesExtensions
         services.Configure<KubernetesOptions>(kubernetesConfiguration);
 
         services.AddHostedService<CacheWatcherEventHandlerHostedService>();
+        services.AddHostedService<WatcherStateCacheTimedHostedService>();
 
         services.AddSingleton<IKubernetesClientFactory, KubernetesClientFactory>();
     }
