@@ -1,5 +1,4 @@
-﻿using Elasticsearch.Net;
-using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
+﻿using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
@@ -12,12 +11,13 @@ public class WatcherStateCacheTimedHostedService(
 {
     private Timer? timer;
     private readonly int timeFrameInMinutes = 6;
-    private CancellationToken? cancellationToken;
+    private CancellationToken? ct;
+    
     public Task StartAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Timed Hosted Service running.");
-        this.cancellationToken = cancellationToken;
-        timer = new Timer(async (e) =>
+        ct = cancellationToken;
+        timer = new Timer(async void (_) =>
         {
             await DoWorkAsync();
         }, null, TimeSpan.Zero, TimeSpan.FromMinutes(timeFrameInMinutes)); // TODO: use consistent timeout with Watcher one, from appsettings
@@ -32,16 +32,15 @@ public class WatcherStateCacheTimedHostedService(
 
             foreach (WatcherStateInfo expiredWatcherState in expiredWatcherStates)
             {
-                var clusteredScopedWatcherType = typeof(IClusterScopedWatcher<>).MakeGenericType(expiredWatcherState.WatchedKubernetesObjectType);
-                var namespacedWatcherType = typeof(INamespacedWatcher<>).MakeGenericType(expiredWatcherState.WatchedKubernetesObjectType);
+                Type clusteredScopedWatcherType = typeof(IClusterScopedWatcher<>).MakeGenericType(expiredWatcherState.WatchedKubernetesObjectType);
+                Type namespacedWatcherType = typeof(INamespacedWatcher<>).MakeGenericType(expiredWatcherState.WatchedKubernetesObjectType);
 
-                dynamic? aTypeService = serviceProvider.GetServices(clusteredScopedWatcherType).FirstOrDefault()
+                object? watcherService = serviceProvider.GetServices(clusteredScopedWatcherType).FirstOrDefault()
                     ?? serviceProvider.GetServices(namespacedWatcherType).FirstOrDefault();
 
-                if (aTypeService != null)
+                if (watcherService is IKubernetesWatcher watcher)
                 {
-                    CancellationToken cancellationToken = this.cancellationToken ?? new();
-                    await aTypeService.Recreate(cancellationToken, expiredWatcherState.WatcherKey);
+                    await watcher.Recreate(ct ?? CancellationToken.None, expiredWatcherState.WatcherKey);
                 }
             }
         }
