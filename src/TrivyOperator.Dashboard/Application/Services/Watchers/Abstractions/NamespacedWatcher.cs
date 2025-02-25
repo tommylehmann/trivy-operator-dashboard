@@ -1,6 +1,7 @@
 ﻿using k8s;
 using k8s.Autorest;
 using k8s.Models;
+using System.Threading.Tasks;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
@@ -24,7 +25,14 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
-    
+    // TODO: new for ns cleanup
+    // also addd it to I
+    public async Task ReconcileNamespaces(string[] newNamespaceNames)
+    {
+        //var tasks = somethingArray.Select(s => s.DoSomething());
+        //await Task.WhenAll(tasks);
+        await Task.Delay(100);
+    }
 
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
         string watcherKey,

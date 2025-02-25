@@ -23,9 +23,9 @@ public class
     where TKubernetesWatcher : INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>
 {
-    public void Stop(string watcherKey)
+    public async Task Stop(CancellationToken cancellationToken, string watcherKey)
     {
         Logger.LogDebug("Removing Watcher for {kubernetesObjectType} - {watcherKey}.", typeof(TKubernetesObject).Name, watcherKey);
-        KubernetesWatcher.Delete(watcherKey);
+        await KubernetesWatcher.Delete(watcherKey, cancellationToken);
     }
 }

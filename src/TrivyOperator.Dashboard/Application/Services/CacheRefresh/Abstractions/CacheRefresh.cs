@@ -45,13 +45,16 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
                         ProcessAddEvent(watcherEvent, cancellationToken);
                         break;
                     case WatchEventType.Deleted:
-                        ProcessDeleteEvent(watcherEvent);
+                        await ProcessDeleteEvent(watcherEvent, cancellationToken);
                         break;
                     case WatchEventType.Error:
                         ProcessErrorEvent(watcherEvent);
                         break;
                     case WatchEventType.Modified:
                         ProcessModifiedEvent(watcherEvent, cancellationToken);
+                        break;
+                    case WatchEventType.Bookmark:
+                        ProcessBookmarkEvent(watcherEvent);
                         break;
                         //default:
                         //    break;
@@ -96,7 +99,7 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
         }
     }
 
-    protected virtual void ProcessDeleteEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
+    protected virtual Task ProcessDeleteEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
         string watcherKey = VarUtils.GetCacheRefreshKey(watcherEvent.KubernetesObject);
 
@@ -115,6 +118,7 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
                 kubernetesObjects.Remove(existingKubernetesObject);
             }
         }
+        return Task.CompletedTask;
     }
 
     protected virtual void ProcessErrorEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
@@ -134,4 +138,8 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
         logger.LogDebug("ProcessModifiedEvent - redirecting to ProcessAddEvent.");
         ProcessAddEvent(watcherEvent, cancellationToken);
     }
+
+    protected virtual void ProcessBookmarkEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
+    { }
+    // TODO: new for ns cleanup
 }

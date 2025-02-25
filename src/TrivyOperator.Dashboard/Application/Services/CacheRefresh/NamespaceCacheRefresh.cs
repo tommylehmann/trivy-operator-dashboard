@@ -25,12 +25,13 @@ public class NamespaceCacheRefresh(
         }
     }
 
-    protected override void ProcessDeleteEvent(IWatcherEvent<V1Namespace> watcherEvent)
+    protected override async Task ProcessDeleteEvent(IWatcherEvent<V1Namespace> watcherEvent, CancellationToken cancellationToken)
     {
-        base.ProcessDeleteEvent(watcherEvent);
-        foreach (INamespacedCacheWatcherEventHandler service in services)
-        {
-            service.Stop(watcherEvent.KubernetesObject.Metadata.Name);
-        }
+        await base.ProcessDeleteEvent(watcherEvent, cancellationToken);
+        IEnumerable<Task> tasks = services.Select(s => s.Stop(cancellationToken, watcherEvent.KubernetesObject.Metadata.Name));
+        await Task.WhenAll(tasks);
     }
+
+    protected override void ProcessBookmarkEvent(IWatcherEvent<V1Namespace> watcherEvent) => base.ProcessBookmarkEvent(watcherEvent);
+    // TODO: new for ns cleanup
 }

@@ -54,25 +54,27 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
         return Task.CompletedTask;
     }
 
-    public void Delete(string watcherKey)
+    public async Task Delete(string watcherKey, CancellationToken cancellationToken)
     {
         logger.LogInformation(
             "Deleting Watcher for {kubernetesObjectType} and key {watcherKey}.",
             typeof(TKubernetesObject).Name,
             watcherKey);
+        await EnqueueWatcherEventWithError(watcherKey);
         if (Watchers.TryGetValue(watcherKey, out TaskWithCts taskWithCts))
         {
             taskWithCts.Cts.Cancel();
             // TODO: do I have to wait for Task.IsCanceled?
             Watchers.Remove(watcherKey);
         }
+        await UpdateWatcherState(WatcherStateStatus.Deleted, watcherKey, cancellationToken);
     }
 
     public async Task Recreate(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey)
     {
         logger.LogWarning("Recreated called for {kubernetesObjectType} - {watcherKey}", typeof(TKubernetesObject).Name,
                         watcherKey);
-        Delete(watcherKey);
+        await Delete(watcherKey, cancellationToken);
         await Add(cancellationToken, watcherKey);
     }
 
