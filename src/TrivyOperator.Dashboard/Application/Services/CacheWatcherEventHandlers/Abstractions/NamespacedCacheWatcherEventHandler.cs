@@ -28,4 +28,9 @@ public class
         Logger.LogDebug("Removing Watcher for {kubernetesObjectType} - {watcherKey}.", typeof(TKubernetesObject).Name, watcherKey);
         await KubernetesWatcher.Delete(watcherKey, cancellationToken);
     }
+
+    public async Task ReconcileWatchers(string[] newNamespaceNames, CancellationToken cancellationToken)
+    {
+        await KubernetesWatcher.ReconcileNamespaces(newNamespaceNames, cancellationToken);
+    }
 }

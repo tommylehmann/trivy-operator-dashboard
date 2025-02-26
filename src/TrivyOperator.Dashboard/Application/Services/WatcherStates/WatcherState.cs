@@ -64,7 +64,7 @@ public class WatcherState(
                 logger.LogError(
                     ex,
                     "Error processing event for Watcher State.");
-                await Task.Delay(10000, cancellationToken);
+                await Task.Delay(1000, cancellationToken);
             }
             
         }

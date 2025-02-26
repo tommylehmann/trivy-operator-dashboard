@@ -1,8 +1,9 @@
 ﻿using k8s;
 using k8s.Autorest;
 using k8s.Models;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
@@ -14,11 +15,13 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
         namespacedResourceWatchDomainService,
     TBackgroundQueue backgroundQueue,
     IBackgroundQueue<WatcherStateInfo> backgroundQueueWatcherState,
+    IOptions<WatchersOptions> options,
     ILogger<NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
         logger)
     : KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         backgroundQueue,
         backgroundQueueWatcherState,
+        options,
         logger), INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>, new()
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
@@ -26,12 +29,15 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
     // TODO: new for ns cleanup
-    // also addd it to I
-    public async Task ReconcileNamespaces(string[] newNamespaceNames)
+    public async Task ReconcileNamespaces(string[] newNamespaceNames, CancellationToken cancellationToken)
     {
-        //var tasks = somethingArray.Select(s => s.DoSomething());
-        //await Task.WhenAll(tasks);
-        await Task.Delay(100);
+        IEnumerable<string> existingWatcherKeys = Watchers.Select(kvp => kvp.Key);
+        IEnumerable<string> newWatcherKeys = newNamespaceNames.Except(existingWatcherKeys);
+        IEnumerable<string> staleWatcherKeys = existingWatcherKeys.Except(newNamespaceNames);
+        List<Task> tasks = [];
+        tasks.AddRange(newWatcherKeys.Select(watcherKey => this.Add(cancellationToken, watcherKey)));
+        tasks.AddRange(staleWatcherKeys.Select(watcherKey => this.Delete(watcherKey, cancellationToken)));
+        await Task.WhenAll(tasks);
     }
 
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(

@@ -7,4 +7,5 @@ public interface INamespacedWatcher<TKubernetesObject> : IKubernetesWatcher<TKub
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
 {
     Task Delete(string watcherKey, CancellationToken cancellationToken);
+    Task ReconcileNamespaces(string[] newNamespaceNames, CancellationToken cancellationToken);
 }

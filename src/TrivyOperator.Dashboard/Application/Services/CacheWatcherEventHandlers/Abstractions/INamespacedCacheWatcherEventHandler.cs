@@ -7,4 +7,5 @@ namespace TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers
 public interface INamespacedCacheWatcherEventHandler : ICacheWatcherEventHandler
 {
     Task Stop(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey);
+    Task ReconcileWatchers(string[] newNamespaceNames, CancellationToken cancellationToken);
 }

@@ -15,6 +15,7 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
     protected Task? CacheRefreshTask;
+    protected IConcurrentCache<string, IList<TKubernetesObject>> cache = cache;
 
     public void StartEventsProcessing(CancellationToken cancellationToken)
     {
@@ -54,7 +55,7 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
                         ProcessModifiedEvent(watcherEvent, cancellationToken);
                         break;
                     case WatchEventType.Bookmark:
-                        ProcessBookmarkEvent(watcherEvent);
+                        await ProcessBookmarkEvent(watcherEvent, cancellationToken);
                         break;
                         //default:
                         //    break;
@@ -139,7 +140,9 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
         ProcessAddEvent(watcherEvent, cancellationToken);
     }
 
-    protected virtual void ProcessBookmarkEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
-    { }
+    protected virtual Task ProcessBookmarkEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
     // TODO: new for ns cleanup
 }

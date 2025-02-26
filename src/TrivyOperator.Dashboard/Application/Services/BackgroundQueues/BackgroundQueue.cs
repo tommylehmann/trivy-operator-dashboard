@@ -14,7 +14,7 @@ public class BackgroundQueue<TObject> : IBackgroundQueue<TObject>
     public BackgroundQueue(IOptions<BackgroundQueueOptions> options, ILogger<BackgroundQueue<TObject>> logger)
     {
         this.logger = logger;
-        BoundedChannelOptions boundedChannelOptions = new(options.Value.Capacity ?? 500)
+        BoundedChannelOptions boundedChannelOptions = new(options.Value.Capacity)
         {
             FullMode = BoundedChannelFullMode.Wait,
         };

@@ -1,8 +1,10 @@
 ﻿using k8s;
 using k8s.Autorest;
 using k8s.Models;
+using Microsoft.Extensions.Options;
 using System.Net;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Utils;
@@ -12,9 +14,10 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         TBackgroundQueue backgroundQueue,
         IBackgroundQueue<WatcherStateInfo> backgroundQueueWatcherState,
+        IOptions<WatchersOptions> options,
         ILogger<KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>> logger)
     : IKubernetesWatcher<TKubernetesObject>
-    where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
+    where TKubernetesObject : IKubernetesObject<V1ObjectMeta>, new()
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
     where TKubernetesWatcherEvent : IWatcherEvent<TKubernetesObject>, new()
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
@@ -101,6 +104,9 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                         typeof(TKubernetesObject).Name,
                         watcherKey,
                         lastResourceVersion);
+                    TKubernetesWatcherEvent kubernetesWatcherEvent =
+                                new() { KubernetesObject = new(), WatcherEventType = WatchEventType.Bookmark };
+                    await BackgroundQueue.QueueBackgroundWorkItemAsync(kubernetesWatcherEvent);
                 }
 
                 await UpdateWatcherState(WatcherStateStatus.Green, watcherKey, cancellationToken);
@@ -277,7 +283,8 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
     protected virtual void ProcessReceivedKubernetesObject(TKubernetesObject kubernetesObject)
     { }
 
-    protected static int GetWatcherRandomTimeout() => random.Next(300, 330);
+    protected int GetWatcherRandomTimeout() 
+        => random.Next(options.Value.WatchTimeoutInSeconds, (int)(options.Value.WatchTimeoutInSeconds * 1.1));
 
     protected async Task UpdateWatcherState(WatcherStateStatus watcherStateStatus, string watcherKey, CancellationToken cancellationToken)
         => await UpdateWatcherState(watcherStateStatus, watcherKey, null, cancellationToken);

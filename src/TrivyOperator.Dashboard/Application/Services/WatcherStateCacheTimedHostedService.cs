@@ -1,4 +1,6 @@
-﻿using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
+﻿using Microsoft.Extensions.Options;
+using TrivyOperator.Dashboard.Application.Services.Options;
+using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
@@ -7,28 +9,27 @@ namespace TrivyOperator.Dashboard.Application.Services;
 public class WatcherStateCacheTimedHostedService(
     IConcurrentCache<string, WatcherStateInfo> cache,
     IServiceProvider serviceProvider,
+    IOptions<WatchersOptions> options,
     ILogger<WatcherStateCacheTimedHostedService> logger) : IHostedService, IDisposable
 {
     private Timer? timer;
-    private readonly int timeFrameInMinutes = 6;
-    private CancellationToken? ct;
+    private readonly int timeFrameInSeconds = (int)(options.Value.WatchTimeoutInSeconds * 1.1 + 60);
     
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Timed Hosted Service running.");
-        ct = cancellationToken;
-        timer = new Timer(async void (_) =>
-        {
-            await DoWorkAsync();
-        }, null, TimeSpan.Zero, TimeSpan.FromMinutes(timeFrameInMinutes)); // TODO: use consistent timeout with Watcher one, from appsettings
+        logger.LogInformation("Watcher State Cache Timed Hosted Service is running.");
+        timer = new Timer(async state => await DoWorkAsync(cancellationToken),
+            null, TimeSpan.Zero, TimeSpan.FromMinutes(1)); 
         return Task.CompletedTask;
     }
 
-    private async Task DoWorkAsync()
+    private async Task DoWorkAsync(CancellationToken cancellationToken)
     {
         try
         {
-            IEnumerable<WatcherStateInfo> expiredWatcherStates = cache.Select(kvp => kvp.Value).Where(x => (DateTime.Now - x.LastEventMoment).TotalMinutes > timeFrameInMinutes) ?? [];
+            IEnumerable<WatcherStateInfo> expiredWatcherStates = cache
+                .Select(kvp => kvp.Value)
+                .Where(x => (DateTime.Now - x.LastEventMoment).TotalSeconds > timeFrameInSeconds) ?? [];
 
             foreach (WatcherStateInfo expiredWatcherState in expiredWatcherStates)
             {
@@ -40,7 +41,7 @@ public class WatcherStateCacheTimedHostedService(
 
                 if (watcherService is IKubernetesWatcher watcher)
                 {
-                    await watcher.Recreate(ct ?? CancellationToken.None, expiredWatcherState.WatcherKey);
+                    await watcher.Recreate(cancellationToken, expiredWatcherState.WatcherKey);
                 }
             }
         }

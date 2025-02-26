@@ -336,10 +336,12 @@ public static class BuilderServicesExtensions
     public static void AddCommons(
         this IServiceCollection services,
         IConfiguration queuesConfiguration,
-        IConfiguration kubernetesConfiguration)
+        IConfiguration kubernetesConfiguration,
+        IConfiguration watchersConfiguration)
     {
         services.Configure<BackgroundQueueOptions>(queuesConfiguration);
         services.Configure<KubernetesOptions>(kubernetesConfiguration);
+        services.Configure<WatchersOptions>(watchersConfiguration);
 
         services.AddHostedService<CacheWatcherEventHandlerHostedService>();
         services.AddHostedService<WatcherStateCacheTimedHostedService>();
