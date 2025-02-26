@@ -27,6 +27,7 @@ public class WatcherStateCacheTimedHostedService(
         
         return Task.CompletedTask;
     }
+    
     private void Execute(object? state)
     {
         if (executingTask == null || executingTask.IsCompleted)
@@ -45,7 +46,7 @@ public class WatcherStateCacheTimedHostedService(
         {
             IEnumerable<WatcherStateInfo> expiredWatcherStates = cache
                 .Select(kvp => kvp.Value)
-                .Where(x => (DateTime.Now - x.LastEventMoment).TotalSeconds > timeFrameInSeconds) ?? [];
+                .Where(x => (DateTime.Now - x.LastEventMoment).TotalSeconds > timeFrameInSeconds);
 
             foreach (WatcherStateInfo expiredWatcherState in expiredWatcherStates)
             {
