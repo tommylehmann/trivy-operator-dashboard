@@ -88,6 +88,7 @@ public class WatcherStateCacheTimedHostedService(
             await executingTask.WaitAsync(cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         }
     }
+    
     protected virtual void Dispose(bool disposing)
     {
         if (!disposed)
