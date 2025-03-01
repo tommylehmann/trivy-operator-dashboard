@@ -178,6 +178,7 @@ ClientBin/
 *.pfx
 *.publishsettings
 orleans.codegen.cs
+*.bak
 
 /node_modules
 
