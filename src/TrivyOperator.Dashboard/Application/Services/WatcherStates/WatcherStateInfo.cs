@@ -6,5 +6,5 @@ public class WatcherStateInfo
     public string WatcherKey { get; set; } = string.Empty;
     public WatcherStateStatus Status { get; set; }
     public Exception? LastException { get; set; }
-    public DateTime LastEventMoment { get; init; } = DateTime.Now;
+    public DateTime LastEventMoment { get; init; } = DateTime.UtcNow;
 }

@@ -1,6 +1,7 @@
 ﻿using k8s.Autorest;
 using System.Net;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
@@ -22,7 +23,9 @@ public static class WatcherStateInfoExtensions
             : new WatcherStateInfoDto
             {
                 KubernetesObjectType = watcherStateInfo.WatchedKubernetesObjectType.Name,
-                NamespaceName = watcherStateInfo.WatcherKey,
+                NamespaceName = watcherStateInfo.WatcherKey == VarUtils.DefaultCacheRefreshKey 
+                    ? string.Empty
+                    : watcherStateInfo.WatcherKey,
                 Status = watcherStateInfo.Status.ToString(),
                 MitigationMessage = GetMitigationMessage(watcherStateInfo),
                 LastException = watcherStateInfo.LastException?.Message ?? string.Empty,
