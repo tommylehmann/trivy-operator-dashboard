@@ -76,7 +76,7 @@ public class WatcherStateCacheTimedHostedService(
         try
         {
             IEnumerable<WatcherStateInfo> expiredWatcherStates = cache.Select(kvp => kvp.Value)
-                .Where(x => (DateTime.Now - x.LastEventMoment).TotalSeconds > timeFrameInSeconds);
+                .Where(x => (DateTime.UtcNow - x.LastEventMoment).TotalSeconds > timeFrameInSeconds);
 
             foreach (WatcherStateInfo expiredWatcherState in expiredWatcherStates)
             {

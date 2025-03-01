@@ -12,6 +12,7 @@ import { TrivyFilterData, TrivyTableColumn, TrivyTableOptions } from '../trivy-t
 
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
+import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 
 export interface ImageDto {
@@ -28,7 +29,7 @@ export interface DependsOn {
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, CardModule, TableModule],
+  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, CardModule, PanelModule, TableModule],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
