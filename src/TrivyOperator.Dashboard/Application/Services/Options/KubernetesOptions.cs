@@ -2,15 +2,15 @@
 
 public record KubernetesOptions
 {
-    public string? KubeConfigFileName { get; init; }
-    public string? NamespaceList { get; init; }
-    public bool? TrivyUseClusterRbacAssessmentReport { get; init; }
-    public bool? TrivyUseConfigAuditReport { get; init; }
-    public bool? TrivyUseExposedSecretReport { get; init; }
-    public bool? TrivyUseVulnerabilityReport { get; init; }
-    public bool? TrivyUseClusterVulnerabilityReport { get; init; }
-    public bool? TrivyUseRbacAssessmentReport { get; init; }
-    public bool? TrivyUseSbomReport { get; init; }
-    public bool? TrivyUseClusterSbomReport { get; init; }
-    public bool? TrivyUseClusterComplianceReport { get; init; }
+    public string KubeConfigFileName { get; init; } = string.Empty;
+    public string NamespaceList { get; init; } = string.Empty;
+    public bool TrivyUseClusterRbacAssessmentReport { get; init; } = true;
+    public bool TrivyUseConfigAuditReport { get; init; } = true;
+    public bool TrivyUseExposedSecretReport { get; init; } = true;
+    public bool TrivyUseVulnerabilityReport { get; init; } = true;
+    public bool TrivyUseClusterVulnerabilityReport { get; init; } = true;
+    public bool TrivyUseRbacAssessmentReport { get; init; } = true;
+    public bool TrivyUseSbomReport { get; init; } = true;
+    public bool TrivyUseClusterSbomReport { get; init; } = true;
+    public bool TrivyUseClusterComplianceReport { get; init; } = true;
 }

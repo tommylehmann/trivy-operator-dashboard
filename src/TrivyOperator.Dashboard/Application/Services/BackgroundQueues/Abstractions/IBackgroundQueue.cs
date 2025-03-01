@@ -1,11 +1,7 @@
-﻿using k8s;
-using k8s.Models;
-using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
+﻿namespace TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 
-namespace TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
-
-public interface IBackgroundQueue<TKubernetesObject> where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
+public interface IBackgroundQueue<TObject> where TObject : class
 {
-    ValueTask<IWatcherEvent<TKubernetesObject>> DequeueAsync(CancellationToken cancellationToken);
-    ValueTask QueueBackgroundWorkItemAsync(IWatcherEvent<TKubernetesObject> workItem);
+    ValueTask<TObject?> DequeueAsync(CancellationToken cancellationToken);
+    ValueTask QueueBackgroundWorkItemAsync(TObject enqueuedObject);
 }

@@ -4,6 +4,7 @@ using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions
 using TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
 
@@ -14,7 +15,8 @@ public class
         TKubernetesWatcher kubernetesWatcher,
         ILogger<CacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcherEvent, TKubernetesWatcher,
             TKubernetesObject>> logger)
-    : ICacheWatcherEventHandler where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
+    : ICacheWatcherEventHandler
+    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
     where TCacheRefresh : ICacheRefresh<TKubernetesObject, TBackgroundQueue>
     where TKubernetesWatcherEvent : class, IWatcherEvent<TKubernetesObject>, new()
     where TKubernetesWatcher : IKubernetesWatcher<TKubernetesObject>
@@ -30,10 +32,10 @@ public class
 
     public void Start(
         CancellationToken cancellationToken,
-        IKubernetesObject<V1ObjectMeta>? sourceKubernetesObject = null)
+        string watcherKey = VarUtils.DefaultCacheRefreshKey)
     {
-        Logger.LogDebug("Adding Watcher for {kubernetesObjectType}.", typeof(TKubernetesObject).Name);
-        KubernetesWatcher.Add(cancellationToken, sourceKubernetesObject);
+        Logger.LogDebug("Adding Watcher for {kubernetesObjectType} - {watcherKey}.", typeof(TKubernetesObject).Name, watcherKey);
+        KubernetesWatcher.Add(cancellationToken, watcherKey);
         if (!CacheRefresh.IsQueueProcessingStarted())
         {
             Logger.LogDebug("Adding CacheRefresher for {kubernetesObjectType}.", typeof(TKubernetesObject).Name);

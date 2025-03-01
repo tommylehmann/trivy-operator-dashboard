@@ -16,61 +16,61 @@ public class BackendSettingsService(IOptions<KubernetesOptions> options) : IBack
             {
                 Id = "ccr",
                 Name = "Cluster Compliance Report",
-                Enabled = options.Value.TrivyUseClusterComplianceReport ?? false,
+                Enabled = options.Value.TrivyUseClusterComplianceReport,
             });
         backendSettingsDto.TrivyReportConfigDtos.Add(
             new BackendSettingsTrivyReportConfigDto
             {
                 Id = "crar",
                 Name = "Cluster RBAC Assessment Report",
-                Enabled = options.Value.TrivyUseClusterRbacAssessmentReport ?? false,
+                Enabled = options.Value.TrivyUseClusterRbacAssessmentReport,
             });
         backendSettingsDto.TrivyReportConfigDtos.Add(
             new BackendSettingsTrivyReportConfigDto
             {
                 Id = "car",
                 Name = "Config Audit Report",
-                Enabled = options.Value.TrivyUseConfigAuditReport ?? false,
+                Enabled = options.Value.TrivyUseConfigAuditReport,
             });
         backendSettingsDto.TrivyReportConfigDtos.Add(
             new BackendSettingsTrivyReportConfigDto
             {
                 Id = "esr",
                 Name = "Exposed Secret Report",
-                Enabled = options.Value.TrivyUseExposedSecretReport ?? false,
+                Enabled = options.Value.TrivyUseExposedSecretReport,
             });
         backendSettingsDto.TrivyReportConfigDtos.Add(
             new BackendSettingsTrivyReportConfigDto
             {
                 Id = "vr",
                 Name = "Vulnerability Report",
-                Enabled = options.Value.TrivyUseVulnerabilityReport ?? false,
+                Enabled = options.Value.TrivyUseVulnerabilityReport,
             });
         backendSettingsDto.TrivyReportConfigDtos.Add(
             new BackendSettingsTrivyReportConfigDto
             {
                 Id = "cvr",
                 Name = "Cluster Vulnerability Report",
-                Enabled = options.Value.TrivyUseClusterVulnerabilityReport ?? false,
+                Enabled = options.Value.TrivyUseClusterVulnerabilityReport,
             });
         backendSettingsDto.TrivyReportConfigDtos.Add(
             new BackendSettingsTrivyReportConfigDto
             {
                 Id = "rar",
                 Name = "RBAC Assessment Report",
-                Enabled = options.Value.TrivyUseRbacAssessmentReport ?? false,
+                Enabled = options.Value.TrivyUseRbacAssessmentReport,
             });
         backendSettingsDto.TrivyReportConfigDtos.Add(
             new BackendSettingsTrivyReportConfigDto
             {
-                Id = "sr", Name = "SBOM Report", Enabled = options.Value.TrivyUseSbomReport ?? false,
+                Id = "sr", Name = "SBOM Report", Enabled = options.Value.TrivyUseSbomReport,
             });
         backendSettingsDto.TrivyReportConfigDtos.Add(
             new BackendSettingsTrivyReportConfigDto
             {
                 Id = "csr",
                 Name = "Cluster SBOM Report",
-                Enabled = options.Value.TrivyUseClusterSbomReport ?? false,
+                Enabled = options.Value.TrivyUseClusterSbomReport,
             });
 
         return Task.FromResult(backendSettingsDto);

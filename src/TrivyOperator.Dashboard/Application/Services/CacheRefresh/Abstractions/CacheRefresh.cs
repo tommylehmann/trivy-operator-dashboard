@@ -12,14 +12,14 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
     IConcurrentCache<string, IList<TKubernetesObject>> cache,
     ILogger<CacheRefresh<TKubernetesObject, TBackgroundQueue>> logger)
     : ICacheRefresh<TKubernetesObject, TBackgroundQueue> where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
-    where TBackgroundQueue : IBackgroundQueue<TKubernetesObject>
+    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
-    protected TBackgroundQueue backgroundQueue = backgroundQueue;
     protected Task? CacheRefreshTask;
+    protected IConcurrentCache<string, IList<TKubernetesObject>> cache = cache;
 
     public void StartEventsProcessing(CancellationToken cancellationToken)
     {
-        if (CacheRefreshTask is not null)
+        if (IsQueueProcessingStarted())
         {
             logger.LogWarning(
                 "Processing for {kubernetesObjectType} already started. Ignoring...",
@@ -39,20 +39,23 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
         {
             try
             {
-                IWatcherEvent<TKubernetesObject> watcherEvent = await backgroundQueue.DequeueAsync(cancellationToken);
-                switch (watcherEvent.WatcherEventType)
+                IWatcherEvent<TKubernetesObject>? watcherEvent = await backgroundQueue.DequeueAsync(cancellationToken);
+                switch (watcherEvent?.WatcherEventType)
                 {
                     case WatchEventType.Added:
                         ProcessAddEvent(watcherEvent, cancellationToken);
                         break;
                     case WatchEventType.Deleted:
-                        ProcessDeleteEvent(watcherEvent);
+                        await ProcessDeleteEvent(watcherEvent, cancellationToken);
                         break;
                     case WatchEventType.Error:
                         ProcessErrorEvent(watcherEvent);
                         break;
                     case WatchEventType.Modified:
                         ProcessModifiedEvent(watcherEvent, cancellationToken);
+                        break;
+                    case WatchEventType.Bookmark:
+                        await ProcessBookmarkEvent(watcherEvent, cancellationToken);
                         break;
                         //default:
                         //    break;
@@ -97,7 +100,7 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
         }
     }
 
-    protected virtual void ProcessDeleteEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
+    protected virtual Task ProcessDeleteEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
         string watcherKey = VarUtils.GetCacheRefreshKey(watcherEvent.KubernetesObject);
 
@@ -116,6 +119,7 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
                 kubernetesObjects.Remove(existingKubernetesObject);
             }
         }
+        return Task.CompletedTask;
     }
 
     protected virtual void ProcessErrorEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
@@ -135,4 +139,10 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
         logger.LogDebug("ProcessModifiedEvent - redirecting to ProcessAddEvent.");
         ProcessAddEvent(watcherEvent, cancellationToken);
     }
+
+    protected virtual Task ProcessBookmarkEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+    // TODO: new for ns cleanup
 }

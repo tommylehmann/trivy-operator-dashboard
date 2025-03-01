@@ -68,6 +68,15 @@ export class WatcherStateComponent {
         style: 'width: 330px; max-width: 330px; white-space: normal;',
         renderType: 'standard',
       },
+      {
+        field: 'lastEventMoment',
+        header: 'Last Event',
+        isFiltrable: true,
+        isSortable: true,
+        multiSelectType: 'none',
+        style: 'width: 155px; max-width: 155px;',
+        renderType: 'dateTime',
+      }
     ];
     this.trivyTableOptions = {
       isClearSelectionVisible: false,

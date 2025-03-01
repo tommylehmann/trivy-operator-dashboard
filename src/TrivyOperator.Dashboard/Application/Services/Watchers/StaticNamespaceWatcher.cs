@@ -4,15 +4,16 @@ using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class StaticNamespaceWatcher(
-    IBackgroundQueue<V1Namespace> backgroundQueue,
+    IKubernetesBackgroundQueue<V1Namespace> backgroundQueue,
     IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList> kubernetesNamespaceDomainService)
     : IClusterScopedWatcher<V1Namespace>
 {
-    public async Task Add(CancellationToken cancellationToken, IKubernetesObject<V1ObjectMeta>? sourceKubernetesObjects)
+    public async Task Add(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey)
     {
         IList<V1Namespace> kubernetesNamespaces = await kubernetesNamespaceDomainService.GetResources();
         foreach (V1Namespace kubernetesNamespace in kubernetesNamespaces)
@@ -25,5 +26,10 @@ public class StaticNamespaceWatcher(
 
             await backgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);
         }
+    }
+
+    public Task Recreate(CancellationToken cancellationToken, string watcherKey = "generic.Key")
+    {
+        return Task.CompletedTask;
     }
 }

@@ -38,6 +38,7 @@ export interface TrivyTableColumn extends Column {
     | 'imageNameTag'
     | 'link'
     | 'date'
+    | 'dateTime'
     | 'eosl'
     | 'semaphore'
     | 'multiline';

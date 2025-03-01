@@ -1,51 +1,69 @@
-﻿using k8s;
-using k8s.Models;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using System.Threading.Channels;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
-using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.BackgroundQueues;
 
-public class BackgroundQueue<TKubernetesObject> : IBackgroundQueue<TKubernetesObject>
-    where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
+public class BackgroundQueue<TObject> : IBackgroundQueue<TObject>
+    where TObject : class
 {
-    private readonly ILogger<BackgroundQueue<TKubernetesObject>> logger;
-    private readonly Channel<IWatcherEvent<TKubernetesObject>> queue;
+    protected readonly ILogger<BackgroundQueue<TObject>> logger;
+    protected readonly Channel<TObject> queue;
 
-    public BackgroundQueue(IOptions<BackgroundQueueOptions> options, ILogger<BackgroundQueue<TKubernetesObject>> logger)
+    public BackgroundQueue(IOptions<BackgroundQueueOptions> options, ILogger<BackgroundQueue<TObject>> logger)
     {
         this.logger = logger;
         BoundedChannelOptions boundedChannelOptions = new(options.Value.Capacity)
         {
             FullMode = BoundedChannelFullMode.Wait,
         };
-        queue = Channel.CreateBounded<IWatcherEvent<TKubernetesObject>>(boundedChannelOptions);
-        logger.LogDebug("Started BackgroundQueue for {kubernetesObjectType}.", typeof(TKubernetesObject).Name);
+        queue = Channel.CreateBounded<TObject>(boundedChannelOptions);
+        logger.LogDebug("Started BackgroundQueue for {objectType}.", typeof(TObject).Name);
     }
 
-    public async ValueTask QueueBackgroundWorkItemAsync(IWatcherEvent<TKubernetesObject> watcherEvent)
+    public async ValueTask QueueBackgroundWorkItemAsync(TObject enqueuedObject)
     {
-        ArgumentNullException.ThrowIfNull(watcherEvent, nameof(watcherEvent));
+        ArgumentNullException.ThrowIfNull(enqueuedObject, nameof(enqueuedObject));
+        LogQueue(enqueuedObject);
 
-        logger.LogDebug(
-            "Queueing Event {watcherEventType} - {kubernetesObjectType} - {kubernetesObjectName}",
-            watcherEvent.WatcherEventType,
-            typeof(TKubernetesObject).Name,
-            watcherEvent.KubernetesObject.Metadata?.Name);
-        await queue.Writer.WriteAsync(watcherEvent);
+        try
+        {
+            await queue.Writer.WriteAsync(enqueuedObject);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Could not enqueue {objectType}", typeof(TObject).Name);
+        }
     }
 
-    public async ValueTask<IWatcherEvent<TKubernetesObject>> DequeueAsync(CancellationToken cancellationToken)
+    public async ValueTask<TObject?> DequeueAsync(CancellationToken cancellationToken)
     {
-        IWatcherEvent<TKubernetesObject> watcherEvent = await queue.Reader.ReadAsync(cancellationToken);
-        logger.LogDebug(
-            "Dequeued Event {watcherEventType} - {kubernetesObjectType} - {kubernetesObjectName}",
-            watcherEvent.WatcherEventType,
-            typeof(TKubernetesObject).Name,
-            watcherEvent.KubernetesObject.Metadata?.Name);
+        try
+        {
+            TObject dequeuedObject = await queue.Reader.ReadAsync(cancellationToken);
+            LogDequeue(dequeuedObject);
 
-        return watcherEvent;
+            return dequeuedObject;
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Could not dequeue {objectType}", typeof(TObject).Name);
+        }
+        return null;
+    }
+
+    protected virtual void LogQueue(TObject enqueuedObject)
+    {
+        logger.LogDebug(
+            "Queueing {objectType}",
+            typeof(TObject).Name);
+    }
+
+    protected virtual void LogDequeue(TObject dequeuedObject)
+    {
+        logger.LogDebug(
+            "Dequeued {objectType}",
+            typeof(TObject).Name);
     }
 }

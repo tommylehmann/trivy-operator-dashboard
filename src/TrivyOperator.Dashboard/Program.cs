@@ -16,6 +16,7 @@ Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 const string applicationName = "TrivyOperator.Dashboard";
 const string queuesConfigurationSectionKey = "Queues";
 const string kubernetesConfigurationSectionKey = "Kubernetes";
+const string watchersConfigurationSectionKey = "Watchers";
 WebApplicationBuilder builder = WebApplication.CreateBuilder(
     new WebApplicationOptions
     {
@@ -74,7 +75,8 @@ builder.Services.AddCors(
 
 builder.Services.AddCommons(
     configuration.GetSection(queuesConfigurationSectionKey),
-    configuration.GetSection(kubernetesConfigurationSectionKey));
+    configuration.GetSection(kubernetesConfigurationSectionKey),
+    configuration.GetSection(watchersConfigurationSectionKey));
 builder.Services.AddDomainServices();
 builder.Services.AddAlertsServices();
 builder.Services.AddWatcherStateServices();

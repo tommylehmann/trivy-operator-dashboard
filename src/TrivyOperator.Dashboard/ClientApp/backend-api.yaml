@@ -2418,4 +2418,8 @@ components:
         lastException:
           type: string
           nullable: true
+        lastEventMoment:
+          type: string
+          format: date-time
+          nullable: true
       additionalProperties: false
