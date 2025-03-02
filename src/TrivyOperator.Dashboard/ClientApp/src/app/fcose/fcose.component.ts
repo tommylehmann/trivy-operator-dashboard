@@ -13,9 +13,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 
 // TODO: change to dedicated interface
-import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
+// import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
+import { NodeDataDto } from './fcose.types'
 
-import { SeverityUtils } from '../utils/severity.utils';
+
+//import { SeverityUtils } from '../utils/severity.utils';
 
 cytoscape.use(fcose);
 
@@ -81,15 +83,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     },
   };
 
-  get dataDtos(): SbomReportDetailDto[] {
+  get dataDtos(): NodeDataDto[] {
     return this._dataDtos;
   }
 
-  @Input() set dataDtos(sbomDto: SbomReportDetailDto[]) {
+  @Input() set dataDtos(sbomDto: NodeDataDto[]) {
     this._dataDtos = sbomDto;
   }
 
-  private _dataDtos: SbomReportDetailDto[] = [];
+  private _dataDtos: NodeDataDto[] = [];
 
   private isDivedIn: boolean = false;
 
@@ -106,8 +108,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   private _hoveredNode: NodeSingular | null = null;
-  hoveredNodeDto: SbomReportDetailDto | undefined = undefined;
-  @Output() hoveredNodeDtoChange: EventEmitter<SbomReportDetailDto> = new EventEmitter<SbomReportDetailDto>();
+  hoveredNodeDto: NodeDataDto | undefined = undefined;
+  @Output() hoveredNodeDtoChange: EventEmitter<NodeDataDto> = new EventEmitter<NodeDataDto>();
 
   inputFilterByNameControl = new FormControl();
   private inputFilterByNameValue: string = "";
@@ -418,7 +420,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   private getElementsByNodeId(nodeId: string): ElementDefinition[] {
-    const sbomDetailDtos: SbomReportDetailDto[] = [];
+    const sbomDetailDtos: NodeDataDto[] = [];
     const rootSbomDto = this.dataDtos.find((x) => x.bomRef == nodeId);
     if (rootSbomDto) {
       sbomDetailDtos.push(rootSbomDto);
@@ -427,26 +429,28 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     }
 
     const groupMap = new Map<string, number>();
-    sbomDetailDtos.forEach((sbomDetailDto) => {
-      if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
-        const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
-        const currentCount = (groupMap.get(potentialNs) || 0) + 1;
-        groupMap.set(potentialNs, currentCount);
-      }
-    });
+    // TODO: change to speciffic BelongsToGroupName (or smth) field in NodeDataDto
+    //sbomDetailDtos.forEach((sbomDetailDto) => {
+    //  if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
+    //    const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
+    //    const currentCount = (groupMap.get(potentialNs) || 0) + 1;
+    //    groupMap.set(potentialNs, currentCount);
+    //  }
+    //});
 
     const elements: ElementDefinition[] = [];
     sbomDetailDtos.forEach((sbomDetailDto) => {
       if (sbomDetailDto) {
         let parentId: string | undefined = undefined;
-        if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
-          // && !sbomDetailDto.name.includes("Runtime.linux-x64")
-          const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
-          if ((groupMap.get(potentialNs) || 0) > 1) {
-            elements.push({ data: { id: potentialNs, label: potentialNs }, classes: 'nodeCommon' });
-            parentId = potentialNs;
-          }
-        }
+        // TODO: change to speciffic BelongsToGroupName (or smth) field in NodeDataDto
+        //if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
+        //  // && !sbomDetailDto.name.includes("Runtime.linux-x64")
+        //  const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
+        //  if ((groupMap.get(potentialNs) || 0) > 1) {
+        //    elements.push({ data: { id: potentialNs, label: potentialNs }, classes: 'nodeCommon' });
+        //    parentId = potentialNs;
+        //  }
+        //}
         elements.push({
           data: {
             id: sbomDetailDto.bomRef,
@@ -470,11 +474,11 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     return elements;
   }
 
-  private getParentsSbomDtos(sbomDetailDto: SbomReportDetailDto, sbomDetailDtos: SbomReportDetailDto[]) {
+  private getParentsSbomDtos(sbomDetailDto: NodeDataDto, sbomDetailDtos: NodeDataDto[]) {
     const parents = this.dataDtos
       .filter((x) => x.dependsOn?.includes(sbomDetailDto.bomRef ?? ""))
       .map((y) => {
-        const parentSbom: SbomReportDetailDto = JSON.parse(JSON.stringify(y));
+        const parentSbom: NodeDataDto = JSON.parse(JSON.stringify(y));
         parentSbom.dependsOn = [sbomDetailDto.bomRef ?? ""];
         return parentSbom;
       }) ?? [];
@@ -482,7 +486,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     sbomDetailDtos.push(...parents);
   }
 
-  private getChildrenSbomDtos(sbomDetailDto: SbomReportDetailDto, sbomDetailDtos: SbomReportDetailDto[]) {
+  private getChildrenSbomDtos(sbomDetailDto: NodeDataDto, sbomDetailDtos: NodeDataDto[]) {
     if (!sbomDetailDto) {
       return;
     }
@@ -551,7 +555,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.selectedInnerNodeId = nodeId;
   }
 
-  getDataDetailDtoById(id: string | undefined | null): SbomReportDetailDto | undefined {
+  getDataDetailDtoById(id: string | undefined | null): NodeDataDto | undefined {
     return this.dataDtos.find((x) => x.bomRef == id);
   }
 
@@ -560,7 +564,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.onNodesHighlightByName(value);
   }
 
-  severityWrapperGetCssColor(severityId: number): string {
-    return SeverityUtils.getCssColor(severityId);
-  }
+  //severityWrapperGetCssColor(severityId: number): string {
+  //  return SeverityUtils.getCssColor(severityId);
+  //}
 }

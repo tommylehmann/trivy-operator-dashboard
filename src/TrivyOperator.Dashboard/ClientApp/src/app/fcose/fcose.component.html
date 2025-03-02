@@ -17,32 +17,3 @@
     <div #graphContainer style="width: 100%; height: 75vh"></div>
   </div>
 </div>
-<div>
-  <div *ngIf="hoveredNodeDto">
-    <span>
-      <b>Name:</b> {{ hoveredNodeDto.name }} -
-      <b>Version:</b> {{ this.hoveredNodeDto.version }} -
-      <b>Dependencies:</b> {{ this.hoveredNodeDto.dependsOn?.length ?? 0 }}
-    </span>
-    <p-tag class="ml-2"
-           [rounded]="true"
-           [style]="{ background: severityWrapperGetCssColor(0) }"
-           [value]="(hoveredNodeDto.criticalCount ?? 0).toString()" />
-    <p-tag class="ml-2"
-           [rounded]="true"
-           [style]="{ background: severityWrapperGetCssColor(1) }"
-           [value]="(hoveredNodeDto.highCount ?? 0).toString()" />
-    <p-tag class="ml-2"
-           [rounded]="true"
-           [style]="{ background: severityWrapperGetCssColor(2) }"
-           [value]="(hoveredNodeDto.mediumCount ?? 0).toString()" />
-    <p-tag class="ml-2"
-           [rounded]="true"
-           [style]="{ background: severityWrapperGetCssColor(3) }"
-           [value]="(hoveredNodeDto.lowCount ?? 0).toString()" />
-    <p-tag class="ml-2"
-           [rounded]="true"
-           [style]="{ background: severityWrapperGetCssColor(4) }"
-           [value]="(hoveredNodeDto.unknownCount ?? 0).toString()" />
-  </div>
-</div>
