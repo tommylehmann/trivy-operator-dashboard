@@ -99,11 +99,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   private set hoveredNode(node: NodeSingular | null) {
     this._hoveredNode = node;
-    this.hoveredNodeDto = this.getDataDetailDtoById(node?.id());
+    const hoveredNodeDto = this.getDataDetailDtoById(node?.id());
+    this.hoveredNodeDto = hoveredNodeDto;
+    this.hoveredNodeDtoChange.emit(hoveredNodeDto);
+    console.log(JSON.stringify(hoveredNodeDto));
   }
 
   private _hoveredNode: NodeSingular | null = null;
   hoveredNodeDto: SbomReportDetailDto | undefined = undefined;
+  @Output() hoveredNodeDtoChange: EventEmitter<SbomReportDetailDto> = new EventEmitter<SbomReportDetailDto>();
 
   inputFilterByNameControl = new FormControl();
   private inputFilterByNameValue: string = "";

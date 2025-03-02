@@ -5,26 +5,22 @@
     <div class="col-12 md:col-5 lg:col-4 p-1">
       <div class="grid flex">
         <div class="col-4 p-fluid">
-          <p-dropdown
-            placeholder="Select a Namespace"
-            class="p-inputtext-sm"
-            [filter]="true"
-            [options]="activeNamespaces"
-            [showClear]="true"
-            [(ngModel)]="selectedNamespace"
-            (onChange)="filterImageDtos()"
-          />
+          <p-dropdown placeholder="Select a Namespace"
+                      class="p-inputtext-sm"
+                      [filter]="true"
+                      [options]="activeNamespaces"
+                      [showClear]="true"
+                      [(ngModel)]="selectedNamespace"
+                      (onChange)="filterImageDtos()" />
         </div>
         <div class="col-8 p-fluid">
-          <p-dropdown
-            optionLabel="imageNameTag"
-            placeholder="Select a Namespace"
-            class="p-inputtext-sm"
-            [filter]="true"
-            [options]="imageDtos"
-            [showClear]="true"
-            [(ngModel)]="selectedImageDto"
-          />
+          <p-dropdown optionLabel="imageNameTag"
+                      placeholder="Select a Namespace"
+                      class="p-inputtext-sm"
+                      [filter]="true"
+                      [options]="imageDtos"
+                      [showClear]="true"
+                      [(ngModel)]="selectedImageDto" />
         </div>
       </div>
       <!--<p-card [header]="selectedSbomDetailDto?.name ?? 'none'" [subheader]="selectedSbomDetailDto?.version ?? 'none'">-->
@@ -32,8 +28,8 @@
                [toggleable]="true"
                header="{{ selectedSbomDetailDto?.name ?? 'none' }} - {{ selectedSbomDetailDto?.version ?? 'none' }}">
         <!--<div class="flex flex-column pb-2">
-          <span>{{ selectedSbomDetailDto?.name ?? 'none' }} - {{ selectedSbomDetailDto?.version ?? 'none' }}</span>
-        </div>-->
+        <span>{{ selectedSbomDetailDto?.name ?? 'none' }} - {{ selectedSbomDetailDto?.version ?? 'none' }}</span>
+      </div>-->
         <p-table [value]="selectedSbomDetailDto?.properties || []"
                  [scrollable]="true"
                  scrollHeight="flex"
@@ -52,28 +48,53 @@
           </ng-template>
         </p-table>
       </p-panel>
-      <app-trivy-table
-        tableHeight="30vh"
-        [dataDtos]="dependsOnBoms!"
-        [isLoading]="false"
-        [trivyTableColumns]="dependsOnTableColumns"
-        [trivyTableOptions]="dependsOnTableOptions"
-      />
-      <app-trivy-table
-        *ngIf="false"
-        #mainTable
-        tableHeight="70vh"
-        [activeNamespaces]="activeNamespaces"
-        [dataDtos]="dataDtos!"
-        [isLoading]="isMainTableLoading"
-        [trivyTableColumns]="mainTableColumns"
-        [trivyTableOptions]="mainTableOptions"
-        (refreshRequested)="onRefreshRequested($event)"
-        (selectedRowsChanged)="onMainTableSelectionChange($event)"
-      />
+      <app-trivy-table tableHeight="30vh"
+                       [dataDtos]="dependsOnBoms!"
+                       [isLoading]="false"
+                       [trivyTableColumns]="dependsOnTableColumns"
+                       [trivyTableOptions]="dependsOnTableOptions" />
+      <app-trivy-table *ngIf="false"
+                       #mainTable
+                       tableHeight="70vh"
+                       [activeNamespaces]="activeNamespaces"
+                       [dataDtos]="dataDtos!"
+                       [isLoading]="isMainTableLoading"
+                       [trivyTableColumns]="mainTableColumns"
+                       [trivyTableOptions]="mainTableOptions"
+                       (refreshRequested)="onRefreshRequested($event)"
+                       (selectedRowsChanged)="onMainTableSelectionChange($event)" />
     </div>
     <div class="col-12 md:col-7 lg:col-8 p-1">
-      <app-fcose [dataDtos]="fullSbomDataDto?.details ?? []" [(selectedInnerNodeId)]="selectedInnerNodeId" />
+      <app-fcose [dataDtos]="fullSbomDataDto?.details ?? []"
+                 [(selectedInnerNodeId)]="selectedInnerNodeId"
+                 (hoveredNodeDtoChange)="onHoveredNodeDtoChange($event)" />
+      <div *ngIf="hoveredNodeDto">
+        <span>
+          <b>Name:</b> {{ hoveredNodeDto.name }} -
+          <b>Version:</b> {{ this.hoveredNodeDto.version }} -
+          <b>Dependencies:</b> {{ this.hoveredNodeDto.dependsOn?.length ?? 0 }}
+        </span>
+        <p-tag class="ml-2"
+               [rounded]="true"
+               [style]="{ background: severityWrapperGetCssColor(0) }"
+               [value]="(hoveredNodeDto.criticalCount ?? 0).toString()" />
+        <p-tag class="ml-2"
+               [rounded]="true"
+               [style]="{ background: severityWrapperGetCssColor(1) }"
+               [value]="(hoveredNodeDto.highCount ?? 0).toString()" />
+        <p-tag class="ml-2"
+               [rounded]="true"
+               [style]="{ background: severityWrapperGetCssColor(2) }"
+               [value]="(hoveredNodeDto.mediumCount ?? 0).toString()" />
+        <p-tag class="ml-2"
+               [rounded]="true"
+               [style]="{ background: severityWrapperGetCssColor(3) }"
+               [value]="(hoveredNodeDto.lowCount ?? 0).toString()" />
+        <p-tag class="ml-2"
+               [rounded]="true"
+               [style]="{ background: severityWrapperGetCssColor(4) }"
+               [value]="(hoveredNodeDto.unknownCount ?? 0).toString()" />
+      </div>
     </div>
   </div>
 </div>

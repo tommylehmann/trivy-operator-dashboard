@@ -14,6 +14,9 @@ import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+
+import { SeverityUtils } from '../utils/severity.utils';
 
 export interface ImageDto {
   uid: string;
@@ -29,7 +32,7 @@ export interface DependsOn {
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, CardModule, PanelModule, TableModule],
+  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, CardModule, PanelModule, TableModule, TagModule],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
@@ -37,6 +40,7 @@ export class SbomReportsComponent {
   dataDtos: SbomReportDto[] | null = null;
   activeNamespaces: string[] | undefined = [];
   imageDtos: ImageDto[] | undefined = [];
+  hoveredNodeDto: SbomReportDetailDto | undefined = undefined;
 
   get selectedNamespace(): string | null {
     return this._selectedNamespace;
@@ -315,5 +319,14 @@ export class SbomReportsComponent {
   public sanitizePropertyValue(value: string | null | undefined): string | null | undefined {
     return value?.replaceAll('@', ' [@] ')
       .replaceAll('sha256:', ' [sha256:] ');
+  }
+
+  severityWrapperGetCssColor(severityId: number): string {
+    return SeverityUtils.getCssColor(severityId);
+  }
+
+  onHoveredNodeDtoChange(event: SbomReportDetailDto | undefined) {
+    console.log(JSON.stringify(event));
+    this.hoveredNodeDto = event;
   }
 }
