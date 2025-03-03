@@ -12,16 +12,10 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 
-// TODO: change to dedicated interface
-// import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
 import { NodeDataDto } from './fcose.types'
 
 
-//import { SeverityUtils } from '../utils/severity.utils';
-
 cytoscape.use(fcose);
-
-//
 
 @Component({
   selector: 'app-fcose',
@@ -33,7 +27,7 @@ cytoscape.use(fcose);
 export class FcoseComponent implements AfterViewInit, OnInit {
   @ViewChild('graphContainer', { static: true }) graphContainer!: ElementRef;
 
-  // selectedInnerNodeId
+  // #region selectedInnerNodeId
   @Input() set selectedInnerNodeId(value: string | undefined) {
     this._selectedInnerNodeId = value;
     this.selectedInnerNodeIdChange.emit(value);
@@ -49,7 +43,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
   @Output() selectedInnerNodeIdChange: EventEmitter<string> = new EventEmitter<string>();
   private _selectedInnerNodeId: string | undefined = this.rootNodeId;
-  // rootNodeId
+  // #endregion
+  // #region rootNodeId
   @Input() set rootNodeId(value: string) {
     this._rootNodeId = value;
     this.initNavMenuItems();
@@ -58,7 +53,30 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     return this._rootNodeId;
   }
   private _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
-
+  // #endregion
+  // #region dataDtos
+  get dataDtos(): NodeDataDto[] {
+    return this._dataDtos;
+  }
+  @Input() set dataDtos(sbomDto: NodeDataDto[]) {
+    this._dataDtos = sbomDto;
+  }
+  private _dataDtos: NodeDataDto[] = [];
+  // #endregion
+  // #region hoveredNode
+  get hoveredNode(): NodeSingular | null {
+    return this._hoveredNode;
+  }
+  private set hoveredNode(node: NodeSingular | null) {
+    this._hoveredNode = node;
+    const hoveredNodeDto = this.getDataDetailDtoById(node?.id());
+    this.hoveredNodeDto = hoveredNodeDto;
+    this.hoveredNodeDtoChange.emit(hoveredNodeDto);
+  }
+  private _hoveredNode: NodeSingular | null = null;
+  hoveredNodeDto: NodeDataDto | undefined = undefined;
+  @Output() hoveredNodeDtoChange: EventEmitter<NodeDataDto> = new EventEmitter<NodeDataDto>();
+  // #endregion
   navItems: MenuItem[] = [];
   navHome: MenuItem = { id: this.rootNodeId, icon: 'pi pi-sitemap' };
   private cy!: cytoscape.Core;
@@ -82,32 +100,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       return 0.15;
     },
   };
-
-  // dataDtos
-  get dataDtos(): NodeDataDto[] {
-    return this._dataDtos;
-  }
-  @Input() set dataDtos(sbomDto: NodeDataDto[]) {
-    this._dataDtos = sbomDto;
-  }
-  private _dataDtos: NodeDataDto[] = [];
-
   private isDivedIn: boolean = false;
-
-  // hoveredNode
-  get hoveredNode(): NodeSingular | null {
-    return this._hoveredNode;
-  }
-  private set hoveredNode(node: NodeSingular | null) {
-    this._hoveredNode = node;
-    const hoveredNodeDto = this.getDataDetailDtoById(node?.id());
-    this.hoveredNodeDto = hoveredNodeDto;
-    this.hoveredNodeDtoChange.emit(hoveredNodeDto);
-  }
-  private _hoveredNode: NodeSingular | null = null;
-  hoveredNodeDto: NodeDataDto | undefined = undefined;
-  @Output() hoveredNodeDtoChange: EventEmitter<NodeDataDto> = new EventEmitter<NodeDataDto>();
-
   inputFilterByNameControl = new FormControl();
   private inputFilterByNameValue: string = "";
 
@@ -122,6 +115,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.setupCyEvents();
   }
 
+  // #region Cy Setup
   private setupCyLayout() {
     this.cy = cytoscape({
       container: this.graphContainer.nativeElement,
@@ -277,7 +271,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     //  console.log('Single-clicked on node:', node.id());
     //});
   }
+  // #endregion
 
+  // #region Node Highlightning
   private highlightNode(node: NodeSingular) {
     if (this.hoveredNode?.id() == node.id() || node.isParent()) {
       return;
@@ -310,7 +306,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       return;
     }
     if (this.isDivedIn) {
-      this.isDivedIn = false;
+      // this.isDivedIn = false;
       return;
     }
     node.removeClass('hoveredCommon hovered');
@@ -327,15 +323,16 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     });
     this.hoveredNode = null;
   }
+  // #endregion
 
   private selectNode(node: NodeSingular) {
     if (node.isParent() || node.hasClass('nodeLeaf')) {
       return;
     }
-    this.hoveredNode = null;
     this.graphDiveIn(node.id());
   }
 
+  // #region Menu Bar Events
   onZoomIn(_event: MouseEvent) {
     this.cy.animate({
       zoom: this.cy.zoom() + 0.1,
@@ -359,6 +356,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       duration: 300,
     });
   }
+  // #endregion
 
   private graphDiveIn(nodeId: string) {
     this.cy.elements().addClass('hidden');
@@ -384,6 +382,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         if (this.inputFilterByNameValue) {
           this.onNodesHighlightByName(this.inputFilterByNameValue);
         }
+        this.isDivedIn = false;
       }, 500);
     }, 350);
     this.isDivedIn = true;
@@ -416,6 +415,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     });
   }
 
+  // #region Get Parent and Children Nodes - To be moved in SBOM
   private getElementsByNodeId(nodeId: string): ElementDefinition[] {
     const sbomDetailDtos: NodeDataDto[] = [];
     const rootSbomDto = this.dataDtos.find((x) => x.id == nodeId);
@@ -501,22 +501,30 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     sbomDetailDtos.push(...newSbomDetailDtos);
     newSbomDetailDtos.forEach((sbomDetailDto) => this.getChildrenSbomDtos(sbomDetailDto, sbomDetailDtos));
   }
+  // #endregion
 
+  // #region navItems
+  /**
+   * This method initialize the NavMenu.
+   */
   private initNavMenuItems() {
     this.navItems = [];
     this.navHome = { id: this.rootNodeId, icon: 'pi pi-sitemap' };
   }
 
+  /**
+   * This method initialize the NavMenu.
+   * @param {BreadcrumbItemClickEvent} event - the event holding item info
+   */
   onNavItemClick(event: BreadcrumbItemClickEvent) {
-    if (event.item.icon) {
-      this.graphDiveIn(this.rootNodeId);
-      return;
-    }
     if (event.item.id) {
       this.graphDiveIn(event.item.id);
     }
   }
-
+  /**
+   * This method updates the menu with the selected item from the graph
+   * @param {string} nodeId - the node id of the selected item
+   */
   private updateNavMenuItems(nodeId: string) {
     if (this.selectedInnerNodeId === nodeId) {
       return;
@@ -550,6 +558,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     ];
     this.selectedInnerNodeId = nodeId;
   }
+  // #endregion
 
   getDataDetailDtoById(id: string | undefined | null): NodeDataDto | undefined {
     return this.dataDtos.find((x) => x.id == id);
@@ -559,8 +568,4 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.inputFilterByNameValue = value;
     this.onNodesHighlightByName(value);
   }
-
-  //severityWrapperGetCssColor(severityId: number): string {
-  //  return SeverityUtils.getCssColor(severityId);
-  //}
 }
