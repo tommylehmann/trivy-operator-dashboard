@@ -33,30 +33,30 @@ cytoscape.use(fcose);
 export class FcoseComponent implements AfterViewInit, OnInit {
   @ViewChild('graphContainer', { static: true }) graphContainer!: ElementRef;
 
+  // selectedInnerNodeId
   @Input() set selectedInnerNodeId(value: string | undefined) {
     this._selectedInnerNodeId = value;
     this.selectedInnerNodeIdChange.emit(value);
     if (value) {
       this.graphDiveIn(value);
     }
+    else {
+      this.initNavMenuItems();
+    }
   }
-
   get selectedInnerNodeId(): string | undefined {
     return this._selectedInnerNodeId;
   }
-
   @Output() selectedInnerNodeIdChange: EventEmitter<string> = new EventEmitter<string>();
   private _selectedInnerNodeId: string | undefined = this.rootNodeId;
-
+  // rootNodeId
   @Input() set rootNodeId(value: string) {
     this._rootNodeId = value;
     this.initNavMenuItems();
   }
-
   get rootNodeId(): string {
     return this._rootNodeId;
   }
-
   private _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
 
   navItems: MenuItem[] = [];
@@ -83,30 +83,27 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     },
   };
 
+  // dataDtos
   get dataDtos(): NodeDataDto[] {
     return this._dataDtos;
   }
-
   @Input() set dataDtos(sbomDto: NodeDataDto[]) {
     this._dataDtos = sbomDto;
   }
-
   private _dataDtos: NodeDataDto[] = [];
 
   private isDivedIn: boolean = false;
 
+  // hoveredNode
   get hoveredNode(): NodeSingular | null {
     return this._hoveredNode;
   }
-
   private set hoveredNode(node: NodeSingular | null) {
     this._hoveredNode = node;
     const hoveredNodeDto = this.getDataDetailDtoById(node?.id());
     this.hoveredNodeDto = hoveredNodeDto;
     this.hoveredNodeDtoChange.emit(hoveredNodeDto);
-    console.log(JSON.stringify(hoveredNodeDto));
   }
-
   private _hoveredNode: NodeSingular | null = null;
   hoveredNodeDto: NodeDataDto | undefined = undefined;
   @Output() hoveredNodeDtoChange: EventEmitter<NodeDataDto> = new EventEmitter<NodeDataDto>();
@@ -421,7 +418,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   private getElementsByNodeId(nodeId: string): ElementDefinition[] {
     const sbomDetailDtos: NodeDataDto[] = [];
-    const rootSbomDto = this.dataDtos.find((x) => x.bomRef == nodeId);
+    const rootSbomDto = this.dataDtos.find((x) => x.id == nodeId);
     if (rootSbomDto) {
       sbomDetailDtos.push(rootSbomDto);
       this.getParentsSbomDtos(rootSbomDto, sbomDetailDtos);
@@ -453,7 +450,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         //}
         elements.push({
           data: {
-            id: sbomDetailDto.bomRef,
+            id: sbomDetailDto.id,
             label: sbomDetailDto.name ?? '',
             parent: parentId,
           },
@@ -462,7 +459,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         sbomDetailDto.dependsOn?.forEach((depends) => {
           elements.push({
             data: {
-              source: sbomDetailDto.bomRef,
+              source: sbomDetailDto.id,
               target: depends,
             },
             classes: 'edgeCommon',
@@ -476,10 +473,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   private getParentsSbomDtos(sbomDetailDto: NodeDataDto, sbomDetailDtos: NodeDataDto[]) {
     const parents = this.dataDtos
-      .filter((x) => x.dependsOn?.includes(sbomDetailDto.bomRef ?? ""))
+      .filter((x) => x.dependsOn?.includes(sbomDetailDto.id ?? ""))
       .map((y) => {
         const parentSbom: NodeDataDto = JSON.parse(JSON.stringify(y));
-        parentSbom.dependsOn = [sbomDetailDto.bomRef ?? ""];
+        parentSbom.dependsOn = [sbomDetailDto.id ?? ""];
         return parentSbom;
       }) ?? [];
 
@@ -490,17 +487,17 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (!sbomDetailDto) {
       return;
     }
-    const detailBomRefIds = sbomDetailDto.dependsOn;
-    if (!detailBomRefIds) {
+    const detailIds = sbomDetailDto.dependsOn;
+    if (!detailIds) {
       return;
     }
-    const newDetailBomRefIds: string[] = [];
-    detailBomRefIds.forEach((bomRefId) => {
-      if (!sbomDetailDtos.find((x) => x.bomRef === bomRefId)) {
-        newDetailBomRefIds.push(bomRefId);
+    const newDetailIds: string[] = [];
+    detailIds.forEach((id) => {
+      if (!sbomDetailDtos.find((x) => x.id === id)) {
+        newDetailIds.push(id);
       }
     });
-    const newSbomDetailDtos = this.dataDtos.filter((x) => newDetailBomRefIds.includes(x.bomRef ?? '')) ?? [];
+    const newSbomDetailDtos = this.dataDtos.filter((x) => newDetailIds.includes(x.id ?? '')) ?? [];
     sbomDetailDtos.push(...newSbomDetailDtos);
     newSbomDetailDtos.forEach((sbomDetailDto) => this.getChildrenSbomDtos(sbomDetailDto, sbomDetailDtos));
   }
@@ -511,7 +508,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   onNavItemClick(event: BreadcrumbItemClickEvent) {
-    console.log(event.item);
     if (event.item.icon) {
       this.graphDiveIn(this.rootNodeId);
       return;
@@ -556,7 +552,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   getDataDetailDtoById(id: string | undefined | null): NodeDataDto | undefined {
-    return this.dataDtos.find((x) => x.bomRef == id);
+    return this.dataDtos.find((x) => x.id == id);
   }
 
   onInputChange(value: string) {

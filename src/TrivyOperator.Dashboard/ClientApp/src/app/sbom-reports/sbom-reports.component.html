@@ -65,35 +65,35 @@
                        (selectedRowsChanged)="onMainTableSelectionChange($event)" />
     </div>
     <div class="col-12 md:col-7 lg:col-8 p-1">
-      <app-fcose [dataDtos]="fullSbomDataDto?.details ?? []"
+      <app-fcose [dataDtos]="nodeDataDtos"
                  [(selectedInnerNodeId)]="selectedInnerNodeId"
                  (hoveredNodeDtoChange)="onHoveredNodeDtoChange($event)" />
-      <div *ngIf="hoveredNodeDto">
+      <div *ngIf="hoveredSbomDetailDto">
         <span>
-          <b>Name:</b> {{ hoveredNodeDto.name }} -
-          <b>Version:</b> {{ this.hoveredNodeDto.version }} -
-          <b>Dependencies:</b> {{ this.hoveredNodeDto.dependsOn?.length ?? 0 }}
+          <b>Name:</b> {{ hoveredSbomDetailDto.name }} -
+          <b>Version:</b> {{ this.hoveredSbomDetailDto.version }} -
+          <b>Dependencies:</b> {{ this.hoveredSbomDetailDto.dependsOn?.length ?? 0 }}
         </span>
         <p-tag class="ml-2"
                [rounded]="true"
                [style]="{ background: severityWrapperGetCssColor(0) }"
-               [value]="(hoveredNodeDto.criticalCount ?? 0).toString()" />
+               [value]="(hoveredSbomDetailDto.criticalCount ?? 0).toString()" />
         <p-tag class="ml-2"
                [rounded]="true"
                [style]="{ background: severityWrapperGetCssColor(1) }"
-               [value]="(hoveredNodeDto.highCount ?? 0).toString()" />
+               [value]="(hoveredSbomDetailDto.highCount ?? 0).toString()" />
         <p-tag class="ml-2"
                [rounded]="true"
                [style]="{ background: severityWrapperGetCssColor(2) }"
-               [value]="(hoveredNodeDto.mediumCount ?? 0).toString()" />
+               [value]="(hoveredSbomDetailDto.mediumCount ?? 0).toString()" />
         <p-tag class="ml-2"
                [rounded]="true"
                [style]="{ background: severityWrapperGetCssColor(3) }"
-               [value]="(hoveredNodeDto.lowCount ?? 0).toString()" />
+               [value]="(hoveredSbomDetailDto.lowCount ?? 0).toString()" />
         <p-tag class="ml-2"
                [rounded]="true"
                [style]="{ background: severityWrapperGetCssColor(4) }"
-               [value]="(hoveredNodeDto.unknownCount ?? 0).toString()" />
+               [value]="(hoveredSbomDetailDto.unknownCount ?? 0).toString()" />
       </div>
     </div>
   </div>

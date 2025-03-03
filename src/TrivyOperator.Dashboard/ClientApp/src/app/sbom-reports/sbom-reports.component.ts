@@ -17,6 +17,8 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 
 import { SeverityUtils } from '../utils/severity.utils';
+import { NodeDataDefinition } from 'cytoscape';
+import { NodeDataDto } from '../fcose/fcose.types';
 
 export interface ImageDto {
   uid: string;
@@ -40,27 +42,23 @@ export class SbomReportsComponent {
   dataDtos: SbomReportDto[] | null = null;
   activeNamespaces: string[] | undefined = [];
   imageDtos: ImageDto[] | undefined = [];
-  hoveredNodeDto: SbomReportDetailDto | undefined = undefined;
+  hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
 
   get selectedNamespace(): string | null {
     return this._selectedNamespace;
   }
-
   set selectedNamespace(value: string | null) {
     this._selectedNamespace = value;
   }
-
   private _selectedNamespace: string | null = '';
 
   get selectedImageDto(): ImageDto | null {
     return this._imageDto;
   }
-
   set selectedImageDto(value: ImageDto | null) {
     this._imageDto = value;
     this.getFullSbomDto(value?.uid);
   }
-
   private _imageDto: ImageDto | null = null;
 
   set selectedInnerNodeId(value: string | undefined) {
@@ -96,6 +94,7 @@ export class SbomReportsComponent {
   private _selectedDataDto: SbomReportDto | null = null;
 
   fullSbomDataDto: SbomReportDto | null = null;
+  nodeDataDtos: NodeDataDto[] = [];
 
   constructor(private service: SbomReportService) {
     this.getTableDataDtos();
@@ -248,11 +247,13 @@ export class SbomReportsComponent {
     }
     this.fullSbomDataDto = null;
     this.selectedInnerNodeId = undefined;
+    this.nodeDataDtos = [];
   }
 
   onGetSbomReportDtoByUid(fullSbomDataDto: SbomReportDto) {
     this.fullSbomDataDto = fullSbomDataDto;
     this.selectedInnerNodeId = this._rootNodeId;
+    this.nodeDataDtos = this.getNodeDataDtos(fullSbomDataDto);
   }
 
   onGetDataDtos(dtos: SbomReportDto[]) {
@@ -325,8 +326,20 @@ export class SbomReportsComponent {
     return SeverityUtils.getCssColor(severityId);
   }
 
-  onHoveredNodeDtoChange(event: SbomReportDetailDto | undefined) {
-    console.log(JSON.stringify(event));
-    this.hoveredNodeDto = event;
+  onHoveredNodeDtoChange(event: NodeDataDto | undefined) {
+    this.hoveredSbomDetailDto = this.getSbomDetailDtoByBomref(event?.id);
+  }
+
+  private getSbomDetailDtoByBomref(bomref: string | undefined): SbomReportDetailDto | undefined {
+    return this.fullSbomDataDto?.details?.find(x => x.bomRef == bomref);
+  }
+
+  private getNodeDataDtos(fullSbom: SbomReportDto | undefined): NodeDataDto[] {
+    if (!fullSbom) {
+      return [];
+    }
+
+    return fullSbom.details?.map((x) =>
+      ({ id: x.bomRef, dependsOn: x.dependsOn, name: x.name, groupName: "" })) ?? [];
   }
 }
