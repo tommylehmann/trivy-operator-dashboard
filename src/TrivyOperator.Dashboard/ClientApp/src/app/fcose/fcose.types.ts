@@ -3,4 +3,5 @@ export interface NodeDataDto {
   name?: string | null;
   dependsOn?: Array<string> | null;
   groupName?: string;
+  isMain?: boolean;
 }

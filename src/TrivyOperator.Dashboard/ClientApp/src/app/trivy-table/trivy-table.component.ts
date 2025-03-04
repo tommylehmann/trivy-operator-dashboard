@@ -290,7 +290,7 @@ export class TrivyTableComponent<TData> implements OnInit {
     return SeverityUtils.getCssColorByName(severityName);
   }
   
-  formatUTCtoLocal(utcDateString: string): string {
+  formatUtcToLocal(utcDateString: string): string {
     const date = new Date(utcDateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');

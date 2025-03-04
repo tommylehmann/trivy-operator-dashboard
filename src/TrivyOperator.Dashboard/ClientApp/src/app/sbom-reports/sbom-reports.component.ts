@@ -19,6 +19,7 @@ import { TagModule } from 'primeng/tag';
 import { SeverityUtils } from '../utils/severity.utils';
 import { NodeDataDefinition } from 'cytoscape';
 import { NodeDataDto } from '../fcose/fcose.types';
+import { SbomDetailExtendedDto } from './sbom-reports.types'
 
 export interface ImageDto {
   uid: string;
@@ -39,11 +40,13 @@ export interface DependsOn {
   styleUrl: './sbom-reports.component.scss',
 })
 export class SbomReportsComponent {
+  // #region main data - SbomReportDtos, activeNS, fullSbomDataDto, table data
   dataDtos: SbomReportDto[] | null = null;
   activeNamespaces: string[] | undefined = [];
-  imageDtos: ImageDto[] | undefined = [];
-  hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
-
+  fullSbomDataDto: SbomReportDto | null = null;
+  tableDataDtos: SbomReportDetailDto[] | null = null;
+  // #endregion
+  // #region selectedNamespace property
   get selectedNamespace(): string | null {
     return this._selectedNamespace;
   }
@@ -51,7 +54,8 @@ export class SbomReportsComponent {
     this._selectedNamespace = value;
   }
   private _selectedNamespace: string | null = '';
-
+  // #endregion
+  // #region selectedImageDto property
   get selectedImageDto(): ImageDto | null {
     return this._imageDto;
   }
@@ -60,80 +64,36 @@ export class SbomReportsComponent {
     this.getFullSbomDto(value?.uid);
   }
   private _imageDto: ImageDto | null = null;
-
+  // #endregion
+  // #region selectedInnerNodeId property
   set selectedInnerNodeId(value: string | undefined) {
     this._selectedInnerNodeId = value;
     this.selectedSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == value);
     if (value) {
-      this.getDependsOnBoms(value);
+      this.getDataDtosByNodeId(value);
     }
   }
-
   get selectedInnerNodeId(): string | undefined {
     return this._selectedInnerNodeId;
   }
-
   private _selectedInnerNodeId: string | undefined = undefined;
-
+  // #endregion
+  // #region dependsOnTable data
   selectedSbomDetailDto: SbomReportDetailDto | undefined = undefined;
-  dependsOnBoms: SbomReportDetailDto[] = [];
-
-  public mainTableColumns: TrivyTableColumn[] = [];
-  public mainTableOptions: TrivyTableOptions;
-  public isMainTableLoading: boolean = true;
+  dependsOnBoms: SbomDetailExtendedDto[] = [];
 
   dependsOnTableColumns: TrivyTableColumn[] = [];
   dependsOnTableOptions: TrivyTableOptions;
+  // #endregion
+
+  imageDtos: ImageDto[] | undefined = []; // filtered images by ns
+  hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
+  nodeDataDtos: NodeDataDto[] = [];
 
   private readonly _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
 
-  set selectedDataDto(dataDto: SbomReportDto | null) {
-    this.getFullSbomDto(dataDto?.uid);
-  }
-
-  private _selectedDataDto: SbomReportDto | null = null;
-
-  fullSbomDataDto: SbomReportDto | null = null;
-  nodeDataDtos: NodeDataDto[] = [];
-
   constructor(private service: SbomReportService) {
     this.getTableDataDtos();
-
-    this.mainTableColumns = [
-      {
-        field: 'resourceNamespace',
-        header: 'NS',
-        isFiltrable: true,
-        isSortable: true,
-        multiSelectType: 'namespaces',
-        style: 'width: 130px; max-width: 130px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'imageName',
-        header: 'Image Name - Tag',
-        isFiltrable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'white-space: normal;',
-        renderType: 'imageNameTag',
-        extraFields: ['imageTag', 'imageEosl'],
-      },
-    ];
-    this.mainTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFiltrable: false,
-      isFooterVisible: true,
-      tableSelectionMode: 'single',
-      tableStyle: {},
-      stateKey: 'SBOM Reports - Main',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: 'trivy-half',
-    };
 
     this.dependsOnTableColumns = [
       {
@@ -209,6 +169,15 @@ export class SbomReportsComponent {
         renderType: 'severityValue',
         extraFields: ['UNKNOWN'],
       },
+      {
+        field: 'level',
+        header: 'Level',
+        isFiltrable: true,
+        isSortable: true,
+        multiSelectType: 'none',
+        style: 'width: 130px; max-width: 130px;',
+        renderType: 'standard',
+      },
 
     ];
     this.dependsOnTableOptions = {
@@ -227,6 +196,7 @@ export class SbomReportsComponent {
     };
   }
 
+  // #region get data from api
   getTableDataDtos() {
     this.service.getSbomReportDtos().subscribe({
       next: (res) => this.onGetDataDtos(res),
@@ -258,25 +228,69 @@ export class SbomReportsComponent {
 
   onGetDataDtos(dtos: SbomReportDto[]) {
     this.dataDtos = dtos;
-    this.isMainTableLoading = false;
-  }
-
-  onMainTableSelectionChange(event: SbomReportDto[]) {
-    if (event == null || event.length == 0) {
-      this.selectedDataDto = null;
-      return;
-    } else {
-      this.selectedDataDto = event[0];
-    }
   }
 
   public onRefreshRequested(event: TrivyFilterData) {
-    this.isMainTableLoading = true;
     this.service.getSbomReportDtos().subscribe({
       next: (res) => this.onGetDataDtos(res),
       error: (err) => console.error(err),
     });
   }
+  // #endregion
+
+  // #region Get Parent and Children Nodes - To be moved in SBOM
+  private getDataDtosByNodeId(nodeId: string) {
+    const sbomDetailDtos: SbomDetailExtendedDto[] = [];
+    const rootSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == nodeId);
+    if (rootSbomDetailDto) {
+      const rootSbomExtended: SbomDetailExtendedDto = JSON.parse(JSON.stringify(rootSbomDetailDto));
+      rootSbomExtended.level = 'Base'
+      sbomDetailDtos.push(rootSbomExtended);
+      this.getDirectParentsSbomDtos(rootSbomExtended, sbomDetailDtos);
+      this.getChildrenSbomDtos(rootSbomExtended, nodeId, sbomDetailDtos);
+    }
+
+    this.dependsOnBoms = sbomDetailDtos;
+  }
+
+  private getDirectParentsSbomDtos(sded: SbomDetailExtendedDto, sdeds: SbomDetailExtendedDto[]) {
+    const parents = this.fullSbomDataDto?.details?.
+      filter((x) => x.dependsOn?.includes(sded.bomRef ?? ""))
+      .map((y) => {
+        const parentSbom: SbomDetailExtendedDto = JSON.parse(JSON.stringify(y));
+        parentSbom.level = 'Ancestor';
+        parentSbom.dependsOn = [sded.bomRef ?? ""];
+        return parentSbom;
+      }) ?? [];
+
+    sdeds.push(...parents);
+  }
+
+  private getChildrenSbomDtos(sded: SbomDetailExtendedDto, baseBomref: string, sdeds: SbomDetailExtendedDto[]) {
+    if (!sded) {
+      return;
+    }
+    const detailIds = sded.dependsOn;
+    if (!detailIds) {
+      return;
+    }
+    const newDetailIds: string[] = [];
+    detailIds.forEach((id) => {
+      if (!sdeds.find((x) => x.bomRef === id)) {
+        newDetailIds.push(id);
+      }
+    });
+    const newSbomDetailDtos = this.fullSbomDataDto?.details?.
+      filter((x) => newDetailIds.includes(x.bomRef ?? ''))
+      .map((y) => {
+        const childSbom: SbomDetailExtendedDto = JSON.parse(JSON.stringify(y));
+        childSbom.level = sded.bomRef == baseBomref ? 'Child' : 'Descendant';
+        return childSbom;
+      }) ?? [];
+    sdeds.push(...newSbomDetailDtos);
+    newSbomDetailDtos.forEach((sbomDetailDto) => this.getChildrenSbomDtos(sbomDetailDto, baseBomref, sdeds));
+  }
+  // #endregion
 
   filterImageDtos() {
     this.imageDtos = this.dataDtos
@@ -293,24 +307,27 @@ export class SbomReportsComponent {
       });
   }
 
-  getDependsOnBoms(bomRef: string) {
-    const details = this.fullSbomDataDto?.details;
-    let sboms: SbomReportDetailDto[] = [];
 
-    if (details) {
-      const foundItem = details.find((x) => x.bomRef == bomRef);
+  //getDependsOnBoms(bomRef: string) {
+  //  const details = this.fullSbomDataDto?.details;
+  //  let sboms: SbomReportDetailDto[] = [];
 
-      if (foundItem && foundItem.dependsOn) {
-        sboms = foundItem.dependsOn.map((dep) => {
-          return details.find((y) => y.bomRef == dep);
-        }).filter((x) => x !== undefined);
-      }
-    }
+  //  if (details) {
+  //    const foundItem = details.find((x) => x.bomRef == bomRef);
 
-    this.dependsOnBoms = sboms;
+  //    if (foundItem && foundItem.dependsOn) {
+  //      sboms = foundItem.dependsOn.map((dep) => {
+  //        return details.find((y) => y.bomRef == dep);
+  //      }).filter((x) => x !== undefined);
+  //    }
+  //  }
 
-  }
+  //  this.dependsOnBoms = sboms;
+  //}
 
+
+
+  // #region sanitize property name and value
   public sanitizePropertyName(value: string | null | undefined): string | null | undefined {
     return value?.replaceAll(':', ' ')
       .replaceAll('.', '-')
@@ -321,6 +338,8 @@ export class SbomReportsComponent {
     return value?.replaceAll('@', ' [@] ')
       .replaceAll('sha256:', ' [sha256:] ');
   }
+  // #endregion
+
 
   severityWrapperGetCssColor(severityId: number): string {
     return SeverityUtils.getCssColor(severityId);

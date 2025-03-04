@@ -23,13 +23,9 @@
                       [(ngModel)]="selectedImageDto" />
         </div>
       </div>
-      <!--<p-card [header]="selectedSbomDetailDto?.name ?? 'none'" [subheader]="selectedSbomDetailDto?.version ?? 'none'">-->
-      <p-panel styleClass="custom-panel"
+      <!--<p-panel styleClass="custom-panel"
                [toggleable]="true"
                header="{{ selectedSbomDetailDto?.name ?? 'none' }} - {{ selectedSbomDetailDto?.version ?? 'none' }}">
-        <!--<div class="flex flex-column pb-2">
-        <span>{{ selectedSbomDetailDto?.name ?? 'none' }} - {{ selectedSbomDetailDto?.version ?? 'none' }}</span>
-      </div>-->
         <p-table [value]="selectedSbomDetailDto?.properties || []"
                  [scrollable]="true"
                  scrollHeight="flex"
@@ -47,22 +43,12 @@
             </tr>
           </ng-template>
         </p-table>
-      </p-panel>
+      </p-panel>-->
       <app-trivy-table tableHeight="30vh"
                        [dataDtos]="dependsOnBoms!"
                        [isLoading]="false"
                        [trivyTableColumns]="dependsOnTableColumns"
                        [trivyTableOptions]="dependsOnTableOptions" />
-      <app-trivy-table *ngIf="false"
-                       #mainTable
-                       tableHeight="70vh"
-                       [activeNamespaces]="activeNamespaces"
-                       [dataDtos]="dataDtos!"
-                       [isLoading]="isMainTableLoading"
-                       [trivyTableColumns]="mainTableColumns"
-                       [trivyTableOptions]="mainTableOptions"
-                       (refreshRequested)="onRefreshRequested($event)"
-                       (selectedRowsChanged)="onMainTableSelectionChange($event)" />
     </div>
     <div class="col-12 md:col-7 lg:col-8 p-1">
       <app-fcose [dataDtos]="nodeDataDtos"
