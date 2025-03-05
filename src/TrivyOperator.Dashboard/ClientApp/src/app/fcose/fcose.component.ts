@@ -27,41 +27,38 @@ cytoscape.use(fcose);
 export class FcoseComponent implements AfterViewInit, OnInit {
   @ViewChild('graphContainer', { static: true }) graphContainer!: ElementRef;
 
-  // #region selectedInnerNodeId
-  @Input() set selectedInnerNodeId(value: string | undefined) {
-    this._selectedInnerNodeId = value;
-    this.selectedInnerNodeIdChange.emit(value);
-    if (value) {
-      this.graphDiveIn(value);
-    }
-    else {
-      this.initNavMenuItems();
-    }
-  }
-  get selectedInnerNodeId(): string | undefined {
-    return this._selectedInnerNodeId;
-  }
-  @Output() selectedInnerNodeIdChange: EventEmitter<string> = new EventEmitter<string>();
-  private _selectedInnerNodeId: string | undefined = this.rootNodeId;
-  // #endregion
-  // #region rootNodeId
-  @Input() set rootNodeId(value: string) {
-    this._rootNodeId = value;
-    this.initNavMenuItems();
-  }
-  get rootNodeId(): string {
-    return this._rootNodeId;
-  }
+  // #region activeNodeId
+  activeNodeId: string | undefined = undefined;
+  @Output() activeNodeIdChange: EventEmitter<string> = new EventEmitter<string>();
+  //@Input() set rootNodeId(value: string) {
+  //  this._rootNodeId = value;
+  //  this.initNavMenuItems();
+  //}
+  //get rootNodeId(): string {
+  //  return this._rootNodeId;
+  //}
   private _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
   // #endregion
-  // #region dataDtos
-  get dataDtos(): NodeDataDto[] {
-    return this._dataDtos;
+  // #region main nodeDataDtos
+  get nodeDataDtos(): NodeDataDto[] {
+    return this._nodeDataDtos;
   }
-  @Input() set dataDtos(sbomDto: NodeDataDto[]) {
-    this._dataDtos = sbomDto;
+  @Input() set nodeDataDtos(nodeDataDtos: NodeDataDto[]) {
+    this._nodeDataDtos = nodeDataDtos;
+    if (nodeDataDtos.length == 0) {
+      this.activeNodeId = undefined;
+      this.navHome = undefined;
+      this.navItems = [];
+    }
+    else {
+      if (!this.activeNodeId) {
+        this.initNavMenuItems();
+      }
+      this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
+      this.graphDiveIn();
+    }
   }
-  private _dataDtos: NodeDataDto[] = [];
+  private _nodeDataDtos: NodeDataDto[] = [];
   // #endregion
   // #region hoveredNode
   get hoveredNode(): NodeSingular | null {
@@ -78,7 +75,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   @Output() hoveredNodeDtoChange: EventEmitter<NodeDataDto> = new EventEmitter<NodeDataDto>();
   // #endregion
   navItems: MenuItem[] = [];
-  navHome: MenuItem = { id: this.rootNodeId, icon: 'pi pi-sitemap' };
+  navHome: MenuItem | undefined = undefined;
   private cy!: cytoscape.Core;
   private fcoseLayoutOptions: FcoseLayoutOptions = {
     name: 'fcose',
@@ -329,7 +326,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (node.isParent() || node.hasClass('nodeLeaf')) {
       return;
     }
-    this.graphDiveIn(node.id());
+    //this.graphDiveIn(node.id());
+    if (this.activeNodeId !== node.id()) {
+      this.activeNodeIdChange.emit(node.id());
+    }
   }
 
   // #region Menu Bar Events
@@ -358,24 +358,23 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
   // #endregion
 
-  private graphDiveIn(nodeId: string) {
+  private graphDiveIn() {
     this.cy.elements().addClass('hidden');
 
     setTimeout(() => {
       this.cy.elements().remove();
 
-      const newElements = this.getElementsByNodeId(nodeId);
-      this.cy.add(newElements);
+      this.cy.add(this.getElements());
 
       this.cy.elements().addClass('hidden');
 
       this.cy.layout(this.fcoseLayoutOptions as FcoseLayoutOptions).run();
       this.onZoomFit();
 
-      this.updateNavMenuItems(nodeId);
+      this.updateNavMenuItems(this.activeNodeId ?? "");
       setTimeout(() => {
         this.cy.elements().removeClass('hidden');
-        const newRootNode = this.cy.$(`#${nodeId}`);
+        const newRootNode = this.cy.$(`#${this.activeNodeId}`);
         if (newRootNode) {
           this.highlightNode(newRootNode);
         }
@@ -415,92 +414,117 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     });
   }
 
-  // #region Get Parent and Children Nodes - To be moved in SBOM
-  private getElementsByNodeId(nodeId: string): ElementDefinition[] {
-    const sbomDetailDtos: NodeDataDto[] = [];
-    const rootSbomDto = this.dataDtos.find((x) => x.id == nodeId);
-    if (rootSbomDto) {
-      sbomDetailDtos.push(rootSbomDto);
-      this.getParentsSbomDtos(rootSbomDto, sbomDetailDtos);
-      this.getChildrenSbomDtos(rootSbomDto, sbomDetailDtos);
-    }
-
-    const groupMap = new Map<string, number>();
-    // TODO: change to speciffic BelongsToGroupName (or smth) field in NodeDataDto
-    //sbomDetailDtos.forEach((sbomDetailDto) => {
-    //  if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
-    //    const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
-    //    const currentCount = (groupMap.get(potentialNs) || 0) + 1;
-    //    groupMap.set(potentialNs, currentCount);
-    //  }
-    //});
-
+  private getElements(): ElementDefinition[] {
     const elements: ElementDefinition[] = [];
-    sbomDetailDtos.forEach((sbomDetailDto) => {
-      if (sbomDetailDto) {
-        let parentId: string | undefined = undefined;
-        // TODO: change to speciffic BelongsToGroupName (or smth) field in NodeDataDto
-        //if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
-        //  // && !sbomDetailDto.name.includes("Runtime.linux-x64")
-        //  const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
-        //  if ((groupMap.get(potentialNs) || 0) > 1) {
-        //    elements.push({ data: { id: potentialNs, label: potentialNs }, classes: 'nodeCommon' });
-        //    parentId = potentialNs;
-        //  }
-        //}
+    this.nodeDataDtos.forEach(nodeData => {
+      elements.push({
+        data: {
+          id: nodeData.id,
+          label: nodeData.name ?? '',
+          parent: undefined,
+        },
+        classes: `nodeCommon nodePackage ${nodeData.dependsOn?.length ? 'nodeBranch' : 'nodeLeaf'}`,
+      });
+      nodeData.dependsOn?.forEach((depends) => {
         elements.push({
           data: {
-            id: sbomDetailDto.id,
-            label: sbomDetailDto.name ?? '',
-            parent: parentId,
+            source: nodeData.id,
+            target: depends,
           },
-          classes: `nodeCommon nodePackage ${sbomDetailDto.dependsOn?.length ? 'nodeBranch' : 'nodeLeaf'}`,
+          classes: 'edgeCommon',
         });
-        sbomDetailDto.dependsOn?.forEach((depends) => {
-          elements.push({
-            data: {
-              source: sbomDetailDto.id,
-              target: depends,
-            },
-            classes: 'edgeCommon',
-          });
-        });
-      }
+      });
     });
 
     return elements;
   }
 
-  private getParentsSbomDtos(sbomDetailDto: NodeDataDto, sbomDetailDtos: NodeDataDto[]) {
-    const parents = this.dataDtos
-      .filter((x) => x.dependsOn?.includes(sbomDetailDto.id ?? ""))
-      .map((y) => {
-        const parentSbom: NodeDataDto = JSON.parse(JSON.stringify(y));
-        parentSbom.dependsOn = [sbomDetailDto.id ?? ""];
-        return parentSbom;
-      }) ?? [];
+  // #region Get Parent and Children Nodes - To be moved in SBOM
+  //private getElementsByNodeId(nodeId: string): ElementDefinition[] {
+  //  const sbomDetailDtos: NodeDataDto[] = [];
+  //  const rootSbomDto = this.nodeDataDtos.find((x) => x.id == nodeId);
+  //  if (rootSbomDto) {
+  //    sbomDetailDtos.push(rootSbomDto);
+  //    this.getParentsSbomDtos(rootSbomDto, sbomDetailDtos);
+  //    this.getChildrenSbomDtos(rootSbomDto, sbomDetailDtos);
+  //  }
 
-    sbomDetailDtos.push(...parents);
-  }
+  //  const groupMap = new Map<string, number>();
+  //  // TODO: change to speciffic BelongsToGroupName (or smth) field in NodeDataDto
+  //  //sbomDetailDtos.forEach((sbomDetailDto) => {
+  //  //  if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
+  //  //    const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
+  //  //    const currentCount = (groupMap.get(potentialNs) || 0) + 1;
+  //  //    groupMap.set(potentialNs, currentCount);
+  //  //  }
+  //  //});
 
-  private getChildrenSbomDtos(sbomDetailDto: NodeDataDto, sbomDetailDtos: NodeDataDto[]) {
-    if (!sbomDetailDto) {
-      return;
-    }
-    const detailIds = sbomDetailDto.dependsOn;
-    if (!detailIds) {
-      return;
-    }
-    const newDetailIds: string[] = [];
-    detailIds.forEach((id) => {
-      if (!sbomDetailDtos.find((x) => x.id === id)) {
-        newDetailIds.push(id);
-      }
-    });
-    const newSbomDetailDtos = this.dataDtos.filter((x) => newDetailIds.includes(x.id ?? '')) ?? [];
-    sbomDetailDtos.push(...newSbomDetailDtos);
-    newSbomDetailDtos.forEach((sbomDetailDto) => this.getChildrenSbomDtos(sbomDetailDto, sbomDetailDtos));
-  }
+  //  const elements: ElementDefinition[] = [];
+  //  sbomDetailDtos.forEach((sbomDetailDto) => {
+  //    if (sbomDetailDto) {
+  //      let parentId: string | undefined = undefined;
+  //      // TODO: change to speciffic BelongsToGroupName (or smth) field in NodeDataDto
+  //      //if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
+  //      //  // && !sbomDetailDto.name.includes("Runtime.linux-x64")
+  //      //  const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
+  //      //  if ((groupMap.get(potentialNs) || 0) > 1) {
+  //      //    elements.push({ data: { id: potentialNs, label: potentialNs }, classes: 'nodeCommon' });
+  //      //    parentId = potentialNs;
+  //      //  }
+  //      //}
+  //      elements.push({
+  //        data: {
+  //          id: sbomDetailDto.id,
+  //          label: sbomDetailDto.name ?? '',
+  //          parent: parentId,
+  //        },
+  //        classes: `nodeCommon nodePackage ${sbomDetailDto.dependsOn?.length ? 'nodeBranch' : 'nodeLeaf'}`,
+  //      });
+  //      sbomDetailDto.dependsOn?.forEach((depends) => {
+  //        elements.push({
+  //          data: {
+  //            source: sbomDetailDto.id,
+  //            target: depends,
+  //          },
+  //          classes: 'edgeCommon',
+  //        });
+  //      });
+  //    }
+  //  });
+
+  //  return elements;
+  //}
+
+  //private getParentsSbomDtos(sbomDetailDto: NodeDataDto, sbomDetailDtos: NodeDataDto[]) {
+  //  const parents = this.nodeDataDtos
+  //    .filter((x) => x.dependsOn?.includes(sbomDetailDto.id ?? ""))
+  //    .map((y) => {
+  //      const parentSbom: NodeDataDto = JSON.parse(JSON.stringify(y));
+  //      parentSbom.dependsOn = [sbomDetailDto.id ?? ""];
+  //      return parentSbom;
+  //    }) ?? [];
+
+  //  sbomDetailDtos.push(...parents);
+  //}
+
+  //private getChildrenSbomDtos(sbomDetailDto: NodeDataDto, sbomDetailDtos: NodeDataDto[]) {
+  //  if (!sbomDetailDto) {
+  //    return;
+  //  }
+  //  const detailIds = sbomDetailDto.dependsOn;
+  //  if (!detailIds) {
+  //    return;
+  //  }
+  //  const newDetailIds: string[] = [];
+  //  detailIds.forEach((id) => {
+  //    if (!sbomDetailDtos.find((x) => x.id === id)) {
+  //      newDetailIds.push(id);
+  //    }
+  //  });
+  //  const newSbomDetailDtos = this.nodeDataDtos.filter((x) => newDetailIds.includes(x.id ?? '')) ?? [];
+  //  sbomDetailDtos.push(...newSbomDetailDtos);
+  //  newSbomDetailDtos.forEach((sbomDetailDto) => this.getChildrenSbomDtos(sbomDetailDto, sbomDetailDtos));
+  //}
   // #endregion
 
   // #region navItems
@@ -509,7 +533,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
    */
   private initNavMenuItems() {
     this.navItems = [];
-    this.navHome = { id: this.rootNodeId, icon: 'pi pi-sitemap' };
+    this.navHome = { id: this._rootNodeId, icon: 'pi pi-sitemap' };
   }
 
   /**
@@ -517,8 +541,11 @@ export class FcoseComponent implements AfterViewInit, OnInit {
    * @param {BreadcrumbItemClickEvent} event - the event holding item info
    */
   onNavItemClick(event: BreadcrumbItemClickEvent) {
-    if (event.item.id) {
-      this.graphDiveIn(event.item.id);
+    if (event.item?.id === this._rootNodeId && this.navItems.length == 0) {
+      return;
+    }
+    if (event.item?.id && this.navItems[this.navItems.length - 1]?.id !== event.item.id) {
+      this.activeNodeIdChange.emit(event.item.id);
     }
   }
   /**
@@ -526,12 +553,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
    * @param {string} nodeId - the node id of the selected item
    */
   private updateNavMenuItems(nodeId: string) {
-    if (this.selectedInnerNodeId === nodeId) {
-      return;
-    }
-
-    if (this.rootNodeId === nodeId) {
-      this.selectedInnerNodeId = nodeId;
+    if (this._rootNodeId === nodeId) {
+      this.activeNodeId = nodeId;
       this.navItems = [];
       return;
     }
@@ -540,7 +563,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (potentialIndex !== -1) {
       this.navItems = this.navItems.slice(0, potentialIndex + 1);
       this.navItems[potentialIndex].styleClass = 'breadcrumb-size';
-      this.selectedInnerNodeId = nodeId;
+      this.activeNodeId = nodeId;
       return;
     }
 
@@ -556,12 +579,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         styleClass: 'breadcrumb-size',
       },
     ];
-    this.selectedInnerNodeId = nodeId;
+    this.activeNodeId = nodeId;
   }
   // #endregion
 
   getDataDetailDtoById(id: string | undefined | null): NodeDataDto | undefined {
-    return this.dataDtos.find((x) => x.id == id);
+    return this.nodeDataDtos.find((x) => x.id == id);
   }
 
   onInputChange(value: string) {

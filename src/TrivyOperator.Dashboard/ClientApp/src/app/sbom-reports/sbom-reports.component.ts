@@ -65,18 +65,18 @@ export class SbomReportsComponent {
   }
   private _imageDto: ImageDto | null = null;
   // #endregion
-  // #region selectedInnerNodeId property
-  set selectedInnerNodeId(value: string | undefined) {
-    this._selectedInnerNodeId = value;
-    this.selectedSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == value);
-    if (value) {
-      this.getDataDtosByNodeId(value);
-    }
-  }
-  get selectedInnerNodeId(): string | undefined {
-    return this._selectedInnerNodeId;
-  }
-  private _selectedInnerNodeId: string | undefined = undefined;
+  // #region activeSbomDetailBomRef property
+  //set activeSbomDetailBomRef(value: string | undefined) {
+  //  this._activeSbomDetailBomRef = value;
+  //  this.selectedSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == value);
+  //  if (value) {
+  //    this.getDataDtosByNodeId(value);
+  //  }
+  //}
+  //get activeSbomDetailBomRef(): string | undefined {
+  //  return this._activeSbomDetailBomRef;
+  //}
+  //private _activeSbomDetailBomRef: string | undefined = undefined;
   // #endregion
   // #region dependsOnTable data
   selectedSbomDetailDto: SbomReportDetailDto | undefined = undefined;
@@ -216,14 +216,15 @@ export class SbomReportsComponent {
       });
     }
     this.fullSbomDataDto = null;
-    this.selectedInnerNodeId = undefined;
+    //this.activeSbomDetailBomRef = undefined;
     this.nodeDataDtos = [];
   }
 
   onGetSbomReportDtoByUid(fullSbomDataDto: SbomReportDto) {
     this.fullSbomDataDto = fullSbomDataDto;
-    this.selectedInnerNodeId = this._rootNodeId;
-    this.nodeDataDtos = this.getNodeDataDtos(fullSbomDataDto);
+    this.onActiveNodeIdChange(this._rootNodeId);
+    //this.activeSbomDetailBomRef = this._rootNodeId;
+    //this.nodeDataDtos = this.getNodeDataDtos(fullSbomDataDto);
   }
 
   onGetDataDtos(dtos: SbomReportDto[]) {
@@ -238,19 +239,27 @@ export class SbomReportsComponent {
   }
   // #endregion
 
-  // #region Get Parent and Children Nodes - To be moved in SBOM
+  // #region Get Parent and Children Nodes
   private getDataDtosByNodeId(nodeId: string) {
     const sbomDetailDtos: SbomDetailExtendedDto[] = [];
     const rootSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == nodeId);
     if (rootSbomDetailDto) {
       const rootSbomExtended: SbomDetailExtendedDto = JSON.parse(JSON.stringify(rootSbomDetailDto));
-      rootSbomExtended.level = 'Base'
+      rootSbomExtended.level = 'Base';
       sbomDetailDtos.push(rootSbomExtended);
       this.getDirectParentsSbomDtos(rootSbomExtended, sbomDetailDtos);
       this.getChildrenSbomDtos(rootSbomExtended, nodeId, sbomDetailDtos);
     }
 
     this.dependsOnBoms = sbomDetailDtos;
+    this.nodeDataDtos = sbomDetailDtos.map((x) =>
+      ({
+        id: x.bomRef,
+        dependsOn: x.dependsOn,
+        name: x.name,
+        groupName: "",
+        isMain: x.bomRef == nodeId,
+      })) ?? [];
   }
 
   private getDirectParentsSbomDtos(sded: SbomDetailExtendedDto, sdeds: SbomDetailExtendedDto[]) {
@@ -307,26 +316,6 @@ export class SbomReportsComponent {
       });
   }
 
-
-  //getDependsOnBoms(bomRef: string) {
-  //  const details = this.fullSbomDataDto?.details;
-  //  let sboms: SbomReportDetailDto[] = [];
-
-  //  if (details) {
-  //    const foundItem = details.find((x) => x.bomRef == bomRef);
-
-  //    if (foundItem && foundItem.dependsOn) {
-  //      sboms = foundItem.dependsOn.map((dep) => {
-  //        return details.find((y) => y.bomRef == dep);
-  //      }).filter((x) => x !== undefined);
-  //    }
-  //  }
-
-  //  this.dependsOnBoms = sboms;
-  //}
-
-
-
   // #region sanitize property name and value
   public sanitizePropertyName(value: string | null | undefined): string | null | undefined {
     return value?.replaceAll(':', ' ')
@@ -353,12 +342,29 @@ export class SbomReportsComponent {
     return this.fullSbomDataDto?.details?.find(x => x.bomRef == bomref);
   }
 
-  private getNodeDataDtos(fullSbom: SbomReportDto | undefined): NodeDataDto[] {
-    if (!fullSbom) {
-      return [];
-    }
 
-    return fullSbom.details?.map((x) =>
-      ({ id: x.bomRef, dependsOn: x.dependsOn, name: x.name, groupName: "" })) ?? [];
+
+
+  onActiveNodeIdChange(event: string) {
+    this.selectedSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == event);
+    if (this.selectedSbomDetailDto) {
+      this.getDataDtosByNodeId(event);
+    }
   }
+
+
+  //private getNodeDataDtos(fullSbom: SbomReportDto | undefined): NodeDataDto[] {
+  //  if (!fullSbom) {
+  //    return [];
+  //  }
+
+  //  return fullSbom.details?.map((x) =>
+  //  ({
+  //    id: x.bomRef,
+  //    dependsOn: x.dependsOn,
+  //    name: x.name,
+  //    groupName: "",
+  //    isMain: x.bomRef == this._rootNodeId,
+  //  })) ?? [];
+  //}
 }
