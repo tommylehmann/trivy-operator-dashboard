@@ -246,6 +246,7 @@ export class SbomReportsComponent {
     if (rootSbomDetailDto) {
       const rootSbomExtended: SbomDetailExtendedDto = JSON.parse(JSON.stringify(rootSbomDetailDto));
       rootSbomExtended.level = 'Base';
+      rootSbomExtended.group = this.getGroupFromSbomReportDetail(rootSbomExtended);
       sbomDetailDtos.push(rootSbomExtended);
       this.getDirectParentsSbomDtos(rootSbomExtended, sbomDetailDtos);
       this.getChildrenSbomDtos(rootSbomExtended, nodeId, sbomDetailDtos);
@@ -257,7 +258,7 @@ export class SbomReportsComponent {
         id: x.bomRef,
         dependsOn: x.dependsOn,
         name: x.name,
-        groupName: "",
+        groupName: x.group,
         isMain: x.bomRef == nodeId,
       })) ?? [];
   }
@@ -268,6 +269,7 @@ export class SbomReportsComponent {
       .map((y) => {
         const parentSbom: SbomDetailExtendedDto = JSON.parse(JSON.stringify(y));
         parentSbom.level = 'Ancestor';
+        parentSbom.group = this.getGroupFromSbomReportDetail(parentSbom);
         parentSbom.dependsOn = [sded.bomRef ?? ""];
         return parentSbom;
       }) ?? [];
@@ -294,6 +296,7 @@ export class SbomReportsComponent {
       .map((y) => {
         const childSbom: SbomDetailExtendedDto = JSON.parse(JSON.stringify(y));
         childSbom.level = sded.bomRef == baseBomref ? 'Child' : 'Descendant';
+        childSbom.group = this.getGroupFromSbomReportDetail(childSbom);
         return childSbom;
       }) ?? [];
     sdeds.push(...newSbomDetailDtos);
@@ -342,9 +345,6 @@ export class SbomReportsComponent {
     return this.fullSbomDataDto?.details?.find(x => x.bomRef == bomref);
   }
 
-
-
-
   onActiveNodeIdChange(event: string) {
     this.selectedSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == event);
     if (this.selectedSbomDetailDto) {
@@ -352,6 +352,12 @@ export class SbomReportsComponent {
     }
   }
 
+  private getGroupFromSbomReportDetail(dto: SbomDetailExtendedDto): string {
+    if (dto.purl?.startsWith('pkg:nuget/')) {
+      return dto.name?.split('.')[0] ?? "";
+    }
+    return "";
+  }
 
   //private getNodeDataDtos(fullSbom: SbomReportDto | undefined): NodeDataDto[] {
   //  if (!fullSbom) {

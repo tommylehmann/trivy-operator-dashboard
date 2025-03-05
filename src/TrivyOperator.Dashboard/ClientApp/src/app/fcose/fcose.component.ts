@@ -416,12 +416,27 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   private getElements(): ElementDefinition[] {
     const elements: ElementDefinition[] = [];
+    const groupMap = new Map<string, number>();
+    this.nodeDataDtos
+      .filter(x => x.groupName)
+      .forEach((x) => {
+        const currentCount = (groupMap.get(x.groupName ?? "") || 0) + 1;
+        groupMap.set(x.groupName ?? "", currentCount);
+      }
+    );
+    groupMap.forEach((value, key) => {
+      if (value > 1) {
+        elements.push({ data: { id: key, label: key }, classes: 'nodeCommon' });
+      }
+    });
+
     this.nodeDataDtos.forEach(nodeData => {
+      const parentId = (groupMap.get(nodeData.groupName ?? "") || 0) > 1 ? nodeData.groupName : undefined;
       elements.push({
         data: {
           id: nodeData.id,
           label: nodeData.name ?? '',
-          parent: undefined,
+          parent: parentId,
         },
         classes: `nodeCommon nodePackage ${nodeData.dependsOn?.length ? 'nodeBranch' : 'nodeLeaf'}`,
       });
