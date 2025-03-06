@@ -27,7 +27,8 @@
                        [dataDtos]="dependsOnBoms"
                        [isLoading]="isTableLoading"
                        [trivyTableColumns]="dependsOnTableColumns"
-                       [trivyTableOptions]="dependsOnTableOptions" />
+                       [trivyTableOptions]="dependsOnTableOptions"
+                       (selectedRowsChanged)="onTableSelectedRowChange($event)"/>
     </div>
     <div class="col-12 md:col-7 lg:col-8 p-1">
       <app-fcose [nodeDataDtos]="nodeDataDtos"

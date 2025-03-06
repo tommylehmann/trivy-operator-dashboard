@@ -175,7 +175,7 @@ export class SbomReportsComponent {
       isRefreshVisible: false,
       isRefreshFiltrable: false,
       isFooterVisible: true,
-      tableSelectionMode: null,
+      tableSelectionMode: 'single',
       tableStyle: {},
       stateKey: 'SBOM Reports - Depends On',
       dataKey: null,
@@ -353,18 +353,7 @@ export class SbomReportsComponent {
     return "";
   }
 
-  //private getNodeDataDtos(fullSbom: SbomReportDto | undefined): NodeDataDto[] {
-  //  if (!fullSbom) {
-  //    return [];
-  //  }
-
-  //  return fullSbom.details?.map((x) =>
-  //  ({
-  //    id: x.bomRef,
-  //    dependsOn: x.dependsOn,
-  //    name: x.name,
-  //    groupName: "",
-  //    isMain: x.bomRef == this._rootNodeId,
-  //  })) ?? [];
-  //}
+  onTableSelectedRowChange(data: SbomReportDetailDto[]) {
+    //console.log(data);
+  }
 }

@@ -48,6 +48,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         this.initNavMenuItems();
       }
       this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
+      this.hoveredNode = undefined;
+      this.selectedNode = undefined;
       this.redrawGraph();
     }
   }
@@ -60,11 +62,11 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private set hoveredNode(node: NodeSingular | undefined) {
     this._hoveredNode = node;
     const hoveredNodeDto = this.getDataDetailDtoById(node?.id());
-    this.hoveredNodeDto = hoveredNodeDto;
-    this.hoveredNodeDtoChange.emit(hoveredNodeDto);
+    //this.hoveredNodeDto = hoveredNodeDto;
+    this.hoveredNodeDtoChange.emit(this.getDataDetailDtoById(node?.id()));
   }
   private _hoveredNode?: NodeSingular;
-  hoveredNodeDto: NodeDataDto | undefined = undefined;
+  //hoveredNodeDto: NodeDataDto | undefined = undefined;
   @Output() hoveredNodeDtoChange: EventEmitter<NodeDataDto> = new EventEmitter<NodeDataDto>();
   // #endregion
   navItems: MenuItem[] = [];
@@ -93,6 +95,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private isDivedIn: boolean = false;
   inputFilterByNameControl = new FormControl();
   private inputFilterByNameValue: string = "";
+
+  selectedNode?: NodeSingular;
+
+  clickTimeout?: ReturnType<typeof setTimeout>;
+  private doubleClickDelay = 300; 
+
 
   ngOnInit() {
     this.inputFilterByNameControl.valueChanges.pipe(debounceTime(500)).subscribe((value) => {
@@ -176,7 +184,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.hoveredCommon',
+          selector: '.hoveredCommon, .selectedCommon',
           style: {
             width: 'mapData(label.length, 1, 30, 20, 240)',
             height: '24px',
@@ -186,7 +194,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.hovered',
+          selector: '.hovered, .selected',
           style: {
             'background-color': 'Silver',
           },
@@ -198,9 +206,21 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
+          selector: '.selectedOutgoers',
+          style: {
+            'background-color': 'Salmon',
+          },
+        },
+        {
           selector: '.hoveredIncomers',
           style: {
             'background-color': 'RoyalBlue',
+          },
+        },
+        {
+          selector: '.selectedIncomers',
+          style: {
+            'background-color': 'Red',
           },
         },
         {
@@ -212,10 +232,27 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.highlighted-edge',
+          selector: '.selectedHighlight',
+          style: {
+            'overlay-opacity': 0.5,
+            'overlay-color': 'Salmon',
+            'font-style': 'italic',
+          },
+        },
+        {
+          selector: '.hoveredEdge',
           style: {
             width: 3,
             'line-color': 'Violet',
+            'transition-property': 'line-color opacity',
+            'transition-duration': 300,
+          },
+        },
+        {
+          selector: '.selectedEdge',
+          style: {
+            width: 3,
+            'line-color': 'LightCoral',
             'transition-property': 'line-color opacity',
             'transition-duration': 300,
           },
@@ -245,67 +282,108 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   private setupCyEvents() {
     this.cy.on('mouseover', 'node', (event) => {
-      this.highlightNode(event.target as NodeSingular);
+      this.hoverHighlightNode(event.target as NodeSingular);
     });
 
     this.cy.on('mouseout', 'node', (event) => {
-      this.unhighlightNode(event.target as NodeSingular);
+      this.hoverUnhighlightNode(event.target as NodeSingular);
     });
 
-    this.cy.on('dblclick', 'node', (event) => {
+    this.cy.on('tap', 'node', (event: cytoscape.EventObject) => {
+      if (event.originalEvent.detail === 1) {
+        this.clickTimeout = setTimeout(() => {
+          this.onSelectNode(event.target as NodeSingular)
+        }, this.doubleClickDelay);
+      }
+    });
+
+    this.cy.on('dbltap', 'node', (event) => {
+      clearTimeout(this.clickTimeout);
       this.diveInNode(event.target as NodeSingular);
     });
+
+
   }
   // #endregion
 
   // #region Node Highlightning
-  private highlightNode(node: NodeSingular) {
-    if (this.hoveredNode?.id() == node.id() || node.isParent()) {
+  private hoverHighlightNode(node: NodeSingular) {
+    if (this.selectedNode || this.hoveredNode == node || node.isParent()) {
       return;
     }
     if (this.hoveredNode) {
-      this.unhighlightNode(this.hoveredNode);
+      this.hoverUnhighlightNode(this.hoveredNode);
     }
     this.hoveredNode = node;
-    this.hoveredNode.addClass('hoveredCommon hovered');
-    this.hoveredNode.incomers('node').forEach((depNode: NodeSingular) => {
-      depNode.addClass('hoveredCommon ');
-      // WTF? why it might be null?
-      if (this.hoveredNode!.outgoers('node').has(depNode)) {
-        depNode.addClass('hoveredHighlight');
-      } else {
-        depNode.addClass('hoveredIncomers');
-      }
-    });
-    this.hoveredNode.outgoers('node').forEach((depNode: NodeSingular) => {
-      depNode.addClass('hoveredCommon hoveredOutgoers');
-    });
-
-    this.hoveredNode.connectedEdges().forEach((edge: EdgeSingular) => {
-      edge.addClass('highlighted-edge');
-    });
+    this.highlightNode(node, "hovered");
   }
 
-  private unhighlightNode(node: NodeSingular) {
-    if (node.isParent()) {
+  private hoverUnhighlightNode(node: NodeSingular) {
+    if (this.selectedNode || node.isParent() || this.isDivedIn) {
       return;
     }
-    if (this.isDivedIn) {
-      return;
-    }
-    node.removeClass('hoveredCommon hovered');
+    this.unhighlightNode(node, "hovered");
+    this.hoveredNode = undefined;
+  }
+  // #endregion
 
-    node.outgoers('node').forEach((depNode: NodeSingular) => {
-      depNode.removeClass('hoveredCommon hoveredOutgoers hoveredHighlight');
-    });
+  private highlightNode(node: NodeSingular, stylePrefix: "hovered" | "selected") {
+    node.addClass(`${stylePrefix}Common ${stylePrefix}`);
     node.incomers('node').forEach((depNode: NodeSingular) => {
-      depNode.removeClass('hoveredCommon hoveredIncomers');
+      depNode.addClass(`${stylePrefix}Common`);
+      if (node.outgoers('node').has(depNode)) {
+        depNode.addClass(`${stylePrefix}Highlight`);
+      } else {
+        depNode.addClass(`${stylePrefix}Incomers`);
+      }
+    });
+    node.outgoers('node').forEach((depNode: NodeSingular) => {
+      depNode.addClass(`${stylePrefix}Common ${stylePrefix}Outgoers`);
     });
 
     node.connectedEdges().forEach((edge: EdgeSingular) => {
-      edge.removeClass('highlighted-edge');
+      edge.addClass(`${stylePrefix}Edge`);
     });
-    this.hoveredNode = undefined;
+  }
+
+  private unhighlightNode(node: NodeSingular, stylePrefix: "hovered" | "selected") {
+    node.removeClass(`${stylePrefix}Common ${stylePrefix}`);
+
+    node.outgoers('node').forEach((depNode: NodeSingular) => {
+      depNode.removeClass(`${stylePrefix}Common ${stylePrefix}Outgoers ${stylePrefix}Highlight`);
+    });
+    node.incomers('node').forEach((depNode: NodeSingular) => {
+      depNode.removeClass(`${stylePrefix}Common ${stylePrefix}Incomers`);
+    });
+
+    node.connectedEdges().forEach((edge: EdgeSingular) => {
+      edge.removeClass(`${stylePrefix}Edge`);
+    });
+  }
+
+  // #region Node Select
+  private onSelectNode(node: NodeSingular) {
+    if (this.hoveredNode) {
+      this.hoverUnhighlightNode(this.hoveredNode);
+    }
+    if (this.selectedNode == node) {
+      this.unselectNode(node);
+      this.hoverHighlightNode(node);
+      return;
+    }
+    if (this.selectedNode) {
+      this.unselectNode(this.selectedNode);
+    }
+    this.selectNode(node);
+  }
+
+  private selectNode(node: NodeSingular) {
+    this.highlightNode(node, 'selected');
+    this.selectedNode = node;
+  }
+  private unselectNode(node: NodeSingular) {
+    this.unhighlightNode(node, "selected");
+    this.selectedNode = undefined;
   }
   // #endregion
 
@@ -360,10 +438,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.updateNavMenuItems(this.activeNodeId ?? "");
       setTimeout(() => {
         this.cy.elements().removeClass('hidden');
-        const newRootNode = this.cy.$(`#${this.activeNodeId}`);
-        if (newRootNode) {
-          this.highlightNode(newRootNode);
-        }
+        //const newRootNode = this.cy.$(`#${this.activeNodeId}`);
+        //if (newRootNode) {
+        //  this.hoverHighlightNode(newRootNode);
+        //}
         if (this.inputFilterByNameValue) {
           this.onNodesHighlightByName(this.inputFilterByNameValue);
         }
