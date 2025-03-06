@@ -30,13 +30,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   // #region activeNodeId
   activeNodeId: string | undefined = undefined;
   @Output() activeNodeIdChange: EventEmitter<string> = new EventEmitter<string>();
-  //@Input() set rootNodeId(value: string) {
-  //  this._rootNodeId = value;
-  //  this.initNavMenuItems();
-  //}
-  //get rootNodeId(): string {
-  //  return this._rootNodeId;
-  //}
   private _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
   // #endregion
   // #region main nodeDataDtos
@@ -55,22 +48,22 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         this.initNavMenuItems();
       }
       this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
-      this.graphDiveIn();
+      this.redrawGraph();
     }
   }
   private _nodeDataDtos: NodeDataDto[] = [];
   // #endregion
   // #region hoveredNode
-  get hoveredNode(): NodeSingular | null {
+  get hoveredNode(): NodeSingular | undefined {
     return this._hoveredNode;
   }
-  private set hoveredNode(node: NodeSingular | null) {
+  private set hoveredNode(node: NodeSingular | undefined) {
     this._hoveredNode = node;
     const hoveredNodeDto = this.getDataDetailDtoById(node?.id());
     this.hoveredNodeDto = hoveredNodeDto;
     this.hoveredNodeDtoChange.emit(hoveredNodeDto);
   }
-  private _hoveredNode: NodeSingular | null = null;
+  private _hoveredNode?: NodeSingular;
   hoveredNodeDto: NodeDataDto | undefined = undefined;
   @Output() hoveredNodeDtoChange: EventEmitter<NodeDataDto> = new EventEmitter<NodeDataDto>();
   // #endregion
@@ -260,13 +253,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     });
 
     this.cy.on('dblclick', 'node', (event) => {
-      this.selectNode(event.target as NodeSingular);
+      this.diveInNode(event.target as NodeSingular);
     });
-
-    //this.cy.on('click', 'node', (event) => {
-    //  const node = event.target;
-    //  console.log('Single-clicked on node:', node.id());
-    //});
   }
   // #endregion
 
@@ -303,7 +291,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       return;
     }
     if (this.isDivedIn) {
-      // this.isDivedIn = false;
       return;
     }
     node.removeClass('hoveredCommon hovered');
@@ -318,15 +305,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     node.connectedEdges().forEach((edge: EdgeSingular) => {
       edge.removeClass('highlighted-edge');
     });
-    this.hoveredNode = null;
+    this.hoveredNode = undefined;
   }
   // #endregion
 
-  private selectNode(node: NodeSingular) {
+  private diveInNode(node: NodeSingular) {
     if (node.isParent() || node.hasClass('nodeLeaf')) {
       return;
     }
-    //this.graphDiveIn(node.id());
     if (this.activeNodeId !== node.id()) {
       this.activeNodeIdChange.emit(node.id());
     }
@@ -358,7 +344,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
   // #endregion
 
-  private graphDiveIn() {
+  private redrawGraph() {
     this.cy.elements().addClass('hidden');
 
     setTimeout(() => {
@@ -453,94 +439,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
     return elements;
   }
-
-  // #region Get Parent and Children Nodes - To be moved in SBOM
-  //private getElementsByNodeId(nodeId: string): ElementDefinition[] {
-  //  const sbomDetailDtos: NodeDataDto[] = [];
-  //  const rootSbomDto = this.nodeDataDtos.find((x) => x.id == nodeId);
-  //  if (rootSbomDto) {
-  //    sbomDetailDtos.push(rootSbomDto);
-  //    this.getParentsSbomDtos(rootSbomDto, sbomDetailDtos);
-  //    this.getChildrenSbomDtos(rootSbomDto, sbomDetailDtos);
-  //  }
-
-  //  const groupMap = new Map<string, number>();
-  //  // TODO: change to speciffic BelongsToGroupName (or smth) field in NodeDataDto
-  //  //sbomDetailDtos.forEach((sbomDetailDto) => {
-  //  //  if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
-  //  //    const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
-  //  //    const currentCount = (groupMap.get(potentialNs) || 0) + 1;
-  //  //    groupMap.set(potentialNs, currentCount);
-  //  //  }
-  //  //});
-
-  //  const elements: ElementDefinition[] = [];
-  //  sbomDetailDtos.forEach((sbomDetailDto) => {
-  //    if (sbomDetailDto) {
-  //      let parentId: string | undefined = undefined;
-  //      // TODO: change to speciffic BelongsToGroupName (or smth) field in NodeDataDto
-  //      //if (sbomDetailDto.purl?.startsWith('pkg:nuget/')) {
-  //      //  // && !sbomDetailDto.name.includes("Runtime.linux-x64")
-  //      //  const potentialNs = sbomDetailDto.name?.split('.')[0] ?? 'unknown';
-  //      //  if ((groupMap.get(potentialNs) || 0) > 1) {
-  //      //    elements.push({ data: { id: potentialNs, label: potentialNs }, classes: 'nodeCommon' });
-  //      //    parentId = potentialNs;
-  //      //  }
-  //      //}
-  //      elements.push({
-  //        data: {
-  //          id: sbomDetailDto.id,
-  //          label: sbomDetailDto.name ?? '',
-  //          parent: parentId,
-  //        },
-  //        classes: `nodeCommon nodePackage ${sbomDetailDto.dependsOn?.length ? 'nodeBranch' : 'nodeLeaf'}`,
-  //      });
-  //      sbomDetailDto.dependsOn?.forEach((depends) => {
-  //        elements.push({
-  //          data: {
-  //            source: sbomDetailDto.id,
-  //            target: depends,
-  //          },
-  //          classes: 'edgeCommon',
-  //        });
-  //      });
-  //    }
-  //  });
-
-  //  return elements;
-  //}
-
-  //private getParentsSbomDtos(sbomDetailDto: NodeDataDto, sbomDetailDtos: NodeDataDto[]) {
-  //  const parents = this.nodeDataDtos
-  //    .filter((x) => x.dependsOn?.includes(sbomDetailDto.id ?? ""))
-  //    .map((y) => {
-  //      const parentSbom: NodeDataDto = JSON.parse(JSON.stringify(y));
-  //      parentSbom.dependsOn = [sbomDetailDto.id ?? ""];
-  //      return parentSbom;
-  //    }) ?? [];
-
-  //  sbomDetailDtos.push(...parents);
-  //}
-
-  //private getChildrenSbomDtos(sbomDetailDto: NodeDataDto, sbomDetailDtos: NodeDataDto[]) {
-  //  if (!sbomDetailDto) {
-  //    return;
-  //  }
-  //  const detailIds = sbomDetailDto.dependsOn;
-  //  if (!detailIds) {
-  //    return;
-  //  }
-  //  const newDetailIds: string[] = [];
-  //  detailIds.forEach((id) => {
-  //    if (!sbomDetailDtos.find((x) => x.id === id)) {
-  //      newDetailIds.push(id);
-  //    }
-  //  });
-  //  const newSbomDetailDtos = this.nodeDataDtos.filter((x) => newDetailIds.includes(x.id ?? '')) ?? [];
-  //  sbomDetailDtos.push(...newSbomDetailDtos);
-  //  newSbomDetailDtos.forEach((sbomDetailDto) => this.getChildrenSbomDtos(sbomDetailDto, sbomDetailDtos));
-  //}
-  // #endregion
 
   // #region navItems
   /**

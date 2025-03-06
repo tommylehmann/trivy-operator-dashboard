@@ -244,9 +244,11 @@ export class SbomReportsComponent {
     const sbomDetailDtos: SbomDetailExtendedDto[] = [];
     const rootSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == nodeId);
     if (rootSbomDetailDto) {
-      const rootSbomExtended: SbomDetailExtendedDto = JSON.parse(JSON.stringify(rootSbomDetailDto));
-      rootSbomExtended.level = 'Base';
-      rootSbomExtended.group = this.getGroupFromSbomReportDetail(rootSbomExtended);
+      const rootSbomExtended: SbomDetailExtendedDto = {
+        ...rootSbomDetailDto,
+        level: 'Base',
+        group: this.getGroupFromSbomReportDetail(rootSbomDetailDto),
+      }
       sbomDetailDtos.push(rootSbomExtended);
       this.getDirectParentsSbomDtos(rootSbomExtended, sbomDetailDtos);
       this.getChildrenSbomDtos(rootSbomExtended, nodeId, sbomDetailDtos);
@@ -267,10 +269,12 @@ export class SbomReportsComponent {
     const parents = this.fullSbomDataDto?.details?.
       filter((x) => x.dependsOn?.includes(sded.bomRef ?? ""))
       .map((y) => {
-        const parentSbom: SbomDetailExtendedDto = JSON.parse(JSON.stringify(y));
-        parentSbom.level = 'Ancestor';
-        parentSbom.group = this.getGroupFromSbomReportDetail(parentSbom);
-        parentSbom.dependsOn = [sded.bomRef ?? ""];
+        const parentSbom: SbomDetailExtendedDto = {
+          ...y,
+          level: 'Ancestor',
+          group: this.getGroupFromSbomReportDetail(y),
+          dependsOn: [sded.bomRef ?? ""],
+        }
         return parentSbom;
       }) ?? [];
 
@@ -294,9 +298,11 @@ export class SbomReportsComponent {
     const newSbomDetailDtos = this.fullSbomDataDto?.details?.
       filter((x) => newDetailIds.includes(x.bomRef ?? ''))
       .map((y) => {
-        const childSbom: SbomDetailExtendedDto = JSON.parse(JSON.stringify(y));
-        childSbom.level = sded.bomRef == baseBomref ? 'Child' : 'Descendant';
-        childSbom.group = this.getGroupFromSbomReportDetail(childSbom);
+        const childSbom: SbomDetailExtendedDto = {
+          ...y,
+          level: sded.bomRef == baseBomref ? 'Child' : 'Descendant',
+          group: this.getGroupFromSbomReportDetail(y),
+        }
         return childSbom;
       }) ?? [];
     sdeds.push(...newSbomDetailDtos);
@@ -352,7 +358,7 @@ export class SbomReportsComponent {
     }
   }
 
-  private getGroupFromSbomReportDetail(dto: SbomDetailExtendedDto): string {
+  private getGroupFromSbomReportDetail(dto: SbomReportDetailDto): string {
     if (dto.purl?.startsWith('pkg:nuget/')) {
       return dto.name?.split('.')[0] ?? "";
     }
