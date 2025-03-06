@@ -45,6 +45,7 @@ export class SbomReportsComponent {
   activeNamespaces: string[] | undefined = [];
   fullSbomDataDto: SbomReportDto | null = null;
   tableDataDtos: SbomReportDetailDto[] | null = null;
+  isTableLoading: boolean = false;
   // #endregion
   // #region selectedNamespace property
   get selectedNamespace(): string | null {
@@ -65,22 +66,9 @@ export class SbomReportsComponent {
   }
   private _imageDto: ImageDto | null = null;
   // #endregion
-  // #region activeSbomDetailBomRef property
-  //set activeSbomDetailBomRef(value: string | undefined) {
-  //  this._activeSbomDetailBomRef = value;
-  //  this.selectedSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == value);
-  //  if (value) {
-  //    this.getDataDtosByNodeId(value);
-  //  }
-  //}
-  //get activeSbomDetailBomRef(): string | undefined {
-  //  return this._activeSbomDetailBomRef;
-  //}
-  //private _activeSbomDetailBomRef: string | undefined = undefined;
-  // #endregion
   // #region dependsOnTable data
   selectedSbomDetailDto: SbomReportDetailDto | undefined = undefined;
-  dependsOnBoms: SbomDetailExtendedDto[] = [];
+  dependsOnBoms?: SbomDetailExtendedDto[];
 
   dependsOnTableColumns: TrivyTableColumn[] = [];
   dependsOnTableOptions: TrivyTableOptions;
@@ -216,15 +204,12 @@ export class SbomReportsComponent {
       });
     }
     this.fullSbomDataDto = null;
-    //this.activeSbomDetailBomRef = undefined;
     this.nodeDataDtos = [];
   }
 
   onGetSbomReportDtoByUid(fullSbomDataDto: SbomReportDto) {
     this.fullSbomDataDto = fullSbomDataDto;
     this.onActiveNodeIdChange(this._rootNodeId);
-    //this.activeSbomDetailBomRef = this._rootNodeId;
-    //this.nodeDataDtos = this.getNodeDataDtos(fullSbomDataDto);
   }
 
   onGetDataDtos(dtos: SbomReportDto[]) {
@@ -241,6 +226,8 @@ export class SbomReportsComponent {
 
   // #region Get Parent and Children Nodes
   private getDataDtosByNodeId(nodeId: string) {
+    this.isTableLoading = true;
+    this.dependsOnBoms = undefined;
     const sbomDetailDtos: SbomDetailExtendedDto[] = [];
     const rootSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == nodeId);
     if (rootSbomDetailDto) {
@@ -262,7 +249,8 @@ export class SbomReportsComponent {
         name: x.name,
         groupName: x.group,
         isMain: x.bomRef == nodeId,
-      })) ?? [];
+    })) ?? [];
+    this.isTableLoading = false;
   }
 
   private getDirectParentsSbomDtos(sded: SbomDetailExtendedDto, sdeds: SbomDetailExtendedDto[]) {
