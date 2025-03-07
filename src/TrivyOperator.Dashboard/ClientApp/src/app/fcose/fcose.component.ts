@@ -62,11 +62,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private set hoveredNode(node: NodeSingular | undefined) {
     this._hoveredNode = node;
     const hoveredNodeDto = this.getDataDetailDtoById(node?.id());
-    //this.hoveredNodeDto = hoveredNodeDto;
     this.hoveredNodeDtoChange.emit(this.getDataDetailDtoById(node?.id()));
   }
   private _hoveredNode?: NodeSingular;
-  //hoveredNodeDto: NodeDataDto | undefined = undefined;
   @Output() hoveredNodeDtoChange: EventEmitter<NodeDataDto> = new EventEmitter<NodeDataDto>();
   // #endregion
   navItems: MenuItem[] = [];
@@ -180,11 +178,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
             'target-arrow-shape': 'triangle',
             'transition-property': 'width line-color opacity',
             'transition-duration': 300,
-            opacity: 1,
+            //opacity: 1,
           },
         },
         {
-          selector: '.hoveredCommon, .selectedCommon',
+          //selector: '.hoveredCommon, .selectedCommon',
+          selector: 'node[hoveredCommon="x"], node[selectedCommon="x"]',
           style: {
             width: 'mapData(label.length, 1, 30, 20, 240)',
             height: '24px',
@@ -194,37 +193,51 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.hovered, .selected',
+          //selector: '.filtered-unhighlighted.hoveredCommon, .selectedCommon.filtered-unhighlighted',
+          selector: 'node[hoveredCommon="x"][filtered-unhighlighted="x"], node[selectedCommon="x"][filtered-unhighlighted="x"]',
+          style: {
+            opacity: 0.4,
+          },
+        },
+        {
+          //selector: '.hovered, .selected',
+          selector: 'node[hovered="x"], node[selected="x"]',
           style: {
             'background-color': 'Silver',
           },
         },
         {
-          selector: '.hoveredOutgoers',
+          //selector: '.hoveredOutgoers',
+          selector: 'node[hoveredOutgoers="x"]',
           style: {
             'background-color': 'DeepSkyBlue',
+
           },
         },
         {
-          selector: '.selectedOutgoers',
+          //selector: '.selectedOutgoers',
+          selector: 'node[selectedOutgoers="x"]',
           style: {
             'background-color': 'Salmon',
           },
         },
         {
-          selector: '.hoveredIncomers',
+          //selector: '.hoveredIncomers',
+          selector: 'node[hoveredIncomers="x"]',
           style: {
             'background-color': 'RoyalBlue',
           },
         },
         {
-          selector: '.selectedIncomers',
+          //selector: '.selectedIncomers',
+          selector: 'node[selectedIncomers="x"]',
           style: {
             'background-color': 'Red',
           },
         },
         {
-          selector: '.hoveredHighlight',
+          //selector: '.hoveredHighlight',
+          selector: 'node[hoveredHighlight="x"]',
           style: {
             'overlay-opacity': 0.5,
             'overlay-color': 'RoyalBlue',
@@ -232,7 +245,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.selectedHighlight',
+          //selector: '.selectedHighlight',
+          selector: 'node[selectedHighlight="x"]',
           style: {
             'overlay-opacity': 0.5,
             'overlay-color': 'Salmon',
@@ -240,7 +254,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.hoveredEdge',
+          //selector: '.hoveredEdge',
+          selector: 'node[hoveredEdge="x"]',
           style: {
             width: 3,
             'line-color': 'Violet',
@@ -249,7 +264,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.selectedEdge',
+          //selector: '.selectedEdge',
+          selector: 'node[selectedEdge="x"]',
           style: {
             width: 3,
             'line-color': 'LightCoral',
@@ -264,14 +280,16 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.filtered-highlighted',
+          //selector: '.filtered-highlighted',
+          selector: 'node[filtered-highlighted="x"]',
           style: {
             width: 'mapData(label.length, 1, 30, 20, 240)',
             height: '24px',
           },
         },
         {
-          selector: '.filtered-unhighlighted',
+          //selector: '.filtered-unhighlighted',
+          selector: 'node[filtered-unhighlighted="x"]',
           style: {
             opacity: 0.4,
           },
@@ -308,7 +326,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   // #region Node Highlightning
   private hoverHighlightNode(node: NodeSingular) {
-    if (this.selectedNode || this.hoveredNode == node || node.isParent()) {
+    if (this.hoveredNode == node || node.isParent()) {
+    //if (this.selectedNode || this.hoveredNode == node || node.isParent()) {
       return;
     }
     if (this.hoveredNode) {
@@ -319,7 +338,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   private hoverUnhighlightNode(node: NodeSingular) {
-    if (this.selectedNode || node.isParent() || this.isDivedIn) {
+    if (node.isParent() || this.isDivedIn) {
+    //if (this.selectedNode || node.isParent() || this.isDivedIn) {
       return;
     }
     this.unhighlightNode(node, "hovered");
@@ -328,36 +348,52 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   // #endregion
 
   private highlightNode(node: NodeSingular, stylePrefix: "hovered" | "selected") {
-    node.addClass(`${stylePrefix}Common ${stylePrefix}`);
+    //node.addClass(`${stylePrefix}Common ${stylePrefix}`);
+    node.data(`${stylePrefix}Common`, 'x');
+    node.data(`${stylePrefix}`, 'x');
     node.incomers('node').forEach((depNode: NodeSingular) => {
-      depNode.addClass(`${stylePrefix}Common`);
+      //depNode.addClass(`${stylePrefix}Common`);
+      depNode.data(`${stylePrefix}Common`, 'x');
       if (node.outgoers('node').has(depNode)) {
-        depNode.addClass(`${stylePrefix}Highlight`);
+        //depNode.addClass(`${stylePrefix}Highlight`);
+        depNode.data(`${stylePrefix}Highlight`, 'x');
       } else {
-        depNode.addClass(`${stylePrefix}Incomers`);
+        //depNode.addClass(`${stylePrefix}Incomers`);
+        depNode.data(`${stylePrefix}Incomers`, 'x');
       }
     });
     node.outgoers('node').forEach((depNode: NodeSingular) => {
-      depNode.addClass(`${stylePrefix}Common ${stylePrefix}Outgoers`);
+      //depNode.addClass(`${stylePrefix}Common ${stylePrefix}Outgoers`);
+      depNode.data(`${stylePrefix}Common`, 'x');
+      depNode.data(`${stylePrefix}Outgoers`, 'x');
     });
 
     node.connectedEdges().forEach((edge: EdgeSingular) => {
-      edge.addClass(`${stylePrefix}Edge`);
+      //edge.addClass(`${stylePrefix}Edge`);
+      edge.data(`${stylePrefix}Edge`, 'x');
     });
   }
 
   private unhighlightNode(node: NodeSingular, stylePrefix: "hovered" | "selected") {
-    node.removeClass(`${stylePrefix}Common ${stylePrefix}`);
+    //node.removeClass(`${stylePrefix}Common ${stylePrefix}`);
+    node.removeData(`${stylePrefix}Common`);
+    node.removeData(`${stylePrefix}`);
 
     node.outgoers('node').forEach((depNode: NodeSingular) => {
-      depNode.removeClass(`${stylePrefix}Common ${stylePrefix}Outgoers ${stylePrefix}Highlight`);
+      //depNode.removeClass(`${stylePrefix}Common ${stylePrefix}Outgoers ${stylePrefix}Highlight`);
+      depNode.removeData(`${stylePrefix}Common`);
+      depNode.removeData(`${stylePrefix}Outgoers`);
+      depNode.removeData(`${stylePrefix}Highlight`);
     });
     node.incomers('node').forEach((depNode: NodeSingular) => {
-      depNode.removeClass(`${stylePrefix}Common ${stylePrefix}Incomers`);
+      //depNode.removeClass(`${stylePrefix}Common ${stylePrefix}Incomers`);
+      depNode.removeData(`${stylePrefix}Common`);
+      depNode.removeData(`${stylePrefix}Incomers`);
     });
 
     node.connectedEdges().forEach((edge: EdgeSingular) => {
-      edge.removeClass(`${stylePrefix}Edge`);
+      //edge.removeClass(`${stylePrefix}Edge`);
+      edge.removeData(`${stylePrefix}Edge`);
     });
   }
 
@@ -460,19 +496,25 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           if (!node.isParent()) {
             const label = node.data('label').toLowerCase();
             if (label.includes(value)) {
-              node.removeClass('filtered-unhighlighted');
-              node.addClass('filtered-highlighted');
+              //node.removeClass('filtered-unhighlighted');
+              //node.addClass('filtered-highlighted');
+              node.removeData('filtered-unhighlighted');
+              node.data('filtered-highlighted', 'x');
             } else {
-              node.removeClass('filtered-highlighted');
-              node.addClass('filtered-unhighlighted');
+              //node.removeClass('filtered-highlighted');
+              //node.addClass('filtered-unhighlighted');
+              node.removeData('filtered-highlighted');
+              node.data('filtered-unhighlighted', 'x');
             }
           }
         });
       }
       else {
         this.cy.nodes().forEach((node: NodeSingular) => {
-          node.removeClass('filtered-highlighted');
-          node.removeClass('filtered-unhighlighted');
+          //node.removeClass('filtered-highlighted');
+          //node.removeClass('filtered-unhighlighted');
+          node.removeData('filtered-highlighted');
+          node.removeData('filtered-unhighlighted');
         })
       }
     });
