@@ -208,8 +208,9 @@ export class SbomReportsComponent {
   }
 
   onGetSbomReportDtoByUid(fullSbomDataDto: SbomReportDto) {
+    console.log("mama01");
     this.fullSbomDataDto = fullSbomDataDto;
-    this.onActiveNodeIdChange(this._rootNodeId);
+    this.onActiveNodeIdChange(fullSbomDataDto.rootNodeBomRef ?? "");
   }
 
   onGetDataDtos(dtos: SbomReportDto[]) {
@@ -226,6 +227,7 @@ export class SbomReportsComponent {
 
   // #region Get Parent and Children Nodes
   private getDataDtosByNodeId(nodeId: string) {
+    console.log("mama03");
     this.isTableLoading = true;
     this.dependsOnBoms = undefined;
     const sbomDetailDtos: SbomDetailExtendedDto[] = [];
@@ -244,7 +246,7 @@ export class SbomReportsComponent {
     this.dependsOnBoms = sbomDetailDtos;
     this.nodeDataDtos = sbomDetailDtos.map((x) =>
       ({
-        id: x.bomRef,
+        id: x.bomRef ?? undefined,
         dependsOn: x.dependsOn,
         name: x.name,
         groupName: x.group,
@@ -340,6 +342,7 @@ export class SbomReportsComponent {
   }
 
   onActiveNodeIdChange(event: string) {
+    console.log("mama02");
     this.selectedSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == event);
     if (this.selectedSbomDetailDto) {
       this.getDataDtosByNodeId(event);

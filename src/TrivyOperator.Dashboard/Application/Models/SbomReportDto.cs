@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Security.Cryptography;
+using System.Text;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 
 namespace TrivyOperator.Dashboard.Application.Models;
@@ -13,73 +14,73 @@ public class SbomReportDto
     public string ImageName { get; set; } = string.Empty;
     public string ImageTag { get; set; } = string.Empty;
     public string Repository { get; set; } = string.Empty;
+    public string RootNodeBomRef { get; set; } = string.Empty;
     public SbomReportDetailDto[] Details { get; set; } = [];
 }
 
 public class SbomReportDetailDto
 {
-    public Guid BomRef { get; set; } = Guid.Empty;
+    public string BomRef { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Purl { get; set; } = string.Empty;
     public string Version { get; set; } = string.Empty;
-    public Guid[] DependsOn { get; set; } = [];
+    public string[] DependsOn { get; set; } = [];
     public string[][] Properties { get; set; } = [];
     public long CriticalCount { get; set; } = 0;
     public long HighCount { get; set; } = 0;
     public long MediumCount { get; set; } = 0;
     public long LowCount { get; set; } = 0;
     public long UnknownCount { get; set; } = 0;
+    
 }
 
 public static class SbomReportCrExtensions
 {
     public static SbomReportDto ToSbomReportDto(this SbomReportCr sbomReportCr)
     {
-        ComponentsComponent[] allComponents = sbomReportCr.Report?.Components.ComponentsComponents ?? [];
-        SanitizeComponents(allComponents);
-        Array.Resize(ref allComponents, allComponents.Length + 1);
-        allComponents[^1] = new ComponentsComponent
-        {
-            BomRef = Guid.Empty.ToString(),
-            Name = sbomReportCr.Report?.Components.Metadata.Component.Name ?? string.Empty,
-            Purl = sbomReportCr.Report?.Components.Metadata.Component.Purl ?? string.Empty,
-            Type = sbomReportCr.Report?.Components.Metadata.Component.Type ?? string.Empty,
-            Version = sbomReportCr.Report?.Components.Metadata.Component.Version ?? string.Empty,
-            Properties = sbomReportCr.Report?.Components.Metadata.Component.Properties ?? [],
-        };
-        Dependency[] alldependencies = sbomReportCr.Report?.Components.Dependencies ?? [];
-
-        IEnumerable<SbomReportDetailDto> details = allComponents.Select(
-            component =>
+        ComponentsComponent[] allComponents = sbomReportCr.Report?.Components.Metadata.Component != null
+            ? [.. sbomReportCr.Report?.Components.ComponentsComponents ?? [], sbomReportCr.Report?.Components.Metadata.Component!]
+            : [.. sbomReportCr.Report?.Components.ComponentsComponents ?? []];
+        
+        var componentsGrouped = allComponents
+            .GroupBy(component => new { component.Purl, PropertisHash = GetPropertiesHash(component.Properties) })
+            .Select(group => new
             {
-                Guid.TryParse(component.BomRef, out Guid bomRef);
-
-                Dependency refDependency =
-                    alldependencies.FirstOrDefault(dep => dep.Ref == bomRef.ToString() || dep.Ref == component.Purl) ??
-                    new Dependency();
-                Guid[] dependencies = refDependency.DependsOn.Select(
-                        depOn =>
-                        {
-                            string dependsOn =
-                                allComponents.FirstOrDefault(dep => dep.BomRef == depOn || dep.Purl == depOn)?.BomRef ??
-                                string.Empty;
-                            Guid.TryParse(dependsOn, out Guid dependsOnBomRef);
-
-                            return dependsOnBomRef;
-                        })
-                    .ToArray();
-                SbomReportDetailDto detailDto = new()
-                {
-                    BomRef = bomRef,
-                    Name = HttpUtility.HtmlEncode(component.Name),
-                    Purl = component.Purl,
-                    Version = HttpUtility.HtmlEncode(component.Version),
-                    DependsOn = dependencies,
-                    Properties = component.Properties.Select(x => new[] { x.Name, x.Value }).ToArray(),
-                };
-
-                return detailDto;
+                group.Key.Purl,
+                group.Key.PropertisHash,
+                group,
             });
+
+        var toBereplacedBomRefs = componentsGrouped
+            .Where(compGroup => compGroup.group.Count() > 1)
+            .Select(filteredCompGroup => new 
+            {
+                filteredCompGroup.Purl, 
+                BomRef = filteredCompGroup.group.FirstOrDefault()?.BomRef ?? string.Empty,
+                filteredCompGroup.group
+            })
+            .SelectMany(extGroup => extGroup.group.Where(groupItem => groupItem.BomRef != extGroup.Purl).Select(item => new
+            {
+                Key = item.BomRef,
+                Value = extGroup.BomRef,
+            }))
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        IEnumerable<SbomReportDetailDto> details = componentsGrouped.Select(compGroup =>
+        {
+            ComponentsComponent component = compGroup.group.FirstOrDefault() ?? new();
+            SbomReportDetailDto detailDto = new()
+            {
+                BomRef = component.BomRef,
+                Name = component.Name,
+                Purl = component.Purl,
+                Version = component.Version,
+                DependsOn = sbomReportCr.Report?.Components.Dependencies.FirstOrDefault(x => x.Ref == component.BomRef)?.DependsOn ?? [],
+                Properties = component.Properties.Select(x => new[] { x.Name, x.Value }).ToArray(),
+            };
+
+            return detailDto;
+        });
 
         SbomReportDto result = new()
         {
@@ -111,55 +112,17 @@ public static class SbomReportCrExtensions
             ImageName = sbomReportCr.Report?.Artifact?.Repository ?? string.Empty,
             ImageTag = sbomReportCr.Report?.Artifact?.Tag ?? string.Empty,
             Repository = sbomReportCr.Report?.Registry?.Server ?? string.Empty,
-            Details = details.ToArray(),
+            RootNodeBomRef = sbomReportCr.Report?.Components.Metadata.Component.BomRef ?? string.Empty,
+            Details = [.. details],
         };
-
-        RemoveSbomDetailDuplicates(result);
 
         return result;
     }
 
-    private static void SanitizeComponents(ComponentsComponent[] components)
+    private static string GetPropertiesHash(Property[] properties)
     {
-        foreach (ComponentsComponent component in components)
-        {
-            component.BomRef = SanitizeBomRef(component.BomRef);
-        }
+        string propValues = string.Join("-", properties.OrderBy(x => x.Name).Select(x => x.Value));
+        byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(propValues));
+        return BitConverter.ToString(hashBytes);
     }
-
-    private static void RemoveSbomDetailDuplicates(SbomReportDto sbomReportDto)
-    {
-        IEnumerable<IGrouping<string, SbomReportDetailDto>> groupedByPurl =
-            sbomReportDto.Details.GroupBy(x => string.IsNullOrEmpty(x.Purl) ? Guid.NewGuid().ToString() : x.Purl);
-
-        List<SbomReportDetailDto> uniqueSboms = [];
-        Dictionary<Guid, Guid> guidMapping = [];
-
-        foreach (IGrouping<string, SbomReportDetailDto> group in groupedByPurl)
-        {
-            SbomReportDetailDto? retainedSbom = group.First();
-            uniqueSboms.Add(retainedSbom);
-
-            foreach (SbomReportDetailDto sbom in group)
-            {
-                guidMapping[sbom.BomRef] = retainedSbom.BomRef;
-            }
-        }
-
-        foreach (SbomReportDetailDto sbom in uniqueSboms)
-        {
-            sbom.DependsOn = sbom.DependsOn.Select(dep => guidMapping.ContainsKey(dep) ? guidMapping[dep] : dep)
-                .Distinct()
-                .ToArray();
-        }
-
-        sbomReportDto.Details = [.. uniqueSboms];
-    }
-
-    private static string SanitizeBomRef(string? bomRef) => string.IsNullOrWhiteSpace(bomRef) || bomRef.Length != 36
-        ?
-        Guid.NewGuid().ToString()
-        : Guid.TryParse(bomRef, out _)
-            ? bomRef
-            : Guid.NewGuid().ToString();
 }

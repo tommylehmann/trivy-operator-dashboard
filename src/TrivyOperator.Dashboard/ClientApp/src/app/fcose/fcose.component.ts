@@ -30,7 +30,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   // #region activeNodeId
   activeNodeId: string | undefined = undefined;
   @Output() activeNodeIdChange: EventEmitter<string> = new EventEmitter<string>();
-  private _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
+  private readonly _defaultRootNodeId: string = '00000000-0000-0000-0000-000000000000';
+  private _rootNodeId: string = this._defaultRootNodeId;
   // #endregion
   // #region main nodeDataDtos
   get nodeDataDtos(): NodeDataDto[] {
@@ -40,11 +41,13 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this._nodeDataDtos = nodeDataDtos;
     if (nodeDataDtos.length == 0) {
       this.activeNodeId = undefined;
+      this._rootNodeId = this._defaultRootNodeId;
       this.navHome = undefined;
       this.navItems = [];
     }
     else {
       if (!this.activeNodeId) {
+        this._rootNodeId = nodeDataDtos.find(x => x.isMain)?.id ?? this._defaultRootNodeId;
         this.initNavMenuItems();
       }
       this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;

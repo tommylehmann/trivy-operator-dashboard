@@ -1977,7 +1977,7 @@ components:
       properties:
         bomRef:
           type: string
-          format: uuid
+          nullable: true
         name:
           type: string
           nullable: true
@@ -1991,7 +1991,6 @@ components:
           type: array
           items:
             type: string
-            format: uuid
           nullable: true
         properties:
           type: array
@@ -2041,6 +2040,9 @@ components:
           type: string
           nullable: true
         repository:
+          type: string
+          nullable: true
+        rootNodeBomRef:
           type: string
           nullable: true
         details:
