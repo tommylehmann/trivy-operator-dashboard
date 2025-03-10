@@ -79,6 +79,8 @@ export class SbomReportsComponent {
   nodeDataDtos: NodeDataDto[] = [];
   selectedSbomDetailBomRef?: string;
 
+  private _deletedNodeIds?: string[];
+
   private readonly _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
 
   constructor(private service: SbomReportService) {
@@ -378,5 +380,11 @@ export class SbomReportsComponent {
     else {
       this.selectedSbomDetailDto = undefined;
     }
+  }
+
+  onDeletedNodeIds(nodeIds: string[] | undefined) {
+    console.log("sbooom");
+    this._deletedNodeIds = nodeIds;
+    this.dependsOnBoms = this.dependsOnBoms?.filter(x => !nodeIds?.includes(x.bomRef ?? ""));
   }
 }

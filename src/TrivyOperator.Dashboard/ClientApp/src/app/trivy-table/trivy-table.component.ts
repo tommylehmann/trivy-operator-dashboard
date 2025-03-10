@@ -9,7 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
-import { Table, TableModule } from 'primeng/table';
+import { Table, TableModule, TableRowSelectEvent } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 
 import { SeverityDto } from '../../api/models/severity-dto';
@@ -71,7 +71,19 @@ export class TrivyTableComponent<TData> implements OnInit {
   @Output() selectedRowsChanged = new EventEmitter<TData[]>();
   @Output() refreshRequested = new EventEmitter<TrivyFilterData>();
   tableStateKey: string | undefined = undefined;
-  @Input() selectedDataDtos?: any | null;
+  @Input() set selectedDataDtos(value: any | null | undefined) {
+
+    this._selectedDataDtos = value;
+    const index = this.dataDtos?.indexOf(value);
+    console.log(index);
+    if (index) {
+      this.trivyTable.scrollToVirtualIndex(index);
+    }
+  }
+  get selectedDataDtos(): any | null | undefined {
+    return this._selectedDataDtos;
+  }
+  private _selectedDataDtos?: any | null = null;
   public filterSeverityOptions: number[] = [];
   public filterSelectedSeverityIds: number[] | null = [];
   public filterSelectedActiveNamespaces: string[] | null = [];

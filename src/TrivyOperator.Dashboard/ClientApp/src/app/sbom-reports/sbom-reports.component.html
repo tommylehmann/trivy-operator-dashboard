@@ -36,7 +36,8 @@
                  [selectedNodeId]="selectedSbomDetailBomRef"
                  (activeNodeIdChange)="onActiveNodeIdChange($event)"
                  (hoveredNodeDtoChange)="onHoveredNodeDtoChange($event)"
-                 (selectedNodeIdChange)="onNodeIdChange($event)"/>
+                 (selectedNodeIdChange)="onNodeIdChange($event)"
+                 (deletedNodeIds)="onDeletedNodeIds($event)"/>
       <div *ngIf="hoveredSbomDetailDto">
         <span>
           <b>Name:</b> {{ hoveredSbomDetailDto.name }} -

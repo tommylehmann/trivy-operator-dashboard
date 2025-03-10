@@ -76,7 +76,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       if (this.selectedNode) {
         this.unselectNode(this.selectedNode);
       }
-      const node = this.cy.$(`#${this.escapeId(nodeId)}`);
+      const node = this.cy.$(`#${nodeId}`);
       if (node) {
         this.selectNode(node);
       }
@@ -658,10 +658,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.onNodesHighlightByName(value);
   }
 
-  private escapeId(id: string): string {
-    return id.replace(/([.\?=&_@])/g, '\\$1'); // Escapes special characters
-  }
-
   private deleteNodeAndOrphans(node: NodeSingular | undefined) {
     if (this.selectedNode) {
       const deletedNodes: string[] = [this.selectedNode.id()];
@@ -677,8 +673,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.cy.$('node.selectedIncomers')
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
       this.selectedNode = undefined;
+      console.log("fcose - " + deletedNodes.length);
       if (deletedNodes.length > 0) {
-        this.deletedNodeIds.emit();
+        this.deletedNodeIds.emit(deletedNodes);
       }
       this.cleanupParents();
     }
@@ -696,8 +693,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.cy.$('node.selectedIncomers')
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
       this.selectedNode = undefined;
+      console.log("fcose - " + deletedNodes.length);
       if (deletedNodes.length > 0) {
-        this.deletedNodeIds.emit();
+        this.deletedNodeIds.emit(deletedNodes);
       }
       this.cleanupParents();
     }
