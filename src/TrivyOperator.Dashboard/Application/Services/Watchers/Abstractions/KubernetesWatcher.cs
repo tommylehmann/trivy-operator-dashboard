@@ -185,7 +185,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
             }
             catch (TaskCanceledException)
             {
-                await UpdateWatcherState(WatcherStateStatus.Deleted, watcherKey, cancellationToken); 
+                // be free and be gone :-)
             }
             catch (Exception ex)
             {
