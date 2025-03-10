@@ -340,24 +340,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.graphContainer.nativeElement.setAttribute('tabindex', '0');
       this.graphContainer.nativeElement.addEventListener('keydown', (event: KeyboardEvent) => {
         if ((event.key === 'Delete' || event.key === 'Del') && event.shiftKey) {
-          if (this.selectedNode) {
-            const deletedNodes: string[] = [];
-            this.selectedNode.remove();
-            this.cy.$('node.selectedOutgoers')
-              .filter((x: NodeSingular) => x.incomers('edge').length === 0)
-              .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
-            this.cy.$('node.selectedIncomers')
-              .filter((x: NodeSingular) => x.outgoers('edge').length === 0)
-              .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
-            this.cy.$('node.selectedOutgoers')
-              .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedOutgoers selectedHighlight`); });
-            this.cy.$('node.selectedIncomers')
-              .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
-            this.selectedNode = undefined;
-            if (deletedNodes.length > 0) {
-              this.deletedNodeIds.emit();
-            }
-          }
+          this.deleteNodeChildrenAndOrphans(this.selectedNode);
+          return;
+        }
+        if (event.key === 'Delete' || event.key === 'Del') {
+          this.deleteNodeAndOrphans(this.selectedNode);
+          return;
         }
       },
       { capture: true });
@@ -674,4 +662,61 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private escapeId(id: string): string {
     return id.replace(/([.\?=&_@])/g, '\\$1'); // Escapes special characters
   }
+
+  private deleteNodeAndOrphans(node: NodeSingular | undefined) {
+    if (this.selectedNode) {
+      const deletedNodes: string[] = [this.selectedNode.id()];
+      this.selectedNode.remove();
+      this.cy.$('node.selectedOutgoers')
+        .filter((x: NodeSingular) => x.incomers('edge').length === 0)
+        .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
+      this.cy.$('node.selectedIncomers')
+        .filter((x: NodeSingular) => x.outgoers('edge').length === 0)
+        .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
+      this.cy.$('node.selectedOutgoers')
+        .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedOutgoers selectedHighlight`); });
+      this.cy.$('node.selectedIncomers')
+        .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
+      this.selectedNode = undefined;
+      if (deletedNodes.length > 0) {
+        this.deletedNodeIds.emit();
+      }
+      this.cleanupParents();
+    }
+  }
+
+  private deleteNodeChildrenAndOrphans(node: NodeSingular | undefined) {
+    if (this.selectedNode) {
+      const deletedNodes: string[] = [this.selectedNode.id()];
+      this.selectedNode.remove();
+      this.cy.$('node.selectedOutgoers')
+        .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
+      this.cy.$('node.selectedIncomers')
+        .filter((x: NodeSingular) => x.outgoers('edge').length === 0)
+        .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
+      this.cy.$('node.selectedIncomers')
+        .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
+      this.selectedNode = undefined;
+      if (deletedNodes.length > 0) {
+        this.deletedNodeIds.emit();
+      }
+      this.cleanupParents();
+    }
+  }
+
+  private cleanupParents() {
+    this.cy.nodes().filter(node => node.isParent())
+      .filter((parentNode: NodeSingular) => parentNode.children().length < 2)
+      .forEach(parent =>
+      {
+        parent.children().forEach((node: NodeSingular) => { node.move({ parent: null }); });
+      });
+    this.cy.nodes().filter(node => node.isParent())
+      .filter((parentNode: NodeSingular) => parentNode.children().length == 0)
+      .forEach(parent => {
+        parent.remove();
+      });
+    this.cy.nodes().filter(x => x.degree(false) == 0 && !x.isParent()).forEach(x => { x.remove(); });
+  }
+
 }

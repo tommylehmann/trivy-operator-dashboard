@@ -348,8 +348,11 @@ export class SbomReportsComponent {
   }
 
   private getGroupFromSbomReportDetail(dto: SbomReportDetailDto): string {
-    if (dto.purl?.startsWith('pkg:nuget/')) {
-      return dto.name?.split('.')[0] ?? "";
+    if (dto.properties?.find(x => x[1] == "nuget")) {
+      return `nuget-${dto.name?.split('.')[0] ?? ""}`;
+    }
+    if (dto.properties?.find(x => x[1] == "dotnet-core")) {
+      return `dotnet-core-${dto.name?.split('.')[0] ?? ""}`;
     }
     return "";
   }
