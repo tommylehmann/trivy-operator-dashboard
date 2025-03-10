@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -29,7 +29,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   // #region activeNodeId
   activeNodeId: string | undefined = undefined;
-  @Output() activeNodeIdChange: EventEmitter<string> = new EventEmitter<string>();
+  @Output() activeNodeIdChange = new EventEmitter<string>();
   private readonly _defaultRootNodeId: string = '00000000-0000-0000-0000-000000000000';
   private _rootNodeId: string = this._defaultRootNodeId;
   // #endregion
@@ -68,7 +68,34 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.hoveredNodeDtoChange.emit(this.getDataDetailDtoById(node?.id()));
   }
   private _hoveredNode?: NodeSingular;
-  @Output() hoveredNodeDtoChange: EventEmitter<NodeDataDto> = new EventEmitter<NodeDataDto>();
+  @Output() hoveredNodeDtoChange = new EventEmitter<NodeDataDto>();
+  // #endregion
+  // #region selectedNode
+  @Input() set selectedNodeId(nodeId: string | undefined) {
+    if (nodeId) {
+      if (this.selectedNode) {
+        this.unselectNode(this.selectedNode);
+      }
+      const node = this.cy.$(`#${this.escapeId(nodeId)}`);
+      if (node) {
+        this.selectNode(node);
+      }
+    }
+    else {
+      if (this.selectedNode) {
+        this.unselectNode(this.selectedNode);
+      }
+    }
+    
+  }
+  private _selectedNode?: NodeSingular;
+  @Output() selectedNodeIdChange = new EventEmitter<string | undefined>();
+  private get selectedNode(): NodeSingular | undefined {
+    return this._selectedNode;
+  }
+  private set selectedNode(node: NodeSingular | undefined) {
+    this._selectedNode = node;
+  }
   // #endregion
   navItems: MenuItem[] = [];
   navHome: MenuItem | undefined = undefined;
@@ -97,10 +124,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   inputFilterByNameControl = new FormControl();
   private inputFilterByNameValue: string = "";
 
-  selectedNode?: NodeSingular;
-
   clickTimeout?: ReturnType<typeof setTimeout>;
-  private doubleClickDelay = 300; 
+  private doubleClickDelay = 300;
+
+  @Output() deletedNodeIds = new EventEmitter<string[]>();
 
 
   ngOnInit() {
@@ -309,6 +336,32 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.diveInNode(event.target as NodeSingular);
     });
 
+    if (this.graphContainer) {
+      this.graphContainer.nativeElement.setAttribute('tabindex', '0');
+      this.graphContainer.nativeElement.addEventListener('keydown', (event: KeyboardEvent) => {
+        if ((event.key === 'Delete' || event.key === 'Del') && event.shiftKey) {
+          if (this.selectedNode) {
+            const deletedNodes: string[] = [];
+            this.selectedNode.remove();
+            this.cy.$('node.selectedOutgoers')
+              .filter((x: NodeSingular) => x.incomers('edge').length === 0)
+              .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
+            this.cy.$('node.selectedIncomers')
+              .filter((x: NodeSingular) => x.outgoers('edge').length === 0)
+              .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
+            this.cy.$('node.selectedOutgoers')
+              .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedOutgoers selectedHighlight`); });
+            this.cy.$('node.selectedIncomers')
+              .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
+            this.selectedNode = undefined;
+            if (deletedNodes.length > 0) {
+              this.deletedNodeIds.emit();
+            }
+          }
+        }
+      },
+      { capture: true });
+    }
 
   }
   // #endregion
@@ -388,12 +441,16 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (this.selectedNode == node) {
       this.unselectNode(node);
       this.hoverHighlightNode(node);
+      this.selectedNodeIdChange.emit(undefined);
       return;
     }
     if (this.selectedNode) {
       this.unselectNode(this.selectedNode);
     }
     this.selectNode(node);
+    this.selectedNodeIdChange.emit(node.id());
+    console.log("fs - emit");
+    this.graphContainer.nativeElement.focus();
   }
 
   private selectNode(node: NodeSingular) {
@@ -612,5 +669,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   onInputChange(value: string) {
     this.inputFilterByNameValue = value;
     this.onNodesHighlightByName(value);
+  }
+
+  private escapeId(id: string): string {
+    return id.replace(/([.\?=&_@])/g, '\\$1'); // Escapes special characters
   }
 }

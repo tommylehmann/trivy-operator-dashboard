@@ -42,33 +42,8 @@ public static class SbomReportCrExtensions
             ? [.. sbomReportCr.Report?.Components.ComponentsComponents ?? [], sbomReportCr.Report?.Components.Metadata.Component!]
             : [.. sbomReportCr.Report?.Components.ComponentsComponents ?? []];
         
-        var componentsGrouped = allComponents
-            .GroupBy(component => new { component.Purl, PropertisHash = GetPropertiesHash(component.Properties) })
-            .Select(group => new
-            {
-                group.Key.Purl,
-                group.Key.PropertisHash,
-                group,
-            });
-
-        var toBereplacedBomRefs = componentsGrouped
-            .Where(compGroup => compGroup.group.Count() > 1)
-            .Select(filteredCompGroup => new 
-            {
-                filteredCompGroup.Purl, 
-                BomRef = filteredCompGroup.group.FirstOrDefault()?.BomRef ?? string.Empty,
-                filteredCompGroup.group
-            })
-            .SelectMany(extGroup => extGroup.group.Where(groupItem => groupItem.BomRef != extGroup.Purl).Select(item => new
-            {
-                Key = item.BomRef,
-                Value = extGroup.BomRef,
-            }))
-            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-        IEnumerable<SbomReportDetailDto> details = componentsGrouped.Select(compGroup =>
+        IEnumerable<SbomReportDetailDto> details = allComponents.Select(component =>
         {
-            ComponentsComponent component = compGroup.group.FirstOrDefault() ?? new();
             SbomReportDetailDto detailDto = new()
             {
                 BomRef = component.BomRef,
@@ -76,7 +51,7 @@ public static class SbomReportCrExtensions
                 Purl = component.Purl,
                 Version = component.Version,
                 DependsOn = sbomReportCr.Report?.Components.Dependencies.FirstOrDefault(x => x.Ref == component.BomRef)?.DependsOn ?? [],
-                Properties = component.Properties.Select(x => new[] { x.Name, x.Value }).ToArray(),
+                Properties = [.. component.Properties.Select(x => new[] { x.Name, x.Value })],
             };
 
             return detailDto;
@@ -117,12 +92,5 @@ public static class SbomReportCrExtensions
         };
 
         return result;
-    }
-
-    private static string GetPropertiesHash(Property[] properties)
-    {
-        string propValues = string.Join("-", properties.OrderBy(x => x.Name).Select(x => x.Value));
-        byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(propValues));
-        return BitConverter.ToString(hashBytes);
     }
 }

@@ -71,7 +71,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   @Output() selectedRowsChanged = new EventEmitter<TData[]>();
   @Output() refreshRequested = new EventEmitter<TrivyFilterData>();
   tableStateKey: string | undefined = undefined;
-  public selectedDataDtos?: any | null;
+  @Input() selectedDataDtos?: any | null;
   public filterSeverityOptions: number[] = [];
   public filterSelectedSeverityIds: number[] | null = [];
   public filterSelectedActiveNamespaces: string[] | null = [];

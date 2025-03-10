@@ -28,12 +28,15 @@
                        [isLoading]="isTableLoading"
                        [trivyTableColumns]="dependsOnTableColumns"
                        [trivyTableOptions]="dependsOnTableOptions"
+                       [selectedDataDtos]="selectedSbomDetailDto"
                        (selectedRowsChanged)="onTableSelectedRowChange($event)"/>
     </div>
     <div class="col-12 md:col-7 lg:col-8 p-1">
       <app-fcose [nodeDataDtos]="nodeDataDtos"
+                 [selectedNodeId]="selectedSbomDetailBomRef"
                  (activeNodeIdChange)="onActiveNodeIdChange($event)"
-                 (hoveredNodeDtoChange)="onHoveredNodeDtoChange($event)" />
+                 (hoveredNodeDtoChange)="onHoveredNodeDtoChange($event)"
+                 (selectedNodeIdChange)="onNodeIdChange($event)"/>
       <div *ngIf="hoveredSbomDetailDto">
         <span>
           <b>Name:</b> {{ hoveredSbomDetailDto.name }} -

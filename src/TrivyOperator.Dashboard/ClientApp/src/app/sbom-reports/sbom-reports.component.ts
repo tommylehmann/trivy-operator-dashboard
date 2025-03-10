@@ -77,6 +77,7 @@ export class SbomReportsComponent {
   imageDtos: ImageDto[] | undefined = []; // filtered images by ns
   hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
   nodeDataDtos: NodeDataDto[] = [];
+  selectedSbomDetailBomRef?: string;
 
   private readonly _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
 
@@ -208,7 +209,6 @@ export class SbomReportsComponent {
   }
 
   onGetSbomReportDtoByUid(fullSbomDataDto: SbomReportDto) {
-    console.log("mama01");
     this.fullSbomDataDto = fullSbomDataDto;
     this.onActiveNodeIdChange(fullSbomDataDto.rootNodeBomRef ?? "");
   }
@@ -227,7 +227,6 @@ export class SbomReportsComponent {
 
   // #region Get Parent and Children Nodes
   private getDataDtosByNodeId(nodeId: string) {
-    console.log("mama03");
     this.isTableLoading = true;
     this.dependsOnBoms = undefined;
     const sbomDetailDtos: SbomDetailExtendedDto[] = [];
@@ -342,7 +341,6 @@ export class SbomReportsComponent {
   }
 
   onActiveNodeIdChange(event: string) {
-    console.log("mama02");
     this.selectedSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == event);
     if (this.selectedSbomDetailDto) {
       this.getDataDtosByNodeId(event);
@@ -357,6 +355,28 @@ export class SbomReportsComponent {
   }
 
   onTableSelectedRowChange(data: SbomReportDetailDto[]) {
-    //console.log(data);
+    if (data.length == 0) {
+      this.selectedSbomDetailDto = undefined;
+      this.selectedSbomDetailBomRef = undefined;
+    }
+    else {
+      this.selectedSbomDetailDto = data[0];
+      this.selectedSbomDetailBomRef = data[0].bomRef ?? undefined;
+    }
+  }
+
+  onNodeIdChange(nodeId: string | undefined) {
+    if (nodeId) {
+      console.log("sbom - received " + nodeId);
+      const sbomReportDetailDto = this.dependsOnBoms?.find(x => x.bomRef == nodeId);
+      console.log("sbom - found " + sbomReportDetailDto?.bomRef);
+      if (sbomReportDetailDto) {
+        this.selectedSbomDetailDto = sbomReportDetailDto;
+      }
+    }
+    else {
+      console.log("sbom - received undefined");
+      this.selectedSbomDetailDto = undefined;
+    }
   }
 }
