@@ -71,19 +71,17 @@ export class TrivyTableComponent<TData> implements OnInit {
   @Output() selectedRowsChanged = new EventEmitter<TData[]>();
   @Output() refreshRequested = new EventEmitter<TrivyFilterData>();
   tableStateKey: string | undefined = undefined;
-  @Input() set selectedDataDtos(value: any | null | undefined) {
-
-    this._selectedDataDtos = value;
-    const index = this.dataDtos?.indexOf(value);
-    console.log(index);
-    if (index) {
-      this.trivyTable.scrollToVirtualIndex(index);
+  
+  selectedDataDtos?: any | null = null;
+  @Input() set singleSelectDataDto(value: TData | undefined) {
+    this.selectedDataDtos = value;
+    if (value) {
+      const index = this.dataDtos?.indexOf(value);
+      if (index) {
+        this.trivyTable.scrollToVirtualIndex(index);
+      }
     }
   }
-  get selectedDataDtos(): any | null | undefined {
-    return this._selectedDataDtos;
-  }
-  private _selectedDataDtos?: any | null = null;
   public filterSeverityOptions: number[] = [];
   public filterSelectedSeverityIds: number[] | null = [];
   public filterSelectedActiveNamespaces: string[] | null = [];
