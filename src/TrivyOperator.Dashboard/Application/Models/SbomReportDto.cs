@@ -90,7 +90,35 @@ public static class SbomReportCrExtensions
             RootNodeBomRef = sbomReportCr.Report?.Components.Metadata.Component.BomRef ?? string.Empty,
             Details = [.. details],
         };
+        CleanupPurlsFromBomRefs(result);
 
         return result;
+    }
+
+    private static void CleanupPurlsFromBomRefs(SbomReportDto sbomReportDto)
+    {
+        var nonGuidToGuidMap = sbomReportDto.Details
+            .Where(d => !Guid.TryParse(d.BomRef, out _))
+            .ToDictionary(d => d.BomRef, d => Guid.NewGuid().ToString());
+
+        foreach (var detail in sbomReportDto.Details)
+        {
+            if (nonGuidToGuidMap.TryGetValue(detail.BomRef, out string? valueFroBomRef))
+            {
+                detail.BomRef = valueFroBomRef;
+            }
+
+            for (int i = 0; i < detail.DependsOn.Length; i++)
+            {
+                if (nonGuidToGuidMap.TryGetValue(detail.DependsOn[i], out string? valueFroDependsOn))
+                {
+                    detail.DependsOn[i] = valueFroDependsOn;
+                }
+            }
+        }
+        if (nonGuidToGuidMap.TryGetValue(sbomReportDto.RootNodeBomRef, out string? valueFroRootNodeBomRef))
+        {
+            sbomReportDto.RootNodeBomRef = valueFroRootNodeBomRef;
+        }
     }
 }

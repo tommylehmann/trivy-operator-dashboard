@@ -437,7 +437,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     }
     this.selectNode(node);
     this.selectedNodeIdChange.emit(node.id());
-    console.log("fs - emit");
     this.graphContainer.nativeElement.focus();
   }
 

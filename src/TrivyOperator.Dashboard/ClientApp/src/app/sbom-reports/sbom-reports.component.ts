@@ -370,15 +370,12 @@ export class SbomReportsComponent {
 
   onNodeIdChange(nodeId: string | undefined) {
     if (nodeId) {
-      console.log("sbom - received " + nodeId);
       const sbomReportDetailDto = this.dependsOnBoms?.find(x => x.bomRef == nodeId);
-      console.log("sbom - found " + sbomReportDetailDto?.bomRef);
       if (sbomReportDetailDto) {
         this.selectedSbomDetailDto = sbomReportDetailDto;
       }
     }
     else {
-      console.log("sbom - received undefined");
       this.selectedSbomDetailDto = undefined;
     }
   }
