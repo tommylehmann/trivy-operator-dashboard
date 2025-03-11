@@ -501,10 +501,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.updateNavMenuItems(this.activeNodeId ?? "");
       setTimeout(() => {
         this.cy.elements().removeClass('hidden');
-        //const newRootNode = this.cy.$(`#${this.activeNodeId}`);
-        //if (newRootNode) {
-        //  this.hoverHighlightNode(newRootNode);
-        //}
         if (this.inputFilterByNameValue) {
           this.onNodesHighlightByName(this.inputFilterByNameValue);
         }
@@ -673,10 +669,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.cy.$('node.selectedIncomers')
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
       this.selectedNode = undefined;
+      this.cleanupParentsAndOrphans(deletedNodes);
       if (deletedNodes.length > 0) {
         this.deletedNodeIds.emit(deletedNodes);
       }
-      this.cleanupParents();
     }
   }
 
@@ -692,10 +688,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.cy.$('node.selectedIncomers')
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
       this.selectedNode = undefined;
+      this.cleanupParentsAndOrphans(deletedNodes);
       if (deletedNodes.length > 0) {
         this.deletedNodeIds.emit(deletedNodes);
       }
-      this.cleanupParents();
     }
   }
 
