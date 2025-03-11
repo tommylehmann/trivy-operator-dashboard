@@ -12,6 +12,8 @@
   border: none; /* Remove border if any */
   color: inherit; /* Keep the text color inherited */
   box-shadow: none; /* Remove any box-shadow */
+  padding-bottom: 0;
+  padding-top: 0;
 }
 
 .breadcrumb-no-overflow {

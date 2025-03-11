@@ -44,6 +44,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this._rootNodeId = this._defaultRootNodeId;
       this.navHome = undefined;
       this.navItems = [];
+      this.cy?.elements()?.remove();
     }
     else {
       if (!this.activeNodeId) {
@@ -654,6 +655,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.onNodesHighlightByName(value);
   }
 
+  // #region delete nodes
   private deleteNodeAndOrphans(node: NodeSingular | undefined) {
     if (this.selectedNode) {
       const deletedNodes: string[] = [this.selectedNode.id()];
@@ -709,5 +711,5 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       });
     this.cy.nodes().filter(x => x.degree(false) == 0 && !x.isParent()).forEach(x => { deletedNodeIds.push(x.id()); x.remove(); });
   }
-
+  // #endregion
 }

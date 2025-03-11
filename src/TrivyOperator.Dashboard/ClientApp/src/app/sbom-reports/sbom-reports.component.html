@@ -13,7 +13,7 @@
                       [(ngModel)]="selectedNamespace"
                       (onChange)="filterImageDtos()" />
         </div>
-        <div class="col-8 p-fluid">
+        <div class="col-7 p-fluid">
           <p-dropdown optionLabel="imageNameTag"
                       placeholder="Select a Namespace"
                       class="p-inputtext-sm"
@@ -21,6 +21,9 @@
                       [options]="imageDtos"
                       [showClear]="true"
                       [(ngModel)]="selectedImageDto" />
+        </div>
+        <div class="col-1 p-fluid">
+          <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small" (onClick)="reloadData()" />
         </div>
       </div>
       <app-trivy-table tableHeight="30vh"

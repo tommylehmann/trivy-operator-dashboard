@@ -10,6 +10,7 @@ import { FcoseComponent } from '../fcose/fcose.component';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
 import { TrivyFilterData, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
 
+import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { PanelModule } from 'primeng/panel';
@@ -35,7 +36,7 @@ export interface DependsOn {
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, CardModule, PanelModule, TableModule, TagModule],
+  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, ButtonModule, CardModule, PanelModule, TableModule, TagModule],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
@@ -44,7 +45,6 @@ export class SbomReportsComponent {
   dataDtos: SbomReportDto[] | null = null;
   activeNamespaces: string[] | undefined = [];
   fullSbomDataDto: SbomReportDto | null = null;
-  tableDataDtos: SbomReportDetailDto[] | null = null;
   isTableLoading: boolean = false;
   // #endregion
   // #region selectedNamespace property
@@ -219,11 +219,16 @@ export class SbomReportsComponent {
     this.dataDtos = dtos;
   }
 
-  public onRefreshRequested(event: TrivyFilterData) {
-    this.service.getSbomReportDtos().subscribe({
-      next: (res) => this.onGetDataDtos(res),
-      error: (err) => console.error(err),
-    });
+  reloadData() {
+    this.activeNamespaces = undefined;
+    this.imageDtos = undefined;
+    this.selectedNamespace = null;
+    this.dataDtos = null;
+    this.fullSbomDataDto = null;
+    this.dependsOnBoms = undefined;
+    this.nodeDataDtos = [];
+
+    this.getTableDataDtos();
   }
   // #endregion
 
