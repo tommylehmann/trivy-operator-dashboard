@@ -383,7 +383,6 @@ export class SbomReportsComponent {
   }
 
   onDeletedNodeIds(nodeIds: string[] | undefined) {
-    console.log("sbooom");
     this._deletedNodeIds = nodeIds;
     this.dependsOnBoms = this.dependsOnBoms?.filter(x => !nodeIds?.includes(x.bomRef ?? ""));
   }

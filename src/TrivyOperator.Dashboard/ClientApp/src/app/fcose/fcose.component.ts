@@ -673,7 +673,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.cy.$('node.selectedIncomers')
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
       this.selectedNode = undefined;
-      console.log("fcose - " + deletedNodes.length);
       if (deletedNodes.length > 0) {
         this.deletedNodeIds.emit(deletedNodes);
       }
@@ -693,7 +692,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.cy.$('node.selectedIncomers')
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
       this.selectedNode = undefined;
-      console.log("fcose - " + deletedNodes.length);
       if (deletedNodes.length > 0) {
         this.deletedNodeIds.emit(deletedNodes);
       }
@@ -701,7 +699,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     }
   }
 
-  private cleanupParents() {
+  private cleanupParentsAndOrphans(deletedNodeIds: string[]) {
     this.cy.nodes().filter(node => node.isParent())
       .filter((parentNode: NodeSingular) => parentNode.children().length < 2)
       .forEach(parent =>
@@ -713,7 +711,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       .forEach(parent => {
         parent.remove();
       });
-    this.cy.nodes().filter(x => x.degree(false) == 0 && !x.isParent()).forEach(x => { x.remove(); });
+    this.cy.nodes().filter(x => x.degree(false) == 0 && !x.isParent()).forEach(x => { deletedNodeIds.push(x.id()); x.remove(); });
   }
 
 }
