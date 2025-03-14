@@ -73,6 +73,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   // #endregion
   // #region selectedNode
   @Input() set selectedNodeId(nodeId: string | undefined) {
+    if (nodeId == this._selectedNode?.id()) {
+      return;
+    }
     if (nodeId) {
       if (this.selectedNode) {
         this.unselectNode(this.selectedNode);
@@ -290,6 +293,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           selector: '.hidden',
           style: {
             opacity: 0,
+          },
+        },
+        {
+          selector: '.deleted',
+          style: {
+            'visibility': 'hidden',
           },
         },
         {

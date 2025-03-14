@@ -74,6 +74,9 @@ export class TrivyTableComponent<TData> implements OnInit {
   
   selectedDataDtos?: any | null = null;
   @Input() set singleSelectDataDto(value: TData | undefined) {
+    if (this.selectedDataDtos == value) {
+      return;  // avoid (re)selection
+    }
     this.selectedDataDtos = value;
     if (value) {
       const index = this.dataDtos?.indexOf(value);
@@ -94,6 +97,8 @@ export class TrivyTableComponent<TData> implements OnInit {
   //rows expand
   expandedRows = {};
   anyRowExpanded: boolean = false;
+
+  private isSelectionChangedExternally: boolean = false;
 
   constructor(public semaphoreStatusHelper: SemaphoreStatusHelperService) {}
 
