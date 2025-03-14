@@ -512,15 +512,25 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   onUndo() {
+    if (this.currentDeletedNodesIndex == -1 || this.deletedNodes.length == 0) {
+      return;
+    }
     this.currentDeletedNodesIndex--;
   }
 
   onRedo() {
+    if (this.currentDeletedNodesIndex >= this.deletedNodes.length - 1) {
+      return;
+    }
     this.currentDeletedNodesIndex++;
   }
 
   onShowAll() {
-    console.log("fcose - onShowAll");
+    if (this.deletedNodes.length == 0) {
+      return;
+    }
+    this.deletedNodes = [];
+    this.currentDeletedNodesIndex = -1;
   }
 
   onDeleteTest() {
