@@ -14,13 +14,22 @@ import { TagModule } from 'primeng/tag';
 
 import { NodeDataDto } from './fcose.types'
 
+import {
+  faReply,
+  faShare,
+} from '@fortawesome/free-solid-svg-icons';
+import {
+  faEye,
+} from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 
 cytoscape.use(fcose);
 
 @Component({
   selector: 'app-fcose',
   standalone: true,
-  imports: [BreadcrumbModule, ButtonModule, InputTextModule, TagModule, CommonModule, ReactiveFormsModule],
+  imports: [BreadcrumbModule, ButtonModule, InputTextModule, TagModule, CommonModule, ReactiveFormsModule, FontAwesomeModule],
   templateUrl: './fcose.component.html',
   styleUrl: './fcose.component.scss',
 })
@@ -101,6 +110,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this._selectedNode = node;
   }
   // #endregion
+  // #region "Deleted" Nodes
+  deletedNodes: string[][] = [];
+  currentDeletedNodesIndex: number = -1;
+
+  @Output() deletedNodeIds = new EventEmitter<string[]>();
+  // #endregion
   navItems: MenuItem[] = [];
   navHome: MenuItem | undefined = undefined;
   private cy!: cytoscape.Core;
@@ -131,8 +146,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   clickTimeout?: ReturnType<typeof setTimeout>;
   private doubleClickDelay = 300;
 
-  @Output() deletedNodeIds = new EventEmitter<string[]>();
-
+  
+  faEye = faEye;
+  faReply = faReply;
+  faShare = faShare;
 
   ngOnInit() {
     this.inputFilterByNameControl.valueChanges.pipe(debounceTime(500)).subscribe((value) => {
@@ -470,21 +487,21 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   // #region Menu Bar Events
-  onZoomIn(_event: MouseEvent) {
+  onZoomIn() {
     this.cy.animate({
       zoom: this.cy.zoom() + 0.1,
       duration: 300,
     });
   }
 
-  onZoomOut(_event: MouseEvent) {
+  onZoomOut() {
     this.cy.animate({
       zoom: this.cy.zoom() - 0.1,
       duration: 300,
     });
   }
 
-  onZoomFit(_event?: MouseEvent) {
+  onZoomFit() {
     this.cy.animate({
       fit: {
         eles: this.cy.elements(),
@@ -492,6 +509,24 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       },
       duration: 300,
     });
+  }
+
+  onUndo() {
+    this.currentDeletedNodesIndex--;
+  }
+
+  onRedo() {
+    this.currentDeletedNodesIndex++;
+  }
+
+  onShowAll() {
+    console.log("fcose - onShowAll");
+  }
+
+  onDeleteTest() {
+    const x: NodeSingular | undefined = undefined;
+    this.deletedNodes = this.deletedNodes.slice(0, this.currentDeletedNodesIndex + 1);
+    this.deleteNodeAndOrphans(x);
   }
   // #endregion
 
@@ -685,6 +720,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         this.deletedNodeIds.emit(deletedNodes);
       }
     }
+    
+    this.currentDeletedNodesIndex++;
+    this.deletedNodes.push([]);
   }
 
   private deleteNodeChildrenAndOrphans(node: NodeSingular | undefined) {
