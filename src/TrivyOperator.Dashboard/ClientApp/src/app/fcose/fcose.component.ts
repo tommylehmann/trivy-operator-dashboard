@@ -726,13 +726,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
       this.selectedNode = undefined;
       this.cleanupParentsAndOrphans(deletedNodes);
-      if (deletedNodes.length > 0) {
-        this.deletedNodeIds.emit(deletedNodes);
-      }
+      this.processDeletedNodeIds(deletedNodes);
     }
-    
-    this.currentDeletedNodesIndex++;
-    this.deletedNodes.push([]);
   }
 
   private deleteNodeChildrenAndOrphans(node: NodeSingular | undefined) {
@@ -748,9 +743,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
       this.selectedNode = undefined;
       this.cleanupParentsAndOrphans(deletedNodes);
-      if (deletedNodes.length > 0) {
-        this.deletedNodeIds.emit(deletedNodes);
-      }
+      this.processDeletedNodeIds(deletedNodes);
     }
   }
 
@@ -767,6 +760,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         parent.remove();
       });
     this.cy.nodes().filter(x => x.degree(false) == 0 && !x.isParent()).forEach(x => { deletedNodeIds.push(x.id()); x.remove(); });
+  }
+
+  private processDeletedNodeIds(deletedNodes: string[]) {
+    if (deletedNodes.length > 0) {
+      this.deletedNodeIds.emit(deletedNodes);
+      this.currentDeletedNodesIndex++;
+      this.deletedNodes.push(deletedNodes);
+    }
   }
   // #endregion
 }
