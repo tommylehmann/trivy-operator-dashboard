@@ -717,7 +717,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.selectedNode.addClass("deleted");
       this.selectedNode.connectedEdges().addClass("deleted");
       this.cy.$('node.selectedOutgoers')
-        .filter((x: NodeSingular) => x.incomers('edge').filter(x => !x.hasClass("deleted")).length === 0)
+        .filter((x: NodeSingular) => x.connectedEdges().filter(x => !x.hasClass("deleted")).length === 0)
         .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.addClass("deleted"); });
       //this.cy.$('node.selectedIncomers')
       //  .filter((x: NodeSingular) => x.outgoers('edge').filter(x => !x.hasClass("deleted")).length === 0)
@@ -725,7 +725,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.cy.$('node.selectedOutgoers')
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedOutgoers selectedHighlight`); });
       this.cy.$('node.selectedIncomers')
-        .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers`); })
+        .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedIncomers selectedHighlight`); })
       this.selectedNode = undefined;
       this.cleanupParentsAndOrphans(deletedNodes);
       this.processDeletedNodeIds(deletedNodes);
