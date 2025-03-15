@@ -69,6 +69,7 @@ export class SbomReportsComponent {
   // #region dependsOnTable data
   selectedSbomDetailDto: SbomReportDetailDto | undefined = undefined;
   dependsOnBoms?: SbomDetailExtendedDto[];
+  deletedDependsOnBom: SbomDetailExtendedDto[] = [];
 
   dependsOnTableColumns: TrivyTableColumn[] = [];
   dependsOnTableOptions: TrivyTableOptions;
@@ -78,8 +79,6 @@ export class SbomReportsComponent {
   hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
   nodeDataDtos: NodeDataDto[] = [];
   selectedSbomDetailBomRef?: string;
-
-  private _deletedNodeIds?: string[];
 
   private readonly _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
 
@@ -226,6 +225,7 @@ export class SbomReportsComponent {
     this.dataDtos = null;
     this.fullSbomDataDto = null;
     this.dependsOnBoms = undefined;
+    this.deletedDependsOnBom = [];
     this.nodeDataDtos = [];
 
     this.getTableDataDtos();
@@ -236,6 +236,7 @@ export class SbomReportsComponent {
   private getDataDtosByNodeId(nodeId: string) {
     this.isTableLoading = true;
     this.dependsOnBoms = undefined;
+    this.deletedDependsOnBom = [];
     const sbomDetailDtos: SbomDetailExtendedDto[] = [];
     const rootSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == nodeId);
     if (rootSbomDetailDto) {
@@ -388,7 +389,13 @@ export class SbomReportsComponent {
   }
 
   onDeletedNodeIds(nodeIds: string[] | undefined) {
-    this._deletedNodeIds = nodeIds;
+    this.deletedDependsOnBom.push(...(this.dependsOnBoms?.filter(x => nodeIds?.includes(x.bomRef ?? ""))) ?? []);
     this.dependsOnBoms = this.dependsOnBoms?.filter(x => !nodeIds?.includes(x.bomRef ?? ""));
+  }
+
+  onUndeletedNodeIds(nodeIds: string[] | undefined) {
+    const undeletedSboms = this.deletedDependsOnBom.filter(x => nodeIds?.includes(x.bomRef ?? ""));
+    this.deletedDependsOnBom = this.deletedDependsOnBom.filter(x => !nodeIds?.includes(x.bomRef ?? ""));
+    this.dependsOnBoms = [...(this.dependsOnBoms || []), ...undeletedSboms];
   }
 }

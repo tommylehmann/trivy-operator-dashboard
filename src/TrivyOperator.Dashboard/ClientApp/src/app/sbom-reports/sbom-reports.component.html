@@ -40,7 +40,8 @@
                  (activeNodeIdChange)="onActiveNodeIdChange($event)"
                  (hoveredNodeDtoChange)="onHoveredNodeDtoChange($event)"
                  (selectedNodeIdChange)="onNodeIdChange($event)"
-                 (deletedNodeIds)="onDeletedNodeIds($event)"/>
+                 (deletedNodeIdsChange)="onDeletedNodeIds($event)"
+                 (undeletedNodeIdsChange)="onUndeletedNodeIds($event)"/>
       <div *ngIf="hoveredSbomDetailDto">
         <span>
           <b>Name:</b> {{ hoveredSbomDetailDto.name }} -

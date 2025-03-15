@@ -53,6 +53,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this._rootNodeId = this._defaultRootNodeId;
       this.navHome = undefined;
       this.navItems = [];
+      this.deletedNodes = [];
+      this.currentDeletedNodesIndex = -1;
       this.cy?.elements()?.remove();
     }
     else {
@@ -63,6 +65,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
       this.hoveredNode = undefined;
       this.selectedNode = undefined;
+      this.deletedNodes = [];
+      this.currentDeletedNodesIndex = -1;
       this.redrawGraph();
     }
   }
@@ -111,10 +115,11 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
   // #endregion
   // #region "Deleted" Nodes
-  deletedNodes: string[][] = [];
+  deletedNodes: { deleteType: "single" | "multiple"; nodeIds: string[] }[] = [];
   currentDeletedNodesIndex: number = -1;
 
-  @Output() deletedNodeIds = new EventEmitter<string[]>();
+  @Output() deletedNodeIdsChange = new EventEmitter<string[]>();
+  @Output() undeletedNodeIdsChange = new EventEmitter<string[]>();
   // #endregion
   navItems: MenuItem[] = [];
   navHome: MenuItem | undefined = undefined;
@@ -516,6 +521,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (this.currentDeletedNodesIndex == -1 || this.deletedNodes.length == 0) {
       return;
     }
+    this.undeletedNodeIdsChange.emit(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds);
+    this.recreateNodes(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds);
+    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds[0]);
+    if (node) {
+      if (this.selectedNode) {
+        this.unselectNode(this.selectedNode);
+      }
+      this.selectNode(node);
+    }
     this.currentDeletedNodesIndex--;
   }
 
@@ -523,22 +537,31 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (this.currentDeletedNodesIndex >= this.deletedNodes.length - 1) {
       return;
     }
-    this.currentDeletedNodesIndex++;
+    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex + 1].nodeIds[0]);
+    if (node) {
+      switch (this.deletedNodes[this.currentDeletedNodesIndex + 1].deleteType) {
+        case "single":
+          this.deleteNodeAndOrphans(node, [], true, true);
+          break;
+        case "multiple":
+          this.deleteNodeChildrenAndOrphans(node, true);
+          break;
+      }
+    }
   }
 
   onShowAll() {
-    if (this.deletedNodes.length == 0) {
+    if (this.deletedNodes.length == 0 || this.currentDeletedNodesIndex == -1) {
       return;
+    }
+    for (let i = this.currentDeletedNodesIndex; i >= 0; i--) {
+      this.recreateNodes(this.deletedNodes[i].nodeIds);
     }
     this.deletedNodes = [];
     this.currentDeletedNodesIndex = -1;
   }
 
-  onDeleteTest() {
-    const x: NodeSingular | undefined = undefined;
-    this.deletedNodes = this.deletedNodes.slice(0, this.currentDeletedNodesIndex + 1);
-    this.deleteNodeAndOrphans(x);
-  }
+  
   // #endregion
 
   private redrawGraph() {
@@ -711,9 +734,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   // #region delete nodes
-  private deleteNodeAndOrphans(node: NodeSingular | undefined, deletedNodes: string[] = []) {
+  private deleteNodeAndOrphans(node: NodeSingular | undefined, deletedNodes: string[] = [], isMaster: boolean = true, isRedo: boolean = false) {
     if (node) {
-      const isMaster: boolean = deletedNodes.length == 0;
       deletedNodes.push(node.id());
       node.addClass("deleted");
       node.connectedEdges().addClass("deleted");
@@ -727,19 +749,19 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       }
       if (isMaster) {
         this.cleanupParentsAndOrphans(deletedNodes);
-        this.processDeletedNodeIds(deletedNodes);
+        this.processDeletedNodeIds(deletedNodes, "single", isRedo);
       }
     }
   }
 
-  private deleteNodeChildrenAndOrphans(node: NodeSingular | undefined) {
+  private deleteNodeChildrenAndOrphans(node: NodeSingular | undefined, isRedo: boolean = false) {
     if (node) {
       const deletedNodes: string[] = [];
-      this.deleteNodeAndOrphans(node, deletedNodes);
-      node.outgoers('node').forEach((x: NodeSingular) => this.deleteNodeAndOrphans(x, deletedNodes));
+      this.deleteNodeAndOrphans(node, deletedNodes, false);
+      node.outgoers('node').forEach((x: NodeSingular) => this.deleteNodeAndOrphans(x, deletedNodes, false));
 
       this.cleanupParentsAndOrphans(deletedNodes);
-      this.processDeletedNodeIds(deletedNodes);
+      this.processDeletedNodeIds(deletedNodes, "multiple", isRedo);
     }
   }
 
@@ -756,15 +778,30 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         parent.remove();
       });
     this.cy.nodes()
-      .filter(x => !x.isParent() && x.connectedEdges().filter(y => !y.hasClass("deleted")).length === 0)
+      .filter(x => !x.isParent() && x.connectedEdges().filter(y => !y.hasClass("deleted")).length === 0 && !x.hasClass("deleted"))
       .forEach(x => { deletedNodeIds.push(x.id()); x.addClass("deleted") });
   }
 
-  private processDeletedNodeIds(deletedNodes: string[]) {
+  recreateNodes(deletedNodes: string[]) {
+    deletedNodes.forEach(nodeId => {
+      const node = this.cy.getElementById(nodeId);
+      if (node) {
+        node.removeClass("deleted");
+        node.connectedEdges()
+          .filter(edge => !edge.source().hasClass("deleted") && !edge.target().hasClass("deleted"))
+          .forEach(edge => { edge.removeClass("deleted") });
+      }
+    });
+  }
+
+  private processDeletedNodeIds(deletedNodes: string[], deleteType: "single" | "multiple", isRedo: boolean) {
     if (deletedNodes.length > 0) {
-      this.deletedNodeIds.emit(deletedNodes);
+      this.deletedNodeIdsChange.emit(deletedNodes);
+      if (!isRedo) {
+        this.deletedNodes = this.deletedNodes.slice(0, this.currentDeletedNodesIndex + 1);
+        this.deletedNodes.push({ deleteType: deleteType, nodeIds: deletedNodes, });
+      }
       this.currentDeletedNodesIndex++;
-      this.deletedNodes.push(deletedNodes);
     }
   }
   // #endregion

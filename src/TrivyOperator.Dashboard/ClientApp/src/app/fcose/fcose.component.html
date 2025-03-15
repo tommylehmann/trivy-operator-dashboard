@@ -25,11 +25,10 @@
     <p-button label="Show All"
               size="small"
               [text]="true"
-              [disabled]="deletedNodes.length == 0"
+              [disabled]="deletedNodes.length == 0 || this.currentDeletedNodesIndex == -1"
               (onClick)="onShowAll()">
       <fa-icon [icon]="faEye" class="mr-2"></fa-icon>
     </p-button>
-    <p-button icon="pi pi-asterisk" label="Test" size="small" [text]="true" (onClick)="onDeleteTest()" />
   </div>
   <div class="flex align-items-center col-12 p-0">
     <p-breadcrumb class="breadcrumb-no-background breadcrumb-no-overflow"
