@@ -502,9 +502,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   onZoomFit() {
+    const visibleElements = this.cy.elements().filter(ele => !ele.hasClass('deleted'));
     this.cy.animate({
       fit: {
-        eles: this.cy.elements(),
+        eles: visibleElements,
         padding: 10,
       },
       duration: 300,
@@ -713,13 +714,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private deleteNodeAndOrphans(node: NodeSingular | undefined) {
     if (this.selectedNode) {
       const deletedNodes: string[] = [this.selectedNode.id()];
-      this.selectedNode.remove();
+      this.selectedNode.addClass("deleted");
+      this.selectedNode.connectedEdges().addClass("deleted");
       this.cy.$('node.selectedOutgoers')
-        .filter((x: NodeSingular) => x.incomers('edge').length === 0)
-        .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
-      this.cy.$('node.selectedIncomers')
-        .filter((x: NodeSingular) => x.outgoers('edge').length === 0)
-        .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.remove(); });
+        .filter((x: NodeSingular) => x.incomers('edge').filter(x => !x.hasClass("deleted")).length === 0)
+        .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.addClass("deleted"); });
+      //this.cy.$('node.selectedIncomers')
+      //  .filter((x: NodeSingular) => x.outgoers('edge').filter(x => !x.hasClass("deleted")).length === 0)
+      //  .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.addClass("deleted"); });
       this.cy.$('node.selectedOutgoers')
         .forEach((x: NodeSingular) => { x.removeClass(`selectedCommon selectedOutgoers selectedHighlight`); });
       this.cy.$('node.selectedIncomers')
@@ -749,7 +751,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   private cleanupParentsAndOrphans(deletedNodeIds: string[]) {
     this.cy.nodes().filter(node => node.isParent())
-      .filter((parentNode: NodeSingular) => parentNode.children().length < 2)
+      .filter((parentNode: NodeSingular) => parentNode.children().filter(x => !x.hasClass("deleted")).length < 2)
       .forEach(parent =>
       {
         parent.children().forEach((node: NodeSingular) => { node.move({ parent: null }); });
@@ -759,7 +761,11 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       .forEach(parent => {
         parent.remove();
       });
-    this.cy.nodes().filter(x => x.degree(false) == 0 && !x.isParent()).forEach(x => { deletedNodeIds.push(x.id()); x.remove(); });
+    //this.cy.nodes()
+    //  .filter(x => !x.isParent() && x.connectedEdges().filter(y => !y.hasClass("deleted").length === 0))
+    this.cy.nodes()
+      .filter(x => !x.isParent() && x.connectedEdges().filter(y => !y.hasClass("deleted")).length === 0)
+      .forEach(x => { deletedNodeIds.push(x.id()); x.addClass("deleted") });
   }
 
   private processDeletedNodeIds(deletedNodes: string[]) {
