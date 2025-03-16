@@ -555,6 +555,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       return;
     }
     for (let i = this.currentDeletedNodesIndex; i >= 0; i--) {
+      this.undeletedNodeIdsChange.emit(this.deletedNodes[i].nodeIds);
       this.recreateNodes(this.deletedNodes[i].nodeIds);
     }
     this.deletedNodes = [];
