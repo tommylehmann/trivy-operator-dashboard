@@ -103,7 +103,7 @@ public class WatcherState(
                     EmitterKey = GetCacheKey(watcherStateInfo),
                     Message =
                         $"Watcher for {watcherStateInfo.WatchedKubernetesObjectType.Name} and Namespace {namespaceName} failed.",
-                    Severity = Severity.Error,
+                    Severity = watcherStateInfo.Status == WatcherStateStatus.Red ? Severity.Error : Severity.Warning,
                 });
         }
         else

@@ -203,14 +203,33 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                 bool enqueueErrorEventIsSuccessful = false;
                 while (!cancellationToken.IsCancellationRequested && !enqueueErrorEventIsSuccessful)
                 {
+                    // TODO: rehaul exception handling.
+                    // This is a temporary solution
                     try
                     {
-                        logger.LogDebug(
-                            "Sending to Queue - {kubernetesObjectType} - EventWithError - {watcherKey}",
-                            typeof(TKubernetesObject).Name,
-                            watcherKey);
+                        if (lastResourceVersion is not null)
+                        {
+                            logger.LogDebug(
+                                "Watcher {kubernetesObjectType} - {watcherKey} crashed - lastResourceVersion is not null - {lastResourceVersion}",
+                                typeof(TKubernetesObject).Name,
+                                watcherKey,
+                                lastResourceVersion);
+                            lastResourceVersion = null;
+                            // TODO: create (maybe) a dedicated exception for this
+                            await UpdateWatcherState(WatcherStateStatus.Yellow, 
+                                watcherKey,
+                                new StaleWatcheCacheException("Watcher Cache is stale", watcherKey, typeof(TKubernetesObject)), 
+                                cancellationToken);
+                        }
+                        else
+                        {
+                            logger.LogDebug(
+                                "Sending to Queue - {kubernetesObjectType} - EventWithError - {watcherKey}",
+                                typeof(TKubernetesObject).Name,
+                                watcherKey);
 
-                        await EnqueueWatcherEventWithError(watcherKey);
+                            await EnqueueWatcherEventWithError(watcherKey);
+                        }
                         enqueueErrorEventIsSuccessful = true;
                     }
                     catch (Exception ex)

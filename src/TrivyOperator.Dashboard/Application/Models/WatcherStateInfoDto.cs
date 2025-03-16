@@ -42,6 +42,8 @@ public static class WatcherStateInfoExtensions
             return "Forbidden: The k8s user is not allowed to perform the watch operation";
         if (((HttpOperationException)watcherStateInfo.LastException).Response.StatusCode == HttpStatusCode.NotFound)
             return "Not Found: The specified resource type does not exist in cluster (it might be that Trivy is not installed)";
+        if (watcherStateInfo.LastException is StaleWatcheCacheException ex)
+            return $"{watcherStateInfo.LastException.Message} - {ex.KubernetesObjectType.Name} - {ex.WatcherKey}";
 
         return "Unknown mitigation";
     }
