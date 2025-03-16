@@ -175,11 +175,16 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       layout: this.fcoseLayoutOptions as FcoseLayoutOptions,
       style: [
         {
-          selector: '$node > .nodeCommon',
+          selector: ':parent',
           style: {
             'background-color': 'gray',
             'background-opacity': 0.2,
             //'label': 'data(label)',
+          },
+        },
+        {
+          selector: '.parentNode',
+          style: {
             'text-valign': 'top',
             'text-halign': 'center',
             'text-background-color': 'aqua',
@@ -388,6 +393,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   // #region Node Highlightning
   private hoverHighlightNode(node: NodeSingular) {
+    this.testHoveredNode = node;
     if (this.hoveredNode == node || node.isParent()) {
     //if (this.selectedNode || this.hoveredNode == node || node.isParent()) {
       return;
@@ -400,8 +406,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   private hoverUnhighlightNode(node: NodeSingular) {
+    this.testHoveredNode = undefined;
     if (node.isParent() || this.isDivedIn) {
-    //if (this.selectedNode || node.isParent() || this.isDivedIn) {
       return;
     }
     this.unhighlightNode(node, "hovered");
@@ -523,13 +529,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     }
     this.undeletedNodeIdsChange.emit(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds);
     this.recreateNodes(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds);
-    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds[0]);
-    if (node) {
-      if (this.selectedNode) {
-        this.unselectNode(this.selectedNode);
+    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds[0]) as NodeSingular;
+    setTimeout(() => {
+      if (node) {
+        if (this.selectedNode) {
+          this.unselectNode(this.selectedNode);
+        }
+        this.selectNode(node);
       }
-      this.selectNode(node);
-    }
+    }, 0);
     this.currentDeletedNodesIndex--;
   }
 
@@ -641,7 +649,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     );
     groupMap.forEach((value, key) => {
       if (value > 1) {
-        elements.push({ data: { id: key, label: key }, classes: 'nodeCommon' });
+        //elements.push({ data: { id: key, label: key }, classes: 'nodeCommon' });
+        elements.push({ data: { id: key, label: key }, classes: 'parentNode' });
       }
     });
 
@@ -772,12 +781,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       .forEach(parent =>
       {
         parent.children().forEach((node: NodeSingular) => { node.move({ parent: null }); });
+        parent.addClass("deleted");
+        deletedNodeIds.push(parent.id());
       });
-    this.cy.nodes().filter(node => node.isParent())
-      .filter((parentNode: NodeSingular) => parentNode.children().length == 0)
-      .forEach(parent => {
-        parent.remove();
-      });
+    //this.cy.nodes().filter(node => node.isParent())
+    //  .filter((parentNode: NodeSingular) => parentNode.children().length == 0)
+    //  .forEach(parent => {
+    //    parent.addClass("deleted");
+    //  });
     this.cy.nodes()
       .filter(x => !x.isParent() && x.connectedEdges().filter(y => !y.hasClass("deleted")).length === 0 && !x.hasClass("deleted"))
       .forEach(x => { deletedNodeIds.push(x.id()); x.addClass("deleted") });
@@ -793,6 +804,13 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           .forEach(edge => { edge.removeClass("deleted") });
       }
     });
+    const x = this.cy.nodes(".parentNode")
+      .filter(x => x.children().length === 0 && !x.hasClass("deleted"));
+      x.forEach(x => {
+        this.nodeDataDtos.filter(y => y.groupName == x.id()).forEach(y => {
+          this.cy.nodes(`#${y.id}`).move({ parent: x.id() });
+        });
+      });
   }
 
   private processDeletedNodeIds(deletedNodes: string[], deleteType: "single" | "multiple", isRedo: boolean) {
@@ -805,5 +823,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.currentDeletedNodesIndex++;
     }
   }
+  // #endregion
+
+  // #region test area
+  testHoveredNode?: NodeSingular;
   // #endregion
 }
