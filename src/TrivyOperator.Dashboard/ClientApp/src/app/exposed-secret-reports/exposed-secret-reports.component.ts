@@ -31,7 +31,7 @@ export class ExposedSecretReportsComponent {
 
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;
-  public mainTableExpandTableOptions: TrivyExpandTableOptions;
+  public mainTableExpandTableOptions: TrivyExpandTableOptions<ExposedSecretReportImageDto>;
   public mainTableExpandCallbackDto: ExposedSecretReportImageDto | null = null;
   public isMainTableLoading: boolean = true;
 

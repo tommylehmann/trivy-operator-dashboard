@@ -66,7 +66,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   @Input() trivyTableColumns: TrivyTableColumn[] = [];
   @Input({ required: true }) trivyTableOptions!: TrivyTableOptions;
 
-  @Input() trivyExpandTableOptions: TrivyExpandTableOptions = new TrivyExpandTableOptions(false, 0, 0);
+  @Input() trivyExpandTableOptions: TrivyExpandTableOptions<TData> = new TrivyExpandTableOptions(false, 0, 0);
   @Output() trivyDetailsTableCallback = new EventEmitter<TData>();
   @Output() selectedRowsChanged = new EventEmitter<TData[]>();
   @Output() refreshRequested = new EventEmitter<TrivyFilterData>();

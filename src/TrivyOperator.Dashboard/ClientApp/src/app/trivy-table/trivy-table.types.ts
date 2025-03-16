@@ -50,15 +50,26 @@ export interface TrivyFilterData {
   selectedSeverityIds: number[];
 }
 
-export class TrivyExpandTableOptions {
+export class TrivyExpandTableOptions<TData> {
   isHeaderVisible: boolean = true;
   columnsNo: number = 0;
   rowsNo: number = 0;
+  private fn: ((data: TData) => number) | undefined;
 
-  constructor(isHeaderVisible: boolean, columnsNo: number, rowsNo: number) {
+  constructor(isHeaderVisible: boolean, columnsNo: number, rowsNo: number, fn?: (data: TData) => number) {
     this.isHeaderVisible = isHeaderVisible;
     this.columnsNo = columnsNo;
     this.rowsNo = rowsNo;
+    this.fn = fn;
+
+    this._rowsArray = this.getRowsArrayByRowsNo(rowsNo);
+  }
+
+  getRowsArray(data: TData): number[] {
+    if (this.fn) {
+      return this.getRowsArrayByRowsNo(this.fn(data));
+    }
+    return this._rowsArray;
   }
 
   get columnsArray(): number[] {
@@ -66,14 +77,18 @@ export class TrivyExpandTableOptions {
       .fill(0)
       .map((_, i) => i);
   }
+    // or return Array.from({ length: this.columnsNo }, (_, i) => i);
 
-  // or return Array.from({ length: this.columnsNo }, (_, i) => i);
-
-  get rowsArray(): number[] {
-    return Array(this.rowsNo)
-      .fill(0)
-      .map((_, i) => i);
+  private getRowsArrayByRowsNo(rowsNo: number): number[] {
+    if (this.rowsNo > 0) {
+      return Array(rowsNo)
+        .fill(0)
+        .map((_, i) => i);
+    }
+    return [];
   }
+
+  private _rowsArray: number[] = [];
 }
 
 export interface TrivyTableCellCustomOptions {

@@ -26,7 +26,7 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   @Input() activeNamespaces: string[] | null = [];
   @Input() mainTableColumns: TrivyTableColumn[] = [];
   @Input({ required: true }) mainTableOptions!: TrivyTableOptions;
-  @Input() mainTableExpandTableOptions: TrivyExpandTableOptions = new TrivyExpandTableOptions(false, 0, 0);
+  @Input() mainTableExpandTableOptions: TrivyExpandTableOptions<TDataDto> = new TrivyExpandTableOptions(false, 0, 0);
   @Input() public isMainTableLoading: boolean = true;
   @ViewChild('mainTable', { static: true }) mainTable!: TrivyTableComponent<TDataDto>;
   @Input() public detailsTableColumns: TrivyTableColumn[] = [];

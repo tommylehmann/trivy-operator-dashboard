@@ -24,7 +24,7 @@ export class ClusterComplianceReportsComponent {
 
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;
-  public mainTableExpandTableOptions: TrivyExpandTableOptions;
+  public mainTableExpandTableOptions: TrivyExpandTableOptions<ClusterComplianceReportDto>;
   //public mainTableExpandCallbackDto: ClusterComplianceReportDto | null = null;
   public isMainTableLoading: boolean = true;
 
