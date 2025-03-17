@@ -89,7 +89,7 @@ export class TrivyExpandTableOptions<TData> {
 
   private getRowsArrayByRowsNo(rowsNo: number): number[] {
     console.log("TrivyExpandTableOptions - " + rowsNo);
-    if (this.rowsNo > 0) {
+    if (rowsNo > 0) {
       return Array(rowsNo)
         .fill(0)
         .map((_, i) => i);
