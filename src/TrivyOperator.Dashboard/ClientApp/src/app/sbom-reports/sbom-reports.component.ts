@@ -8,7 +8,7 @@ import { SbomReportService } from '../../api/services/sbom-report.service';
 
 import { FcoseComponent } from '../fcose/fcose.component';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { TrivyFilterData, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import { TrivyExpandTableOptions, TrivyFilterData, TrivyTableCellCustomOptions, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -67,12 +67,13 @@ export class SbomReportsComponent {
   private _imageDto: ImageDto | null = null;
   // #endregion
   // #region dependsOnTable data
-  selectedSbomDetailDto: SbomReportDetailDto | undefined = undefined;
+  selectedSbomDetailDto: SbomDetailExtendedDto | undefined = undefined;
   dependsOnBoms?: SbomDetailExtendedDto[];
   deletedDependsOnBom: SbomDetailExtendedDto[] = [];
 
   dependsOnTableColumns: TrivyTableColumn[] = [];
   dependsOnTableOptions: TrivyTableOptions;
+  dependsOnTableExpandTableOptions: TrivyExpandTableOptions<SbomDetailExtendedDto> = new TrivyExpandTableOptions(false, 2, 0, this.getPropertiesCount);
   // #endregion
 
   imageDtos: ImageDto[] | undefined = []; // filtered images by ns
@@ -180,8 +181,8 @@ export class SbomReportsComponent {
       tableSelectionMode: 'single',
       tableStyle: {},
       stateKey: 'SBOM Reports - Depends On',
-      dataKey: null,
-      rowExpansionRender: null,
+      dataKey: 'bomRef',
+      rowExpansionRender: 'table',
       extraClasses: 'trivy-half',
     };
   }
@@ -349,9 +350,10 @@ export class SbomReportsComponent {
   }
 
   onActiveNodeIdChange(event: string) {
-    this.selectedSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == event);
-    if (this.selectedSbomDetailDto) {
+    const sbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == event);
+    if (sbomDetailDto) {
       this.getDataDtosByNodeId(event);
+      this.selectedSbomDetailDto = this.dependsOnBoms?.find(x => x.level == 'Base');
     }
   }
 
@@ -365,7 +367,7 @@ export class SbomReportsComponent {
     return "";
   }
 
-  onTableSelectedRowChange(data: SbomReportDetailDto[]) {
+  onTableSelectedRowChange(data: SbomDetailExtendedDto[]) {
     if (data.length == 0) {
       this.selectedSbomDetailDto = undefined;
       this.selectedSbomDetailBomRef = undefined;
@@ -398,4 +400,45 @@ export class SbomReportsComponent {
     this.deletedDependsOnBom = this.deletedDependsOnBom.filter(x => !nodeIds?.includes(x.bomRef ?? ""));
     this.dependsOnBoms = [...(this.dependsOnBoms || []), ...undeletedSboms];
   }
+
+  // # region table expand row
+  getPropertiesCount(data: SbomDetailExtendedDto): number {
+    console.log("sbom-reports " + data.bomRef);
+    return data.properties?.length ?? 0;
+  }
+
+  dependsOnTableExpandCellOptions(
+    dto: SbomDetailExtendedDto,
+    type: 'header' | 'row',
+    colIndex: number,
+    rowIndex?: number,
+  ): TrivyTableCellCustomOptions {
+    rowIndex ?? 0;
+    let celValue: string = '';
+    let celStyle: string = '';
+    let celBadge: string | undefined;
+    let celButtonLink: string | undefined;
+    let celUrl: string | undefined;
+
+    switch (colIndex) {
+      case 0:
+        celStyle = 'width: 70px; min-width: 70px; height: 50px';
+        celValue = dto.properties?.[rowIndex ?? 0]?.[0] ?? "";
+        break;
+      case 1:
+        celStyle = 'white-space: normal; display: flex; align-items: center; height: 50px;';
+        celValue = dto.properties?.[rowIndex ?? 0]?.[1] ?? "";
+        break;
+    }
+
+    return {
+      value: celValue,
+      style: celStyle,
+      badge: celBadge,
+      buttonLink: celButtonLink,
+      url: celUrl,
+    };
+  }
+  // #endregion
+
 }

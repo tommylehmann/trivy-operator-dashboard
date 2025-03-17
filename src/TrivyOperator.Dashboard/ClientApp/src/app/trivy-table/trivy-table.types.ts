@@ -66,10 +66,18 @@ export class TrivyExpandTableOptions<TData> {
   }
 
   getRowsArray(data: TData): number[] {
+    console.log("mama");
     if (this.fn) {
       return this.getRowsArrayByRowsNo(this.fn(data));
     }
     return this._rowsArray;
+  }
+
+  getRowsNo(data: TData): number {
+    if (this.fn) {
+      return this.fn(data);
+    }
+    return this.rowsNo;
   }
 
   get columnsArray(): number[] {
@@ -80,6 +88,7 @@ export class TrivyExpandTableOptions<TData> {
     // or return Array.from({ length: this.columnsNo }, (_, i) => i);
 
   private getRowsArrayByRowsNo(rowsNo: number): number[] {
+    console.log("TrivyExpandTableOptions - " + rowsNo);
     if (this.rowsNo > 0) {
       return Array(rowsNo)
         .fill(0)

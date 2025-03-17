@@ -234,7 +234,7 @@
                 </tr>
               </ng-template>
               <ng-template pTemplate="body">
-                <tr *ngFor="let row of trivyExpandTableOptions.getRowsArray(rowData)">
+                <tr *ngFor="let row of getExpandCellRowArray(rowData)">
                   <td
                     *ngFor="let col of trivyExpandTableOptions.columnsArray"
                     style="{{ trivyExpandTableFunction(rowData, 'row', col, row).style }}"

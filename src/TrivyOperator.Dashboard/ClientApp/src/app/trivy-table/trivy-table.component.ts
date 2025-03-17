@@ -317,6 +317,17 @@ export class TrivyTableComponent<TData> implements OnInit {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
+
+  // #region to be moved appropriately
+  private _rowArray: number[] = [];
+  getExpandCellRowArray(data: TData): number[] {
+    if (this._rowArray.length == this.trivyExpandTableOptions.getRowsNo(data)) {
+      return this._rowArray;
+    }
+    this._rowArray = this.trivyExpandTableOptions.getRowsArray(data);
+    return this._rowArray;
+  }
+  // #endregion
 }
 
 // clear filters on reset table: https://stackoverflow.com/questions/51395624/reset-filter-value-on-primeng-table

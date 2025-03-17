@@ -31,6 +31,8 @@
                        [isLoading]="isTableLoading"
                        [trivyTableColumns]="dependsOnTableColumns"
                        [trivyTableOptions]="dependsOnTableOptions"
+                       [trivyExpandTableFunction]="dependsOnTableExpandCellOptions"
+                       [trivyExpandTableOptions]="dependsOnTableExpandTableOptions"
                        [singleSelectDataDto]="selectedSbomDetailDto"
                        (selectedRowsChanged)="onTableSelectedRowChange($event)"/>
     </div>
