@@ -183,7 +183,7 @@ export class SbomReportsComponent {
       stateKey: 'SBOM Reports - Depends On',
       dataKey: 'bomRef',
       rowExpansionRender: 'table',
-      extraClasses: 'trivy-half',
+      extraClasses: 'trivy-with-filters',
     };
   }
 

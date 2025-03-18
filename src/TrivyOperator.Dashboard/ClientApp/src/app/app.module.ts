@@ -42,70 +42,70 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
         loadComponent: () =>
           import('./vulnerability-reports/vulnerability-reports.component').then(
             (m) => m.VulnerabilityReportsComponent),
-        data: { title: 'Vulnerability Reps' },
+        data: { title: 'Vulnerability Reports' },
       },
       {
         path: 'vulnerability-reports-detailed',
         loadComponent: () =>
           import('./vulnerability-reports-detailed/vulnerability-reports-detailed.component').then(
             (m) => m.VulnerabilityReportsDetailedComponent),
-        data: { title: 'Vulnerability Reps Detailed' },
+        data: { title: 'Vulnerability Reports Detailed' },
       },
       {
         path: 'config-audit-reports',
         loadComponent: () =>
           import('./config-audit-reports/config-audit-reports.component').then(
             (m) => m.ConfigAuditReportsComponent),
-        data: { title: 'Config Audit Reps' },
+        data: { title: 'Config Audit Reports' },
       },
       {
         path: 'config-audit-reports-detailed',
         loadComponent: () =>
           import('./config-audit-reports-detailed/config-audit-reports-detailed.component').then(
             (m) => m.ConfigAuditReportsDetailedComponent),
-        data: { title: 'Config Audit Reps Detailed' },
+        data: { title: 'Config Audit Reports Detailed' },
       },
       {
         path: 'cluster-rbac-assessment-reports',
         loadComponent: () =>
           import('./cluster-rbac-assessment-reports/cluster-rbac-assessment-reports.component').then(
             (m) => m.ClusterRbacAssessmentReportsComponent),
-        data: { title: 'Cluster RBAC Assessment Reps' },
+        data: { title: 'Cluster RBAC Assessment Reports' },
       },
       {
         path: 'cluster-rbac-assessment-reports-detailed',
         loadComponent: () =>
           import('./cluster-rbac-assessment-reports-detailed/cluster-rbac-assessment-reports-detailed.component').then(
             (m) => m.ClusterRbacAssessmentReportsDetailedComponent),
-        data: { title: 'Cluster RBAC Assessment Reps Detailed' },
+        data: { title: 'Cluster RBAC Assessment Reports Detailed' },
       },
       {
         path: 'exposed-secret-reports',
         loadComponent: () =>
           import('./exposed-secret-reports/exposed-secret-reports.component').then(
             (m) => m.ExposedSecretReportsComponent),
-        data: { title: 'Exposed Secret Reps' },
+        data: { title: 'Exposed Secret Reports' },
       },
       {
         path: 'exposed-secret-reports-detailed',
         loadComponent: () =>
           import('./exposed-secret-reports-detailed/exposed-secret-reports-detailed.component').then(
             (m) => m.ExposedSecretReportsDetailedComponent),
-        data: { title: 'Exposed Secret Reps Detailed' },
+        data: { title: 'Exposed Secret Reports Detailed' },
       },
       {
         path: 'cluster-compliance-reports',
         loadComponent: () =>
           import('./cluster-compliance-reports/cluster-compliance-reports.component').then(
             (m) => m.ClusterComplianceReportsComponent),
-        data: { title: 'Cluster Compliance Reps' },
+        data: { title: 'Cluster Compliance Reports' },
       },
       {
         path: 'cluster-compliance-reports-detailed',
         loadComponent: () =>
           import('./cluster-compliance-reports-detailed/cluster-compliance-reports-detailed.component').then(
             (m) => m.ClusterComplianceReportsDetailedComponent),
-        data: { title: 'Cluster Compliance Reps Detailed' },
+        data: { title: 'Cluster Compliance Reports Detailed' },
       },
 
       {
@@ -113,28 +113,28 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
         loadComponent: () =>
           import('./cluster-vulnerability-reports/cluster-vulnerability-reports.component').then(
             (m) => m.ClusterVulnerabilityReportsComponent),
-        data: { title: 'Cluster Vulnerability Reps' },
+        data: { title: 'Cluster Vulnerability Reports' },
       },
       {
         path: 'cluster-vulnerability-reports-detailed',
         loadComponent: () =>
           import('./cluster-vulnerability-reports-detailed/cluster-vulnerability-reports-detailed.component').then(
             (m) => m.ClusterVulnerabilityReportsDetailedComponent),
-        data: { title: 'Cluster Vulnerability Reps Detailed' },
+        data: { title: 'Cluster Vulnerability Reports Detailed' },
       },
       {
         path: 'rbac-assessment-reports',
         loadComponent: () =>
           import('./rbac-assessment-reports/rbac-assessment-reports.component').then(
             (m) => m.RbacAssessmentReportsComponent),
-        data: { title: 'RBAC Assessment Reps' },
+        data: { title: 'RBAC Assessment Reports' },
       },
       {
         path: 'rbac-assessment-reports-detailed',
         loadComponent: () =>
           import('./rbac-assessment-reports-detailed/rbac-assessment-reports-detailed.component').then(
             (m) => m.RbacAssessmentReportsDetailedComponent),
-        data: { title: 'RBAC Assessment Reps' },
+        data: { title: 'RBAC Assessment Reports' },
       },
       {
         path: 'watcher-states',
@@ -158,7 +158,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
         path: 'sbom-reports',
         loadComponent: () => import('./sbom-reports/sbom-reports.component').then(
           (m) => m.SbomReportsComponent),
-        data: { title: 'SBOM Reps' },
+        data: { title: 'SBOM Reports' },
       },
     ]),
     ApiModule.forRoot({ rootUrl: environment.baseUrl }),

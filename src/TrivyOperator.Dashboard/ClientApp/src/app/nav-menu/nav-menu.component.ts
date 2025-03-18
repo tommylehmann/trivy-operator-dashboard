@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { AlertDto } from '../../api/models/alert-dto';
 import { AlertsService } from '../services/alerts.service';
 import { MainAppInitService } from '../services/main-app-init.service';
+import { RouterEventEmitterService } from '../services/router-event-emitter.service';
 
 import {
   faClipboardList,
@@ -17,6 +18,7 @@ import {
   faUserShield,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
+
 
 interface TrivyMenuItem extends MenuItem {
   faIcon: IconDefinition | null | undefined;
@@ -32,6 +34,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   alertsCount: number = 0;
   alerts: AlertDto[] = [];
   enabledTrivyReports: string[] = ['crar', 'car', 'esr', 'vr'];
+  activePage: string = "";
   isSidebarVisible = false;
   faHouse = faHouse;
   faShieldHalved = faShieldHalved;
@@ -46,7 +49,12 @@ export class NavMenuComponent implements OnInit, OnDestroy {
     public router: Router,
     private alertsService: AlertsService,
     private mainAppInitService: MainAppInitService,
-  ) {}
+    private routerEventEmitterService: RouterEventEmitterService
+  ) {
+    this.routerEventEmitterService.title$.subscribe((title) => {
+      this.activePage = title;
+    });
+  }
 
   get isDarkMode(): boolean {
     return this.mainAppInitService.isDarkMode;

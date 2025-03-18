@@ -1,4 +1,3 @@
-<h3>Home</h3>
 <p-tabView [scrollable]="true" [(activeIndex)]="tabPageActiveIndex" (onChange)="onTabPageChange($event)">
   <p-tabPanel header="Vulnerability Reports" [disabled]="!enabledTrivyReports.includes('vr')">
     <app-home-vulnerability-reports
