@@ -234,32 +234,25 @@
                 </tr>
               </ng-template>
               <ng-template pTemplate="body">
-                <tr *ngFor="let row of getExpandCellRowArray(rowData)">
-                  <td
-                    *ngFor="let col of trivyExpandTableOptions.columnsArray"
-                    style="{{ trivyExpandTableFunction(rowData, 'row', col, row).style }}"
-                  >
+                <!--<tr *ngFor="let row of getExpandCellRowArray(rowData)">-->
+                <tr *ngFor="let row of rowData | cellRowArray:trivyExpandTableOptions">
+                  <td *ngFor="let col of trivyExpandTableOptions.columnsArray"
+                      style="{{ trivyExpandTableFunction(rowData, 'row', col, row).style }}">
                     <div *ngIf="!trivyExpandTableFunction(rowData, 'row', col, row).url">
                       <span>{{ trivyExpandTableFunction(rowData, 'row', col, row).value }}</span>
-                      <p-button
-                        *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).buttonLink"
-                        label="{{ trivyExpandTableFunction(rowData, 'row', col, row).buttonLink }}"
-                        size="small"
-                        [text]="true"
-                        (onClick)="onTrivyDetailsTableCallback(rowData)"
-                      />
-                      <p-tag
-                        *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).badge"
-                        [rounded]="true"
-                        [style]="{ 'margin-left': '10px', background: severityWrapperGetCssColor(1) }"
-                        [value]="trivyExpandTableFunction(rowData, 'row', col, row).badge"
-                      />
+                      <p-button *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).buttonLink"
+                                label="{{ trivyExpandTableFunction(rowData, 'row', col, row).buttonLink }}"
+                                size="small"
+                                [text]="true"
+                                (onClick)="onTrivyDetailsTableCallback(rowData)" />
+                      <p-tag *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).badge"
+                             [rounded]="true"
+                             [style]="{ 'margin-left': '10px', background: severityWrapperGetCssColor(1) }"
+                             [value]="trivyExpandTableFunction(rowData, 'row', col, row).badge" />
                     </div>
-                    <a
-                      *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).url"
-                      href="{{ trivyExpandTableFunction(rowData, 'row', col, row).url }}"
-                      target="_blank"
-                    >
+                    <a *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).url"
+                       href="{{ trivyExpandTableFunction(rowData, 'row', col, row).url }}"
+                       target="_blank">
                       {{ trivyExpandTableFunction(rowData, 'row', col, row).value }}
                     </a>
                   </td>

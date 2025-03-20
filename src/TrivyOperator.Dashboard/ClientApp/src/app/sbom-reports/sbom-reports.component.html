@@ -2,7 +2,7 @@
   <div class="flex flex-wrap align-items-stretch">
     <div class="col-12 md:col-5 lg:col-4 p-0 pr-1">
       <div class="grid">
-        <div class="col-4 p-fluid">
+        <div class="col-4 p-fluid pr-1">
           <p-dropdown placeholder="Select a Namespace"
                       class="p-inputtext-sm"
                       [filter]="true"
@@ -11,17 +11,16 @@
                       [(ngModel)]="selectedNamespace"
                       (onChange)="filterImageDtos()" />
         </div>
-        <div class="col-7 p-fluid">
+        <div class="col-8 p-fluid flex align-items-center pl-1">
           <p-dropdown optionLabel="imageNameTag"
                       placeholder="Select a Namespace"
-                      class="p-inputtext-sm"
+                      class="p-inputtext-sm flex-grow-1 pr-1 text-truncate p-dropdown-max"
                       [filter]="true"
                       [options]="imageDtos"
                       [showClear]="true"
                       [(ngModel)]="selectedImageDto" />
-        </div>
-        <div class="col-1">
-          <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small" (onClick)="reloadData()" />
+
+          <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small" (onClick)="reloadData()" class="flex-none pl-1"/>
         </div>
       </div>
       <app-trivy-table tableHeight="30vh"

@@ -10,6 +10,7 @@
            style="width: 200px; font-size: 12px" />
     <p-button label="Undo"
               size="small"
+              class="hidden-sm"
               [text]="true"
               [disabled]="currentDeletedNodesIndex == -1 || deletedNodes.length == 0"
               (onClick)="onUndo()">
@@ -17,6 +18,7 @@
     </p-button>
     <p-button label="Redo"
               size="small"
+              class="hidden-sm"
               [text]="true"
               [disabled]="currentDeletedNodesIndex >= deletedNodes.length - 1"
               (onClick)="onRedo()">
@@ -24,6 +26,7 @@
     </p-button>
     <p-button label="Show All"
               size="small"
+              class="hidden-sm"
               [text]="true"
               [disabled]="deletedNodes.length == 0 || this.currentDeletedNodesIndex == -1"
               (onClick)="onShowAll()">
@@ -37,6 +40,6 @@
                   (onItemClick)="onNavItemClick($event)" />
   </div>
   <div class="col-12 h-full">
-    <div #graphContainer style="width: 100%; height: 80vh" class="graph-container"></div>
+    <div #graphContainer class="fcose fcose-half graph-container"></div>
   </div>
 </div>

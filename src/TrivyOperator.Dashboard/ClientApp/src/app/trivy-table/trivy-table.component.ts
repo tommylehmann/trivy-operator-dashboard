@@ -25,6 +25,7 @@ import {
   TrivyTableColumn,
   TrivyTableOptions,
 } from './trivy-table.types';
+import { CellRowArrayPipe } from '../pipes/cell-row-array.pipe';
 
 @Component({
   selector: 'app-trivy-table',
@@ -41,6 +42,7 @@ import {
     SplitButtonModule,
     TableModule,
     TagModule,
+    CellRowArrayPipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',

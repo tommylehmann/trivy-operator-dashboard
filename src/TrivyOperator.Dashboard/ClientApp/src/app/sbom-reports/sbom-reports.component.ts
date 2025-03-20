@@ -403,7 +403,6 @@ export class SbomReportsComponent {
 
   // # region table expand row
   getPropertiesCount(data: SbomDetailExtendedDto): number {
-    console.log("sbom-reports " + data.bomRef);
     return data.properties?.length ?? 0;
   }
 
