@@ -347,6 +347,16 @@ export class FcoseComponent implements AfterViewInit, OnInit {
             opacity: 0.8,
           },
         },
+        {
+          selector: '.graph-selected',
+          style: {
+            'font-style': 'italic',
+            'font-weight': 'bold',
+            'shape': 'round-rectangle',
+            // @ts-ignore
+            'corner-radius': '12px',
+          }
+        }
       ],
     });
   }
@@ -388,10 +398,20 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       { capture: true });
     }
 
+    this.cy.on('select', 'node',  (event) =>{
+      const node = event.target as NodeSingular;
+      node.addClass("graph-selected");
+    });
+
+    this.cy.on('unselect', 'node', (event) => {
+      const node = event.target as NodeSingular;
+      node.removeClass("graph-selected");
+    });
+
   }
   // #endregion
 
-  // #region Node Highlightning
+  // #region Node Hover
   private hoverHighlightNode(node: NodeSingular) {
     this.testHoveredNode = node;
     if (this.hoveredNode == node || node.isParent()) {
@@ -415,6 +435,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
   // #endregion
 
+  // #region node highlight
   private highlightNode(node: NodeSingular, stylePrefix: "hovered" | "selected") {
     node.addClass(`${stylePrefix}Common ${stylePrefix}`);
     this.swapClassNodesHighlightedByName(node, "highlight");
@@ -458,6 +479,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       edge.removeClass(`${stylePrefix}Edge`);
     });
   }
+  // #endregion
 
   // #region Node Select
   private onSelectNode(node: NodeSingular) {
