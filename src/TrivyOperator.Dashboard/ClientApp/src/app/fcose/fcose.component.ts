@@ -355,6 +355,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
             'shape': 'round-rectangle',
             // @ts-ignore
             'corner-radius': '12px',
+            'background-fill': 'linear-gradient',
+            'background-gradient-stop-colors': 'red pink magenta blue',
+            'background-gradient-direction': 'to-right'
+            /*'background-gradient-stop-positions': '0% 100%'*/
           }
         }
       ],
