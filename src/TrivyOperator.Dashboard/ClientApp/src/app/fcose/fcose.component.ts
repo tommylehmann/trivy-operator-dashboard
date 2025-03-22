@@ -97,12 +97,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       }
       const node = this.cy.$(`#${nodeId}`);
       if (node) {
-        this.selectNode(node);
+        node.select();
+        this.onSelectNode(node);
       }
     }
     else {
       if (this.selectedNode) {
-        this.unselectNode(this.selectedNode);
+        //this.unselectNode(this.selectedNode);
+        this.selectedNode.unselect();
       }
     }
     
@@ -399,9 +401,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.cy.on('tap', 'node', (event: cytoscape.EventObject) => {
       if (event.originalEvent.detail === 1) {
         this.clickTimeout = setTimeout(() => {
-          if (this.graphSelectedNodes.length == 1) {
-            this.onSelectNode(this.graphSelectedNodes[0])
-          }
+          this.onSelectNode(this.graphSelectedNodes[0])
         }, this.doubleClickDelay);
       }
     });
@@ -415,11 +415,11 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.graphContainer.nativeElement.setAttribute('tabindex', '0');
       this.graphContainer.nativeElement.addEventListener('keydown', (event: KeyboardEvent) => {
         if ((event.key === 'Delete' || event.key === 'Del') && event.shiftKey) {
-          this.deleteNodeChildrenAndOrphans(this.selectedNode);
+          this.deleteNodesChildrenAndOrphans();
           return;
         }
         if (event.key === 'Delete' || event.key === 'Del') {
-          this.deleteNodeAndOrphans(this.selectedNode);
+          this.deleteNodesAndOrphans();
           return;
         }
       },
@@ -521,6 +521,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   // #region Node Select
   private onSelectNode(node: NodeSingular) {
+    if (this.graphSelectedNodes.length != 1) {
+      return;
+    }
     if (this.hoveredNode) {
       this.hoverUnhighlightNode(this.hoveredNode);
     }
@@ -807,6 +810,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   // #region delete nodes
+  private deleteNodesAndOrphans() {
+    this.deleteNodeAndOrphans(this.selectedNode);
+  }
+
+  private deleteNodesChildrenAndOrphans() {
+    this.deleteNodeChildrenAndOrphans(this.selectedNode);
+  }
+
   private deleteNodeAndOrphans(node: NodeSingular | undefined, deletedNodes: string[] = [], isMaster: boolean = true, isRedo: boolean = false) {
     if (node) {
       deletedNodes.push(node.id());
