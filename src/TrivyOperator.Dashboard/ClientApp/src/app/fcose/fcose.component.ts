@@ -395,7 +395,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.cy.on('tap', 'node', (event: cytoscape.EventObject) => {
       if (event.originalEvent.detail === 1) {
         this.clickTimeout = setTimeout(() => {
-          this.onSelectNode(event.target as NodeSingular)
+          if (this.graphSelectedNodes.length == 1) {
+            this.onSelectNode(this.graphSelectedNodes[0])
+          }
         }, this.doubleClickDelay);
       }
     });
@@ -422,14 +424,22 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
     this.cy.on('select', 'node',  (event) =>{
       const node = event.target as NodeSingular;
-      node.addClass(["graph-selected"]);
+      
       this.graphSelectedNodes.push(node);
+      if (this.graphSelectedNodes.length == 2 && this.selectedNode) {
+        this.unselectNode(this.graphSelectedNodes[0]);
+      }
+      node.addClass(["graph-selected", "selected", "selectedCommon"]);
+      this.graphSelectedNodes[0].addClass(["graph-selected", "selected", "selectedCommon"]);
     });
 
     this.cy.on('unselect', 'node', (event) => {
       const node = event.target as NodeSingular;
-      node.removeClass(["graph-selected"]);
       this.graphSelectedNodes = this.graphSelectedNodes.filter(x => x != node);
+      if (this.graphSelectedNodes.length === 0) {
+        this.unselectNode(node);
+      }
+      node.removeClass(["graph-selected", "selected", "selectedCommon"]);
     });
 
   }
