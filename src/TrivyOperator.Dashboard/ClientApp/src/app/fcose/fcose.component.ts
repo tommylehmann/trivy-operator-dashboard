@@ -262,7 +262,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           style: {
             // @ts-ignore
             'background-fill': 'linear-gradient',
-            'background-gradient-stop-colors': 'RoyalBlue DeepSkyBlue',
+            'background-gradient-stop-colors': 'RoyalBlue Silver DeepSkyBlue',
             'background-gradient-direction': 'to-right'
           },
         },
@@ -291,7 +291,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           style: {
             // @ts-ignore
             'background-fill': 'linear-gradient',
-            'background-gradient-stop-colors': 'Red Salmon',
+            'background-gradient-stop-colors': 'Red Silver Salmon',
             'background-gradient-direction': 'to-right'
           },
         },
@@ -541,6 +541,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private unselectNode(node: NodeSingular) {
     this.unhighlightNode(node, "selected");
     this.selectedNode = undefined;
+    if (this.graphSelectedNodes.length == 1) {
+      node.unselect();
+    }
   }
   // #endregion
 
