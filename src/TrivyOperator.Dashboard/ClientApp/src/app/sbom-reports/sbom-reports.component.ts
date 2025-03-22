@@ -359,10 +359,10 @@ export class SbomReportsComponent {
 
   private getGroupFromSbomReportDetail(dto: SbomReportDetailDto): string {
     if (dto.properties?.find(x => x[1] == "nuget")) {
-      return `nuget-${dto.name?.split('.')[0] ?? ""}`;
+      return `${dto.name?.split('.')[0] ?? ""} (nuget)`;
     }
     if (dto.properties?.find(x => x[1] == "dotnet-core")) {
-      return `dotnet-core-${dto.name?.split('.')[0] ?? ""}`;
+      return `${dto.name?.split('.')[0] ?? ""} (dotnet-core)`;
     }
     return "";
   }

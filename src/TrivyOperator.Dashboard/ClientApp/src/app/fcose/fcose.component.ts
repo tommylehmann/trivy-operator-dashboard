@@ -192,9 +192,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           style: {
             'text-valign': 'top',
             'text-halign': 'center',
-            'color': 'Gray',
+            'color': 'Gainsboro',
             'text-background-color': 'aqua',
-            'text-margin-y': 15,
+            'text-margin-y': 18,
             'font-size': '14px',
             'font-weight': 'bold',
           },
@@ -266,7 +266,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           style: {
             // @ts-ignore
             'background-fill': 'linear-gradient',
-            'background-gradient-stop-colors': 'RoyalBlue Silver DeepSkyBlue',
+            'background-gradient-stop-colors': 'RoyalBlue Aqua RoyalBlue', //DeepSkyBlue
             'background-gradient-direction': 'to-right'
           },
         },
@@ -295,7 +295,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           style: {
             // @ts-ignore
             'background-fill': 'linear-gradient',
-            'background-gradient-stop-colors': 'Red Silver Salmon',
+            'background-gradient-stop-colors': 'Red Silver Red', //Salmon
             'background-gradient-direction': 'to-right'
           },
         },
