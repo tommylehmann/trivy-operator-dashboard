@@ -53,6 +53,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this._rootNodeId = this._defaultRootNodeId;
       this.navHome = undefined;
       this.navItems = [];
+      this.graphSelectedNodes = [];
       this.deletedNodes = [];
       this.currentDeletedNodesIndex = -1;
       this.cy?.elements()?.remove();
@@ -65,6 +66,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
       this.hoveredNode = undefined;
       this.selectedNode = undefined;
+      this.graphSelectedNodes = [];
       this.deletedNodes = [];
       this.currentDeletedNodesIndex = -1;
       this.redrawGraph();
@@ -113,6 +115,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private set selectedNode(node: NodeSingular | undefined) {
     this._selectedNode = node;
   }
+  private graphSelectedNodes: NodeSingular[] = [];
   // #endregion
   // #region "Deleted" Nodes
   deletedNodes: { deleteType: "single" | "multiple"; nodeIds: string[] }[] = [];
@@ -221,13 +224,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         {
           selector: '.nodeBranch',
           style: {
-            shape: 'roundrectangle',
+            shape: 'rectangle',
           },
         },
         {
           selector: '.nodeLeaf',
           style: {
-            shape: 'cut-rectangle',
+            'shape': 'round-rectangle',
+            // @ts-ignore
+            'corner-radius': '12px',
           },
         },
         {
@@ -253,21 +258,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.hovered, .selected',
+          selector: '.hovered',
           style: {
-            'background-color': 'Silver',
-          },
-        },
-        {
-          selector: '.hoveredOutgoers',
-          style: {
-            'background-color': 'DeepSkyBlue',
-          },
-        },
-        {
-          selector: '.selectedOutgoers',
-          style: {
-            'background-color': 'Salmon',
+            // @ts-ignore
+            'background-fill': 'linear-gradient',
+            'background-gradient-stop-colors': 'RoyalBlue DeepSkyBlue',
+            'background-gradient-direction': 'to-right'
           },
         },
         {
@@ -277,9 +273,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
-          selector: '.selectedIncomers',
+          selector: '.hoveredOutgoers',
           style: {
-            'background-color': 'Red',
+            'background-color': 'DeepSkyBlue',
           },
         },
         {
@@ -290,6 +286,28 @@ export class FcoseComponent implements AfterViewInit, OnInit {
             'font-style': 'italic',
           },
         },
+        {
+          selector: '.selected',
+          style: {
+            // @ts-ignore
+            'background-fill': 'linear-gradient',
+            'background-gradient-stop-colors': 'Red Salmon',
+            'background-gradient-direction': 'to-right'
+          },
+        },
+        {
+          selector: '.selectedIncomers',
+          style: {
+            'background-color': 'Red',
+          },
+        },
+        {
+          selector: '.selectedOutgoers',
+          style: {
+            'background-color': 'Salmon',
+          },
+        },
+        
         {
           selector: '.selectedHighlight',
           style: {
@@ -352,13 +370,13 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           style: {
             'font-style': 'italic',
             'font-weight': 'bold',
-            'shape': 'round-rectangle',
-            // @ts-ignore
-            'corner-radius': '12px',
-            'background-fill': 'linear-gradient',
-            'background-gradient-stop-colors': 'red pink magenta blue',
-            'background-gradient-direction': 'to-right'
-            /*'background-gradient-stop-positions': '0% 100%'*/
+          //  'shape': 'round-rectangle',
+          //  // @ts-ignore
+          //  'corner-radius': '12px',
+          //  'background-fill': 'linear-gradient',
+          //  'background-gradient-stop-colors': 'red pink magenta blue',
+          //  'background-gradient-direction': 'to-right'
+          //  /*'background-gradient-stop-positions': '0% 100%'*/
           }
         }
       ],
@@ -404,12 +422,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
     this.cy.on('select', 'node',  (event) =>{
       const node = event.target as NodeSingular;
-      node.addClass("graph-selected");
+      node.addClass(["graph-selected"]);
+      this.graphSelectedNodes.push(node);
     });
 
     this.cy.on('unselect', 'node', (event) => {
       const node = event.target as NodeSingular;
-      node.removeClass("graph-selected");
+      node.removeClass(["graph-selected"]);
+      this.graphSelectedNodes = this.graphSelectedNodes.filter(x => x != node);
     });
 
   }
