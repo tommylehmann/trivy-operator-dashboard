@@ -5,3 +5,9 @@ export interface NodeDataDto {
   groupName?: string;
   isMain?: boolean;
 }
+
+export interface DeletedNodes {
+  deleteType: "single" | "multiple" | "multiSelected";
+  mainNodeIds: string[];
+  nodeIds: string[];
+}

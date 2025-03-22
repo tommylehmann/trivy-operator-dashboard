@@ -12,7 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 
-import { NodeDataDto } from './fcose.types'
+import { DeletedNodes, NodeDataDto } from './fcose.types'
 
 import {
   faReply,
@@ -120,7 +120,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private graphSelectedNodes: NodeSingular[] = [];
   // #endregion
   // #region "Deleted" Nodes
-  deletedNodes: { deleteType: "single" | "multiple"; nodeIds: string[] }[] = [];
+  deletedNodes: DeletedNodes[] = [];
   currentDeletedNodesIndex: number = -1;
 
   @Output() deletedNodeIdsChange = new EventEmitter<string[]>();
@@ -595,7 +595,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     }
     this.undeletedNodeIdsChange.emit(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds);
     this.recreateNodes(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds);
-    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds[0]) as NodeSingular;
+    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex].mainNodeIds[0]) as NodeSingular;
     setTimeout(() => {
       if (node) {
         if (this.selectedNode) {
@@ -611,14 +611,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (this.currentDeletedNodesIndex >= this.deletedNodes.length - 1) {
       return;
     }
-    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex + 1].nodeIds[0]);
+    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex + 1].mainNodeIds[0]);
     if (node) {
       switch (this.deletedNodes[this.currentDeletedNodesIndex + 1].deleteType) {
         case "single":
-          this.deleteNodeAndOrphans(node, [], true, true);
+          this.deleteNodesAndOrphans(node, true);
           break;
         case "multiple":
-          this.deleteNodeChildrenAndOrphans(node, true);
+          this.deleteNodesChildrenAndOrphans(node, true);
           break;
       }
     }
@@ -810,43 +810,45 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   // #region delete nodes
-  private deleteNodesAndOrphans() {
-    this.deleteNodeAndOrphans(this.selectedNode);
-  }
-
-  private deleteNodesChildrenAndOrphans() {
-    this.deleteNodeChildrenAndOrphans(this.selectedNode);
-  }
-
-  private deleteNodeAndOrphans(node: NodeSingular | undefined, deletedNodes: string[] = [], isMaster: boolean = true, isRedo: boolean = false) {
-    if (node) {
-      deletedNodes.push(node.id());
-      node.addClass("deleted");
-      node.connectedEdges().addClass("deleted");
-      node.outgoers('node')
-        .filter((x: NodeSingular) => !x.hasClass("deleted"))
-        .filter((x: NodeSingular) => x.connectedEdges().filter(x => !x.hasClass("deleted")).length === 0)
-        .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.addClass("deleted"); });
-      if (node == this.selectedNode) {
-        this.unhighlightNode(node, "selected");
-        this.selectedNode = undefined;
-      }
-      if (isMaster) {
-        this.cleanupParentsAndOrphans(deletedNodes);
-        this.processDeletedNodeIds(deletedNodes, "single", isRedo);
-      }
-    }
-  }
-
-  private deleteNodeChildrenAndOrphans(node: NodeSingular | undefined, isRedo: boolean = false) {
+  private deleteNodesAndOrphans(node?: NodeSingular, isRedo: boolean = false) {
+    node = node ?? this.selectedNode;
     if (node) {
       const deletedNodes: string[] = [];
-      this.deleteNodeAndOrphans(node, deletedNodes, false);
-      node.outgoers('node').forEach((x: NodeSingular) => this.deleteNodeAndOrphans(x, deletedNodes, false));
-
+      const mainNodeIds = [node.id()];
+      this.deleteNodeAndOrphans(node, deletedNodes);
       this.cleanupParentsAndOrphans(deletedNodes);
-      this.processDeletedNodeIds(deletedNodes, "multiple", isRedo);
+      this.processDeletedNodeIds(mainNodeIds, deletedNodes, "single", isRedo);
     }
+  }
+
+  private deleteNodesChildrenAndOrphans(node?: NodeSingular, isRedo: boolean = false) {
+    node = node ?? this.selectedNode;
+    if (node) {
+      const deletedNodes: string[] = [];
+      const mainNodeIds = [node.id()];
+      this.deleteNodeChildrenAndOrphans(node, deletedNodes);
+      this.cleanupParentsAndOrphans(deletedNodes);
+      this.processDeletedNodeIds(mainNodeIds, deletedNodes, "multiple", isRedo);
+    }
+  }
+
+  private deleteNodeAndOrphans(node: NodeSingular, deletedNodes: string[]) {
+    deletedNodes.push(node.id());
+    node.addClass("deleted");
+    node.connectedEdges().addClass("deleted");
+    node.outgoers('node')
+      .filter((x: NodeSingular) => !x.hasClass("deleted"))
+      .filter((x: NodeSingular) => x.connectedEdges().filter(x => !x.hasClass("deleted")).length === 0)
+      .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.addClass("deleted"); });
+    if (node == this.selectedNode) {
+      this.unhighlightNode(node, "selected");
+      this.selectedNode = undefined;
+    }
+  }
+
+  private deleteNodeChildrenAndOrphans(node: NodeSingular, deletedNodes: string[]) {
+    this.deleteNodeAndOrphans(node, deletedNodes);
+    node.outgoers('node').forEach((x: NodeSingular) => this.deleteNodeAndOrphans(x, deletedNodes));
   }
 
   private cleanupParentsAndOrphans(deletedNodeIds: string[]) {
@@ -882,12 +884,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       });
   }
 
-  private processDeletedNodeIds(deletedNodes: string[], deleteType: "single" | "multiple", isRedo: boolean) {
+  private processDeletedNodeIds(mainNodeIds: string[], deletedNodes: string[], deleteType: "single" | "multiple", isRedo: boolean) {
     if (deletedNodes.length > 0) {
       this.deletedNodeIdsChange.emit(deletedNodes);
       if (!isRedo) {
         this.deletedNodes = this.deletedNodes.slice(0, this.currentDeletedNodesIndex + 1);
-        this.deletedNodes.push({ deleteType: deleteType, nodeIds: deletedNodes, });
+        this.deletedNodes.push({ deleteType: deleteType, mainNodeIds: mainNodeIds, nodeIds: deletedNodes, });
       }
       this.currentDeletedNodesIndex++;
     }
