@@ -182,7 +182,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           style: {
             'background-color': 'gray',
             'background-opacity': 0.2,
-            //'label': 'data(label)',
+            'label': 'data(label)',
+            // @ts-ignore
+            'padding': 20,
           },
         },
         {
@@ -190,7 +192,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           style: {
             'text-valign': 'top',
             'text-halign': 'center',
+            'color': 'Gray',
             'text-background-color': 'aqua',
+            'text-margin-y': 15,
             'font-size': '14px',
             'font-weight': 'bold',
           },
@@ -843,11 +847,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         parent.addClass("deleted");
         deletedNodeIds.push(parent.id());
       });
-    //this.cy.nodes().filter(node => node.isParent())
-    //  .filter((parentNode: NodeSingular) => parentNode.children().length == 0)
-    //  .forEach(parent => {
-    //    parent.addClass("deleted");
-    //  });
     this.cy.nodes()
       .filter(x => !x.isParent() && x.connectedEdges().filter(y => !y.hasClass("deleted")).length === 0 && !x.hasClass("deleted"))
       .forEach(x => { deletedNodeIds.push(x.id()); x.addClass("deleted") });
