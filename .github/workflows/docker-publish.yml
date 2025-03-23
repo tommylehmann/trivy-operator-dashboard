@@ -75,7 +75,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3.0.0
       - name: Sanitize Version for FileVersion
         run: echo "SEMVERTAG=$(echo '${{ steps.gitversion.outputs.SemVer }}' | sed 's/+/-/g')" >> $GITHUB_ENV
-        # run: echo "::set-output name=result::$(echo '${{ steps.gitversion.outputs.SemVer }}' | sed 's/+/-/g')"
+        # run: echo "::set-output name=result::$(echo '${{ steps.gitversion.outputs.FullSemVer }}' | sed 's/+/-/g')"
         # and use ${{ steps.sanitize-semver-version.outputs.result }}
         id: sanitize-semver-version
         shell: bash
