@@ -76,6 +76,7 @@ jobs:
       - name: Sanitize Version for FileVersion
         run: echo "SEMVERTAG=$(echo '${{ steps.gitversion.outputs.SemVer }}' | sed 's/+/-/g')" >> $GITHUB_ENV
         # run: echo "::set-output name=result::$(echo '${{ steps.gitversion.outputs.SemVer }}' | sed 's/+/-/g')"
+        # and use ${{ steps.sanitize-semver-version.outputs.result }}
         id: sanitize-semver-version
         shell: bash
 
@@ -101,13 +102,13 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.gitversion.outputs.MajorMinorPatch }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SEMVERTAG }}
-            # ${{ steps.meta.outputs.tags }}
+          # ${{ steps.meta.outputs.tags }}
           # tags: ${{ env.REGISTRY }}/raoulx24/trivydashboard:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            FILEVERSION=${{ steps.gitversion.outputs.Major }}.${{ steps.gitversion.outputs.Minor }}.${{ steps.gitversion.outputs.Patch }}
+            FILEVERSION=${{ steps.gitversion.outputs.MajorMinorPatch }}
             SEMVERFILEVERSION=${{ env.SEMVERTAG }}
 
       # Sign the resulting Docker image digest except on PRs.
