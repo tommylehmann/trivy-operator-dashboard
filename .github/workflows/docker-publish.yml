@@ -73,7 +73,11 @@ jobs:
       - name: Get GitVersion
         id: gitversion
         uses: gittools/actions/gitversion/execute@v3.0.0
-      
+      - name: Sanitize Version for FileVersion
+        run: echo "${{ steps.gitversion.outputs.SemVer }}" | sed 's/+/-/g'
+        id: sanitize-semver-version
+        shell: bash
+
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
@@ -94,13 +98,16 @@ jobs:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.gitversion.outputs.Major }}.${{ steps.gitversion.outputs.Minor }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.gitversion.outputs.SemVer }}
-            ${{ steps.meta.outputs.tags }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.gitversion.outputs.Major }}.${{ steps.gitversion.outputs.Minor }}.${{ steps.gitversion.outputs.Patch }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.sanitize-semver-version.outputs.result }}
+            # ${{ steps.meta.outputs.tags }}
           # tags: ${{ env.REGISTRY }}/raoulx24/trivydashboard:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            FILEVERSION=${{ steps.gitversion.outputs.Major }}.${{ steps.gitversion.outputs.Minor }}.${{ steps.gitversion.outputs.Patch }}
+            SEMVERFILEVERSION=${{ steps.sanitize-semver-version.outputs.result }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
