@@ -74,7 +74,7 @@ jobs:
         id: gitversion
         uses: gittools/actions/gitversion/execute@v3.0.0
       - name: Sanitize Version for FileVersion
-        run: echo "${{ steps.gitversion.outputs.SemVer }}" | sed 's/+/-/g'
+        run: echo "SEMVERTAG=$(echo '${{ steps.gitversion.outputs.SemVer }}' | sed 's/+/-/g')" >> $GITHUB_ENV
         id: sanitize-semver-version
         shell: bash
 
@@ -98,8 +98,8 @@ jobs:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.gitversion.outputs.Major }}.${{ steps.gitversion.outputs.Minor }}.${{ steps.gitversion.outputs.Patch }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.sanitize-semver-version.outputs.result }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.gitversion.outputs.MajorMinorPatch }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SEMVERTAG }}
             # ${{ steps.meta.outputs.tags }}
           # tags: ${{ env.REGISTRY }}/raoulx24/trivydashboard:latest
           labels: ${{ steps.meta.outputs.labels }}
