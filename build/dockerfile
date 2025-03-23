@@ -4,7 +4,8 @@ COPY ./src /src
 
 RUN dotnet publish /src/TrivyOperator.Dashboard/TrivyOperator.Dashboard.csproj \
     --configuration Release -o /build --runtime linux-x64 --self-contained \
-    -p:FileVersion=$FILEVERSION -p:SemVerFileVersion=$SEMVERFILEVERSION
+    -p:FileVersion=$FILEVERSION -p:SemVerFileVersion=$SEMVERFILEVERSION \
+    && echo "FileVersion: $FILEVERSION, SemVerFileVersion: $SEMVERFILEVERSION"
 
 FROM node:20 AS build-node
 

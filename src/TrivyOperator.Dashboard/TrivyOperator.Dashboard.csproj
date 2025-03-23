@@ -13,7 +13,7 @@
         <Platforms>AnyCPU;x64</Platforms>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <FileVersion Condition=" '$(FileVersion)' != '' ">$(FileVersion)</FileVersion>
-        <InformationalVersion Condition=" '$(SemVerFileVersion)' != '' ">$(FileVersion)</InformationalVersion>
+        <InformationalVersion Condition=" '$(SemVerFileVersion)' != '' ">$(SemVerFileVersion)</InformationalVersion>
     </PropertyGroup>
 
     <ItemGroup>
