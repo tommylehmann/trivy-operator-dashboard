@@ -614,10 +614,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex + 1].mainNodeIds[0]);
     if (node) {
       switch (this.deletedNodes[this.currentDeletedNodesIndex + 1].deleteType) {
-        case "single":
+        case "node":
           this.deleteNodesAndOrphans(node, true);
           break;
-        case "multiple":
+        case "nodeAndChildren":
           this.deleteNodesChildrenAndOrphans(node, true);
           break;
       }
@@ -811,13 +811,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   // #region delete nodes
   private deleteNodesAndOrphans(node?: NodeSingular, isRedo: boolean = false) {
+    
     node = node ?? this.selectedNode;
     if (node) {
       const deletedNodes: string[] = [];
       const mainNodeIds = [node.id()];
       this.deleteNodeAndOrphans(node, deletedNodes);
       this.cleanupParentsAndOrphans(deletedNodes);
-      this.processDeletedNodeIds(mainNodeIds, deletedNodes, "single", isRedo);
+      this.processDeletedNodeIds(mainNodeIds, deletedNodes, "node", isRedo);
     }
   }
 
@@ -828,7 +829,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       const mainNodeIds = [node.id()];
       this.deleteNodeChildrenAndOrphans(node, deletedNodes);
       this.cleanupParentsAndOrphans(deletedNodes);
-      this.processDeletedNodeIds(mainNodeIds, deletedNodes, "multiple", isRedo);
+      this.processDeletedNodeIds(mainNodeIds, deletedNodes, "nodeAndChildren", isRedo);
     }
   }
 
@@ -884,7 +885,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       });
   }
 
-  private processDeletedNodeIds(mainNodeIds: string[], deletedNodes: string[], deleteType: "single" | "multiple", isRedo: boolean) {
+  private processDeletedNodeIds(mainNodeIds: string[], deletedNodes: string[], deleteType: "node" | "nodeAndChildren", isRedo: boolean) {
     if (deletedNodes.length > 0) {
       this.deletedNodeIdsChange.emit(deletedNodes);
       if (!isRedo) {
