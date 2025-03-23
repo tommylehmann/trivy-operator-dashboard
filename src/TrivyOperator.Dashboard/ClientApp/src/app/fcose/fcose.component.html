@@ -8,6 +8,22 @@
            [formControl]="inputFilterByNameControl"
            placeholder="Highlight by name..."
            style="width: 200px; font-size: 12px" />
+    <p-button label="Del Node"
+              size="small"
+              class="hidden-sm"
+              [text]="true"
+              [disabled]="graphSelectedNodes.length == 0"
+              (onClick)="onDeleteNode()">
+      <fa-icon [icon]="faSquare" class="mr-2"></fa-icon>
+    </p-button>
+    <p-button label="Del Subtree"
+              size="small"
+              class="hidden-sm"
+              [text]="true"
+              [disabled]="graphSelectedNodes.length == 0"
+              (onClick)="onDeleteNodeAndChildren()">
+      <fa-icon [icon]="faClone" class="mr-2"></fa-icon>
+    </p-button>
     <p-button label="Undo"
               size="small"
               class="hidden-sm"

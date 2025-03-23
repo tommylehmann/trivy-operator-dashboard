@@ -20,6 +20,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faEye,
+  faSquare,
+  faClone,
 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -117,7 +119,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private set selectedNode(node: NodeSingular | undefined) {
     this._selectedNode = node;
   }
-  private graphSelectedNodes: NodeSingular[] = [];
+  graphSelectedNodes: NodeSingular[] = [];
   // #endregion
   // #region "Deleted" Nodes
   deletedNodes: DeletedNodes[] = [];
@@ -160,6 +162,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   faEye = faEye;
   faReply = faReply;
   faShare = faShare;
+  faClone = faClone;
+  faSquare = faSquare;
 
   ngOnInit() {
     this.inputFilterByNameControl.valueChanges.pipe(debounceTime(500)).subscribe((value) => {
@@ -415,11 +419,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.graphContainer.nativeElement.setAttribute('tabindex', '0');
       this.graphContainer.nativeElement.addEventListener('keydown', (event: KeyboardEvent) => {
         if ((event.key === 'Delete' || event.key === 'Del') && event.shiftKey) {
-          this.deleteNodesChildrenAndOrphans();
+          //this.deleteNodesChildrenAndOrphans();
+          this.deleteNodesAndOrphans(true);
           return;
         }
         if (event.key === 'Delete' || event.key === 'Del') {
-          this.deleteNodesAndOrphans();
+          this.deleteNodesAndOrphans(false);
           return;
         }
       },
@@ -589,20 +594,27 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     });
   }
 
+  onDeleteNode() {
+    this.deleteNodesAndOrphans(false);
+  }
+
+  onDeleteNodeAndChildren() {
+    this.deleteNodesAndOrphans(true);
+  }
+
   onUndo() {
     if (this.currentDeletedNodesIndex == -1 || this.deletedNodes.length == 0) {
       return;
     }
     this.undeletedNodeIdsChange.emit(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds);
     this.recreateNodes(this.deletedNodes[this.currentDeletedNodesIndex].nodeIds);
-    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex].mainNodeIds[0]) as NodeSingular;
+    const lastNodeIds: string[] = [...this.deletedNodes[this.currentDeletedNodesIndex].mainNodeIds];
     setTimeout(() => {
-      if (node) {
-        if (this.selectedNode) {
-          this.unselectNode(this.selectedNode);
-        }
-        this.selectNode(node);
-      }
+      this.graphSelectedNodes.forEach(node => { node.unselect(); });
+      lastNodeIds.forEach(nodeId => {
+        const node = this.cy.getElementById(nodeId) as NodeSingular;
+        node?.select();
+      })
     }, 0);
     this.currentDeletedNodesIndex--;
   }
@@ -611,16 +623,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (this.currentDeletedNodesIndex >= this.deletedNodes.length - 1) {
       return;
     }
-    const node = this.cy.getElementById(this.deletedNodes[this.currentDeletedNodesIndex + 1].mainNodeIds[0]);
-    if (node) {
-      switch (this.deletedNodes[this.currentDeletedNodesIndex + 1].deleteType) {
-        case "node":
-          this.deleteNodesAndOrphans(node, true);
-          break;
-        case "nodeAndChildren":
-          this.deleteNodesChildrenAndOrphans(node, true);
-          break;
-      }
+    const mainNodeIds = this.deletedNodes[this.currentDeletedNodesIndex + 1].mainNodeIds;
+    const nodes = mainNodeIds.map(id => this.cy.getElementById(id) as NodeSingular).filter(node => node !== undefined);
+    switch (this.deletedNodes[this.currentDeletedNodesIndex + 1].deleteType) {
+      case "node":
+        this.deleteNodesAndOrphans(false, nodes);
+        break;
+      case "nodeAndChildren":
+        this.deleteNodesAndOrphans(true, nodes);
+        break;
     }
   }
 
@@ -810,28 +821,35 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   // #region delete nodes
-  private deleteNodesAndOrphans(node?: NodeSingular, isRedo: boolean = false) {
-    
-    node = node ?? this.selectedNode;
-    if (node) {
-      const deletedNodes: string[] = [];
-      const mainNodeIds = [node.id()];
-      this.deleteNodeAndOrphans(node, deletedNodes);
-      this.cleanupParentsAndOrphans(deletedNodes);
-      this.processDeletedNodeIds(mainNodeIds, deletedNodes, "node", isRedo);
+  private deleteNodesAndOrphans(areChildrenIncluded: boolean, mainNodes: NodeSingular[] = []) {
+    const isRedo = mainNodes.length > 0;
+
+    if (!isRedo) {
+      mainNodes = [...this.graphSelectedNodes];
     }
+    this.graphSelectedNodes.forEach(node => node.unselect());
+    const mainNodeIds: string[] = [];
+    const deletedNodes: string[] = [];
+    mainNodes.forEach(node => {
+      mainNodeIds.push(node.id());
+      areChildrenIncluded
+        ? this.deleteNodeChildrenAndOrphans(node, deletedNodes)
+        : this.deleteNodeAndOrphans(node, deletedNodes);
+    });
+    this.cleanupParentsAndOrphans(deletedNodes);
+    this.processDeletedNodeIds(mainNodeIds, deletedNodes, areChildrenIncluded, isRedo);
   }
 
-  private deleteNodesChildrenAndOrphans(node?: NodeSingular, isRedo: boolean = false) {
-    node = node ?? this.selectedNode;
-    if (node) {
-      const deletedNodes: string[] = [];
-      const mainNodeIds = [node.id()];
-      this.deleteNodeChildrenAndOrphans(node, deletedNodes);
-      this.cleanupParentsAndOrphans(deletedNodes);
-      this.processDeletedNodeIds(mainNodeIds, deletedNodes, "nodeAndChildren", isRedo);
-    }
-  }
+  //private deleteNodesChildrenAndOrphans(node?: NodeSingular, isRedo: boolean = false) {
+  //  node = node ?? this.selectedNode;
+  //  if (node) {
+  //    const deletedNodes: string[] = [];
+  //    const mainNodeIds = [node.id()];
+      
+  //    this.cleanupParentsAndOrphans(deletedNodes);
+  //    this.processDeletedNodeIds(mainNodeIds, deletedNodes, "nodeAndChildren", isRedo);
+  //  }
+  //}
 
   private deleteNodeAndOrphans(node: NodeSingular, deletedNodes: string[]) {
     deletedNodes.push(node.id());
@@ -885,9 +903,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       });
   }
 
-  private processDeletedNodeIds(mainNodeIds: string[], deletedNodes: string[], deleteType: "node" | "nodeAndChildren", isRedo: boolean) {
+  private processDeletedNodeIds(mainNodeIds: string[], deletedNodes: string[], areChildrenIncluded: boolean, isRedo: boolean) {
     if (deletedNodes.length > 0) {
       this.deletedNodeIdsChange.emit(deletedNodes);
+      const deleteType = areChildrenIncluded ? "nodeAndChildren" : "node";
       if (!isRedo) {
         this.deletedNodes = this.deletedNodes.slice(0, this.currentDeletedNodesIndex + 1);
         this.deletedNodes.push({ deleteType: deleteType, mainNodeIds: mainNodeIds, nodeIds: deletedNodes, });
