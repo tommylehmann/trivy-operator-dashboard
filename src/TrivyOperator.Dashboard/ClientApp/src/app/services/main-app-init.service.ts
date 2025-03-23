@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { BackendSettingsDto } from '../../api/models/backend-settings-dto';
 import { BackendSettingsService } from '../../api/services/backend-settings.service';
@@ -10,11 +10,14 @@ import { LocalStorageUtils } from '../utils/local-storage.utils';
 })
 export class MainAppInitService {
   defaultBackendSettingsDto: BackendSettingsDto | null = null;
-  isDarkMode: boolean = false;
   private backendSettingsDtoSubject: BehaviorSubject<BackendSettingsDto> = new BehaviorSubject<BackendSettingsDto>({
     trivyReportConfigDtos: [],
   });
   backendSettingsDto$ = this.backendSettingsDtoSubject.asObservable();
+
+  isDarkMode: boolean = false;
+  private isDarkModeSubject = new BehaviorSubject<boolean>(this.isDarkMode);
+  isDarkMode$ = this.isDarkModeSubject.asObservable();
 
   constructor(private backendSettingsService: BackendSettingsService) {}
 
@@ -76,6 +79,7 @@ export class MainAppInitService {
     }
     primengThemeLink.href = this.isDarkMode ? 'primeng-dark.css' : 'primeng-light.css';
     localStorage.setItem('mainSettings.isDarkMode', this.isDarkMode.toString());
+    this.isDarkModeSubject.next(this.isDarkMode);
   }
 
   private mergeBackendSettingsDto(backendSettingsDto: BackendSettingsDto) {
