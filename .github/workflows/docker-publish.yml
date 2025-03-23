@@ -75,6 +75,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3.0.0
       - name: Sanitize Version for FileVersion
         run: echo "SEMVERTAG=$(echo '${{ steps.gitversion.outputs.SemVer }}' | sed 's/+/-/g')" >> $GITHUB_ENV
+        # run: echo "::set-output name=result::$(echo '${{ steps.gitversion.outputs.SemVer }}' | sed 's/+/-/g')"
         id: sanitize-semver-version
         shell: bash
 
@@ -107,7 +108,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             FILEVERSION=${{ steps.gitversion.outputs.Major }}.${{ steps.gitversion.outputs.Minor }}.${{ steps.gitversion.outputs.Patch }}
-            SEMVERFILEVERSION=${{ steps.sanitize-semver-version.outputs.result }}
+            SEMVERFILEVERSION=${{ env.SEMVERTAG }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
