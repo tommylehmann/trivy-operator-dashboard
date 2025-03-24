@@ -25,85 +25,74 @@ public class SbomReportService(
         return Task.FromResult(dtos);
     }
 
-    public async Task<SbomReportDto?> GetSbomReportDtoByUid(Guid uid)
+    public Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? namespaceName = null)
     {
-        SbomReportCr? sr = null;
+        IEnumerable<SbomReportImageDto> dtos = cache
+            .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.GroupBy(sbom => sbom.Report?.Artifact?.Digest)
+                    .Select(group => group.ToSbomReportImageDto()));
+        return Task.FromResult(dtos);
+    }
 
+    public async Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid)
+    {
         foreach (string namespaceName in cache.Keys)
         {
-            if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
+            SbomReportDto? sr = await GetFullSbomReportDtoByUidNamespace(uid, namespaceName);
+            if (sr != null)
             {
-                sr = sbomReportCrs.FirstOrDefault(x => x.Metadata.Uid == uid.ToString());
+                return sr;
+            }
+        }
+        return null;
+    }
 
-                if (sr is not null)
+    public async Task<SbomReportDto?> GetFullSbomReportDtoByUidNamespace(string uid, string namespaceName)
+    {
+        if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
+        {
+            SbomReportCr? sr = sbomReportCrs.FirstOrDefault(x => x.Metadata.Uid == uid);
+            if (sr != null)
+            {
+                try
                 {
-                    break;
+                    SbomReportDto sbomReportDto = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
+                                .ToSbomReportDto();
+                    SetVulnerabilityReportStatistics(sbomReportDto);
+                    return sbomReportDto;
                 }
+                catch { }
             }
         }
-
-        if (sr != null)
-        {
-            try
-            {
-                SbomReportDto sbomReportDto = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
-                    .ToSbomReportDto();
-                SetVulnerabilityReportStatistics(sbomReportDto, sr.Metadata.Name);
-                return sbomReportDto;
-            }
-            catch { }
-        }
-
         return null;
     }
 
-    public async Task<SbomReportDto?> GetSbomReportDtoByUidNamespace(Guid uid, string namespaceName)
+    public async Task<SbomReportDto?> GetSbomReportDtoByDigestNamespace(string digest, string namespaceName)
     {
-        SbomReportCr? sr = null;
         if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
         {
-            sr = sbomReportCrs.FirstOrDefault(x => x.Metadata.Uid == uid.ToString());
-        }
-        if (sr != null)
-        {
-            try
+            var x = sbomReportCrs
+                .Where(x => x.Report?.Artifact?.Digest == digest)
+                .Aggregate((max, current) =>
+                    max == null || current.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
+            if (x != null)
             {
-                return (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
-                    .ToSbomReportDto();
+                return await GetFullSbomReportDtoByUidNamespace(x.Metadata.Uid, namespaceName);
             }
-            catch { }
         }
         return null;
     }
 
-    public async Task<SbomReportDto?> GetSbomReportDtoByResourceName(string resourceName, string namespaceName)
-    {
-        SbomReportCr? sr = null;
-        if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
-        {
-            sr = sbomReportCrs.FirstOrDefault(x => x.Metadata.Name == resourceName);
-        }
-        if (sr != null)
-        {
-            try
-            {
-                return (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
-                    .ToSbomReportDto();
-            }
-            catch { }
-        }
-        return null;
-    }
 
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult(cache.Where(x => x.Value.Any()).Select(x => x.Key));
 
-    private void SetVulnerabilityReportStatistics(SbomReportDto sbomReportDto, string resourceMetadateName)
+    private void SetVulnerabilityReportStatistics(SbomReportDto sbomReportDto)
     {
         VulnerabilityReportCr? vr = null;
         if (vrCache.TryGetValue(sbomReportDto.ResourceNamespace, out IList<VulnerabilityReportCr>? vulnerabilityReportCrs))
         {
-            vr = vulnerabilityReportCrs.FirstOrDefault(x => x.Metadata.Name == resourceMetadateName);
+            vr = vulnerabilityReportCrs.FirstOrDefault(x => x.Report?.Artifact?.Digest == sbomReportDto.ImageDigest);
         }
 
         if (vr != null)

@@ -28,6 +28,8 @@ Refactor Watcher - events part (maybe with a queue and a processor on the other 
 
 Rename Kubernetes to K8s all classes
 
+Proper 200, 404 etc codes in controllers
+
 ## Both
 Unify same images in SBOM. Maybe an extra-field - hasVulnerabilities
 

@@ -7,11 +7,9 @@ public class SbomReportNullService : ISbomReportService
 {
     public Task<IEnumerable<SbomReportDto>> GetSbomReportDtos(string? namespaceName = null) =>
         Task.FromResult<IEnumerable<SbomReportDto>>([]);
-    public Task<SbomReportDto?> GetSbomReportDtoByUid(Guid uid) =>
+    public Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid) =>
         Task.FromResult<SbomReportDto?>(null);
-    public Task<SbomReportDto?> GetSbomReportDtoByUidNamespace(Guid uid, string namespaceName) =>
-        Task.FromResult<SbomReportDto?>(null);
-    public Task<SbomReportDto?> GetSbomReportDtoByResourceName(string namespaceName, string resourceName) =>
+    public Task<SbomReportDto?> GetFullSbomReportDtoByUidNamespace(string uid, string namespaceName) =>
         Task.FromResult<SbomReportDto?>(null);
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult<IEnumerable<string>>([]);

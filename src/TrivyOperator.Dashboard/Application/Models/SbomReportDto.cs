@@ -1,10 +1,11 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
+using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
-public class SbomReportDto
+public class SbomReportDto : ISbomReportDto
 {
     public string Uid { get; set; } = Guid.NewGuid().ToString();
     public string ResourceName { get; init; } = string.Empty;
@@ -13,9 +14,30 @@ public class SbomReportDto
     public string ResourceContainerName { get; init; } = string.Empty;
     public string ImageName { get; set; } = string.Empty;
     public string ImageTag { get; set; } = string.Empty;
+    public string ImageDigest { get; set; } = string.Empty;
     public string Repository { get; set; } = string.Empty;
     public string RootNodeBomRef { get; set; } = string.Empty;
     public SbomReportDetailDto[] Details { get; set; } = [];
+}
+
+public class SbomReportImageDto : ISbomReportDto
+{
+    public string Uid { get; set; } = Guid.NewGuid().ToString();
+    public string ResourceNamespace { get; init; } = string.Empty;
+    public string ImageName { get; set; } = string.Empty;
+    public string ImageTag { get; set; } = string.Empty;
+    public string ImageDigest { get; set; } = string.Empty;
+    public string Repository { get; set; } = string.Empty;
+    public SbomReportImageResourceDto[] Resources { get; set; } = [];
+    public string RootNodeBomRef { get; set; } = string.Empty;
+    public SbomReportDetailDto[] Details { get; set; } = [];
+}
+
+public class SbomReportImageResourceDto
+{
+    public string Name { get; init; } = string.Empty;
+    public string Kind { get; init; } = string.Empty;
+    public string ContainerName { get; init; } = string.Empty;
 }
 
 public class SbomReportDetailDto
@@ -31,7 +53,12 @@ public class SbomReportDetailDto
     public long MediumCount { get; set; } = 0;
     public long LowCount { get; set; } = 0;
     public long UnknownCount { get; set; } = 0;
-    
+}
+
+public interface ISbomReportDto
+{
+    string RootNodeBomRef { get; set; }
+    SbomReportDetailDto[] Details { get; set; }
 }
 
 public static class SbomReportCrExtensions
@@ -86,6 +113,7 @@ public static class SbomReportCrExtensions
                     : string.Empty,
             ImageName = sbomReportCr.Report?.Artifact?.Repository ?? string.Empty,
             ImageTag = sbomReportCr.Report?.Artifact?.Tag ?? string.Empty,
+            ImageDigest = sbomReportCr.Report?.Artifact?.Digest ?? string.Empty,
             Repository = sbomReportCr.Report?.Registry?.Server ?? string.Empty,
             RootNodeBomRef = sbomReportCr.Report?.Components.Metadata.Component.BomRef ?? string.Empty,
             Details = [.. details],
@@ -95,7 +123,57 @@ public static class SbomReportCrExtensions
         return result;
     }
 
-    private static void CleanupPurlsFromBomRefs(SbomReportDto sbomReportDto)
+    public static SbomReportImageDto ToSbomReportImageDto(this IGrouping<string?, SbomReportCr> groupedSbomReportCr)
+    {
+        SbomReportCr[] sbomReportCrs = groupedSbomReportCr.ToArray();
+        SbomReportCr firstSbomReportCr = sbomReportCrs.First();
+        ComponentsComponent[] allComponents = firstSbomReportCr.Report?.Components.Metadata.Component != null
+            ? [.. firstSbomReportCr.Report?.Components.ComponentsComponents ?? [], firstSbomReportCr.Report?.Components.Metadata.Component!]
+            : [.. firstSbomReportCr.Report?.Components.ComponentsComponents ?? []];
+        IEnumerable<SbomReportDetailDto> details = allComponents.Select(component =>
+        {
+            SbomReportDetailDto detailDto = new()
+            {
+                BomRef = component.BomRef,
+                Name = component.Name,
+                Purl = component.Purl,
+                Version = component.Version,
+                DependsOn = firstSbomReportCr.Report?.Components.Dependencies.FirstOrDefault(x => x.Ref == component.BomRef)?.DependsOn ?? [],
+                Properties = [.. component.Properties.Select(x => new[] { x.Name, x.Value })],
+            };
+            return detailDto;
+        });
+        SbomReportImageDto result = new()
+        {
+            Uid = Guid.NewGuid().ToString(),
+            ResourceNamespace = firstSbomReportCr.Metadata.NamespaceProperty,
+            ImageName = firstSbomReportCr.Report?.Artifact?.Repository ?? string.Empty,
+            ImageTag = firstSbomReportCr.Report?.Artifact?.Tag ?? string.Empty,
+            ImageDigest = firstSbomReportCr.Report?.Artifact?.Digest ?? string.Empty,
+            Repository = firstSbomReportCr.Report?.Registry?.Server ?? string.Empty,
+            Resources = sbomReportCrs.Select(sbomReportCr => new SbomReportImageResourceDto
+            {
+                Name = sbomReportCr.Metadata.Labels != null &&
+                sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.resource.name", out string? resourceName)
+                    ? resourceName
+                    : string.Empty,
+                Kind = sbomReportCr.Metadata.Labels != null &&
+                sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.resource.kind", out string? resourceKind)
+                    ? resourceKind
+                    : string.Empty,
+                ContainerName = sbomReportCr.Metadata.Labels != null &&
+                                sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.container.name", out string? containerName)
+                    ? containerName
+                    : string.Empty,
+            }).ToArray(),
+            RootNodeBomRef = firstSbomReportCr.Report?.Components.Metadata.Component.BomRef ?? string.Empty,
+            Details = [.. details],
+        };
+        CleanupPurlsFromBomRefs(result);
+        return result;
+    }
+
+    private static void CleanupPurlsFromBomRefs(ISbomReportDto sbomReportDto)
     {
         var nonGuidToGuidMap = sbomReportDto.Details
             .Where(d => !Guid.TryParse(d.BomRef, out _))
