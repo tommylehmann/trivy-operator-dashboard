@@ -26,24 +26,23 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
         return sbomReportDto is null ? NotFound() : Ok(sbomReportDto);
     }
 
-    //[HttpGet("", Name = "GetSbomReportDtoByUidNameNamespace")]
-    //[ProducesResponseType<SbomReportDto>(StatusCodes.Status200OK)]
-    //[ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
-    //[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    //public async Task<IActionResult> GetByUidNameNamespace(
-    //    [FromQuery] Guid uid,
-    //    [FromQuery] string resourceName,
-    //    [FromQuery] string namespaceName)
-    //{
-    //    SbomReportDto? sbomReportDto = await sbomReportService.GetSbomReportDtoByUidNamespace(uid, namespaceName);
+    [HttpGet("digest", Name = "GetSbomReportDtoByDigestNamespace")]
+    [ProducesResponseType<SbomReportDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetByDigestNamespace([FromQuery] string digest, [FromQuery] string namespaceName)
+    {
+        SbomReportDto? sbomReportDto = await sbomReportService.GetFullSbomReportDtoByDigestNamespace(digest, namespaceName);
 
-    //    if (sbomReportDto is null)
-    //    {
-    //        sbomReportDto = await sbomReportService.GetSbomReportDtoByResourceName(resourceName, namespaceName);
-    //    }
+        return sbomReportDto is null ? NotFound() : Ok(sbomReportDto);
+    }
 
-    //    return sbomReportDto is null ? NotFound() : Ok(sbomReportDto);
-    //}
+    [HttpGet("grouped-by-image", Name = "GetSbomReportImageDtos")]
+    [ProducesResponseType<IEnumerable<SbomReportImageDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetGroupedByImage([FromQuery] string? namespaceName) =>
+        Ok(await sbomReportService.GetSbomReportImageDtos(namespaceName));
 
     [HttpGet("active-namespaces", Name = "GetSbomReportActiveNamespaces")]
     [ProducesResponseType<IEnumerable<string>>(StatusCodes.Status200OK)]

@@ -30,6 +30,8 @@ Rename Kubernetes to K8s all classes
 
 Proper 200, 404 etc codes in controllers
 
+Add CreationDate in all CRs and dtos
+
 ## Both
 Unify same images in SBOM. Maybe an extra-field - hasVulnerabilities
 

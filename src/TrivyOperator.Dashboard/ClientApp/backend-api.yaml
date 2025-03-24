@@ -697,6 +697,70 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+  /api/sbom-reports/digest:
+    get:
+      tags:
+        - SbomReport
+      operationId: GetSbomReportDtoByDigestNamespace
+      parameters:
+        - name: digest
+          in: query
+          schema:
+            type: string
+        - name: namespaceName
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SbomReportDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /api/sbom-reports/grouped-by-image:
+    get:
+      tags:
+        - SbomReport
+      operationId: GetSbomReportImageDtos
+      parameters:
+        - name: namespaceName
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SbomReportImageDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /api/sbom-reports/active-namespaces:
     get:
       tags:
@@ -2039,6 +2103,9 @@ components:
         imageTag:
           type: string
           nullable: true
+        imageDigest:
+          type: string
+          nullable: true
         repository:
           type: string
           nullable: true
@@ -2049,6 +2116,54 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SbomReportDetailDto'
+          nullable: true
+      additionalProperties: false
+    SbomReportImageDto:
+      type: object
+      properties:
+        uid:
+          type: string
+          nullable: true
+        resourceNamespace:
+          type: string
+          nullable: true
+        imageName:
+          type: string
+          nullable: true
+        imageTag:
+          type: string
+          nullable: true
+        imageDigest:
+          type: string
+          nullable: true
+        repository:
+          type: string
+          nullable: true
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SbomReportImageResourceDto'
+          nullable: true
+        rootNodeBomRef:
+          type: string
+          nullable: true
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/SbomReportDetailDto'
+          nullable: true
+      additionalProperties: false
+    SbomReportImageResourceDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        kind:
+          type: string
+          nullable: true
+        containerName:
+          type: string
           nullable: true
       additionalProperties: false
     Severity:

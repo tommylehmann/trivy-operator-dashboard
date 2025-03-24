@@ -5,7 +5,10 @@ namespace TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport.Abstract
 public interface ISbomReportService
 {
     Task<IEnumerable<SbomReportDto>> GetSbomReportDtos(string? namespaceName = null);
+    Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? namespaceName = null);
     Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid);
     Task<SbomReportDto?> GetFullSbomReportDtoByUidNamespace(string uid, string namespaceName);
+    Task<SbomReportDto?> GetFullSbomReportDtoByDigestNamespace(string digest, string namespaceName);
     Task<IEnumerable<string>> GetActiveNamespaces();
+    
 }

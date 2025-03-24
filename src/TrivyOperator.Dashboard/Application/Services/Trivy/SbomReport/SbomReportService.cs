@@ -67,7 +67,7 @@ public class SbomReportService(
         return null;
     }
 
-    public async Task<SbomReportDto?> GetSbomReportDtoByDigestNamespace(string digest, string namespaceName)
+    public async Task<SbomReportDto?> GetFullSbomReportDtoByDigestNamespace(string digest, string namespaceName)
     {
         if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
         {
