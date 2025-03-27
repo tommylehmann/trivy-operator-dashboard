@@ -18,8 +18,18 @@
                       [filter]="true"
                       [options]="imageDtos"
                       [showClear]="true"
-                      [(ngModel)]="selectedImageDto" />
-
+                      [(ngModel)]="selectedImageDto">
+            <ng-template let-imageDto pTemplate="imageDtos">
+              <div class="flex align-items-center gap-2">
+                <div>{{ imageDto.imageNameTag }}</div>
+                <p-tag *ngIf="imageDto.hasVr" rounded>
+                  <span>
+                    <fa-icon [icon]="faShieldHalved"></fa-icon> VRs
+                  </span>
+                </p-tag>
+              </div>
+            </ng-template>
+          </p-dropdown>
           <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small" (onClick)="reloadData()" class="flex-none pl-1"/>
         </div>
       </div>

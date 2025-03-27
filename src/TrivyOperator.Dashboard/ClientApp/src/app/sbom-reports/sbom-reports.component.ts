@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
 import { SbomReportDto } from '../../api/models/sbom-report-dto';
+import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
+import { SbomReportImageDto } from '../../api/models/sbom-report-image-dto';
 import { SbomReportService } from '../../api/services/sbom-report.service';
 
 import { FcoseComponent } from '../fcose/fcose.component';
@@ -17,14 +18,21 @@ import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 
+import {
+  faShieldHalved,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 import { SeverityUtils } from '../utils/severity.utils';
-import { NodeDataDefinition } from 'cytoscape';
+//import { NodeDataDefinition } from 'cytoscape';
 import { NodeDataDto } from '../fcose/fcose.types';
 import { SbomDetailExtendedDto } from './sbom-reports.types'
 
 export interface ImageDto {
   uid: string;
   imageNameTag: string;
+  digest: string;
+  hasVr: boolean;
 }
 
 export interface DependsOn {
@@ -36,13 +44,13 @@ export interface DependsOn {
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, ButtonModule, CardModule, PanelModule, TableModule, TagModule],
+  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, ButtonModule, CardModule, PanelModule, TableModule, TagModule, FontAwesomeModule],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
 export class SbomReportsComponent {
   // #region main data - SbomReportDtos, activeNS, fullSbomDataDto, table data
-  dataDtos: SbomReportDto[] | null = null;
+  dataDtos: SbomReportImageDto[] | null = null;
   activeNamespaces: string[] | undefined = [];
   fullSbomDataDto: SbomReportDto | null = null;
   isTableLoading: boolean = false;
@@ -62,7 +70,7 @@ export class SbomReportsComponent {
   }
   set selectedImageDto(value: ImageDto | null) {
     this._imageDto = value;
-    this.getFullSbomDto(value?.uid);
+    this.getFullSbomDto(value?.digest, this.selectedNamespace);
   }
   private _imageDto: ImageDto | null = null;
   // #endregion
@@ -82,6 +90,8 @@ export class SbomReportsComponent {
   selectedSbomDetailBomRef?: string;
 
   private readonly _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
+
+  faShieldHalved = faShieldHalved;
 
   constructor(private service: SbomReportService) {
     this.getTableDataDtos();
@@ -189,7 +199,7 @@ export class SbomReportsComponent {
 
   // #region get data from api
   getTableDataDtos() {
-    this.service.getSbomReportDtos().subscribe({
+    this.service.getSbomReportImageDtos().subscribe({
       next: (res) => this.onGetDataDtos(res),
       error: (err) => console.error(err),
     });
@@ -199,10 +209,10 @@ export class SbomReportsComponent {
     });
   }
 
-  getFullSbomDto(uid: string | null | undefined) {
-    if (uid) {
-      this.service.getSbomReportDtoByUid({ uid: uid }).subscribe({
-        next: (res) => this.onGetSbomReportDtoByUid(res),
+  getFullSbomDto(digest: string | null | undefined, selectedNamespace: string | null) {
+    if (digest && selectedNamespace) {
+      this.service.getSbomReportDtoByDigestNamespace({ digest: digest, namespaceName: selectedNamespace }).subscribe({
+        next: (res) => this.onGetSbomReportDtoByDigestNamespace(res),
         error: (err) => console.error(err),
       });
     }
@@ -210,12 +220,12 @@ export class SbomReportsComponent {
     this.nodeDataDtos = [];
   }
 
-  onGetSbomReportDtoByUid(fullSbomDataDto: SbomReportDto) {
+  onGetSbomReportDtoByDigestNamespace(fullSbomDataDto: SbomReportDto) {
     this.fullSbomDataDto = fullSbomDataDto;
     this.onActiveNodeIdChange(fullSbomDataDto.rootNodeBomRef ?? "");
   }
 
-  onGetDataDtos(dtos: SbomReportDto[]) {
+  onGetDataDtos(dtos: SbomReportImageDto[]) {
     this.dataDtos = dtos;
   }
 
@@ -311,7 +321,10 @@ export class SbomReportsComponent {
   filterImageDtos() {
     this.imageDtos = this.dataDtos
       ?.filter((x) => x.resourceNamespace == this.selectedNamespace)
-      .map((x) => ({ uid: x.uid ?? '', imageNameTag: `${x.imageName}:${x.imageTag}` }))
+      .map((x) => ({
+        uid: x.uid ?? '', imageNameTag: `${x.imageName}:${x.imageTag}`,
+        digest: x.imageDigest ?? '', hasVr: x.hasVulnerabilities ?? false
+      }))
       .sort((a, b) => {
         if (a.imageNameTag < b.imageNameTag) {
           return -1;

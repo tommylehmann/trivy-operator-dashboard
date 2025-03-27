@@ -8,6 +8,7 @@ namespace TrivyOperator.Dashboard.Application.Models;
 public class SbomReportDto : ISbomReportDto
 {
     public string Uid { get; set; } = Guid.NewGuid().ToString();
+    public DateTime CreationTimestamp { get; set; } = DateTime.MinValue;
     public string ResourceName { get; init; } = string.Empty;
     public string ResourceNamespace { get; init; } = string.Empty;
     public string ResourceKind { get; init; } = string.Empty;
@@ -23,6 +24,7 @@ public class SbomReportDto : ISbomReportDto
 public class SbomReportImageDto : ISbomReportDto
 {
     public string Uid { get; set; } = Guid.NewGuid().ToString();
+    public DateTime CreationTimestamp { get; set; } = DateTime.MinValue;
     public string ResourceNamespace { get; init; } = string.Empty;
     public string ImageName { get; set; } = string.Empty;
     public string ImageTag { get; set; } = string.Empty;
@@ -30,6 +32,7 @@ public class SbomReportImageDto : ISbomReportDto
     public string Repository { get; set; } = string.Empty;
     public SbomReportImageResourceDto[] Resources { get; set; } = [];
     public string RootNodeBomRef { get; set; } = string.Empty;
+    public bool HasVulnerabilities { get; set; } = false;
     public SbomReportDetailDto[] Details { get; set; } = [];
 }
 
@@ -87,6 +90,7 @@ public static class SbomReportCrExtensions
         SbomReportDto result = new()
         {
             Uid = sbomReportCr.Metadata.Uid,
+            CreationTimestamp = sbomReportCr.Metadata.CreationTimestamp ?? DateTime.MinValue,
             ResourceName =
                 sbomReportCr.Metadata.Labels != null &&
                 sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.resource.name", out string? resourceName)
@@ -125,7 +129,7 @@ public static class SbomReportCrExtensions
 
     public static SbomReportImageDto ToSbomReportImageDto(this IGrouping<string?, SbomReportCr> groupedSbomReportCr)
     {
-        SbomReportCr[] sbomReportCrs = groupedSbomReportCr.ToArray();
+        SbomReportCr[] sbomReportCrs = [.. groupedSbomReportCr];
         SbomReportCr firstSbomReportCr = sbomReportCrs.First();
         ComponentsComponent[] allComponents = firstSbomReportCr.Report?.Components.Metadata.Component != null
             ? [.. firstSbomReportCr.Report?.Components.ComponentsComponents ?? [], firstSbomReportCr.Report?.Components.Metadata.Component!]
@@ -146,12 +150,13 @@ public static class SbomReportCrExtensions
         SbomReportImageDto result = new()
         {
             Uid = Guid.NewGuid().ToString(),
+            CreationTimestamp = firstSbomReportCr.Metadata.CreationTimestamp ?? DateTime.MinValue,
             ResourceNamespace = firstSbomReportCr.Metadata.NamespaceProperty,
             ImageName = firstSbomReportCr.Report?.Artifact?.Repository ?? string.Empty,
             ImageTag = firstSbomReportCr.Report?.Artifact?.Tag ?? string.Empty,
             ImageDigest = firstSbomReportCr.Report?.Artifact?.Digest ?? string.Empty,
             Repository = firstSbomReportCr.Report?.Registry?.Server ?? string.Empty,
-            Resources = sbomReportCrs.Select(sbomReportCr => new SbomReportImageResourceDto
+            Resources = [.. sbomReportCrs.Select(sbomReportCr => new SbomReportImageResourceDto
             {
                 Name = sbomReportCr.Metadata.Labels != null &&
                 sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.resource.name", out string? resourceName)
@@ -165,7 +170,7 @@ public static class SbomReportCrExtensions
                                 sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.container.name", out string? containerName)
                     ? containerName
                     : string.Empty,
-            }).ToArray(),
+            })],
             RootNodeBomRef = firstSbomReportCr.Report?.Components.Metadata.Component.BomRef ?? string.Empty,
             Details = [.. details],
         };

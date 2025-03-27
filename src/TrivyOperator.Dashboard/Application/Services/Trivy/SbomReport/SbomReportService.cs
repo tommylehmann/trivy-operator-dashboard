@@ -27,11 +27,32 @@ public class SbomReportService(
 
     public Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? namespaceName = null)
     {
-        IEnumerable<SbomReportImageDto> dtos = cache
+        SbomReportImageDto[] dtos = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
             .SelectMany(kvp => kvp.Value.GroupBy(sbom => sbom.Report?.Artifact?.Digest)
-                    .Select(group => group.ToSbomReportImageDto()));
-        return Task.FromResult(dtos);
+                    .Select(group => group.ToSbomReportImageDto()))];
+        var vrDigests = vrCache
+            .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.GroupBy(vr => new 
+            {
+                ImageDigest = vr.Report?.Artifact?.Digest ?? string.Empty,
+                ResourceNamespace = vr.Metadata.NamespaceProperty
+            })
+            .Select(group => group.Key));
+        SbomReportImageDto[] sbomsWithVrs = [.. dtos
+            .Join(
+                vrDigests,
+                left => new { left.ImageDigest, left.ResourceNamespace },
+                right => new { right.ImageDigest, right.ResourceNamespace },
+                (left, right) => left
+            )];
+
+        foreach (var dto in dtos)
+        {
+            dto.HasVulnerabilities = sbomsWithVrs.Contains(dto);
+        }
+
+        return Task.FromResult((IEnumerable<SbomReportImageDto>)dtos);
     }
 
     public async Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid)
@@ -71,10 +92,10 @@ public class SbomReportService(
     {
         if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
         {
-            var x = sbomReportCrs
+            SbomReportCr? x = sbomReportCrs
                 .Where(x => x.Report?.Artifact?.Digest == digest)
-                .Aggregate((max, current) =>
-                    max == null || current.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
+                .Aggregate((SbomReportCr?)null, (max, current) =>
+                    max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
             if (x != null)
             {
                 return await GetFullSbomReportDtoByUidNamespace(x.Metadata.Uid, namespaceName);
@@ -108,7 +129,7 @@ public class SbomReportService(
                     LowCount = g.Count(vrd => vrd.Severity == TrivySeverity.LOW),
                     UnknownCount = g.Count(vrd => vrd.Severity == TrivySeverity.UNKNOWN)
                 })
-                .ToList() ?? [];
+                .ToArray() ?? [];
 
             foreach (var item in result)
             {
@@ -124,7 +145,10 @@ public class SbomReportService(
                 }
                 else
                 {
-                    logger.LogWarning("SbomReportDetailDto not found for package purl {PackagePurl}", item.PackagePurl);
+                    logger.LogWarning("SbomReportDetailDto not found for package purl {PackagePurl}, in {SbomResourceName} - {NamespaceName}",
+                        item.PackagePurl,
+                        sbomReportDto.ResourceName,
+                        sbomReportDto.ResourceNamespace);
                 }
             }
         }
