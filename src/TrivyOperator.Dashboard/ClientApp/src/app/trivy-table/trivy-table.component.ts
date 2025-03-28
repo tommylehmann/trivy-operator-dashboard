@@ -26,6 +26,7 @@ import {
   TrivyTableOptions,
 } from './trivy-table.types';
 import { CellRowArrayPipe } from '../pipes/cell-row-array.pipe';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-trivy-table',
@@ -72,6 +73,8 @@ export class TrivyTableComponent<TData> implements OnInit {
   @Output() trivyDetailsTableCallback = new EventEmitter<TData>();
   @Output() selectedRowsChanged = new EventEmitter<TData[]>();
   @Output() refreshRequested = new EventEmitter<TrivyFilterData>();
+  @Output() rowActionRequested = new EventEmitter<TData>();
+  @Output() multiHeaderActionRequested = new EventEmitter<string>();
   tableStateKey: string | undefined = undefined;
   
   selectedDataDtos?: any | null = null;
@@ -141,6 +144,16 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.tableStateKey = LocalStorageUtils.trivyTableKeyPrefix + this.trivyTableOptions.stateKey;
     this.filterSeverityOptions = this.severityDtos.map((x) => x.id);
     this.filterRefreshSeverities = [...this.severityDtos];
+
+    if (this.trivyTableOptions?.multiHeaderAction && this.trivyTableOptions.multiHeaderAction.length > 1) {
+      for (let i = 1; i < this.trivyTableOptions.multiHeaderAction.length; i++) {
+        const actionLabel = this.trivyTableOptions.multiHeaderAction[i];
+        this.multiHeaderActionItems.push({
+          label: actionLabel,
+          command: () => { this.onMultiHeaderAction(actionLabel); }
+        });
+      }
+    }
   }
 
   public onTableClearSelected() {
@@ -329,7 +342,18 @@ export class TrivyTableComponent<TData> implements OnInit {
     this._rowArray = this.trivyExpandTableOptions.getRowsArray(data);
     return this._rowArray;
   }
+
+  onRowAction(event: TData) {
+    this.rowActionRequested.emit(event);
+  }
+
+  onMultiHeaderAction(actionLabel: string) {
+    this.multiHeaderActionRequested.emit(actionLabel);
+  }
+  multiHeaderActionItems: MenuItem[] = [];
   // #endregion
+
+
 }
 
 // clear filters on reset table: https://stackoverflow.com/questions/51395624/reset-filter-value-on-primeng-table

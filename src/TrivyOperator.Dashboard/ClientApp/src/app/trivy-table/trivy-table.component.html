@@ -30,64 +30,70 @@
   >
     <ng-template pTemplate="caption">
       <div>
-        <p-button
-          *ngIf="trivyTableOptions!.isRefreshVisible && !trivyTableOptions!.isRefreshFiltrable"
-          icon="pi pi-refresh"
-          label="Refresh"
-          raised
-          size="small"
-          text
-          (onClick)="onFilterRefresh($event)"
-        />
-        <p-splitButton
-          *ngIf="trivyTableOptions!.isRefreshVisible && trivyTableOptions!.isRefreshFiltrable"
-          #refreshSplitButton
-          icon="pi pi-refresh"
-          label="Refresh"
-          raised
-          size="small"
-          text
-          (onClick)="onFilterRefresh($event)"
-          (onDropdownClick)="onFilterDropdownClick($event)"
-        />
-        <p-button
-          *ngIf="trivyTableOptions!.isClearSelectionVisible"
-          icon="pi pi-list"
-          label="Clear Selected"
-          size="small"
-          text
-          [disabled]="!isTableRowSelected()"
-          (onClick)="onTableClearSelected()"
-        />
-        <p-button
-          *ngIf="trivyTableOptions!.dataKey"
-          icon="pi pi-expand"
-          label="Collapse All"
-          raised
-          size="small"
-          text
-          [disabled]="!anyRowExpanded"
-          (onClick)="onTableCollapseAll()"
-        />
-        <p-button
-          *ngIf="trivyTableOptions!.isResetFiltersVisible"
-          icon="pi pi-filter"
-          label="Clear Sort/Filters"
-          raised
-          size="small"
-          text
-          [disabled]="!isTableFilteredOrSorted()"
-          (onClick)="onClearSortFilters()"
-        />
-        <p-button
-          *ngIf="trivyTableOptions!.isExportCsvVisible"
-          icon="pi pi-file-excel"
-          label="Export to CSV"
-          raised
-          size="small"
-          text
-          (onClick)="csvExportOp.toggle($event)"
-        />
+        <p-button *ngIf="trivyTableOptions!.isRefreshVisible && !trivyTableOptions!.isRefreshFiltrable"
+                  icon="pi pi-refresh"
+                  label="Refresh"
+                  raised
+                  size="small"
+                  text
+                  (onClick)="onFilterRefresh($event)" />
+        <p-splitButton *ngIf="trivyTableOptions!.isRefreshVisible && trivyTableOptions!.isRefreshFiltrable"
+                       #refreshSplitButton
+                       icon="pi pi-refresh"
+                       label="Refresh"
+                       raised
+                       size="small"
+                       text
+                       (onClick)="onFilterRefresh($event)"
+                       (onDropdownClick)="onFilterDropdownClick($event)" />
+        <p-button *ngIf="trivyTableOptions!.isClearSelectionVisible"
+                  icon="pi pi-list"
+                  label="Clear Selected"
+                  size="small"
+                  text
+                  [disabled]="!isTableRowSelected()"
+                  (onClick)="onTableClearSelected()" />
+        <p-button *ngIf="trivyTableOptions!.dataKey"
+                  icon="pi pi-expand"
+                  label="Collapse All"
+                  raised
+                  size="small"
+                  text
+                  [disabled]="!anyRowExpanded"
+                  (onClick)="onTableCollapseAll()" />
+        <p-button *ngIf="trivyTableOptions!.isResetFiltersVisible"
+                  icon="pi pi-filter"
+                  label="Clear Sort/Filters"
+                  raised
+                  size="small"
+                  text
+                  [disabled]="!isTableFilteredOrSorted()"
+                  (onClick)="onClearSortFilters()" />
+        <p-button *ngIf="trivyTableOptions!.isExportCsvVisible"
+                  icon="pi pi-file-excel"
+                  label="Export to CSV"
+                  raised
+                  size="small"
+                  text
+                  (onClick)="csvExportOp.toggle($event)" />
+        <p-button *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderAction && trivyTableOptions.multiHeaderAction.length == 1"
+                  icon="pi pi-cog"
+                  [label]="trivyTableOptions.multiHeaderAction[0]"
+                  raised
+                  size="small"
+                  text
+                  [disabled]="!dataDtos"
+                  (onClick)="onMultiHeaderAction(trivyTableOptions.multiHeaderAction[0])" />
+        <p-splitButton *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderAction && trivyTableOptions.multiHeaderAction.length > 1"
+                       icon="pi pi-cog"
+                       [label]="trivyTableOptions.multiHeaderAction[0]"
+                       raised
+                       size="small"
+                       text
+                       [disabled]="!dataDtos"
+                       [model]="multiHeaderActionItems"
+                       (onClick)="onMultiHeaderAction(trivyTableOptions.multiHeaderAction[0])">
+        </p-splitButton>
       </div>
     </ng-template>
     <ng-template let-columns pTemplate="header">
@@ -215,6 +221,13 @@
                  [style]="{ background: severityWrapperGetCssColorByName(col.extraFields[0] ?? '') }"
                  [value]="rowData[col.field]" />
           <span *ngIf="col.renderType == 'multiline'" [innerHTML]="rowData[col.field].join('<br>')"></span>
+          <p-button *ngIf="col.renderType == 'action'"
+                    [label]="col.extraFields[0]"
+                    size="small"
+                    text
+                    raised
+                    (onClick)="onRowAction(rowData)"
+                    severity="contrast"/>
         </td>
       </tr>
     </ng-template>

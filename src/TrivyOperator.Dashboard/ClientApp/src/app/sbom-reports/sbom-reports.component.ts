@@ -179,6 +179,16 @@ export class SbomReportsComponent {
         style: 'width: 130px; max-width: 130px;',
         renderType: 'standard',
       },
+      {
+        field: 'diveIn',
+        header: 'Dive In',
+        isFiltrable: false,
+        isSortable: false,
+        multiSelectType: 'none',
+        style: 'width: 130px; max-width: 130px;',
+        renderType: 'action',
+        extraFields: ["Dive In"],
+      }
 
     ];
     this.dependsOnTableOptions = {
@@ -194,6 +204,7 @@ export class SbomReportsComponent {
       dataKey: 'bomRef',
       rowExpansionRender: 'table',
       extraClasses: 'trivy-with-filters',
+      multiHeaderAction: ["Info"],
     };
   }
 
@@ -452,5 +463,15 @@ export class SbomReportsComponent {
     };
   }
   // #endregion
+
+  // #region to be moved from here
+  onRowActionRequested(event: SbomDetailExtendedDto) {
+    console.log(event);
+  }
+
+  onMultiHeaderActionRequested(event: string) {
+    console.log(event);
+  }
+  //
 
 }

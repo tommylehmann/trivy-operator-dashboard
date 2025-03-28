@@ -11,6 +11,7 @@ export interface TrivyTableOptions {
   dataKey: string | null;
   rowExpansionRender: null | 'table' | 'messages';
   extraClasses: string;
+  multiHeaderAction?: string[];
 }
 
 export interface Column {
@@ -41,7 +42,8 @@ export interface TrivyTableColumn extends Column {
     | 'dateTime'
     | 'eosl'
     | 'semaphore'
-    | 'multiline';
+    | 'multiline'
+    | 'action';
   extraFields?: string[];
 }
 
