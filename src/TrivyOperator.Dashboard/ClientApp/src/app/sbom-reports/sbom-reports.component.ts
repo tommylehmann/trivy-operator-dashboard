@@ -205,7 +205,7 @@ export class SbomReportsComponent {
       dataKey: 'bomRef',
       rowExpansionRender: 'table',
       extraClasses: 'trivy-with-filters',
-      multiHeaderAction: ["Info"],
+      multiHeaderAction: ["Info", "Dive In"],
     };
   }
 
@@ -471,8 +471,17 @@ export class SbomReportsComponent {
   }
 
   onMultiHeaderActionRequested(event: string) {
-    console.log(event);
+    switch (event) {
+      case "Info":
+        console.log("sbom - multi action call back - " + event);
+        break;
+      case "Dive In":
+        this.diveInNodeId = this.selectedSbomDetailDto?.bomRef ?? undefined;
+        break;
+      default:
+        console.error("sbom - multi action call back - unknown: " + event);
+    }
   }
-  //
+  // #endregion
 
 }
