@@ -81,7 +81,7 @@ public static class SbomReportCrExtensions
                 Purl = component.Purl,
                 Version = component.Version,
                 DependsOn = sbomReportCr.Report?.Components.Dependencies.FirstOrDefault(x => x.Ref == component.BomRef)?.DependsOn ?? [],
-                Properties = [.. component.Properties.Select(x => new[] { x.Name, x.Value })],
+                Properties = [.. component.Properties.Select(x => new[] { x.Name.Replace("aquasecurity:trivy:", string.Empty), x.Value })],
             };
 
             return detailDto;
@@ -143,7 +143,7 @@ public static class SbomReportCrExtensions
                 Purl = component.Purl,
                 Version = component.Version,
                 DependsOn = firstSbomReportCr.Report?.Components.Dependencies.FirstOrDefault(x => x.Ref == component.BomRef)?.DependsOn ?? [],
-                Properties = [.. component.Properties.Select(x => new[] { x.Name, x.Value })],
+                Properties = [.. component.Properties.Select(x => new[] { x.Name.Replace("aquasecurity:trivy:", string.Empty), x.Value })],
             };
             return detailDto;
         });

@@ -16,8 +16,8 @@ public class ComponentsComponent
     [JsonPropertyName("purl")]
     public string Purl { get; init; } = string.Empty;
 
-    //[JsonPropertyName("supplier")]
-    //public Supplier Supplier { get; init; } = new();
+    [JsonPropertyName("supplier")]
+    public Supplier? Supplier { get; init; }
 
     [JsonPropertyName("type")]
     public string Type { get; init; } = string.Empty;
