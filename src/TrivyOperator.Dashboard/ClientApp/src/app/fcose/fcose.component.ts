@@ -77,6 +77,14 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
   private _nodeDataDtos: NodeDataDto[] = [];
   // #endregion
+  // #region DiveInNode
+  @Input() set diveInNodeId(nodeId: string | undefined) {
+    const node = this.cy?.$(`#${nodeId}`);
+    if (node) {
+      this.diveInNode(node);
+    }
+  }
+  // #endregion
   // #region hoveredNode
   get hoveredNode(): NodeSingular | undefined {
     return this._hoveredNode;

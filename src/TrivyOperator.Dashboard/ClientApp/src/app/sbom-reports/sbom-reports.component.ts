@@ -87,6 +87,7 @@ export class SbomReportsComponent {
   imageDtos: ImageDto[] | undefined = []; // filtered images by ns
   hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
   nodeDataDtos: NodeDataDto[] = [];
+  diveInNodeId?: string;
   selectedSbomDetailBomRef?: string;
 
   private readonly _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
@@ -466,7 +467,7 @@ export class SbomReportsComponent {
 
   // #region to be moved from here
   onRowActionRequested(event: SbomDetailExtendedDto) {
-    console.log(event);
+    this.diveInNodeId = event.bomRef ?? undefined;
   }
 
   onMultiHeaderActionRequested(event: string) {
