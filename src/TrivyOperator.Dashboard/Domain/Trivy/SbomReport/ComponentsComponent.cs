@@ -6,7 +6,8 @@ public class ComponentsComponent
 {
     [JsonPropertyName("bom-ref")]
     public string BomRef { get; set; } = string.Empty;
-
+    [JsonPropertyName("licenses")]
+    public License[]? Licenses { get; init; }
     [JsonPropertyName("name")]
     public string Name { get; init; } = string.Empty;
 

@@ -13,10 +13,13 @@ import { TrivyExpandTableOptions, TrivyFilterData, TrivyTableCellCustomOptions, 
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { TreeTableModule } from 'primeng/treetable';
+import { TreeNode } from 'primeng/api';
 
 import {
   faShieldHalved,
@@ -24,7 +27,6 @@ import {
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { SeverityUtils } from '../utils/severity.utils';
-//import { NodeDataDefinition } from 'cytoscape';
 import { NodeDataDto } from '../fcose/fcose.types';
 import { SbomDetailExtendedDto } from './sbom-reports.types'
 
@@ -44,7 +46,10 @@ export interface DependsOn {
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, FcoseComponent, TrivyTableComponent, DropdownModule, ButtonModule, CardModule, PanelModule, TableModule, TagModule, FontAwesomeModule],
+  imports: [CommonModule, FormsModule,
+    FcoseComponent, TrivyTableComponent,
+    ButtonModule, CardModule, DialogModule, DropdownModule, PanelModule, TableModule, TagModule, TreeTableModule,
+    FontAwesomeModule],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
@@ -75,13 +80,18 @@ export class SbomReportsComponent {
   private _imageDto: ImageDto | null = null;
   // #endregion
   // #region dependsOnTable data
-  selectedSbomDetailDto: SbomDetailExtendedDto | undefined = undefined;
+  selectedSbomDetailDto?: SbomDetailExtendedDto;
   dependsOnBoms?: SbomDetailExtendedDto[];
   deletedDependsOnBom: SbomDetailExtendedDto[] = [];
 
   dependsOnTableColumns: TrivyTableColumn[] = [];
   dependsOnTableOptions: TrivyTableOptions;
   dependsOnTableExpandTableOptions: TrivyExpandTableOptions<SbomDetailExtendedDto> = new TrivyExpandTableOptions(false, 2, 0, this.getPropertiesCount);
+  // #endregion
+
+  // #region Full Sbom Report details
+  isSbomReportOverviewDialogVisible: boolean = false;
+  sbomReportDetailPropertiesTreeNodes: TreeNode[] = [];
   // #endregion
 
   imageDtos: ImageDto[] | undefined = []; // filtered images by ns
@@ -378,7 +388,9 @@ export class SbomReportsComponent {
     const sbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == event);
     if (sbomDetailDto) {
       this.getDataDtosByNodeId(event);
-      this.selectedSbomDetailDto = this.dependsOnBoms?.find(x => x.level == 'Base');
+      const selectedSbomDetailDto = this.dependsOnBoms?.find(x => x.level == 'Base');
+      this.selectedSbomDetailDto = selectedSbomDetailDto;
+      this.selectedSbomDetailBomRef = selectedSbomDetailDto?.bomRef ?? undefined;
     }
   }
 
@@ -408,10 +420,12 @@ export class SbomReportsComponent {
       const sbomReportDetailDto = this.dependsOnBoms?.find(x => x.bomRef == nodeId);
       if (sbomReportDetailDto) {
         this.selectedSbomDetailDto = sbomReportDetailDto;
+        this.selectedSbomDetailBomRef = sbomReportDetailDto.bomRef ?? undefined;
       }
     }
     else {
       this.selectedSbomDetailDto = undefined;
+      this.selectedSbomDetailBomRef = undefined;
     }
   }
 
@@ -473,7 +487,7 @@ export class SbomReportsComponent {
   onMultiHeaderActionRequested(event: string) {
     switch (event) {
       case "Info":
-        console.log("sbom - multi action call back - " + event);
+        this.onSbomReportOverviewDialogOpen();
         break;
       case "Dive In":
         this.diveInNodeId = this.selectedSbomDetailDto?.bomRef ?? undefined;
@@ -481,6 +495,82 @@ export class SbomReportsComponent {
       default:
         console.error("sbom - multi action call back - unknown: " + event);
     }
+  }
+
+  onSbomReportOverviewDialogOpen() {
+    if (this.sbomReportDetailPropertiesTreeNodes.length == 0) {
+      this.sbomReportDetailPropertiesTreeNodes = this.getSbomReportPropertyTreeNodes();
+    }
+
+    this.isSbomReportOverviewDialogVisible = true;
+  }
+
+  /**
+   * Get Properties TreeNodes
+   * First, it creates a Map<> with all ProperyName and {propertyValue, usedBy} - usedBy is the SbomDetail Name
+   * Then, for each one, it creates a Set<> with propertyValue and then counts children
+   * the final usedByCount for each propertyName is a unique sum of all usedBy children
+  */
+  private getSbomReportPropertyTreeNodes(): TreeNode[] {
+    const tree: TreeNode[] = [];
+
+    const dataMap = new Map<string, { propValue: string, usedBy: string }[]>();
+
+    this.fullSbomDataDto?.details?.forEach(item => {
+      const usedBy = item.name ?? "unknown";
+
+      item.properties?.forEach(property => {
+        const propName = property[0] ?? "unknown";
+        const propValue = property[1] ?? "unknown";
+
+        if (!dataMap.has(propName)) {
+          dataMap.set(propName, []);
+        }
+
+        dataMap.get(propName)!.push({ propValue, usedBy });
+      });
+    });
+
+    dataMap.forEach((entries, propName) => {
+      const uniqueUsedBySet = new Set<string>();
+
+      const propNameNode: TreeNode = {
+        data: { name: propName, usedByCount: 0 },
+        children: []
+      };
+
+      const propValueUsedByMap = new Map<string, Set<string>>();
+      entries.forEach(entry => {
+        uniqueUsedBySet.add(entry.usedBy);
+
+        if (!propValueUsedByMap.has(entry.propValue)) {
+          propValueUsedByMap.set(entry.propValue, new Set<string>());
+        }
+        propValueUsedByMap.get(entry.propValue)!.add(entry.usedBy);
+      });
+
+      propValueUsedByMap.forEach((usedBySet, propValue) => {
+        const propValueNode: TreeNode = {
+          data: { name: propValue, usedByCount: usedBySet.size },
+          children: []
+        };
+
+        usedBySet.forEach(usedBy => {
+          propValueNode.children!.push({
+            data: { name: usedBy, usedByCount: undefined },
+            children: []
+          });
+        });
+
+        propNameNode.children!.push(propValueNode);
+      });
+
+      propNameNode.data.usedByCount = uniqueUsedBySet.size;
+
+      tree.push(propNameNode);
+    });
+
+    return tree;
   }
   // #endregion
 

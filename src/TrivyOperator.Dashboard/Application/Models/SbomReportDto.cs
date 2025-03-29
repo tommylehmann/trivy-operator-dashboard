@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
@@ -51,6 +52,7 @@ public class SbomReportDetailDto
     public string Version { get; set; } = string.Empty;
     public string[] DependsOn { get; set; } = [];
     public string[][] Properties { get; set; } = [];
+    public string[] Licenses { get; set; } = [];
     public long CriticalCount { get; set; } = 0;
     public long HighCount { get; set; } = 0;
     public long MediumCount { get; set; } = 0;
@@ -82,6 +84,7 @@ public static class SbomReportCrExtensions
                 Version = component.Version,
                 DependsOn = sbomReportCr.Report?.Components.Dependencies.FirstOrDefault(x => x.Ref == component.BomRef)?.DependsOn ?? [],
                 Properties = [.. component.Properties.Select(x => new[] { x.Name.Replace("aquasecurity:trivy:", string.Empty), x.Value })],
+                Licenses = [.. component.Licenses?.Select(x => x.Name ?? string.Empty).Where(x => !string.IsNullOrWhiteSpace(x)) ?? []],
             };
 
             return detailDto;

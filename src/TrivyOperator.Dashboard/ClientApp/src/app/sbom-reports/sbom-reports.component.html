@@ -84,3 +84,35 @@
     </div>
   </div>
 </div>
+
+<p-dialog *ngIf="fullSbomDataDto"
+          closable="true"
+          closeOnEscape="true"
+          dismissableMask="true"
+          resizable="true"
+          [breakpoints]="{ '890px': '90vw' }"
+          [contentStyle]="{ height: '80vh' }"
+          [header]="'SBOM Reprts Details'"
+          [modal]="true"
+          [style]="{ width: '90rem' }"
+          [(visible)]="isSbomReportOverviewDialogVisible">
+  <p-treeTable [value]="sbomReportDetailPropertiesTreeNodes">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Count</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+      <tr [ttRow]="rowNode">
+        <td>
+          <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+          {{ rowData.name }}
+        </td>
+        <td>
+          {{ rowData.usedByCount }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-treeTable>
+</p-dialog>
