@@ -92,47 +92,64 @@
           resizable="true"
           [breakpoints]="{ '890px': '90vw' }"
           [contentStyle]="{ height: '80vh' }"
-          [header]="'SBOM Reprts Details'"
+          [header]="'SBOM Reports Details'"
           [modal]="true"
           [style]="{ width: '90rem' }"
           [(visible)]="isSbomReportOverviewDialogVisible">
-  <p-treeTable [value]="sbomReportDetailLicensesTreeNodes">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>License/User</th>
-        <th>Count</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-      <tr [ttRow]="rowNode">
-        <td>
-          <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-          {{ rowData.name }}
-        </td>
-        <td>
-          {{ rowData.count }}
-        </td>
-      </tr>
-    </ng-template>
-  </p-treeTable>
-
-  <p-treeTable [value]="sbomReportDetailPropertiesTreeNodes">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Name</th>
-        <th>Count</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-      <tr [ttRow]="rowNode">
-        <td>
-          <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-          {{ rowData.name }}
-        </td>
-        <td>
-          {{ rowData.usedByCount }}
-        </td>
-      </tr>
-    </ng-template>
-  </p-treeTable>
+  <div class="grid h-full">
+    <div class="col-12 md:col-4 h-full flex flex-column">
+      <div class="flex-none">
+        <span class="text-xl font-bold">Additional Information</span>
+        <div class="p-2 mt-2">
+          <span class="block text-sm">Details about TreeTable 1</span>
+        </div>
+      </div>
+      <p-treeTable [value]="sbomReportDetailLicensesTreeNodes"
+                   [scrollable]="true"
+                   [virtualScroll]="true"
+                   scrollHeight="flex">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>License</th>
+            <th>Count</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+          <tr [ttRow]="rowNode">
+            <td>
+              <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+              {{ rowData.name }}
+            </td>
+            <td>
+              {{ rowData.count }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-treeTable>
+    </div>
+    <div class="col-12 md:col-8 h-full">
+      <p-treeTable [value]="sbomReportDetailPropertiesTreeNodes"
+                   [scrollable]="true"
+                   [virtualScroll]="true"
+                   scrollHeight="flex">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Name</th>
+            <th>Count</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+          <tr [ttRow]="rowNode">
+            <td>
+              <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+              {{ rowData.name }}
+            </td>
+            <td>
+              {{ rowData.usedByCount }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-treeTable>
+    </div>
+  </div>
 </p-dialog>
