@@ -96,6 +96,26 @@
           [modal]="true"
           [style]="{ width: '90rem' }"
           [(visible)]="isSbomReportOverviewDialogVisible">
+  <p-treeTable [value]="sbomReportDetailLicensesTreeNodes">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>License/User</th>
+        <th>Count</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+      <tr [ttRow]="rowNode">
+        <td>
+          <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+          {{ rowData.name }}
+        </td>
+        <td>
+          {{ rowData.count }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-treeTable>
+
   <p-treeTable [value]="sbomReportDetailPropertiesTreeNodes">
     <ng-template pTemplate="header">
       <tr>

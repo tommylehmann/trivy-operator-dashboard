@@ -84,7 +84,7 @@ public static class SbomReportCrExtensions
                 Version = component.Version,
                 DependsOn = sbomReportCr.Report?.Components.Dependencies.FirstOrDefault(x => x.Ref == component.BomRef)?.DependsOn ?? [],
                 Properties = [.. component.Properties.Select(x => new[] { x.Name.Replace("aquasecurity:trivy:", string.Empty), x.Value })],
-                Licenses = [.. component.Licenses?.Select(x => x.Name ?? string.Empty).Where(x => !string.IsNullOrWhiteSpace(x)) ?? []],
+                Licenses = [.. component.Licenses?.Select(x => x.License?.Name ?? string.Empty).Where(x => !string.IsNullOrWhiteSpace(x)) ?? []],
             };
 
             return detailDto;

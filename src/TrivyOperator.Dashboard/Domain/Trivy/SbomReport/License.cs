@@ -2,6 +2,11 @@
 
 namespace TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 
+public class LicenseContainer
+{
+    [JsonPropertyName("license")]
+    public License? License { get; set; }
+}
 public class License
 {
     [JsonPropertyName("id")]

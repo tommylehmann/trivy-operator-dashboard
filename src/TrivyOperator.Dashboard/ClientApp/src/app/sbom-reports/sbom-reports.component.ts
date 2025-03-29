@@ -92,6 +92,7 @@ export class SbomReportsComponent {
   // #region Full Sbom Report details
   isSbomReportOverviewDialogVisible: boolean = false;
   sbomReportDetailPropertiesTreeNodes: TreeNode[] = [];
+  sbomReportDetailLicensesTreeNodes: TreeNode[] = [];
   // #endregion
 
   imageDtos: ImageDto[] | undefined = []; // filtered images by ns
@@ -501,6 +502,9 @@ export class SbomReportsComponent {
     if (this.sbomReportDetailPropertiesTreeNodes.length == 0) {
       this.sbomReportDetailPropertiesTreeNodes = this.getSbomReportPropertyTreeNodes();
     }
+    if (this.sbomReportDetailLicensesTreeNodes.length == 0) {
+      this.sbomReportDetailLicensesTreeNodes = this.getSbomReportLicenseTreeNodes();
+    }
 
     this.isSbomReportOverviewDialogVisible = true;
   }
@@ -568,6 +572,33 @@ export class SbomReportsComponent {
       propNameNode.data.usedByCount = uniqueUsedBySet.size;
 
       tree.push(propNameNode);
+    });
+
+    return tree;
+  }
+
+  private getSbomReportLicenseTreeNodes(): TreeNode[] {
+    const licenseMap = new Map<string, Set<string>>();
+
+    this.fullSbomDataDto?.details?.forEach(item => {
+      (item.licenses || []).forEach(license => {
+        if (!licenseMap.has(license)) {
+          licenseMap.set(license, new Set<string>());
+        }
+        licenseMap.get(license)!.add(item.name ?? "unknown");
+      });
+    });
+
+    const tree: TreeNode[] = [];
+    licenseMap.forEach((names, license) => {
+      const licenseNode: TreeNode = {
+        data: { name: license, count: names.size },
+        children: Array.from(names).map(name => ({
+          data: { name: name, count: undefined },
+          children: []
+        }))
+      };
+      tree.push(licenseNode);
     });
 
     return tree;
