@@ -29,6 +29,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SeverityUtils } from '../utils/severity.utils';
 import { NodeDataDto } from '../fcose/fcose.types';
 import { SbomDetailExtendedDto } from './sbom-reports.types'
+import { SbomReportImageResourceDto } from '../../api/models';
 
 export interface ImageDto {
   uid: string;
@@ -75,6 +76,7 @@ export class SbomReportsComponent {
   }
   set selectedImageDto(value: ImageDto | null) {
     this._imageDto = value;
+    this.selectedImageResources = this.dataDtos?.find(x => x.uid && x.uid === value?.uid)?.resources ?? [];
     this.getFullSbomDto(value?.digest, this.selectedNamespace);
   }
   private _imageDto: ImageDto | null = null;
@@ -91,6 +93,8 @@ export class SbomReportsComponent {
 
   // #region Full Sbom Report details
   isSbomReportOverviewDialogVisible: boolean = false;
+  selectedImageResources: SbomReportImageResourceDto[] = [];
+  vulnerabilityCounts: Array<number | undefined> = [];
   sbomReportDetailPropertiesTreeNodes: TreeNode[] = [];
   sbomReportDetailLicensesTreeNodes: TreeNode[] = [];
   // #endregion
@@ -505,6 +509,13 @@ export class SbomReportsComponent {
     if (this.sbomReportDetailLicensesTreeNodes.length == 0) {
       this.sbomReportDetailLicensesTreeNodes = this.getSbomReportLicenseTreeNodes();
     }
+    if (this.vulnerabilityCounts.length == 0) {
+      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.criticalCount) ?? []));
+      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.highCount) ?? []));
+      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.mediumCount) ?? []));
+      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.lowCount) ?? []));
+      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.unknownCount) ?? []));
+    }
 
     this.isSbomReportOverviewDialogVisible = true;
   }
@@ -602,6 +613,13 @@ export class SbomReportsComponent {
     });
 
     return tree;
+  }
+
+  private getSumForVulnerabilities(vulnerabilities: Array<number | undefined | null>): number | undefined {
+    const usableVulnerabilities = vulnerabilities.filter((x): x is number => x != null);
+    return usableVulnerabilities.length > 0
+      ? usableVulnerabilities.reduce((acc, item) => acc + item, 0)
+      : undefined;
   }
   // #endregion
 
