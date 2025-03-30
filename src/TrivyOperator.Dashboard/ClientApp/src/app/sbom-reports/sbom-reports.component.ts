@@ -94,7 +94,7 @@ export class SbomReportsComponent {
   // #region Full Sbom Report details
   isSbomReportOverviewDialogVisible: boolean = false;
   selectedImageResources: SbomReportImageResourceDto[] = [];
-  vulnerabilityCounts: Array<number | undefined> = [];
+  sbomReportDetailStatistics: Array<number | undefined> = [];
   sbomReportDetailPropertiesTreeNodes: TreeNode[] = [];
   sbomReportDetailLicensesTreeNodes: TreeNode[] = [];
   // #endregion
@@ -245,6 +245,9 @@ export class SbomReportsComponent {
     }
     this.fullSbomDataDto = null;
     this.nodeDataDtos = [];
+    this.sbomReportDetailLicensesTreeNodes = [];
+    this.sbomReportDetailPropertiesTreeNodes = [];
+    this.sbomReportDetailStatistics = [];
   }
 
   onGetSbomReportDtoByDigestNamespace(fullSbomDataDto: SbomReportDto) {
@@ -265,6 +268,9 @@ export class SbomReportsComponent {
     this.dependsOnBoms = undefined;
     this.deletedDependsOnBom = [];
     this.nodeDataDtos = [];
+    this.sbomReportDetailLicensesTreeNodes = [];
+    this.sbomReportDetailPropertiesTreeNodes = [];
+    this.sbomReportDetailStatistics = [];
 
     this.getTableDataDtos();
   }
@@ -509,12 +515,17 @@ export class SbomReportsComponent {
     if (this.sbomReportDetailLicensesTreeNodes.length == 0) {
       this.sbomReportDetailLicensesTreeNodes = this.getSbomReportLicenseTreeNodes();
     }
-    if (this.vulnerabilityCounts.length == 0) {
-      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.criticalCount) ?? []));
-      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.highCount) ?? []));
-      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.mediumCount) ?? []));
-      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.lowCount) ?? []));
-      this.vulnerabilityCounts.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.unknownCount) ?? []));
+    if (this.sbomReportDetailStatistics.length == 0) {
+      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.criticalCount) ?? []));
+      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.highCount) ?? []));
+      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.mediumCount) ?? []));
+      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.lowCount) ?? []));
+      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.unknownCount) ?? []));
+
+      this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.length ?? 0);
+      this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.map(item => item.dependsOn)
+        .filter((deps): deps is Array<string> => Array.isArray(deps))
+        .reduce((sum, deps) => sum + deps.length, 0) ?? 0);
     }
 
     this.isSbomReportOverviewDialogVisible = true;

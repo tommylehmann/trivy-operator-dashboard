@@ -100,43 +100,74 @@
   <div class="grid h-full">
     <div class="col-12 md:col-4 h-full flex flex-column">
       <div style="height: 180px; min-height: 180px">
+        <b class="col-12 text-sm">S-BoM</b>
+        <div class="grid ml-1 mt-1">
+          <div class="col-3">
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-sm">Nodes</span>
+              <p-tag [rounded]="true"
+                     [value]="sbomReportDetailStatistics[5]?.toString() ?? 'N/A'" />
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-sm">Edges</span>
+              <p-tag [rounded]="true"
+                     [value]="sbomReportDetailStatistics[6]?.toString() ?? 'N/A'" />
+            </div>
+          </div>
+        </div>
         <b class="col-12 text-sm">Vulnerabilities</b>
-        <div class="grid align-items-center ml-1 mt-1">
-
-          <span class="col-3 text-sm">Critical</span>
-          <p-tag class="col-3"
-                 [rounded]="true"
-                 [style]="{ background: severityWrapperGetCssColor(0) }"
-                 [value]="vulnerabilityCounts[0]?.toString() ?? 'N/A'" />
-          <span class="col-3 text-sm">High</span>
-          <p-tag class="col-3"
-                 [rounded]="true"
-                 [style]="{ background: severityWrapperGetCssColor(1) }"
-                 [value]="vulnerabilityCounts[1]?.toString() ?? 'N/A'" />
-          <span class="col-3 text-sm">Medium</span>
-          <p-tag class="col-3"
-                 [rounded]="true"
-                 [style]="{ background: severityWrapperGetCssColor(2) }"
-                 [value]="vulnerabilityCounts[2]?.toString() ?? 'N/A'" />
-          <span class="col-3 text-sm">Low</span>
-          <p-tag class="col-3"
-                 [rounded]="true"
-                 [style]="{ background: severityWrapperGetCssColor(3) }"
-                 [value]="vulnerabilityCounts[3]?.toString() ?? 'N/A'" />
-          <span class="col-3 text-sm">Unknown</span>
-          <p-tag class="col-3"
-                 [rounded]="true"
-                 [style]="{ background: severityWrapperGetCssColor(4) }"
-                 [value]="vulnerabilityCounts[4]?.toString() ?? 'N/A'" />
+        <div class="grid ml-1 mt-1">
+          <div class="col-3">
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-sm">Crit</span>
+              <p-tag [rounded]="true"
+                     [style]="{ background: severityWrapperGetCssColor(0) }"
+                     [value]="sbomReportDetailStatistics[0]?.toString() ?? 'N/A'" />
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-sm">High</span>
+              <p-tag [rounded]="true"
+                     [style]="{ background: severityWrapperGetCssColor(1) }"
+                     [value]="sbomReportDetailStatistics[1]?.toString() ?? 'N/A'" />
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-sm">Med</span>
+              <p-tag [rounded]="true"
+                     [style]="{ background: severityWrapperGetCssColor(2) }"
+                     [value]="sbomReportDetailStatistics[2]?.toString() ?? 'N/A'" />
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-sm">Low</span>
+              <p-tag [rounded]="true"
+                     [style]="{ background: severityWrapperGetCssColor(3) }"
+                     [value]="sbomReportDetailStatistics[3]?.toString() ?? 'N/A'" />
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="flex align-items-center justify-content-between">
+              <span class="text-sm">Unk</span>
+              <p-tag [rounded]="true"
+                     [style]="{ background: severityWrapperGetCssColor(4) }"
+                     [value]="sbomReportDetailStatistics[4]?.toString() ?? 'N/A'" />
+            </div>
+          </div>
         </div>
       </div>
       <div class="h-full flex-column">
         <p-treeTable [value]="sbomReportDetailLicensesTreeNodes"
-                     [scrollable]="true"
-                     [virtualScroll]="true"
-                     [virtualScrollItemSize]="49"
-                     scrollHeight="flex"
-                     styleClass="p-treetable-sm text-sm">
+                      [scrollable]="true"
+                      [virtualScroll]="true"
+                      [virtualScrollItemSize]="49"
+                      scrollHeight="flex"
+                      styleClass="p-treetable-sm text-sm">
           <ng-template pTemplate="header">
             <tr style="height: 49px">
               <th ttSortableColumn="name">License<p-treeTableSortIcon field="name" /></th>
