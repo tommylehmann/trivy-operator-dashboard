@@ -97,7 +97,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private _hoveredNode?: NodeSingular;
   @Output() hoveredNodeDtoChange = new EventEmitter<NodeDataDto>();
   // #endregion
-  // #region selectedNode
+  // #region selectedNode - outside world communication for selected node (red)
   @Input() set selectedNodeId(nodeId: string | undefined) {
     if (nodeId == this._selectedNode?.id()) {
       return;
@@ -109,7 +109,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       const node = this.cy.$(`#${nodeId}`);
       if (node) {
         node.select();
-        this.onSelectNode(node);
       }
     }
     else {
@@ -118,16 +117,17 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         this.selectedNode.unselect();
       }
     }
-    
+    this._selectedNodeId = nodeId;
   }
-  private _selectedNode?: NodeSingular;
   @Output() selectedNodeIdChange = new EventEmitter<string | undefined>();
+  private _selectedNodeId: string | undefined;
   private get selectedNode(): NodeSingular | undefined {
     return this._selectedNode;
   }
   private set selectedNode(node: NodeSingular | undefined) {
     this._selectedNode = node;
   }
+  private _selectedNode?: NodeSingular;
   graphSelectedNodes: NodeSingular[] = [];
   // #endregion
   // #region "Deleted" Nodes
@@ -444,6 +444,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   private setupCyEvents() {
+    this.cy.on('layoutstop', (event) => {
+      console.log("fcose - onLayoutStop");
+    });
+
     this.cy.on('mouseover', 'node', (event) => {
       this.hoverHighlightNode(event.target as NodeSingular);
     });
@@ -452,34 +456,34 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.hoverUnhighlightNode(event.target as NodeSingular);
     });
 
-    this.cy.on('tap', 'node', (event: cytoscape.EventObject) => {
-      if (event.originalEvent.detail === 1) {
-        this.clickTimeout = setTimeout(() => {
-          this.onSelectNode(this.graphSelectedNodes[0])
-        }, this.doubleClickDelay);
-      }
-    });
+    //this.cy.on('tap', 'node', (event: cytoscape.EventObject) => {
+    //  if (event.originalEvent.detail === 1) {
+    //    this.clickTimeout = setTimeout(() => {
+    //      this.onSelectNode(this.graphSelectedNodes[0])
+    //    }, this.doubleClickDelay);
+    //  }
+    //});
 
     this.cy.on('dbltap', 'node', (event) => {
       clearTimeout(this.clickTimeout);
       this.diveInNode(event.target as NodeSingular);
     });
 
-    if (this.graphContainer) {
-      this.graphContainer.nativeElement.setAttribute('tabindex', '0');
-      this.graphContainer.nativeElement.addEventListener('keydown', (event: KeyboardEvent) => {
-        if ((event.key === 'Delete' || event.key === 'Del') && event.shiftKey) {
-          //this.deleteNodesChildrenAndOrphans();
-          this.deleteNodesAndOrphans(true);
-          return;
-        }
-        if (event.key === 'Delete' || event.key === 'Del') {
-          this.deleteNodesAndOrphans(false);
-          return;
-        }
-      },
-      { capture: true });
-    }
+    //if (this.graphContainer) {
+    //  this.graphContainer.nativeElement.setAttribute('tabindex', '0');
+    //  this.graphContainer.nativeElement.addEventListener('keydown', (event: KeyboardEvent) => {
+    //    if ((event.key === 'Delete' || event.key === 'Del') && event.shiftKey) {
+    //      //this.deleteNodesChildrenAndOrphans();
+    //      this.deleteNodesAndOrphans(true);
+    //      return;
+    //    }
+    //    if (event.key === 'Delete' || event.key === 'Del') {
+    //      this.deleteNodesAndOrphans(false);
+    //      return;
+    //    }
+    //  },
+    //  { capture: true });
+    //}
 
     this.cy.on('select', 'node',  (event) =>{
       const node = event.target as NodeSingular;
@@ -495,6 +499,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       }
       node.addClass(`graph-selected selected selectedCommon selected${this.darkLightMode}`);
       this.graphSelectedNodes[0].addClass(`graph-selected selected selectedCommon selected${this.darkLightMode}`);
+      this.onSelectNode(node);
     });
 
     this.cy.on('unselect', 'node', (event) => {
@@ -503,6 +508,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       if (this.graphSelectedNodes.length === 0) {
         this.unselectNode(node);
       }
+      this.onSelectNode(node);
       node.removeClass(`graph-selected selected selectedCommon selected${this.darkLightMode}`);
     });
 
@@ -775,6 +781,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         this.cy.elements().removeClass('hidden');
         if (this.inputFilterByNameValue) {
           this.onNodesHighlightByName(this.inputFilterByNameValue);
+        }
+        const node = this.cy.$(`#${this._selectedNodeId}`);
+        if (node) {
+          node.select();
         }
         this.isDivedIn = false;
       }, 500);

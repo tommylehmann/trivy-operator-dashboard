@@ -424,6 +424,7 @@ export class SbomReportsComponent {
       this.selectedSbomDetailDto = data[0];
       this.selectedSbomDetailBomRef = data[0].bomRef ?? undefined;
     }
+    console.log("sbom - onTableSelectedRowChange - length " + data.length);
   }
 
   onNodeIdChange(nodeId: string | undefined) {
@@ -492,7 +493,10 @@ export class SbomReportsComponent {
 
   // #region to be moved from here
   onRowActionRequested(event: SbomDetailExtendedDto) {
-    this.diveInNodeId = event.bomRef ?? undefined;
+    const bomRefId = event.bomRef ?? undefined;
+    if (bomRefId) {
+      this.onActiveNodeIdChange(bomRefId);
+    }
   }
 
   onMultiHeaderActionRequested(event: string) {
@@ -501,7 +505,10 @@ export class SbomReportsComponent {
         this.onSbomReportOverviewDialogOpen();
         break;
       case "Dive In":
-        this.diveInNodeId = this.selectedSbomDetailDto?.bomRef ?? undefined;
+        const bomRefId = this.selectedSbomDetailDto?.bomRef ?? undefined;
+        if (bomRefId) {
+          this.onActiveNodeIdChange(bomRefId);
+        }
         break;
       default:
         console.error("sbom - multi action call back - unknown: " + event);
