@@ -102,7 +102,6 @@ export class SbomReportsComponent {
   imageDtos: ImageDto[] | undefined = []; // filtered images by ns
   hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
   nodeDataDtos: NodeDataDto[] = [];
-  diveInNodeId?: string;
   selectedSbomDetailBomRef?: string;
 
   private readonly _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
@@ -432,12 +431,10 @@ export class SbomReportsComponent {
       const sbomReportDetailDto = this.dependsOnBoms?.find(x => x.bomRef == nodeId);
       if (sbomReportDetailDto) {
         this.selectedSbomDetailDto = sbomReportDetailDto;
-        this.selectedSbomDetailBomRef = sbomReportDetailDto.bomRef ?? undefined;
       }
     }
     else {
       this.selectedSbomDetailDto = undefined;
-      this.selectedSbomDetailBomRef = undefined;
     }
   }
 

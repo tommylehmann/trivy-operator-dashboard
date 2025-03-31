@@ -68,7 +68,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       }
       this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
       this.hoveredNode = undefined;
-      this.selectedNode = undefined;
       this.graphSelectedNodes = [];
       this.deletedNodes = [];
       this.currentDeletedNodesIndex = -1;
@@ -76,14 +75,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     }
   }
   private _nodeDataDtos: NodeDataDto[] = [];
-  // #endregion
-  // #region DiveInNode
-  @Input() set diveInNodeId(nodeId: string | undefined) {
-    const node = this.cy?.$(`#${nodeId}`);
-    if (node) {
-      this.diveInNode(node);
-    }
-  }
   // #endregion
   // #region hoveredNode
   get hoveredNode(): NodeSingular | undefined {
@@ -99,35 +90,25 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   // #endregion
   // #region selectedNode - outside world communication for selected node (red)
   @Input() set selectedNodeId(nodeId: string | undefined) {
-    if (nodeId == this._selectedNode?.id()) {
+    // only for the graph, to select the "master" mode
+    this._selectedNodeId = nodeId;
+
+    if (this.graphSelectedNodes.length > 1) {
       return;
     }
     if (nodeId) {
-      if (this.selectedNode) {
-        this.unselectNode(this.selectedNode);
+      const node = this.cy?.$(`#${nodeId}`);
+      if (node && this.graphSelectedNodes.length == 1 && this.graphSelectedNodes[0] == node) {
+        return
       }
-      const node = this.cy.$(`#${nodeId}`);
       if (node) {
+        this.graphSelectedNodes[0]?.unselect();
         node.select();
       }
     }
-    else {
-      if (this.selectedNode) {
-        //this.unselectNode(this.selectedNode);
-        this.selectedNode.unselect();
-      }
-    }
-    this._selectedNodeId = nodeId;
   }
   @Output() selectedNodeIdChange = new EventEmitter<string | undefined>();
-  private _selectedNodeId: string | undefined;
-  private get selectedNode(): NodeSingular | undefined {
-    return this._selectedNode;
-  }
-  private set selectedNode(node: NodeSingular | undefined) {
-    this._selectedNode = node;
-  }
-  private _selectedNode?: NodeSingular;
+  private _selectedNodeId?: string;
   graphSelectedNodes: NodeSingular[] = [];
   // #endregion
   // #region "Deleted" Nodes
@@ -493,8 +474,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         return;
       }
 
+      if (this.graphSelectedNodes.some(x => x === node)) {
+        return;
+      }
+
       this.graphSelectedNodes.push(node);
-      if (this.graphSelectedNodes.length == 2 && this.selectedNode) {
+      if (this.graphSelectedNodes.length == 2) {
         this.unselectNode(this.graphSelectedNodes[0]);
       }
       node.addClass(`graph-selected selected selectedCommon selected${this.darkLightMode}`);
@@ -519,7 +504,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private hoverHighlightNode(node: NodeSingular) {
     this.testHoveredNode = node;
     if (this.hoveredNode == node || node.isParent()) {
-    //if (this.selectedNode || this.hoveredNode == node || node.isParent()) {
       return;
     }
     if (this.hoveredNode) {
@@ -547,27 +531,17 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     if (this.hoveredNode) {
       this.hoverUnhighlightNode(this.hoveredNode);
     }
-    if (this.selectedNode == node) {
-      this.unselectNode(node);
-      this.hoverHighlightNode(node);
-      this.selectedNodeIdChange.emit(undefined);
-      return;
-    }
-    if (this.selectedNode) {
-      this.unselectNode(this.selectedNode);
-    }
     this.selectNode(node);
-    this.selectedNodeIdChange.emit(node.id());
     this.graphContainer.nativeElement.focus();
   }
 
   private selectNode(node: NodeSingular) {
+    this.selectedNodeIdChange.emit(node.id());
     this.highlightNode(node, 'selected');
-    this.selectedNode = node;
   }
   private unselectNode(node: NodeSingular) {
     this.unhighlightNode(node, "selected");
-    this.selectedNode = undefined;
+    this.selectedNodeIdChange.emit(undefined);
     if (this.graphSelectedNodes.length == 1) {
       node.unselect();
     }
@@ -919,17 +893,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.processDeletedNodeIds(mainNodeIds, deletedNodes, areChildrenIncluded, isRedo);
   }
 
-  //private deleteNodesChildrenAndOrphans(node?: NodeSingular, isRedo: boolean = false) {
-  //  node = node ?? this.selectedNode;
-  //  if (node) {
-  //    const deletedNodes: string[] = [];
-  //    const mainNodeIds = [node.id()];
-      
-  //    this.cleanupParentsAndOrphans(deletedNodes);
-  //    this.processDeletedNodeIds(mainNodeIds, deletedNodes, "nodeAndChildren", isRedo);
-  //  }
-  //}
-
   private deleteNodeAndOrphans(node: NodeSingular, deletedNodes: string[]) {
     deletedNodes.push(node.id());
     node.addClass("deleted");
@@ -938,10 +901,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       .filter((x: NodeSingular) => !x.hasClass("deleted"))
       .filter((x: NodeSingular) => x.connectedEdges().filter(x => !x.hasClass("deleted")).length === 0)
       .forEach((x: NodeSingular) => { deletedNodes.push(x.id()); x.addClass("deleted"); });
-    if (node == this.selectedNode) {
-      this.unhighlightNode(node, "selected");
-      this.selectedNode = undefined;
-    }
   }
 
   private deleteNodeChildrenAndOrphans(node: NodeSingular, deletedNodes: string[]) {
