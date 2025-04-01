@@ -105,18 +105,22 @@
             style="{{ col.style }}"
             [pSortableColumn]="col.isSortable ? col.field : null">
           {{ col.header }}
-          <p-sortIcon *ngIf="col.isSortable && (col.isSortIconVisible ?? col.isSortable)" field="{{ col.field }}" />
+          <p-sortIcon *ngIf="col.isSortable && (col.isSortIconVisible ?? col.isSortable)"
+                      field="{{ col.field }}"
+                      class="sm-sortIcon"/>
           <p-columnFilter *ngIf="col.isFiltrable && col.multiSelectType === 'none'"
                           display="menu"
                           field="{{ col.field }}"
-                          type="text" />
+                          type="text"
+                          class="sm-filterIcon"/>
           <p-columnFilter *ngIf="col.isFiltrable && col.multiSelectType === 'namespaces'"
                           display="menu"
                           field="{{ col.field }}"
                           matchMode="in"
                           [showAddButton]="false"
                           [showMatchModes]="false"
-                          [showOperator]="false">
+                          [showOperator]="false"
+                          class="sm-filterIcon">
             <ng-template let-filter="filterCallback" pTemplate="filter">
               <p-multiSelect optionLabel=""
                              placeholder="Any"
@@ -137,7 +141,8 @@
                           matchMode="in"
                           [showAddButton]="false"
                           [showMatchModes]="false"
-                          [showOperator]="false">
+                          [showOperator]="false"
+                          class="sm-filterIcon">
             <ng-template let-filter="filterCallback" pTemplate="filter">
               <p-multiSelect optionLabel="name"
                              placeholder="Any"

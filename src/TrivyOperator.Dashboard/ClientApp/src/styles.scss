@@ -43,3 +43,15 @@ h4.no-margins {
 .custom-panel .p-panel-content{
   height: 200px;
 }
+
+p-sortIcon.sm-sortIcon .p-sortable-column-icon {
+  font-size: 0.8rem !important; /* Adjust the size */
+  width: 12px !important; /* Adjust the dimensions if needed */
+  height: 12px !important;
+}
+
+p-columnFilter.sm-filterIcon .pi-filter-icon {
+  width: 12px !important; /* Adjust width */
+  height: 12px !important; /* Adjust height */
+  font-size: 0.8rem !important; /* Optional */
+}

@@ -50,16 +50,20 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     return this._nodeDataDtos;
   }
   @Input() set nodeDataDtos(nodeDataDtos: NodeDataDto[]) {
+    this.isLayoutRedraw = true;
     this._nodeDataDtos = nodeDataDtos;
     if (nodeDataDtos.length == 0) {
-      this.activeNodeId = undefined;
       this._rootNodeId = this._defaultRootNodeId;
       this.navHome = undefined;
       this.navItems = [];
+      this.activeNodeId = undefined;
+      this.hoveredNode = undefined;
+      this.highlightedHoverNode = undefined;
       this.graphSelectedNodes = [];
       this.deletedNodes = [];
       this.currentDeletedNodesIndex = -1;
       this.cy?.elements()?.remove();
+      this.isLayoutRedraw = false;
     }
     else {
       if (!this.activeNodeId) {
@@ -68,6 +72,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       }
       this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
       this.hoveredNode = undefined;
+      this.highlightedHoverNode = undefined;
       this.graphSelectedNodes = [];
       this.deletedNodes = [];
       this.currentDeletedNodesIndex = -1;
@@ -77,21 +82,27 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private _nodeDataDtos: NodeDataDto[] = [];
   // #endregion
   // #region hoveredNode
-  get hoveredNode(): NodeSingular | undefined {
+  private get hoveredNode(): NodeSingular | undefined {
     return this._hoveredNode;
   }
   private set hoveredNode(node: NodeSingular | undefined) {
+    if ((node && node.isParent()) || node === this._hoveredNode) {
+      return;
+    }
     this._hoveredNode = node;
-    const hoveredNodeDto = this.getDataDetailDtoById(node?.id());
-    this.hoveredNodeDtoChange.emit(this.getDataDetailDtoById(node?.id()));
+    this.hoveredNodeIdChange.emit(node?.id());
   }
   private _hoveredNode?: NodeSingular;
-  @Output() hoveredNodeDtoChange = new EventEmitter<NodeDataDto>();
+  @Output() hoveredNodeIdChange = new EventEmitter<string>();
+  private highlightedHoverNode: NodeSingular | undefined;
   // #endregion
   // #region selectedNode - outside world communication for selected node (red)
   @Input() set selectedNodeId(nodeId: string | undefined) {
     // only for the graph, to select the "master" mode
     this._selectedNodeId = nodeId;
+    if (this.isLayoutRedraw) {
+      return;
+    }
 
     if (this.graphSelectedNodes.length > 1) {
       return;
@@ -104,6 +115,11 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       if (node) {
         this.graphSelectedNodes[0]?.unselect();
         node.select();
+      }
+    }
+    else {
+      if (this.graphSelectedNodes.length == 1) {
+        this.graphSelectedNodes[0].unselect();
       }
     }
   }
@@ -141,7 +157,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       return 0.15;
     },
   };
-  private isDivedIn: boolean = false;
+  private isLayoutRedraw: boolean = false;
   inputFilterByNameControl = new FormControl();
   private inputFilterByNameValue: string = "";
 
@@ -158,7 +174,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   constructor(private mainAppInitService: MainAppInitService) {
     this.mainAppInitService.isDarkMode$.subscribe((isDarkMode) => {
-      console.log("fcose - isDarkMode - " + isDarkMode);
       const oldDarkLightMode = this.darkLightMode;
       this.darkLightMode = isDarkMode ? 'Dark' : 'Light';
       if (oldDarkLightMode != this.darkLightMode) {
@@ -425,16 +440,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   private setupCyEvents() {
-    this.cy.on('layoutstop', (event) => {
-      console.log("fcose - onLayoutStop");
-    });
-
     this.cy.on('mouseover', 'node', (event) => {
-      this.hoverHighlightNode(event.target as NodeSingular);
+      const node = event.target as NodeSingular
+      this.hoveredNode = node;
+      this.highlightHoveredNode(node);
     });
 
     this.cy.on('mouseout', 'node', (event) => {
-      this.hoverUnhighlightNode(event.target as NodeSingular);
+      this.hoveredNode = undefined;
+      this.unhighlightHoveredNode(event.target as NodeSingular);
     });
 
     //this.cy.on('tap', 'node', (event: cytoscape.EventObject) => {
@@ -466,92 +480,82 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     //  { capture: true });
     //}
 
-    this.cy.on('select', 'node',  (event) =>{
-      const node = event.target as NodeSingular;
-
-      if (node.isParent()) {
-        node.unselect();
-        return;
-      }
-
-      if (this.graphSelectedNodes.some(x => x === node)) {
-        return;
-      }
-
-      this.graphSelectedNodes.push(node);
-      if (this.graphSelectedNodes.length == 2) {
-        this.unselectNode(this.graphSelectedNodes[0]);
-      }
-      node.addClass(`graph-selected selected selectedCommon selected${this.darkLightMode}`);
-      this.graphSelectedNodes[0].addClass(`graph-selected selected selectedCommon selected${this.darkLightMode}`);
-      this.onSelectNode(node);
+    this.cy.on('select', 'node', (event) => {
+      this.highlightSelectedNode(event.target as NodeSingular);
     });
 
     this.cy.on('unselect', 'node', (event) => {
-      const node = event.target as NodeSingular;
-      this.graphSelectedNodes = this.graphSelectedNodes.filter(x => x != node);
-      if (this.graphSelectedNodes.length === 0) {
-        this.unselectNode(node);
-      }
-      this.onSelectNode(node);
-      node.removeClass(`graph-selected selected selectedCommon selected${this.darkLightMode}`);
+      this.unhighlightSelectedNode(event.target as NodeSingular);
     });
 
-  }
-  // #endregion
-
-  // #region Node Hover
-  private hoverHighlightNode(node: NodeSingular) {
-    this.testHoveredNode = node;
-    if (this.hoveredNode == node || node.isParent()) {
-      return;
-    }
-    if (this.hoveredNode) {
-      this.hoverUnhighlightNode(this.hoveredNode);
-    }
-    this.hoveredNode = node;
-    this.highlightNode(node, "hovered");
-  }
-
-  private hoverUnhighlightNode(node: NodeSingular) {
-    this.testHoveredNode = undefined;
-    if (node.isParent() || this.isDivedIn) {
-      return;
-    }
-    this.unhighlightNode(node, "hovered");
-    this.hoveredNode = undefined;
   }
   // #endregion
 
   // #region Node Select
-  private onSelectNode(node: NodeSingular) {
-    if (this.graphSelectedNodes.length != 1) {
+  private highlightSelectedNode(node: NodeSingular) {
+    if (node.isParent()) {
+      node.unselect();
       return;
     }
-    if (this.hoveredNode) {
-      this.hoverUnhighlightNode(this.hoveredNode);
+    if (this.graphSelectedNodes.some(x => x === node)) {
+      return;
     }
-    this.selectNode(node);
-    this.graphContainer.nativeElement.focus();
+    this.graphSelectedNodes.push(node);
+    if (this.graphSelectedNodes.length == 2) {
+      this.unhighlightNode(this.graphSelectedNodes[0], "selected");
+      this.highlightNode(this.graphSelectedNodes[0], "selected", true);
+    }
+    if (this.highlightedHoverNode) {
+      this.unhighlightHoveredNode(this.highlightedHoverNode);
+    }
+    this.highlightNode(node, "selected", this.graphSelectedNodes.length > 1);
+    this.selectedNodeIdChange.emit(node.id());
   }
 
-  private selectNode(node: NodeSingular) {
-    this.selectedNodeIdChange.emit(node.id());
-    this.highlightNode(node, 'selected');
-  }
-  private unselectNode(node: NodeSingular) {
-    this.unhighlightNode(node, "selected");
-    this.selectedNodeIdChange.emit(undefined);
-    if (this.graphSelectedNodes.length == 1) {
-      node.unselect();
+  private unhighlightSelectedNode(node: NodeSingular) {
+    this.graphSelectedNodes = this.graphSelectedNodes.filter(x => x != node);
+    this.unhighlightNode(node, "selected", this.graphSelectedNodes.length > 1);
+    if (this.highlightedHoverNode) {
+      this.unhighlightHoveredNode(this.highlightedHoverNode);
     }
+    if (this.graphSelectedNodes.length == 1) {
+      this.highlightNode(this.graphSelectedNodes[0], "selected");
+    }
+    if (this.hoveredNode === node) {
+      this.highlightHoveredNode(node);
+    }
+    this.selectedNodeIdChange.emit(undefined);
   }
   // #endregion
 
-  // #region node highlight
-  private highlightNode(node: NodeSingular, stylePrefix: "hovered" | "selected") {
+  // #region Node Hover
+  private highlightHoveredNode(node: NodeSingular) {
+    if (this.highlightedHoverNode == node || node.isParent()) {
+      return;
+    }
+    if (this.highlightedHoverNode) {
+      this.unhighlightHoveredNode(this.highlightedHoverNode);
+    }
+    this.highlightNode(node, "hovered");
+    this.highlightedHoverNode = node;
+  }
+
+  private unhighlightHoveredNode(node: NodeSingular) {
+    if (node.isParent() || this.isLayoutRedraw) {
+      return;
+    }
+    this.unhighlightNode(node, "hovered");
+    this.highlightedHoverNode = undefined;
+  }
+  // #endregion
+
+  // #region Node Highlight
+  private highlightNode(node: NodeSingular, stylePrefix: "hovered" | "selected", justNode: boolean = false) {
     node.addClass(`${stylePrefix}Common ${stylePrefix} ${stylePrefix}${this.darkLightMode}`);
     this.swapClassNodesHighlightedByName(node, "highlight");
+    if (justNode) {
+      return;
+    }
     node.incomers('node').forEach((depNode: NodeSingular) => {
       if (!depNode.hasClass('selectedIncomers') && !depNode.hasClass('selectedCommon')) {
         depNode.addClass(`${stylePrefix}Common`);
@@ -575,10 +579,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     });
   }
 
-  private unhighlightNode(node: NodeSingular, stylePrefix: "hovered" | "selected") {
+  private unhighlightNode(node: NodeSingular, stylePrefix: "hovered" | "selected", justNode: boolean = false) {
     node.removeClass(`${stylePrefix}Common ${stylePrefix} ${stylePrefix}${this.darkLightMode}`);
     this.swapClassNodesHighlightedByName(node, "unhighlight");
-
+    if (justNode) {
+      return;
+    }
     node.outgoers('node').forEach((depNode: NodeSingular) => {
       depNode.removeClass(`${stylePrefix}Common ${stylePrefix}Outgoers ${stylePrefix}Highlight`);
       this.swapClassNodesHighlightedByName(depNode, "unhighlight");
@@ -760,11 +766,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         if (node) {
           node.select();
         }
-        this.isDivedIn = false;
+        this.isLayoutRedraw = false;
       }, 500);
     }, 350);
-    this.isDivedIn = true;
-    
   }
 
   private getElements(): ElementDefinition[] {
@@ -954,9 +958,5 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.currentDeletedNodesIndex++;
     }
   }
-  // #endregion
-
-  // #region test area
-  testHoveredNode?: NodeSingular;
   // #endregion
 }

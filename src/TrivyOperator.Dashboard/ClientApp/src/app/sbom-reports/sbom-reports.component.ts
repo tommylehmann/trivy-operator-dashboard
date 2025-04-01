@@ -118,7 +118,7 @@ export class SbomReportsComponent {
         isFiltrable: true,
         isSortable: true,
         multiSelectType: 'none',
-        style: 'white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 290px; max-width: 290px',
+        style: 'white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 290px;',
         renderType: 'standard',
       },
       {
@@ -135,9 +135,8 @@ export class SbomReportsComponent {
         header: 'C',
         isFiltrable: false,
         isSortable: true,
-        isSortIconVisible: false,
         multiSelectType: 'none',
-        style: 'width: 40px; max-width: 40px;',
+        style: 'width: 50px; max-width: 50px;',
         renderType: 'severityValue',
         extraFields: ['CRITICAL'],
       },
@@ -146,9 +145,8 @@ export class SbomReportsComponent {
         header: 'H',
         isFiltrable: false,
         isSortable: true,
-        isSortIconVisible: false,
         multiSelectType: 'none',
-        style: 'width: 40px; max-width: 40px;',
+        style: 'width: 50px;',
         renderType: 'severityValue',
         extraFields: ['HIGH'],
       },
@@ -157,9 +155,8 @@ export class SbomReportsComponent {
         header: 'M',
         isFiltrable: false,
         isSortable: true,
-        isSortIconVisible: false,
         multiSelectType: 'none',
-        style: 'width: 40px; max-width: 40px;',
+        style: 'width: 50px; max-width: 50px;',
         renderType: 'severityValue',
         extraFields: ['MEDIUM'],
       },
@@ -168,9 +165,8 @@ export class SbomReportsComponent {
         header: 'L',
         isFiltrable: false,
         isSortable: true,
-        isSortIconVisible: false,
         multiSelectType: 'none',
-        style: 'width: 40px; max-width: 40px;',
+        style: 'width: 50px; max-width: 50px;',
         renderType: 'severityValue',
         extraFields: ['LOW'],
       },
@@ -179,9 +175,8 @@ export class SbomReportsComponent {
         header: 'U',
         isFiltrable: false,
         isSortable: true,
-        isSortIconVisible: false,
         multiSelectType: 'none',
-        style: 'width: 40px; max-width: 40px;',
+        style: 'width: 50px; max-width: 50px;',
         renderType: 'severityValue',
         extraFields: ['UNKNOWN'],
       },
@@ -214,7 +209,7 @@ export class SbomReportsComponent {
       isRefreshFiltrable: false,
       isFooterVisible: true,
       tableSelectionMode: 'single',
-      tableStyle: {},
+      tableStyle: { width: '930px' },
       stateKey: 'SBOM Reports - Depends On',
       dataKey: 'bomRef',
       rowExpansionRender: 'table',
@@ -386,8 +381,8 @@ export class SbomReportsComponent {
     return SeverityUtils.getCssColor(severityId);
   }
 
-  onHoveredNodeDtoChange(event: NodeDataDto | undefined) {
-    this.hoveredSbomDetailDto = this.getSbomDetailDtoByBomref(event?.id);
+  onHoveredNodeDtoChange(nodeId: string | undefined) {
+    this.hoveredSbomDetailDto = this.getSbomDetailDtoByBomref(nodeId);
   }
 
   private getSbomDetailDtoByBomref(bomref: string | undefined): SbomReportDetailDto | undefined {
