@@ -406,6 +406,9 @@ export class SbomReportsComponent {
     if (dto.properties?.find(x => x[1] == "dotnet-core")) {
       return `${dto.name?.split('.')[0] ?? ""} (dotnet-core)`;
     }
+    if (dto.properties?.find(x => x[1] == "gobinary")) {
+      return `${dto.name?.split('/')[0] ?? ""} (gobinary)`;
+    }
     return "";
   }
 
