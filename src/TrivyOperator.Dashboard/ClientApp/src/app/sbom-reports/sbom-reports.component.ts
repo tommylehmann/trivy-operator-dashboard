@@ -189,17 +189,6 @@ export class SbomReportsComponent {
         style: 'width: 130px; max-width: 130px;',
         renderType: 'standard',
       },
-      {
-        field: 'diveIn',
-        header: 'Dive In',
-        isFiltrable: false,
-        isSortable: false,
-        multiSelectType: 'none',
-        style: 'width: 130px; max-width: 130px;',
-        renderType: 'action',
-        extraFields: ["Dive In"],
-      }
-
     ];
     this.dependsOnTableOptions = {
       isClearSelectionVisible: false,

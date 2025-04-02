@@ -66,7 +66,7 @@ public interface ISbomReportDto
     SbomReportDetailDto[] Details { get; set; }
 }
 
-public static class SbomReportCrExtensions
+public static partial class SbomReportCrExtensions
 {
     public static SbomReportDto ToSbomReportDto(this SbomReportCr sbomReportCr)
     {
