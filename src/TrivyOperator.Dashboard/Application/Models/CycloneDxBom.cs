@@ -4,22 +4,23 @@ using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 
+[XmlRoot("bom", Namespace = "http://cyclonedx.org/schema/bom/1.6")]
 public class CycloneDxBom
 {
     [JsonPropertyName("bomFormat")]
-    [XmlElement("bomFormat")]
+    [XmlIgnore]
     public string BomFormat { get; set; } = "CycloneDX";
 
     [JsonPropertyName("specVersion")]
-    [XmlElement("specVersion")]
+    [XmlIgnore]
     public string SpecVersion { get; set; } = "1.6";
 
     [JsonPropertyName("serialNumber")]
-    [XmlElement("serialNumber")]
+    [XmlIgnore]
     public string SerialNumber { get; set; } = string.Empty;
 
     [JsonPropertyName("version")]
-    [XmlElement("version")]
+    [XmlAttribute("version")]
     public long Version { get; set; } = 1;
 
     [JsonPropertyName("metadata")]
@@ -75,7 +76,7 @@ public class CycloneDxComponent
     public string BomRef { get; set; } = string.Empty;
 
     [JsonPropertyName("type")]
-    [XmlElement("type")]
+    [XmlAttribute("type")]
     public string Type { get; set; } = "library";
 
     [JsonPropertyName("name")]
@@ -86,11 +87,25 @@ public class CycloneDxComponent
     [XmlElement("version")]
     public string Version { get; set; } = string.Empty;
 
+    //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    //[JsonPropertyName("licenses")]
+    //[XmlArray("licenses")]
+    //[XmlArrayItem("license")]
+    //public List<CycloneDxLicenseContainer>? Licenses { get; set; }
+
+
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("licenses")]
+    [XmlIgnore]
+    public List<CycloneDxLicenseContainer>? LicensesJson 
+        => LicensesXml?.Select(xmlLicense => new CycloneDxLicenseContainer { License = xmlLicense }).ToList();
+
     [XmlArray("licenses")]
     [XmlArrayItem("license")]
-    public List<CycloneDxLicenseContainer>? Licenses { get; set; }
+    [JsonIgnore]
+    public List<CycloneDxLicense>? LicensesXml { get; set; }
+
+
 
     [JsonPropertyName("properties")]
     [XmlArray("properties")]
@@ -127,7 +142,6 @@ public class CycloneDxLicenseContainer
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("license")]
-    [XmlElement("license")]
     public CycloneDxLicense License { get; set; } = new CycloneDxLicense();
 }
 
@@ -156,7 +170,7 @@ public class CycloneDxProperty
     public string Name { get; set; } = string.Empty;
 
     [JsonPropertyName("value")]
-    [XmlAttribute("value")]
+    [XmlText]
     public string Value { get; set; } = string.Empty;
 }
 
@@ -167,9 +181,13 @@ public class CycloneDxDependency
     public string Ref { get; set; } = string.Empty;
 
     [JsonPropertyName("dependsOn")]
-    [XmlArray("dependsOn")]
-    [XmlArrayItem("dependency")]
-    public List<string> DependsOn { get; set; } = [];
+    [XmlIgnore]
+    public List<string> DependsOnJson => DependsOnXml?.ConvertAll(dep => dep.Ref) ?? [];
+
+    [JsonIgnore]
+    [XmlElement("dependency")]
+    public List<CycloneDxDependency>? DependsOnXml { get; set; }
+
 }
 
 
@@ -204,17 +222,15 @@ public static partial class SbomReportCrExtensions
                             Name = prop.Name,
                             Value = prop.Value
                         }) ?? []],
-                    Licenses = sbomReport.Report?.Components.Metadata.Component.Licenses == null
+                    LicensesXml = sbomReport.Report?.Components.Metadata.Component.Licenses == null
                         ? null
-                        : [.. sbomReport.Report?.Components.Metadata.Component.Licenses?.Select(lic => new CycloneDxLicenseContainer
-                        {
-                            License = new CycloneDxLicense
+                        : [.. sbomReport.Report?.Components.Metadata.Component.Licenses?.Select(lic => new CycloneDxLicense
                             {
                                 Id = lic.License?.Id,
                                 Name = lic.License?.Name,
                                 Url = lic.License?.Url
                             }
-                        }) ?? []],
+                        ) ?? []],
                 }
             },
             Components = [.. sbomReport.Report?.Components.ComponentsComponents.Select(comp => new CycloneDxComponent
@@ -229,15 +245,13 @@ public static partial class SbomReportCrExtensions
                     Name = prop.Name,
                     Value = prop.Value
                 })],
-                Licenses = [.. comp.Licenses?.Select(lic => new CycloneDxLicenseContainer 
-                { 
-                    License = new CycloneDxLicense
+                LicensesXml = [.. comp.Licenses?.Select(lic => new CycloneDxLicense
                     {
                         Id = lic.License?.Id,
                         Name = lic.License?.Name,
                         Url = lic.License?.Url
                     }
-                }) ?? []],
+                ) ?? []],
                 Supplier = comp.Supplier == null
                     ? null
                     : new() { Name = comp.Supplier.Name, Email = comp.Supplier.Email, Phone = comp.Supplier.Phone }
@@ -245,7 +259,7 @@ public static partial class SbomReportCrExtensions
             Dependencies = [.. sbomReport.Report?.Components.Dependencies.Select(dep => new CycloneDxDependency
             {
                 Ref = dep.Ref,
-                DependsOn = [.. dep.DependsOn]
+                DependsOnXml = [.. dep.DependsOn.Select(x => new CycloneDxDependency { Ref = x })]
             }) ?? []]
         };
 
