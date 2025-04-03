@@ -9,6 +9,8 @@ public interface ISbomReportService
     Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid);
     Task<SbomReportDto?> GetFullSbomReportDtoByUidNamespace(string uid, string namespaceName);
     Task<SbomReportDto?> GetFullSbomReportDtoByDigestNamespace(string digest, string namespaceName);
+    Task<CycloneDxBom?> GetCycloneDxBomByDigestNamespace(string digest, string namespaceName);
+    Task<SpdxBom?> GetSpdxBomByDigestNamespace(string digest, string namespaceName);
     Task<IEnumerable<string>> GetActiveNamespaces();
     
 }

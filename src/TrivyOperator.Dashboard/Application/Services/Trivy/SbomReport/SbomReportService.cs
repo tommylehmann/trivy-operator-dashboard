@@ -104,6 +104,49 @@ public class SbomReportService(
         return null;
     }
 
+    public async Task<CycloneDxBom?> GetCycloneDxBomByDigestNamespace(string digest, string namespaceName)
+    {
+        if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
+        {
+            SbomReportCr? sr = sbomReportCrs
+                .Where(x => x.Report?.Artifact?.Digest == digest)
+                .Aggregate((SbomReportCr?)null, (max, current) =>
+                    max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
+            if (sr != null)
+            {
+                try
+                {
+                    CycloneDxBom cycloneDx = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
+                                .ToCycloneDx();
+                    return cycloneDx;
+                }
+                catch { }
+            }
+        }
+        return null;
+    }
+
+    public async Task<SpdxBom?> GetSpdxBomByDigestNamespace(string digest, string namespaceName)
+    {
+        if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
+        {
+            SbomReportCr? sr = sbomReportCrs
+                .Where(x => x.Report?.Artifact?.Digest == digest)
+                .Aggregate((SbomReportCr?)null, (max, current) =>
+                    max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
+            if (sr != null)
+            {
+                try
+                {
+                    SpdxBom spdx = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
+                                .ToSpdx();
+                    return spdx;
+                }
+                catch { }
+            }
+        }
+        return null;
+    }
 
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult(cache.Where(x => x.Value.Any()).Select(x => x.Key));

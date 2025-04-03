@@ -5,9 +5,9 @@ namespace TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 public class Supplier
 {
     [JsonPropertyName("email")]
-    public string Email { get; set; } = string.Empty;
+    public string? Email { get; set; }
     [JsonPropertyName("name")]
-    public string Name { get; set; } = string.Empty;
+    public string? Name { get; set; }
     [JsonPropertyName("phone")]
-    public string Phone { get; set; } = string.Empty;
+    public string? Phone { get; set; }
 }

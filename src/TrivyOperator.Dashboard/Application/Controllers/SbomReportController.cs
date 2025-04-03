@@ -37,6 +37,28 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
         return sbomReportDto is null ? NotFound() : Ok(sbomReportDto);
     }
 
+    [HttpGet("cyclonedx", Name = "GetCycloneDxDtoByDigestNamespace")]
+    [ProducesResponseType<CycloneDxBom>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetCycloneDxByDigestNamespace([FromQuery] string digest, [FromQuery] string namespaceName)
+    {
+        CycloneDxBom? cycloneDxBom = await sbomReportService.GetCycloneDxBomByDigestNamespace(digest, namespaceName);
+
+        return cycloneDxBom is null ? NotFound() : Ok(cycloneDxBom);
+    }
+
+    [HttpGet("spdx", Name = "GetSpdxDtoByDigestNamespace")]
+    [ProducesResponseType<SpdxBom>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetSpdxBomByDigestNamespace([FromQuery] string digest, [FromQuery] string namespaceName)
+    {
+        SpdxBom? spdxBom = await sbomReportService.GetSpdxBomByDigestNamespace(digest, namespaceName);
+
+        return spdxBom is null ? NotFound() : Ok(spdxBom);
+    }
+
     [HttpGet("grouped-by-image", Name = "GetSbomReportImageDtos")]
     [ProducesResponseType<IEnumerable<SbomReportImageDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
