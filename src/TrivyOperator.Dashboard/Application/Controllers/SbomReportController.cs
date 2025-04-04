@@ -47,14 +47,6 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
     {
         CycloneDxBom? cycloneDxBom = await sbomReportService.GetCycloneDxBomByDigestNamespace(digest, namespaceName);
 
-        if (cycloneDxBom is not null)
-        {
-            using (var writer = new StreamWriter("C:\\Users\\cocox\\Desktop\\cyclonedx.xml", false, Encoding.UTF8))
-            {
-                var serializer = new XmlSerializer(typeof(CycloneDxBom));
-                serializer.Serialize(writer, cycloneDxBom);
-            }
-        }
         return cycloneDxBom is null ? NotFound() : Ok(cycloneDxBom);
     }
 

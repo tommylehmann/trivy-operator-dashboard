@@ -60,6 +60,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(
     });
 
 builder.Services.AddControllersWithViews(ConfigureMvcOptions)
+    .AddXmlSerializerFormatters()
     .AddJsonOptions(options => ConfigureJsonSerializerOptions(options.JsonSerializerOptions));
 builder.Services.AddHttpClient();
 builder.Services.AddProblemDetails();
