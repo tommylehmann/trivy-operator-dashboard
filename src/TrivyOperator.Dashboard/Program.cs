@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Serilog;
 using Serilog.Extensions.Logging;
 using System.Runtime.InteropServices;
@@ -60,7 +61,6 @@ builder.Services.Configure<ForwardedHeadersOptions>(
     });
 
 builder.Services.AddControllersWithViews(ConfigureMvcOptions)
-    .AddXmlSerializerFormatters()
     .AddJsonOptions(options => ConfigureJsonSerializerOptions(options.JsonSerializerOptions));
 builder.Services.AddHttpClient();
 builder.Services.AddProblemDetails();
@@ -145,7 +145,11 @@ static void ConfigureJsonSerializerOptions(JsonSerializerOptions options)
     options.Converters.Add(new DateTimeNullableJsonConverter());
 }
 
-static void ConfigureMvcOptions(MvcOptions options) => options.Filters.Add(new ProducesAttribute("application/json"));
+static void ConfigureMvcOptions(MvcOptions options)
+{
+    options.Filters.Add(new ProducesAttribute("application/json"));
+    options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+}
 
 static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
 {
