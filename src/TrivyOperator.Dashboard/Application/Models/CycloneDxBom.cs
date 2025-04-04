@@ -16,7 +16,7 @@ public class CycloneDxBom
     public string SpecVersion { get; set; } = "1.6";
 
     [JsonPropertyName("serialNumber")]
-    [XmlIgnore]
+    [XmlAttribute("serialNumber")]
     public string SerialNumber { get; set; } = string.Empty;
 
     [JsonPropertyName("version")]
@@ -56,6 +56,10 @@ public class CycloneDxMetadata
 
 public class CycloneDxTool
 {
+    [JsonPropertyName("vendor")]
+    [XmlElement("vendor")]
+    public string? Vendor { get; set; }
+
     [JsonPropertyName("name")]
     [XmlElement("name")]
     public string Name { get; set; } = string.Empty;
@@ -63,21 +67,22 @@ public class CycloneDxTool
     [JsonPropertyName("version")]
     [XmlElement("version")]
     public string Version { get; set; } = string.Empty;
-
-    [JsonPropertyName("vendor")]
-    [XmlElement("vendor")]
-    public string? Vendor { get; set; }
 }
 
 public class CycloneDxComponent
 {
+    [JsonPropertyName("type")]
+    [XmlAttribute("type")]
+    public string Type { get; set; } = "library";
+
     [JsonPropertyName("bom-ref")]
     [XmlAttribute("bom-ref")]
     public string BomRef { get; set; } = string.Empty;
 
-    [JsonPropertyName("type")]
-    [XmlAttribute("type")]
-    public string Type { get; set; } = "library";
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("supplier")]
+    [XmlElement("supplier")]
+    public CycloneDxSupplier? Supplier { get; set; }
 
     [JsonPropertyName("name")]
     [XmlElement("name")]
@@ -87,39 +92,25 @@ public class CycloneDxComponent
     [XmlElement("version")]
     public string Version { get; set; } = string.Empty;
 
-    //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    //[JsonPropertyName("licenses")]
-    //[XmlArray("licenses")]
-    //[XmlArrayItem("license")]
-    //public List<CycloneDxLicenseContainer>? Licenses { get; set; }
-
-
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("licenses")]
     [XmlIgnore]
-    public List<CycloneDxLicenseContainer>? LicensesJson 
-        => LicensesXml?.Select(xmlLicense => new CycloneDxLicenseContainer { License = xmlLicense }).ToList();
+    public List<CycloneDxLicenseContainer>? LicensesJson
+    => LicensesXml?.Select(xmlLicense => new CycloneDxLicenseContainer { License = xmlLicense }).ToList();
 
     [XmlArray("licenses")]
     [XmlArrayItem("license")]
     [JsonIgnore]
     public List<CycloneDxLicense>? LicensesXml { get; set; }
 
-
+    [JsonPropertyName("purl")]
+    [XmlElement("purl")]
+    public string Purl { get; set; } = string.Empty;
 
     [JsonPropertyName("properties")]
     [XmlArray("properties")]
     [XmlArrayItem("property")]
     public List<CycloneDxProperty> Properties { get; set; } = [];
-
-    [JsonPropertyName("purl")]
-    [XmlElement("purl")]
-    public string Purl { get; set; } = string.Empty;
-
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [JsonPropertyName("supplier")]
-    [XmlElement("supplier")]
-    public CycloneDxSupplier? Supplier { get; set; }
 }
 
 public class CycloneDxSupplier
