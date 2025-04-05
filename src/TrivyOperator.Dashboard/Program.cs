@@ -147,7 +147,7 @@ static void ConfigureJsonSerializerOptions(JsonSerializerOptions options)
 
 static void ConfigureMvcOptions(MvcOptions options)
 {
-    options.Filters.Add(new ProducesAttribute("application/json"));
+    options.RespectBrowserAcceptHeader = true;
     options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
 }
 
