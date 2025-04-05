@@ -34,6 +34,11 @@ public class SbomReportImageDto : ISbomReportDto
     public SbomReportImageResourceDto[] Resources { get; set; } = [];
     public string RootNodeBomRef { get; set; } = string.Empty;
     public bool HasVulnerabilities { get; set; } = false;
+    public long CriticalCount { get; set; } = -1;
+    public long HighCount { get; set; } = -1;
+    public long MediumCount { get; set; } = -1;
+    public long LowCount { get; set; } = -1;
+    public long UnknownCount { get; set; } = -1;
     public SbomReportDetailDto[] Details { get; set; } = [];
 }
 
@@ -53,11 +58,11 @@ public class SbomReportDetailDto
     public string[] DependsOn { get; set; } = [];
     public string[][] Properties { get; set; } = [];
     public string[] Licenses { get; set; } = [];
-    public long CriticalCount { get; set; } = 0;
-    public long HighCount { get; set; } = 0;
-    public long MediumCount { get; set; } = 0;
-    public long LowCount { get; set; } = 0;
-    public long UnknownCount { get; set; } = 0;
+    public long CriticalCount { get; set; } = -1;
+    public long HighCount { get; set; } = -1;
+    public long MediumCount { get; set; } = -1;
+    public long LowCount { get; set; } = -1;
+    public long UnknownCount { get; set; } = -1;
 }
 
 public interface ISbomReportDto

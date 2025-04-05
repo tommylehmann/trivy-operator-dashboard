@@ -26,6 +26,7 @@ import {
   TrivyTableOptions,
 } from './trivy-table.types';
 import { CellRowArrayPipe } from '../pipes/cell-row-array.pipe';
+import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
 import { MenuItem } from 'primeng/api';
 
 @Component({
@@ -44,6 +45,7 @@ import { MenuItem } from 'primeng/api';
     TableModule,
     TagModule,
     CellRowArrayPipe,
+    VulnerabilityCountPipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',

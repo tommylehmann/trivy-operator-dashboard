@@ -134,7 +134,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
         loadComponent: () =>
           import('./rbac-assessment-reports-detailed/rbac-assessment-reports-detailed.component').then(
             (m) => m.RbacAssessmentReportsDetailedComponent),
-        data: { title: 'RBAC Assessment Reports' },
+        data: { title: 'RBAC Assessment Reports Detailed' },
       },
       {
         path: 'watcher-states',
@@ -153,12 +153,17 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
           (m) => m.AboutComponent),
         data: { title: 'About' },
       },
-
       {
         path: 'sbom-reports',
         loadComponent: () => import('./sbom-reports/sbom-reports.component').then(
           (m) => m.SbomReportsComponent),
         data: { title: 'SBOM Reports' },
+      },
+      {
+        path: 'sbom-reports-detailed',
+        loadComponent: () => import('./sbom-reports-detailed/sbom-reports-detailed.component').then(
+          (m) => m.SbomReportsDetailedComponent),
+        data: { title: 'SBOM Reports Detailed' },
       },
     ]),
     ApiModule.forRoot({ rootUrl: environment.baseUrl }),

@@ -411,7 +411,6 @@ export class SbomReportsComponent {
       this.selectedSbomDetailDto = data[0];
       this.selectedSbomDetailBomRef = data[0].bomRef ?? undefined;
     }
-    console.log("sbom - onTableSelectedRowChange - length " + data.length);
   }
 
   onNodeIdChange(nodeId: string | undefined) {

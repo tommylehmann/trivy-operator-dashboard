@@ -16,6 +16,7 @@ import {
   faServer,
   faShieldHalved,
   faUserShield,
+  faDiagramProject,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -43,6 +44,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   faKey = faKey;
   faGears = faGears;
   faServer = faServer;
+  faDiagramProject = faDiagramProject;
   private alertSubscription!: Subscription;
 
   constructor(
@@ -127,6 +129,30 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('vr'),
             command: () => {
               this.router.navigate(['/vulnerability-reports-detailed']);
+              this.isSidebarVisible = false;
+            },
+          },
+        ],
+      },
+      {
+        label: 'SBoMs',
+        faIcon: faDiagramProject,
+        disabled: !this.enabledTrivyReports.includes('sr'),
+        expanded: true,
+        items: [
+          {
+            label: 'Browse',
+            disabled: !this.enabledTrivyReports.includes('sr'),
+            command: () => {
+              this.router.navigate(['/sbom-reports']);
+              this.isSidebarVisible = false;
+            },
+          },
+          {
+            label: 'Detailed',
+            disabled: !this.enabledTrivyReports.includes('sr'),
+            command: () => {
+              this.router.navigate(['/sbom-reports-detailed']);
               this.isSidebarVisible = false;
             },
           },

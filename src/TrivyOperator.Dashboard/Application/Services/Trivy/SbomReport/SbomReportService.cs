@@ -27,30 +27,42 @@ public class SbomReportService(
 
     public Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? namespaceName = null)
     {
-        SbomReportImageDto[] dtos = [.. cache
-            .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.GroupBy(sbom => sbom.Report?.Artifact?.Digest)
-                    .Select(group => group.ToSbomReportImageDto()))];
         var vrDigests = vrCache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.GroupBy(vr => new 
+            .SelectMany(kvp => kvp.Value.GroupBy(vr => new
             {
                 ImageDigest = vr.Report?.Artifact?.Digest ?? string.Empty,
                 ResourceNamespace = vr.Metadata.NamespaceProperty
             })
-            .Select(group => group.Key));
-        SbomReportImageDto[] sbomsWithVrs = [.. dtos
-            .Join(
+            .Select(group => new {
+                group.Key.ImageDigest,
+                group.Key.ResourceNamespace,
+                CriticalCount = group.FirstOrDefault()?.Report?.Summary?.CriticalCount ?? -1,
+                HighCount = group.FirstOrDefault()?.Report?.Summary?.HighCount ?? -1,
+                MediumCount = group.FirstOrDefault()?.Report?.Summary?.MediumCount ?? -1,
+                LowCount = group.FirstOrDefault()?.Report?.Summary?.LowCount ?? -1,
+                UnknownCount = group.FirstOrDefault()?.Report?.Summary?.UnknownCount ?? -1
+            }));
+        SbomReportImageDto[] dtos = [.. cache
+            .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.GroupBy(sbom => sbom.Report?.Artifact?.Digest)
+                .Select(group => group.ToSbomReportImageDto()))
+            .GroupJoin(
                 vrDigests,
-                left => new { left.ImageDigest, left.ResourceNamespace },
-                right => new { right.ImageDigest, right.ResourceNamespace },
-                (left, right) => left
-            )];
+                dto => new { dto.ImageDigest, dto.ResourceNamespace },
+                vr => new { vr.ImageDigest, vr.ResourceNamespace },
+                (dto, vrMatches) =>
+                {
+                    var vr = vrMatches.FirstOrDefault();
+                    dto.HasVulnerabilities = vr != null;
+                    dto.CriticalCount = vr?.CriticalCount ?? -1;
+                    dto.HighCount = vr?.HighCount ?? -1;
+                    dto.MediumCount = vr?.MediumCount ?? -1;
+                    dto.LowCount = vr?.LowCount ?? -1;
+                    dto.UnknownCount = vr?.UnknownCount ?? -1;
 
-        foreach (var dto in dtos)
-        {
-            dto.HasVulnerabilities = sbomsWithVrs.Contains(dto);
-        }
+                    return dto;
+                })];
 
         return Task.FromResult((IEnumerable<SbomReportImageDto>)dtos);
     }

@@ -27,16 +27,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AlertDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AlertDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AlertDto'
         '400':
           description: Bad Request
           content:
@@ -77,12 +67,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/BackendSettingsDto'
             text/json:
-              schema:
-                $ref: '#/components/schemas/BackendSettingsDto'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/BackendSettingsDto'
-            text/xml:
               schema:
                 $ref: '#/components/schemas/BackendSettingsDto'
         '400':
@@ -129,16 +113,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/ClusterComplianceReportDto'
             text/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterComplianceReportDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterComplianceReportDto'
-            text/xml:
               schema:
                 type: array
                 items:
@@ -191,16 +165,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ClusterComplianceReportDenormalizedDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterComplianceReportDenormalizedDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterComplianceReportDenormalizedDto'
         '400':
           description: Bad Request
           content:
@@ -245,16 +209,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/ClusterRbacAssessmentReportDto'
             text/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterRbacAssessmentReportDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterRbacAssessmentReportDto'
-            text/xml:
               schema:
                 type: array
                 items:
@@ -307,16 +261,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ClusterRbacAssessmentReportDenormalizedDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterRbacAssessmentReportDenormalizedDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterRbacAssessmentReportDenormalizedDto'
         '400':
           description: Bad Request
           content:
@@ -365,16 +309,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ClusterRbacAssessmentReportSummaryDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterRbacAssessmentReportSummaryDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterRbacAssessmentReportSummaryDto'
         '400':
           description: Bad Request
           content:
@@ -419,16 +353,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/ClusterSbomReportDto'
             text/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterSbomReportDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClusterSbomReportDto'
-            text/xml:
               schema:
                 type: array
                 items:
@@ -586,16 +510,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ConfigAuditReportDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConfigAuditReportDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConfigAuditReportDto'
         '400':
           description: Bad Request
           content:
@@ -640,16 +554,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConfigAuditReportDenormalizedDto'
             text/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConfigAuditReportDenormalizedDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConfigAuditReportDenormalizedDto'
-            text/xml:
               schema:
                 type: array
                 items:
@@ -702,16 +606,6 @@ paths:
                 type: array
                 items:
                   type: string
-            application/xml:
-              schema:
-                type: array
-                items:
-                  type: string
-            text/xml:
-              schema:
-                type: array
-                items:
-                  type: string
         '400':
           description: Bad Request
           content:
@@ -756,16 +650,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConfigAuditReportSummaryDto'
             text/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConfigAuditReportSummaryDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConfigAuditReportSummaryDto'
-            text/xml:
               schema:
                 type: array
                 items:
@@ -827,16 +711,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ExposedSecretReportDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExposedSecretReportDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExposedSecretReportDto'
         '400':
           description: Bad Request
           content:
@@ -885,16 +759,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ExposedSecretReportDenormalizedDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExposedSecretReportDenormalizedDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExposedSecretReportDenormalizedDto'
         '400':
           description: Bad Request
           content:
@@ -939,16 +803,6 @@ paths:
                 items:
                   type: string
             text/json:
-              schema:
-                type: array
-                items:
-                  type: string
-            application/xml:
-              schema:
-                type: array
-                items:
-                  type: string
-            text/xml:
               schema:
                 type: array
                 items:
@@ -1010,16 +864,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ExposedSecretReportImageDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExposedSecretReportImageDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExposedSecretReportImageDto'
         '400':
           description: Bad Request
           content:
@@ -1068,16 +912,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EsSeveritiesByNsSummaryDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/EsSeveritiesByNsSummaryDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/EsSeveritiesByNsSummaryDto'
         '400':
           description: Bad Request
           content:
@@ -1122,16 +956,6 @@ paths:
                 items:
                   type: string
             text/json:
-              schema:
-                type: array
-                items:
-                  type: string
-            application/xml:
-              schema:
-                type: array
-                items:
-                  type: string
-            text/xml:
               schema:
                 type: array
                 items:
@@ -1193,16 +1017,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RbacAssessmentReportDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RbacAssessmentReportDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RbacAssessmentReportDto'
         '400':
           description: Bad Request
           content:
@@ -1251,16 +1065,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RbacAssessmentReportDenormalizedDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RbacAssessmentReportDenormalizedDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RbacAssessmentReportDenormalizedDto'
         '400':
           description: Bad Request
           content:
@@ -1305,16 +1109,6 @@ paths:
                 items:
                   type: string
             text/json:
-              schema:
-                type: array
-                items:
-                  type: string
-            application/xml:
-              schema:
-                type: array
-                items:
-                  type: string
-            text/xml:
               schema:
                 type: array
                 items:
@@ -1372,16 +1166,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SbomReportDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SbomReportDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SbomReportDto'
         '400':
           description: Bad Request
           content:
@@ -1429,12 +1213,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/SbomReportDto'
             text/json:
-              schema:
-                $ref: '#/components/schemas/SbomReportDto'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/SbomReportDto'
-            text/xml:
               schema:
                 $ref: '#/components/schemas/SbomReportDto'
         '400':
@@ -1488,12 +1266,6 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/SbomReportDto'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/SbomReportDto'
-            text/xml:
-              schema:
-                $ref: '#/components/schemas/SbomReportDto'
         '400':
           description: Bad Request
           content:
@@ -1545,12 +1317,6 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/CycloneDxBom'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/CycloneDxBom'
-            text/xml:
-              schema:
-                $ref: '#/components/schemas/CycloneDxBom'
         '400':
           description: Bad Request
           content:
@@ -1600,12 +1366,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/SpdxBom'
             text/json:
-              schema:
-                $ref: '#/components/schemas/SpdxBom'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/SpdxBom'
-            text/xml:
               schema:
                 $ref: '#/components/schemas/SpdxBom'
         '400':
@@ -1661,16 +1421,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SbomReportImageDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SbomReportImageDto'
-            text/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SbomReportImageDto'
         '400':
           description: Bad Request
           content:
@@ -1719,16 +1469,6 @@ paths:
                 type: array
                 items:
                   type: string
-            application/xml:
-              schema:
-                type: array
-                items:
-                  type: string
-            text/xml:
-              schema:
-                type: array
-                items:
-                  type: string
         '400':
           description: Bad Request
           content:
@@ -1773,16 +1513,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/SeverityDto'
             text/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SeverityDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SeverityDto'
-            text/xml:
               schema:
                 type: array
                 items:
@@ -1985,16 +1715,6 @@ paths:
                 type: array
                 items:
                   type: string
-            application/xml:
-              schema:
-                type: array
-                items:
-                  type: string
-            text/xml:
-              schema:
-                type: array
-                items:
-                  type: string
         '400':
           description: Bad Request
           content:
@@ -2138,16 +1858,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/WatcherStateInfoDto'
             text/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WatcherStateInfoDto'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WatcherStateInfoDto'
-            text/xml:
               schema:
                 type: array
                 items:
@@ -3467,6 +3177,21 @@ components:
           nullable: true
         hasVulnerabilities:
           type: boolean
+        criticalCount:
+          type: integer
+          format: int64
+        highCount:
+          type: integer
+          format: int64
+        mediumCount:
+          type: integer
+          format: int64
+        lowCount:
+          type: integer
+          format: int64
+        unknownCount:
+          type: integer
+          format: int64
         details:
           type: array
           items:
