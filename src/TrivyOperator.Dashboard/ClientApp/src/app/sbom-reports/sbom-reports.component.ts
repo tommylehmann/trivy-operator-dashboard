@@ -30,6 +30,7 @@ import { SeverityUtils } from '../utils/severity.utils';
 import { NodeDataDto } from '../fcose/fcose.types';
 import { SbomDetailExtendedDto } from './sbom-reports.types'
 import { SbomReportImageResourceDto } from '../../api/models';
+import { HttpClient, HttpContext, HttpContextToken, HttpHeaders } from '@angular/common/http';
 
 export interface ImageDto {
   uid: string;
@@ -108,7 +109,7 @@ export class SbomReportsComponent {
 
   faShieldHalved = faShieldHalved;
 
-  constructor(private service: SbomReportService) {
+  constructor(private service: SbomReportService, private http: HttpClient) {
     this.getTableDataDtos();
 
     this.dependsOnTableColumns = [
@@ -203,7 +204,7 @@ export class SbomReportsComponent {
       dataKey: 'bomRef',
       rowExpansionRender: 'table',
       extraClasses: 'trivy-with-filters',
-      multiHeaderAction: ["Info", "Dive In"],
+      multiHeaderAction: ["Info", "Dive In", "Export CycloneDX JSON", "Export CycloneDX XML"],
     };
   }
 
@@ -494,6 +495,12 @@ export class SbomReportsComponent {
           this.onActiveNodeIdChange(bomRefId);
         }
         break;
+      case "Export CycloneDX JSON":
+        this.onExportCycloneDXJSON('json');
+        break;
+      case "Export CycloneDX XML":
+        this.onExportCycloneDXJSON('xml');
+        break;
       default:
         console.error("sbom - multi action call back - unknown: " + event);
     }
@@ -520,6 +527,35 @@ export class SbomReportsComponent {
     }
 
     this.isSbomReportOverviewDialogVisible = true;
+  }
+
+  onExportCycloneDXJSON(contentType: 'json' | 'xml') {
+    const apiRoot = this.service.rootUrl;
+    const namespaceName = encodeURIComponent(this.selectedNamespace ?? "");
+    const digest = encodeURIComponent(this.selectedImageDto?.digest ?? "");
+    const fileUrl = `${apiRoot}/api/sbom-reports/cyclonedx?digest=${digest}&namespaceName=${namespaceName}`;
+
+    const headers = new HttpHeaders({
+      'Accept': contentType === 'json' ? 'application/json' : 'application/xml'
+    });
+
+    this.http.get(fileUrl, { headers, responseType: 'text' }).subscribe({
+      next: (response: string) => {
+        const blob = new Blob([response], { type: contentType === 'json' ? 'application/json' : 'application/xml' });
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+
+        link.download = `sbom_cyclonedx_${this.selectedImageDto?.imageNameTag ?? ""}.${contentType}`;
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error(`Error fetching the file as ${contentType.toUpperCase()}:`, err);
+      }
+    });
   }
 
   /**

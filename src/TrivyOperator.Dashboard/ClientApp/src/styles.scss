@@ -55,3 +55,9 @@ p-columnFilter.sm-filterIcon .pi-filter-icon {
   height: 12px !important; /* Adjust height */
   font-size: 0.8rem !important; /* Optional */
 }
+
+p-splitbutton.text-sm {
+  .p-menuitem-text {
+    font-size: 14px;
+  }
+}
