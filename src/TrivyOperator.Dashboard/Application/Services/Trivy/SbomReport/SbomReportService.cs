@@ -1,4 +1,10 @@
-﻿using TrivyOperator.Dashboard.Application.Models;
+﻿using Microsoft.Extensions.Options;
+using System.IO;
+using System.IO.Compression;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using TrivyOperator.Dashboard.Application.Models;
+using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport.Abstractions;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy;
@@ -13,6 +19,7 @@ public class SbomReportService(
     IConcurrentCache<string, IList<SbomReportCr>> cache,
     IConcurrentCache<string, IList<VulnerabilityReportCr>> vrCache,
     INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>> domainService,
+    IOptions<FileExportOptions> fileExportOptions,
     ILogger<SbomReportService> logger)
     : ISbomReportService
 {
@@ -160,6 +167,52 @@ public class SbomReportService(
         return null;
     }
 
+    public async Task<string> CreateCycloneDxExportZipFile((string NamespaceName, string Digest)[] exportSboms, string fileType = "json")
+    {
+        try
+        {
+            Guid fileNameGuid = Guid.NewGuid();
+            string zipFileName = Path.Combine(fileExportOptions.Value.TempFolder, $"{fileNameGuid}_sbom.zip");
+
+            using (var zipFileStream = new FileStream(zipFileName, FileMode.Create))
+            using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Create))
+            {
+                foreach ((string NamespaceName, string Digest) in exportSboms)
+                {
+                    CycloneDxBom? cycloneDxBom = await GetCycloneDxBomByDigestNamespace(Digest, NamespaceName);
+
+                    if (cycloneDxBom == null)
+                    {
+                        logger.LogWarning("CycloneDxBom not found for {Digest} in {NamespaceName}", Digest, NamespaceName);
+                        continue;
+                    }
+                    string imageName = cycloneDxBom.Metadata?.Component?.Name ?? string.Empty;
+                    string imageVersion = cycloneDxBom.Metadata?.Component?.Version ?? string.Empty;
+                    string fileExtension = fileType.ToLower() == "json" ? "json" : "xml";
+                    string fileName = InvalidFileNameCharsRegex.Replace(
+                        $"{NamespaceName}_{imageName}_{imageVersion}_{Digest}.${fileExtension}", "_");
+                    using var stream = archive.CreateEntry(fileName).Open();
+                    if (fileType == "json")
+                    {
+                        JsonSerializer.Serialize(stream, cycloneDxBom);
+                    }
+                    else
+                    {
+                        var serializer = new System.Xml.Serialization.XmlSerializer(cycloneDxBom.GetType());
+                        serializer.Serialize(stream, cycloneDxBom);
+                    }
+                }
+            }
+
+            return zipFileName;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error creating zip file - {exceptionMessage}", ex.Message);
+            return string.Empty;
+        }
+    }
+
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult(cache.Where(x => x.Value.Any()).Select(x => x.Key));
 
@@ -207,5 +260,10 @@ public class SbomReportService(
                 }
             }
         }
+
     }
+    
+    private static readonly Regex InvalidFileNameCharsRegex = new(
+        $"[{Regex.Escape(new string(Path.GetInvalidFileNameChars()))}]",
+        RegexOptions.Compiled );
 }

@@ -124,6 +124,9 @@ spec:
         - name: http
           containerPort: 8900
           protocol: TCP
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
         livenessProbe:
           httpGet:
             path: /
@@ -134,6 +137,10 @@ spec:
             port: http
         resources:
           {}
+      volumes:
+      - name: tmp-volume
+        emptyDir:
+          sizeLimit: 1024Mi
 ---
 # Source: trivy-operator-dashboard/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1

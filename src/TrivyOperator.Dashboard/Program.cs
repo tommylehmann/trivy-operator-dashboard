@@ -18,6 +18,7 @@ const string applicationName = "TrivyOperator.Dashboard";
 const string queuesConfigurationSectionKey = "Queues";
 const string kubernetesConfigurationSectionKey = "Kubernetes";
 const string watchersConfigurationSectionKey = "Watchers";
+const string fileExportConfigurationSectionKey = "FileExport";
 WebApplicationBuilder builder = WebApplication.CreateBuilder(
     new WebApplicationOptions
     {
@@ -77,7 +78,8 @@ builder.Services.AddCors(
 builder.Services.AddCommons(
     configuration.GetSection(queuesConfigurationSectionKey),
     configuration.GetSection(kubernetesConfigurationSectionKey),
-    configuration.GetSection(watchersConfigurationSectionKey));
+    configuration.GetSection(watchersConfigurationSectionKey),
+    configuration.GetSection(fileExportConfigurationSectionKey));
 builder.Services.AddDomainServices();
 builder.Services.AddAlertsServices();
 builder.Services.AddWatcherStateServices();
@@ -135,7 +137,21 @@ static IConfiguration CreateConfiguration()
     IConfigurationBuilder configurationBuilder = new ConfigurationBuilder().AddJsonFile("appsettings.json", true)
         .AddJsonFile("serilog.config.json", true)
         .AddEnvironmentVariables();
-    return configurationBuilder.Build();
+    IConfiguration configuration = configurationBuilder.Build();
+
+    string? tempFolder = configuration.GetSection(fileExportConfigurationSectionKey)["TempFolder"];
+    if (string.IsNullOrEmpty(tempFolder))
+    {
+        var inMemorySettings = new Dictionary<string, string?>
+        {
+            { "FileExport:TempFolder", Path.GetTempPath() }
+        };
+
+        configurationBuilder.AddInMemoryCollection(inMemorySettings);
+        configuration = configurationBuilder.Build();
+    }
+
+    return configuration;
 }
 
 static void ConfigureJsonSerializerOptions(JsonSerializerOptions options)
@@ -167,7 +183,7 @@ static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEve
             msg += " ErrorCode: " + exCode.ToString("X16");
         }
 
-        Logger?.LogError($"Unhandled External Exception: {msg}");
+        Logger?.LogError("Unhandled External Exception: {msg}", msg);
     }
 }
 

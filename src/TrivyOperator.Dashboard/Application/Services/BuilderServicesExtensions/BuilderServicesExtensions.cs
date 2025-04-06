@@ -334,11 +334,13 @@ public static class BuilderServicesExtensions
         this IServiceCollection services,
         IConfiguration queuesConfiguration,
         IConfiguration kubernetesConfiguration,
-        IConfiguration watchersConfiguration)
+        IConfiguration watchersConfiguration,
+        IConfiguration fileExportConfiguration)
     {
         services.Configure<BackgroundQueueOptions>(queuesConfiguration);
         services.Configure<KubernetesOptions>(kubernetesConfiguration);
         services.Configure<WatchersOptions>(watchersConfiguration);
+        services.Configure<FileExportOptions>(fileExportConfiguration);
 
         services.AddHostedService<CacheWatcherEventHandlerHostedService>();
         services.AddHostedService<WatcherStateCacheTimedHostedService>();

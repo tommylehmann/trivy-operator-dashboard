@@ -69,6 +69,29 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
     public async Task<IActionResult> GetGroupedByImage([FromQuery] string? namespaceName) =>
         Ok(await sbomReportService.GetSbomReportImageDtos(namespaceName));
 
+    [HttpGet("export", Name = "ExportSbomReport")]
+    [Produces("application/zip")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Export([FromBody] (string NamespaceName, string Digest)[] exportSboms, [FromQuery] string fileType = "json")
+    {
+        if (exportSboms.Length == 0)
+        {
+            return BadRequest("No info provided");
+        }
+
+        string zipFilename  = await sbomReportService.CreateCycloneDxExportZipFile(exportSboms, fileType);
+        if (zipFilename == string.Empty)
+        {
+            return BadRequest("Failed to create zip file");
+        }
+
+        var stream = new FileStream(zipFilename, FileMode.Open, FileAccess.Read);
+
+        return File(stream, "application/zip", zipFilename);
+    }
+
     [HttpGet("active-namespaces", Name = "GetSbomReportActiveNamespaces")]
     [ProducesResponseType<IEnumerable<string>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
