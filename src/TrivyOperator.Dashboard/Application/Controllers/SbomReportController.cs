@@ -40,6 +40,7 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
     }
 
     [HttpGet("cyclonedx", Name = "GetCycloneDxDtoByDigestNamespace")]
+    [Produces("application/json", "application/xml")]
     [ProducesResponseType<CycloneDxBom>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]

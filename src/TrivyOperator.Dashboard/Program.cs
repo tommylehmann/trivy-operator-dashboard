@@ -149,6 +149,7 @@ static void ConfigureMvcOptions(MvcOptions options)
 {
     options.RespectBrowserAcceptHeader = true;
     options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+    options.Filters.Add(new ProducesAttribute("application/json"));
 }
 
 static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
