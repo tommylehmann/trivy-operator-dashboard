@@ -8,4 +8,5 @@
                  [trivyTableColumns]="trivyTableColumns"
                  [trivyTableOptions]="trivyTableOptions"
                  (refreshRequested)="getTableDataDtos()"
-                 (selectedRowsChanged)="onTableSelectedRowChange($event)"/>
+                 (selectedRowsChanged)="onTableSelectedRowChange($event)"
+                 (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)"/>

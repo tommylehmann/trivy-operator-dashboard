@@ -19,7 +19,7 @@ public class SbomReportNullService : ISbomReportService
         Task.FromResult<CycloneDxBom?>(null);
     public Task<SpdxBom?> GetSpdxBomByDigestNamespace(string digest, string namespaceName) =>
         Task.FromResult<SpdxBom?>(null);
-    public Task<string> CreateCycloneDxExportZipFile((string NamespaceName, string Digest)[] exportSboms, string fileType = "json") =>
+    public Task<string> CreateCycloneDxExportZipFile(SbomReportExportDto[] exportSboms, string fileType = "json") =>
         Task.FromResult(string.Empty);
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult<IEnumerable<string>>([]);

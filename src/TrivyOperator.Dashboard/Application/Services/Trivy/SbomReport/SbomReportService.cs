@@ -167,7 +167,7 @@ public class SbomReportService(
         return null;
     }
 
-    public async Task<string> CreateCycloneDxExportZipFile((string NamespaceName, string Digest)[] exportSboms, string fileType = "json")
+    public async Task<string> CreateCycloneDxExportZipFile(SbomReportExportDto[] exportSboms, string fileType = "json")
     {
         try
         {
@@ -177,20 +177,21 @@ public class SbomReportService(
             using (var zipFileStream = new FileStream(zipFileName, FileMode.Create))
             using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Create))
             {
-                foreach ((string NamespaceName, string Digest) in exportSboms)
+                foreach (SbomReportExportDto exportSbom in exportSboms)
                 {
-                    CycloneDxBom? cycloneDxBom = await GetCycloneDxBomByDigestNamespace(Digest, NamespaceName);
+                    CycloneDxBom? cycloneDxBom = await GetCycloneDxBomByDigestNamespace(exportSbom.Digest, exportSbom.NamespaceName);
 
                     if (cycloneDxBom == null)
                     {
-                        logger.LogWarning("CycloneDxBom not found for {Digest} in {NamespaceName}", Digest, NamespaceName);
+                        logger.LogWarning("CycloneDxBom not found for {Digest} in {NamespaceName}",
+                            exportSbom.Digest, exportSbom.NamespaceName);
                         continue;
                     }
                     string imageName = cycloneDxBom.Metadata?.Component?.Name ?? string.Empty;
                     string imageVersion = cycloneDxBom.Metadata?.Component?.Version ?? string.Empty;
                     string fileExtension = fileType.ToLower() == "json" ? "json" : "xml";
                     string fileName = InvalidFileNameCharsRegex.Replace(
-                        $"{NamespaceName}_{imageName}_{imageVersion}_{Digest}.${fileExtension}", "_");
+                        $"{exportSbom.NamespaceName}_{imageName}_{imageVersion}_{exportSbom.Digest}.${fileExtension}", "_");
                     using var stream = archive.CreateEntry(fileName).Open();
                     if (fileType == "json")
                     {

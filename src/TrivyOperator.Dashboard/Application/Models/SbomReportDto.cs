@@ -65,6 +65,12 @@ public class SbomReportDetailDto
     public long UnknownCount { get; set; } = -1;
 }
 
+public class SbomReportExportDto
+{
+    public string NamespaceName { get; set; } = string.Empty;
+    public string Digest { get; set; } = string.Empty;
+}
+
 public interface ISbomReportDto
 {
     string RootNodeBomRef { get; set; }

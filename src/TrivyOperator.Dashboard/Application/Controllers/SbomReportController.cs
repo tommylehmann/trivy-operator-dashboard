@@ -69,12 +69,12 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
     public async Task<IActionResult> GetGroupedByImage([FromQuery] string? namespaceName) =>
         Ok(await sbomReportService.GetSbomReportImageDtos(namespaceName));
 
-    [HttpGet("export", Name = "ExportSbomReport")]
+    [HttpPost("export", Name = "ExportSbomReport")]
     [Produces("application/zip")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Export([FromBody] (string NamespaceName, string Digest)[] exportSboms, [FromQuery] string fileType = "json")
+    public async Task<IActionResult> Export([FromBody] SbomReportExportDto[] exportSboms, [FromQuery] string fileType = "json")
     {
         if (exportSboms.Length == 0)
         {

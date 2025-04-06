@@ -7,6 +7,7 @@ import { TrivyTableComponent } from '../trivy-table/trivy-table.component'
 
 import { ExportColumn, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
 import { TrivyTableUtils } from '../utils/trivy-table.utils';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 
 @Component({
   selector: 'app-sbom-reports-detailed',
@@ -25,10 +26,19 @@ export class SbomReportsDetailedComponent {
   trivyTableOptions: TrivyTableOptions;
   public exportColumns: ExportColumn[];
 
-  constructor(private service: SbomReportService) {
+  constructor(private service: SbomReportService, private http: HttpClient) {
     this.getTableDataDtos();
 
     this.trivyTableColumns = [
+      {
+        field: 'resourceNamespace',
+        header: 'Namespace',
+        isFiltrable: true,
+        isSortable: true,
+        multiSelectType: 'namespaces',
+        style: 'width: 130px; max-width: 130px;',
+        renderType: 'standard',
+      },
       {
         field: 'imageName',
         header: 'Image Name',
@@ -63,15 +73,6 @@ export class SbomReportsDetailedComponent {
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 270px; max-width: 270px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'resourceNamespace',
-        header: 'Namespace',
-        isFiltrable: true,
-        isSortable: true,
-        multiSelectType: 'namespaces',
-        style: 'width: 130px; max-width: 130px;',
         renderType: 'standard',
       },
       {
@@ -136,7 +137,7 @@ export class SbomReportsDetailedComponent {
     ];
     this.trivyTableOptions = {
       isClearSelectionVisible: true,
-      isExportCsvVisible: false,
+      isExportCsvVisible: true,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
       isRefreshFiltrable: false,
@@ -147,7 +148,7 @@ export class SbomReportsDetailedComponent {
       dataKey: 'uid',
       rowExpansionRender: 'table',
       extraClasses: '',
-      multiHeaderAction: ["Info", "Dive In", "Export CycloneDX JSON", "Export CycloneDX XML"],
+      multiHeaderAction: ["Export All", "Export Selected"],
     };
     this.exportColumns = TrivyTableUtils.convertFromTableColumnToExportColumn(this.trivyTableColumns);
   }
@@ -170,7 +171,54 @@ export class SbomReportsDetailedComponent {
   }
 
   onTableSelectedRowChange(event: SbomReportImageDto[]) {
-
+    this.selectedDataDtos = event;
   }
 
+  onMultiHeaderActionRequested(event: string) {
+    switch (event) {
+      case "Export All":
+        this.exportSboms("all");
+        break;
+      case "Export Selected":
+        this.exportSboms("selected");
+        break;
+      default:
+        console.error("sbom detailed - multi action call back - unknown: " + event);
+    }
+  }
+
+  exportSboms(exporType: "all" | "selected") {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const params = new HttpParams().set('fileType', 'json');
+    const apiUrl = `${this.service.rootUrl}/api/sbom-reports/export`;
+
+    let sbomsExport: { namespaceName: string, digest: string }[] = []
+
+    if (exporType == "all") {
+      sbomsExport = this.dataDtos?.map(x => {
+        return { namespaceName: x.resourceNamespace ?? "", digest: x.imageDigest ?? "" }
+      }) ?? [];
+    }
+    else {
+      sbomsExport = this.selectedDataDtos?.map(x => {
+        return { namespaceName: x.resourceNamespace ?? "", digest: x.imageDigest ?? "" }
+      }) ?? [];
+    }
+
+    const httpReq = new HttpRequest("POST", apiUrl, sbomsExport, { headers: headers, params: params, responseType: 'blob' });
+
+    this.http.post(apiUrl, sbomsExport, { headers, params, responseType: 'blob' as 'json' }).subscribe({
+      next: (blob: any) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'generated.zip';
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error(`Error during the POST request:`, err);
+      }
+    });
+  }
 }
