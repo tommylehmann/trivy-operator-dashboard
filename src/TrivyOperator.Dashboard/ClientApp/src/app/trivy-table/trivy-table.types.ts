@@ -43,7 +43,8 @@ export interface TrivyTableColumn extends Column {
     | 'eosl'
     | 'semaphore'
     | 'multiline'
-    | 'action';
+    | 'action'
+    | 'boolean';
   extraFields?: string[];
 }
 

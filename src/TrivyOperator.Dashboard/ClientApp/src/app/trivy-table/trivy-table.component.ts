@@ -25,8 +25,12 @@ import {
   TrivyTableColumn,
   TrivyTableOptions,
 } from './trivy-table.types';
+
 import { CellRowArrayPipe } from '../pipes/cell-row-array.pipe';
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
+import { BooleanStylePipe } from '../pipes/boolean-style.pipe';
+import { CapitalizeFirstPipe } from '../pipes/capitalize-first.pipe';
+
 import { MenuItem } from 'primeng/api';
 
 @Component({
@@ -46,6 +50,8 @@ import { MenuItem } from 'primeng/api';
     TagModule,
     CellRowArrayPipe,
     VulnerabilityCountPipe,
+    BooleanStylePipe,
+    CapitalizeFirstPipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',

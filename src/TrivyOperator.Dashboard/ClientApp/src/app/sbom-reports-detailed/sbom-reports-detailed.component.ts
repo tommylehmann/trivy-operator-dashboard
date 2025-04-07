@@ -85,7 +85,7 @@ export class SbomReportsDetailedComponent {
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px;',
-        renderType: 'standard',
+        renderType: 'boolean',
       },
       {
         field: 'criticalCount',

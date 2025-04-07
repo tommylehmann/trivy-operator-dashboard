@@ -233,7 +233,12 @@
                     text
                     raised
                     (onClick)="onRowAction(rowData)"
-                    severity="contrast"/>
+                    severity="contrast" />
+          <p-tag *ngIf="col.renderType == 'boolean'"
+                 [icon]="'pi ' + (rowData[col.field] ? 'pi-verified' : 'pi-times-circle')"
+                 [rounded]="true"
+                 [style]="{ background: (rowData[col.field] | booleanStyle) }"
+                 [value]="rowData[col.field].toString() | capitalizeFirst" />
         </td>
       </tr>
     </ng-template>
