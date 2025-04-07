@@ -214,6 +214,21 @@ public class SbomReportService(
         }
     }
 
+    public void CleanupFile(string fileName)
+    {
+        try
+        {
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error deleting file - {exceptionMessage}", ex.Message);
+        }
+    }
+
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult(cache.Where(x => x.Value.Any()).Select(x => x.Key));
 

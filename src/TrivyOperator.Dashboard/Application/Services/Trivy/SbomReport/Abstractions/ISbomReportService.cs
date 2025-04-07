@@ -12,6 +12,7 @@ public interface ISbomReportService
     Task<CycloneDxBom?> GetCycloneDxBomByDigestNamespace(string digest, string namespaceName);
     Task<SpdxBom?> GetSpdxBomByDigestNamespace(string digest, string namespaceName);
     Task<string> CreateCycloneDxExportZipFile(SbomReportExportDto[] exportSboms, string fileType = "json");
+    void CleanupFile(string fileName);
     Task<IEnumerable<string>> GetActiveNamespaces();
     
 }

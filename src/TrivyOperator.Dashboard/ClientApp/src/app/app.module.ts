@@ -17,6 +17,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { SidebarModule } from 'primeng/sidebar';
 import { TagModule } from 'primeng/tag';
+import { MessageService } from 'primeng/api';
 
 import { initializeAppFactory, MainAppInitService } from './services/main-app-init.service';
 import { TrivyTableComponent } from './trivy-table/trivy-table.component';
@@ -181,6 +182,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     provideHttpClient(),
     MainAppInitService,
     Title,
+    MessageService,
     { provide: APP_INITIALIZER, useFactory: initializeAppFactory, deps: [MainAppInitService], multi: true },
   ],
   bootstrap: [AppComponent],

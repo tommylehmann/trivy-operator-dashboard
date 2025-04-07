@@ -21,6 +21,7 @@ public class SbomReportNullService : ISbomReportService
         Task.FromResult<SpdxBom?>(null);
     public Task<string> CreateCycloneDxExportZipFile(SbomReportExportDto[] exportSboms, string fileType = "json") =>
         Task.FromResult(string.Empty);
+    public void CleanupFile(string fileName) { }
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult<IEnumerable<string>>([]);
 }

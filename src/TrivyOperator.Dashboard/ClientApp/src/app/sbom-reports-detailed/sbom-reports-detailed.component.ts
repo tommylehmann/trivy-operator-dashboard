@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 
 import { SbomReportService } from '../../api/services';
 import { SbomReportImageDto } from '../../api/models';
 
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component'
-
 import { ExportColumn, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
 import { TrivyTableUtils } from '../utils/trivy-table.utils';
-import { HttpClient, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
+
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+
 
 @Component({
   selector: 'app-sbom-reports-detailed',
   standalone: true,
-  imports: [TrivyTableComponent],
+  imports: [TrivyTableComponent, ToastModule],
   templateUrl: './sbom-reports-detailed.component.html',
   styleUrl: './sbom-reports-detailed.component.scss'
 })
@@ -26,7 +29,7 @@ export class SbomReportsDetailedComponent {
   trivyTableOptions: TrivyTableOptions;
   public exportColumns: ExportColumn[];
 
-  constructor(private service: SbomReportService, private http: HttpClient) {
+  constructor(private service: SbomReportService, private http: HttpClient, private messageService: MessageService) {
     this.getTableDataDtos();
 
     this.trivyTableColumns = [
@@ -188,6 +191,11 @@ export class SbomReportsDetailedComponent {
   }
 
   exportSboms(exporType: "all" | "selected") {
+    this.messageService.add({
+      severity: "info",
+      summary: "Download SBOMs",
+      detail: "Download request sent. Please wait...",
+    })
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const params = new HttpParams().set('fileType', 'json');
     const apiUrl = `${this.service.rootUrl}/api/sbom-reports/export`;

@@ -89,6 +89,13 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
 
         var stream = new FileStream(zipFilename, FileMode.Open, FileAccess.Read);
 
+        HttpContext.Response.OnCompleted(() =>
+        {
+            sbomReportService.CleanupFile(zipFilename);
+
+            return Task.CompletedTask;
+        });
+
         return File(stream, "application/zip", zipFilename);
     }
 
