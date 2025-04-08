@@ -1,4 +1,5 @@
-﻿using k8s.Models;
+﻿using k8s;
+using k8s.Models;
 using TrivyOperator.Dashboard.Application.Services.Alerts;
 using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.BackendSettings;
@@ -8,6 +9,8 @@ using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions
 using TrivyOperator.Dashboard.Application.Services.CacheRefresh;
 using TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.AppVersions;
+using TrivyOperator.Dashboard.Application.Services.AppVersions.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Namespaces;
 using TrivyOperator.Dashboard.Application.Services.Namespaces.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
@@ -332,20 +335,21 @@ public static class BuilderServicesExtensions
 
     public static void AddCommons(
         this IServiceCollection services,
-        IConfiguration queuesConfiguration,
-        IConfiguration kubernetesConfiguration,
-        IConfiguration watchersConfiguration,
-        IConfiguration fileExportConfiguration)
+        IConfiguration configuration)
     {
-        services.Configure<BackgroundQueueOptions>(queuesConfiguration);
-        services.Configure<KubernetesOptions>(kubernetesConfiguration);
-        services.Configure<WatchersOptions>(watchersConfiguration);
-        services.Configure<FileExportOptions>(fileExportConfiguration);
+        services.Configure<BackgroundQueueOptions>(configuration.GetSection("Queues"));
+        services.Configure<KubernetesOptions>(configuration.GetSection("Kubernetes"));
+        services.Configure<WatchersOptions>(configuration.GetSection("Watchers"));
+        services.Configure<FileExportOptions>(configuration.GetSection("FileExport"));
+        services.Configure<GitHubOptions>(configuration.GetSection("GitHub"));
 
         services.AddHostedService<CacheWatcherEventHandlerHostedService>();
         services.AddHostedService<WatcherStateCacheTimedHostedService>();
 
         services.AddSingleton<IKubernetesClientFactory, KubernetesClientFactory>();
+        
+        services.AddSingleton<IGitHubClient, GitHubClient>();
+        services.AddScoped<IAppVersionService, AppVersionService>();
     }
 
     public static void AddUiCommons(this IServiceCollection services) =>

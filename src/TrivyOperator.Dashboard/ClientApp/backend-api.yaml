@@ -29,6 +29,104 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+  /api/app-versions:
+    get:
+      tags:
+        - AppVersion
+      operationId: GetGitHubVersions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GitHubRelease'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /api/app-versions/latest:
+    get:
+      tags:
+        - AppVersion
+      operationId: GetGitHubLatestVersion
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitHubRelease'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /api/app-versions/trivy-operator-latest:
+    get:
+      tags:
+        - AppVersion
+      operationId: GetTrivyOperatorGitHubLatestVersion
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitHubRelease'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /api/app-versions/current-version:
+    get:
+      tags:
+        - AppVersion
+      operationId: GetCurrentVersion
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /api/backend-settings:
     get:
       tags:
@@ -853,17 +951,17 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/StringStringValueTuple'
+                $ref: '#/components/schemas/SbomReportExportDto'
           text/json:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/StringStringValueTuple'
+                $ref: '#/components/schemas/SbomReportExportDto'
           application/*+json:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/StringStringValueTuple'
+                $ref: '#/components/schemas/SbomReportExportDto'
       responses:
         '200':
           description: OK
@@ -2177,6 +2275,25 @@ components:
           type: integer
           format: int32
       additionalProperties: false
+    GitHubRelease:
+      type: object
+      properties:
+        tag_name:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        body:
+          type: string
+          nullable: true
+        url:
+          type: string
+          nullable: true
+        published_at:
+          type: string
+          format: date-time
+      additionalProperties: false
     ProblemDetails:
       type: object
       properties:
@@ -2387,6 +2504,16 @@ components:
             $ref: '#/components/schemas/SbomReportDetailDto'
           nullable: true
       additionalProperties: false
+    SbomReportExportDto:
+      type: object
+      properties:
+        namespaceName:
+          type: string
+          nullable: true
+        digest:
+          type: string
+          nullable: true
+      additionalProperties: false
     SbomReportImageDto:
       type: object
       properties:
@@ -2553,9 +2680,6 @@ components:
         relatedSpdxElement:
           type: string
           nullable: true
-      additionalProperties: false
-    StringStringValueTuple:
-      type: object
       additionalProperties: false
     VRSeveritiesByNsSummaryDetailDto:
       type: object

@@ -12,13 +12,10 @@ using TrivyOperator.Dashboard.Utils;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
+const string applicationName = "TrivyOperator.Dashboard";
+
 Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
-const string applicationName = "TrivyOperator.Dashboard";
-const string queuesConfigurationSectionKey = "Queues";
-const string kubernetesConfigurationSectionKey = "Kubernetes";
-const string watchersConfigurationSectionKey = "Watchers";
-const string fileExportConfigurationSectionKey = "FileExport";
 WebApplicationBuilder builder = WebApplication.CreateBuilder(
     new WebApplicationOptions
     {
@@ -75,23 +72,19 @@ builder.Services.AddCors(
             .AllowAnyMethod()
             .AllowCredentials()));
 
-builder.Services.AddCommons(
-    configuration.GetSection(queuesConfigurationSectionKey),
-    configuration.GetSection(kubernetesConfigurationSectionKey),
-    configuration.GetSection(watchersConfigurationSectionKey),
-    configuration.GetSection(fileExportConfigurationSectionKey));
+builder.Services.AddCommons(configuration);
 builder.Services.AddDomainServices();
 builder.Services.AddAlertsServices();
 builder.Services.AddWatcherStateServices();
-builder.Services.AddV1NamespaceServices(configuration.GetSection(kubernetesConfigurationSectionKey));
-builder.Services.AddClusterRbacAssessmentReportServices(configuration.GetSection(kubernetesConfigurationSectionKey));
-builder.Services.AddConfigAuditReportServices(configuration.GetSection(kubernetesConfigurationSectionKey));
-builder.Services.AddExposedSecretReportServices(configuration.GetSection(kubernetesConfigurationSectionKey));
-builder.Services.AddVulnerabilityReportServices(configuration.GetSection(kubernetesConfigurationSectionKey));
-builder.Services.AddClusterComplianceReportServices(configuration.GetSection(kubernetesConfigurationSectionKey));
-builder.Services.AddClusterVulnerabilityReportServices(configuration.GetSection(kubernetesConfigurationSectionKey));
-builder.Services.AddRbacAssessmentReportServices(configuration.GetSection(kubernetesConfigurationSectionKey));
-builder.Services.AddSbomReportServices(configuration.GetSection(kubernetesConfigurationSectionKey));
+builder.Services.AddV1NamespaceServices(configuration.GetSection("Kubernetes"));
+builder.Services.AddClusterRbacAssessmentReportServices(configuration.GetSection("Kubernetes"));
+builder.Services.AddConfigAuditReportServices(configuration.GetSection("Kubernetes"));
+builder.Services.AddExposedSecretReportServices(configuration.GetSection("Kubernetes"));
+builder.Services.AddVulnerabilityReportServices(configuration.GetSection("Kubernetes"));
+builder.Services.AddClusterComplianceReportServices(configuration.GetSection("Kubernetes"));
+builder.Services.AddClusterVulnerabilityReportServices(configuration.GetSection("Kubernetes"));
+builder.Services.AddRbacAssessmentReportServices(configuration.GetSection("Kubernetes"));
+builder.Services.AddSbomReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddUiCommons();
 
 WebApplication app = builder.Build();
@@ -139,7 +132,7 @@ static IConfiguration CreateConfiguration()
         .AddEnvironmentVariables();
     IConfiguration configuration = configurationBuilder.Build();
 
-    string? tempFolder = configuration.GetSection(fileExportConfigurationSectionKey)["TempFolder"];
+    string? tempFolder = configuration.GetSection("FileExport")["TempFolder"];
     if (string.IsNullOrEmpty(tempFolder))
     {
         var inMemorySettings = new Dictionary<string, string?>
