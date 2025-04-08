@@ -17,6 +17,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { SidebarModule } from 'primeng/sidebar';
 import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
 import { initializeAppFactory, MainAppInitService } from './services/main-app-init.service';
@@ -175,6 +176,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     PanelMenuModule,
     SidebarModule,
     TagModule,
+    ToastModule,
     TrivyTableComponent,
     FontAwesomeModule,
   ],

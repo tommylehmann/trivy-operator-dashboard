@@ -9,13 +9,12 @@ import { ExportColumn, TrivyTableColumn, TrivyTableOptions } from '../trivy-tabl
 import { TrivyTableUtils } from '../utils/trivy-table.utils';
 
 import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 
 
 @Component({
   selector: 'app-sbom-reports-detailed',
   standalone: true,
-  imports: [TrivyTableComponent, ToastModule],
+  imports: [TrivyTableComponent],
   templateUrl: './sbom-reports-detailed.component.html',
   styleUrl: './sbom-reports-detailed.component.scss'
 })
