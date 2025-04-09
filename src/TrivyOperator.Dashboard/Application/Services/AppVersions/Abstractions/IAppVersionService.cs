@@ -1,4 +1,5 @@
-﻿using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
+﻿using TrivyOperator.Dashboard.Application.Models;
+using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
 
 namespace TrivyOperator.Dashboard.Application.Services.AppVersions.Abstractions;
 public interface IAppVersionService
@@ -6,4 +7,5 @@ public interface IAppVersionService
     Task<GitHubRelease?> GetTrivyDashboardLatestRelease();
     Task<GitHubRelease[]?> GetTrivyDashboardReleases();
     Task<GitHubRelease?> GetTrivyOperatorLatestRelease();
+    AppVersion GetCurrentVersion();
 }

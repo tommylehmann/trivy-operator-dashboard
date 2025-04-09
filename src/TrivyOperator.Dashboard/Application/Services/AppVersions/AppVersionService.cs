@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+using System.Reflection;
+using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.AppVersions.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -36,5 +38,15 @@ public class AppVersionService(IGitHubClient gitHubClient, IOptions<GitHubOption
             logger.LogWarning("Failed to fetch the latest release from GitHub.");
         }
         return release;
+    }
+
+    public AppVersion GetCurrentVersion()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+
+        return new AppVersion {
+            FileVersion = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.0",
+            InformationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "0.0",
+        };
     }
 }

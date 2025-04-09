@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.AppVersions.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
 using YamlDotNet.Core.Tokens;
@@ -37,12 +38,12 @@ public class AppVersionController(IAppVersionService appVersionService)
     }
 
     [HttpGet("current-version", Name = "GetCurrentVersion")]
-    [ProducesResponseType<string>(StatusCodes.Status200OK)]
+    [ProducesResponseType<AppVersion>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    public Task<string> GetCurrentAppVersion()
+    public AppVersion GetCurrentAppVersion()
     {
-        return Task.FromResult("v1.2");
+        return appVersionService.GetCurrentVersion();
     }
 
     // TODO - proper error handling with Task<IActionResult>

@@ -5,20 +5,24 @@ import { MarkdownModule } from 'ngx-markdown';
 import { provideMarkdown } from 'ngx-markdown';
 import { CardModule } from 'primeng/card';
 import { PanelModule } from 'primeng/panel';
+import { TagModule} from 'primeng/tag'
 
 import { AppVersionService } from '../../api/services/app-version.service';
 import { GitHubRelease } from '../../api/models/git-hub-release';
+import { AppVersion } from '../../api/models/app-version'
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, MarkdownModule, CardModule, PanelModule],
+  imports: [CommonModule, MarkdownModule, CardModule, PanelModule, TagModule],
   providers: [provideMarkdown()],
   templateUrl: './about.component.html',
   styleUrl: './about.component.scss',
 })
 export class AboutComponent {
   releaseNotes?: GitHubRelease[];
+  currentVersion?: AppVersion;
+  newVersionAvailable: boolean = false;
 
   constructor(private service: AppVersionService) {
     this.getReleaseNotesDtos();
@@ -29,9 +33,40 @@ export class AboutComponent {
       next: (res) => this.onReleaseNoteDtos(res),
       error: (err) => console.error(err),
     });
+    this.service.getCurrentVersion().subscribe({
+      next: (res) => this.onCurrentVersion(res),
+      error: (err) => console.error(err),
+    });
   }
 
   private onReleaseNoteDtos(data: GitHubRelease[]) {
     this.releaseNotes = data;
+    this.checkNewVersionAvailable();
+  }
+
+  private onCurrentVersion(data: AppVersion) {
+    this.currentVersion = data;
+    this.checkNewVersionAvailable();
+  }
+
+  private parseVersion(version: string): number {
+    const parts = version.replace('v', '').split('.');
+
+    const x = parseInt(parts[0], 10) || 0;
+    const y = parseInt(parts[1], 10) || 0;
+    const z = parseInt(parts[2], 10) || 0;
+
+    return x * 10000 + y * 100 + z;
+  }
+
+  private checkNewVersionAvailable() {
+    if (!this.currentVersion || !this.releaseNotes || !this.releaseNotes[0]) {
+      return;
+    }
+
+    const parsedCurrentVersion = this.parseVersion(this.currentVersion.fileVersion ?? "0.0");
+    const parsedLastVersion = this.parseVersion(this.releaseNotes[0].tag_name ?? "0.0");
+
+    this.newVersionAvailable = parsedLastVersion - parsedCurrentVersion > 0;
   }
 }
