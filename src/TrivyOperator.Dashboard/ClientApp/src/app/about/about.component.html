@@ -6,29 +6,35 @@
       <div style="width: 300px" class="col-fixed">
         <img src="assets/logo.blurred.png" style="width: 100%" />
       </div>
-      <div class="col">
-        <h5>Intro</h5>
-        <p>
-          Welcome to the Trivy Operator Dashboard, a comprehensive security management tool for Kubernetes environments.
-          Built on top of the powerful Trivy Operator from Aqua Security, this dashboard provides insights into your
-          cluster's security posture. It offers detailed insights on vulnerability scans, policy validation scans and
-          other ones. With an intuitive and user-friendly interface, you can easily monitor, detect, and respond to
-          security threats, ensuring your Kubernetes environment remains robust and secure.
-        </p>
+      <div class="col-12 md:col grid">
+        <div class="col-12 lg:col-6 xl:col-8">
+          <h5>Intro</h5>
+          <p>
+            Welcome to the Trivy Operator Dashboard, a comprehensive security management tool for Kubernetes environments.
+            Built on top of the powerful Trivy Operator from Aqua Security, this dashboard provides insights into your
+            cluster's security posture. It offers detailed insights on vulnerability scans, policy validation scans and
+            other ones. With an intuitive and user-friendly interface, you can easily monitor, detect, and respond to
+            security threats, ensuring your Kubernetes environment remains robust and secure.
+          </p>
+        </div>
+        <div class="col-12 lg:col-6 xl:col-4">
+          <h5>Features</h5>
+          <ul>
+            <li>Vulnerability Reports</li>
+            <li>Config Audit Reports</li>
+            <li>Cluster RBAC Assessment Reports</li>
+            <li>Exposed Secret Reports</li>
+            <li>Cluster Compliance Reports</li>
+            <li>Cluster Vulnerability Reports</li>
+            <li>RBAC Assessment Reports</li>
+            <li>SBOM Reports</li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class="grid">
       <div class="col">
-        <h5>Features</h5>
-        <ul>
-          <li>Vulnerability Reports</li>
-          <li>Config Audit Reports</li>
-          <li>Cluster RBAC Assessment Reports</li>
-          <li>Exposed Secret Reports</li>
-          <li>Cluster Compliance Reports</li>
-          <li>Cluster Vulnerability Reports</li>
-          <li>RBAC Assessment Reports</li>
-        </ul>
+        
         <p>
           All of them consists in dashboards (for view on a glance), browse and inspect findings (with table filters,
           sorts), export data.
@@ -37,7 +43,20 @@
         <p>More info on <a href="https://github.com/raoulx24/work.trivy">GitHub page</a>.</p>
       </div>
     </div>
-  </p-panel>
+    <div *ngIf="releaseNotes">
+      <h2>Release Notes</h2>
+      <div class="grid align-items-start md:align-items-stretch">
+        <div *ngFor="let releaseNote of releaseNotes; let i = index"
+             class="col-12 md:col-6 lg:col-4 xl:col-3">
+          <p-card class="h-full"
+                  [header]="releaseNote.name ?? ''"
+                  subheader="{{ releaseNote.created_at ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
+            <markdown [data]="releaseNote.body ?? ''"></markdown>
+          </p-card>
+        </div>
+      </div>
+    </div>
+</p-panel>
 </div>
 
 <p-panel header="Trivy Operator" [toggleable]="true">

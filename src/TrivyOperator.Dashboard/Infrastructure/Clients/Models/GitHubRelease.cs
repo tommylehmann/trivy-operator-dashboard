@@ -13,5 +13,7 @@ public class GitHubRelease
     [JsonPropertyName("url")]
     public string? HtmlUrl { get; set; }
     [JsonPropertyName("published_at")]
-    public DateTimeOffset PublishedAt { get; set; }
+    public DateTime PublishedAt { get; set; }
+    [JsonPropertyName("created_at")]
+    public DateTime CreatedAt { get; set; }
 }

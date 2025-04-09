@@ -42,7 +42,7 @@ public class AppVersionController(IAppVersionService appVersionService)
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
     public Task<string> GetCurrentAppVersion()
     {
-        return Task.FromResult("v1.4");
+        return Task.FromResult("v1.2");
     }
 
     // TODO - proper error handling with Task<IActionResult>
