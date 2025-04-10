@@ -5,7 +5,7 @@
         <img src="assets/logo.blurred.png" style="width: 100%" />
       </div>
       <div class="col-12 md:col grid">
-        <div class="col-12 lg:col-6 xl:col-8">
+        <div class="col-12 xl:col-6">
           <h4>Intro</h4>
           <p>
             Welcome to the Trivy Operator Dashboard, a comprehensive security management tool for Kubernetes environments.
@@ -14,8 +14,14 @@
             other ones. With an intuitive and user-friendly interface, you can easily monitor, detect, and respond to
             security threats, ensuring your Kubernetes environment remains robust and secure.
           </p>
+          <p>
+            All features consist in dashboards (for view on a glance), browse and inspect findings (with table filters,
+            sorts), export data.
+          </p>
+          <p>This app is fully operational, with new features currently in development. Stay tuned for more updates!</p>
+          <p>More info on <a href="https://github.com/raoulx24/work.trivy">GitHub page</a>.</p>
         </div>
-        <div class="col-12 lg:col-6 xl:col-4">
+        <div class="col-12 md:col-6 xl:col-3">
           <h4>Features</h4>
           <ul>
             <li>Vulnerability Reports</li>
@@ -28,25 +34,22 @@
             <li>SBOM Reports</li>
           </ul>
         </div>
+        <div class="col-12 md:col-6 xl:col-3">
+          <h4>Version Info</h4>
+          <div class="p-1">
+            <span>Current Version:</span>
+            <p-tag class="p-2" [rounded]="true" [value]="currentVersion ? (currentVersion.fileVersion ?? 'n/a') : 'n/a'" />
+          </div>
+          <div class="p-1">
+            <span>Latest Version:</span>
+            <p-tag class="p-2" [rounded]="true" [value]=" releaseNotes ? (releaseNotes[0].tag_name ?? 'n/a') : 'n/a'" />
+          </div>
+          <div class="p-1">
+            <p-tag *ngIf="newVersionAvailable" [rounded]="true" value="New version available!" icon="pi pi-info-circle" severity="info" />
+          </div>
+        </div>
       </div>
     </div>
-    <div class="grid">
-      <div class="col">
-        <p>
-          All of them consists in dashboards (for view on a glance), browse and inspect findings (with table filters,
-          sorts), export data.
-        </p>
-        <p>This app is fully operational, with new features currently in development. Stay tuned for more updates!</p>
-        <p>More info on <a href="https://github.com/raoulx24/work.trivy">GitHub page</a>.</p>
-      </div>
-    </div>
-    <h3>Version Info</h3>
-
-    <span>Current Version:</span>
-    <p-tag class="p-2" [rounded]="true" [value]="currentVersion ? (currentVersion.fileVersion ?? 'n/a') : 'n/a'" />
-    <span>Latest Version:</span>
-    <p-tag class="p-2" [rounded]="true" [value]=" releaseNotes ? (releaseNotes[0].tag_name ?? 'n/a') : 'n/a'" />
-    <p-tag *ngIf="newVersionAvailable" class="p-4" [rounded]="true" value="New version available!" icon="pi pi-info-circle" severity="danger"/>
     <div *ngIf="releaseNotes">
       <h2>Release Notes</h2>
       <div class="grid align-items-start md:align-items-stretch">
