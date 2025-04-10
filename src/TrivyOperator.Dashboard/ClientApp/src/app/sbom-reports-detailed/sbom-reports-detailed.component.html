@@ -9,4 +9,7 @@
                  [trivyTableOptions]="trivyTableOptions"
                  (refreshRequested)="getTableDataDtos()"
                  (selectedRowsChanged)="onTableSelectedRowChange($event)"
-                 (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)"/>
+                 (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)" />
+
+<!--[trivyExpandTableFunction]="dependsOnTableExpandCellOptions"
+[trivyExpandTableOptions]="dependsOnTableExpandTableOptions"-->

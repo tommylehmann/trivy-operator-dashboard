@@ -5,7 +5,7 @@ import { SbomReportService } from '../../api/services';
 import { SbomReportImageDto } from '../../api/models';
 
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component'
-import { ExportColumn, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import { ExportColumn, TrivyExpandTableOptions, TrivyTableCellCustomOptions, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
 import { TrivyTableUtils } from '../utils/trivy-table.utils';
 
 import { MessageService } from 'primeng/api';
@@ -26,6 +26,7 @@ export class SbomReportsDetailedComponent {
 
   trivyTableColumns: TrivyTableColumn[] = [];
   trivyTableOptions: TrivyTableOptions;
+  //dependsOnTableExpandTableOptions: TrivyExpandTableOptions<SbomReportImageDto> = new TrivyExpandTableOptions(false, 2, 0, this.getPropertiesCount);
   public exportColumns: ExportColumn[];
 
   constructor(private service: SbomReportService, private http: HttpClient, private messageService: MessageService) {
@@ -147,8 +148,9 @@ export class SbomReportsDetailedComponent {
       tableSelectionMode: 'multiple',
       tableStyle: { width: '1920px' },
       stateKey: 'SBOM Reports - Detailed',
-      dataKey: 'uid',
-      rowExpansionRender: 'table',
+      //dataKey: 'uid',
+      dataKey: null,
+      rowExpansionRender: null,
       extraClasses: '',
       multiHeaderAction: ["Export All", "Export Selected"],
     };
@@ -228,4 +230,43 @@ export class SbomReportsDetailedComponent {
       }
     });
   }
+
+  // # region table expand row
+  //getPropertiesCount(data: SbomReportImageDto): number {
+  //  return data.details?.[0]?.properties?.length ?? 0;
+  //}
+
+  //dependsOnTableExpandCellOptions(
+  //  dto: SbomReportImageDto,
+  //  type: 'header' | 'row',
+  //  colIndex: number,
+  //  rowIndex?: number,
+  //): TrivyTableCellCustomOptions {
+  //  rowIndex ?? 0;
+  //  let celValue: string = '';
+  //  let celStyle: string = '';
+  //  let celBadge: string | undefined;
+  //  let celButtonLink: string | undefined;
+  //  let celUrl: string | undefined;
+
+  //  switch (colIndex) {
+  //    case 0:
+  //      celStyle = 'width: 70px; min-width: 70px; height: 50px';
+  //      celValue = dto.details?.[0]?.properties?.[rowIndex ?? 0]?.[0] ?? "";
+  //      break;
+  //    case 1:
+  //      celStyle = 'white-space: normal; display: flex; align-items: center; height: 50px;';
+  //      celValue = dto.details?.[0]?.properties?.[rowIndex ?? 0]?.[1] ?? "";
+  //      break;
+  //  }
+
+  //  return {
+  //    value: celValue,
+  //    style: celStyle,
+  //    badge: celBadge,
+  //    buttonLink: celButtonLink,
+  //    url: celUrl,
+  //  };
+  //}
+  // #endregion
 }
