@@ -220,8 +220,9 @@ export class SbomReportsDetailedComponent {
       next: (blob: any) => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
+        const datetimeutc = new Date().toISOString().replace(/:/g, '.').replace('T', '-').slice(0, 19);;
         link.href = url;
-        link.download = 'generated.zip';
+        link.download = `sboms.exports.${datetimeutc}.zip`;
         link.click();
         window.URL.revokeObjectURL(url);
       },
