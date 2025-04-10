@@ -965,6 +965,11 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
         '400':
           description: Bad Request
           content:

@@ -71,7 +71,7 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
 
     [HttpPost("export", Name = "ExportSbomReport")]
     [Produces("application/zip")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<FileStreamResult>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Export([FromBody] SbomReportExportDto[] exportSboms, [FromQuery] string fileType = "json")
