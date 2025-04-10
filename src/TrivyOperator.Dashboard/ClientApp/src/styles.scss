@@ -62,3 +62,12 @@ p-splitbutton.text-sm {
     font-size: 14px;
   }
 }
+
+@media (min-width: 1400px) {
+  @for $i from 1 through 12 {
+    .xxl\:col-#{$i} {
+      flex: 0 0 auto;
+      width: calc(100% / 12 * #{$i});
+    }
+  }
+}

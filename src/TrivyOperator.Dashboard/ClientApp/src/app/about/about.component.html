@@ -51,11 +51,11 @@
       </div>
     </div>
     <div *ngIf="releaseNotes">
-      <h2>Release Notes</h2>
+      <h3>Release Notes</h3>
       <div class="grid align-items-start md:align-items-stretch">
         <div *ngFor="let releaseNote of releaseNotes; let i = index"
              class="col-12 md:col-6 lg:col-4 xl:col-3">
-          <p-card class="h-full"
+          <p-card class="h-full small-header"
                   [ngClass]="{'p-card-bold-subtitle': i === 0}"
                   [header]="releaseNote.name ?? ''"
                   subheader="{{ releaseNote.created_at ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
@@ -67,74 +67,125 @@
   </p-panel>
 </div>
 
-<p-panel header="Trivy Operator" [toggleable]="true">
-  <div class="grid">
-    <div style="width: 300px" class="col-fixed">
-      <img src="assets/trivy-operator-logo.png" style="width: 100%; filter: invert(1)" />
+<p-panel header="Credits AKA Powered By" [toggleable]="true">
+  <h4>Acknowledging the Building Blocks Behind the App</h4>
+  <div class="grid align-items-stretch">
+    <div class="col-4 md:col-3 lg:col-2 xl:col-1">
+      <p-card class="h-full small-header"
+              header="Trivy Operator">
+        <div class="grid">
+          <div class="col-12">
+            <img src="assets/trivy-operator-logo.png" alt="Trivy Operator Logo" class="w-full" />
+          </div>
+          <div class="col-12 text-left">
+            <div class="mt-2">
+              <a href="https://trivy.dev/latest/" target="_blank" class="link">Home</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/aquasecurity/trivy-operator" target="_blank" class="link">GitHub</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://aquasecurity.github.io/trivy-operator/latest/" target="_blank" class="link">Docs</a>
+            </div>
+          </div>
+        </div>
+      </p-card>
     </div>
-    <div class="col">
-      <h5>Intro</h5>
-      <p>
-        The Trivy Operator leverages <a href="https://github.com/aquasecurity/trivy">Trivy</a> to continuously scan your
-        Kubernetes cluster for security issues. The scans are summarised in security reports as Kubernetes
-        <a href="https://aquasecurity.github.io/trivy-operator/latest/docs/crds/">Custom Resource Definitions</a>, which
-        become accessible through the Kubernetes API. The Operator does this by watching Kubernetes for state changes
-        and automatically triggering security scans in response. For example, a vulnerability scan is initiated when a
-        new Pod is created. This way, users can find and view the risks that relate to different resources in a
-        <code>Kubernetes-native</code>
-        way.
-      </p>
+    <div class="col-4 md:col-3 lg:col-2 xl:col-1">
+      <p-card class="h-full small-header"
+              header=".net 8">
+        <div class="grid">
+          <div class="col-12">
+            <img src="assets/net8.png" alt="dot net 8 Logo" class="w-full" />
+          </div>
+          <div class="col-12 text-left">
+            <div class="mt-2">
+              <a href="https://dotnet.microsoft.com/en-us/" target="_blank" class="link">Home</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/dotnet/core" target="_blank" class="link">GitHub</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://learn.microsoft.com/en-us/dotnet/" target="_blank" class="link">Docs</a>
+            </div>
+          </div>
+        </div>
+      </p-card>
     </div>
-  </div>
-  <div class="grid">
-    <div class="col">
-      <h5>In-cluster Security Scans</h5>
-      <p>
-        The Trivy Operator automatically generates and updates security reports. These reports are generated in response
-        to new workload and other changes on a Kubernetes cluster, generating the following reports:
-      </p>
-      <ul>
-        <li>Vulnerability Scans: Automated vulnerability scanning for Kubernetes workloads.</li>
-        <li>
-          ConfigAudit Scans: Automated configuration audits for Kubernetes resources with predefined rules or custom
-          Open Policy Agent (OPA) policies.
-        </li>
-        <li>
-          Exposed Secret Scans: Automated secret scans which find and detail the location of exposed Secrets within your
-          cluster.
-        </li>
-        <li>
-          RBAC scans: Role Based Access Control scans provide detailed information on the access rights of the different
-          resources installed.
-        </li>
-        <li>
-          K8s core component infra assessment scan Kubernetes infra core components
-          (etcd,apiserver,scheduler,controller-manager and etc) setting and configuration.
-        </li>
-        <li>
-          k8s outdated api validation - a configaudit check will validate if the resource api has been deprecated and
-          planned for removal
-        </li>
-        <li>Compliance reports</li>
-        <li>NSA, CISA Kubernetes Hardening Guidance v1.1 cybersecurity technical report is produced.</li>
-        <li>CIS Kubernetes Benchmark v1.23 cybersecurity technical report is produced.</li>
-        <li>Kubernetes pss-baseline, Pod Security Standards</li>
-        <li>Kubernetes pss-restricted, Pod Security Standards</li>
-        <li>SBOM (Software Bill of Materials generations) for Kubernetes workloads.</li>
-      </ul>
-      <h5 id="usage">Usage</h5>
-      <p>
-        The official <a href="https://aquasecurity.github.io/trivy-operator/latest">Documentation</a> provides detailed
-        installation, configuration, troubleshooting, and quick start guides.
-      </p>
-      <p>
-        You can install the Trivy-operator Operator with
-        <a href="https://aquasecurity.github.io/trivy-operator/latest/getting-started/installation/kubectl/">
-          Static YAML Manifests
-        </a>
-        and follow the <a href="https://aquasecurity.github.io/trivy-operator/latest/">Getting Started</a> guide to see
-        how vulnerability and configuration audit reports are generated automatically.
-      </p>
+    <div class="col-4 md:col-3 lg:col-2 xl:col-1">
+      <p-card class="h-full small-header"
+              header="Angular">
+        <div class="grid">
+          <div class="col-12">
+            <img src="assets/angular-js.png" alt="angular 18 Logo" class="w-full" />
+          </div>
+          <div class="col-12 text-left">
+            <div class="mt-2">
+              <a href="https://angular.dev/" target="_blank" class="link">Home</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/angular/angular" target="_blank" class="link">GitHub</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://angular.dev/overview" target="_blank" class="link">Docs</a>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+    <div class="col-4 md:col-3 lg:col-2 xl:col-1">
+      <p-card class="h-full small-header"
+              header="PrimeNG">
+        <div class="grid">
+          <div class="col-12">
+            <img src="assets/primeng.png" alt="PrimeNG Logo" class="w-full" />
+          </div>
+          <div class="col-12 text-left">
+            <div class="mt-2">
+              <a href="https://primeng.org/" target="_blank" class="link">Home</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/primefaces/primeng" target="_blank" class="link">GitHub</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://primeng.org/installation" target="_blank" class="link">Docs</a>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+    <div class="col-8 md:col-6 lg:col-3 xl:col-2">
+      <p-card class="h-full small-header"
+              header="Others">
+        <div class="grid">
+          <div class="col-12 text-left">
+            <div class="-ml-1">
+              <b>Frontend</b>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/cytoscape/cytoscape" target="_blank" class="link">Cytoscape</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/iVis-at-Bilkent/cytoscape.js-fcose" target="_blank" class="link">fCoSE</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/chartjs" target="_blank" class="link">Chart.js</a>
+            </div>
+            <div class="mt-3 -ml-1">
+              <b>Backend</b>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/kubernetes-client/csharp" target="_blank" class="link">Kubernetes C# Client</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/serilog/serilog" target="_blank" class="link">Serilog</a>
+            </div>
+            <div class="mt-2">
+              <a href="https://github.com/open-telemetry/opentelemetry-collector" target="_blank" class="link">OpenTelemetry</a>
+            </div>
+          </div>
+        </div>
+      </p-card>
     </div>
   </div>
 </p-panel>
