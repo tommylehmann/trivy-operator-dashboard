@@ -7,21 +7,21 @@ export type SeverityColorByNameOption = "all" | "greyNulls" | "greyBelowOne" | "
 })
 
 export class SettingsService {
-  private _severityColorByNameOptionDefault: SeverityColorByNameOption = "greyBelowOne";
-  private _severityColorByNameOption: SeverityColorByNameOption | null = null;
-  severityColorByNameOptions: ReadonlyArray<SeverityColorByNameOption> = ["all", "greyNulls", "greyBelowOne", "hideNonPositive"];
+  private _severityCssStyleByIdOptionDefault: SeverityColorByNameOption = "greyBelowOne";
+  private _severityCssStyleByIdOption: SeverityColorByNameOption | null = null;
+  severityCssStyleByIdOptions: ReadonlyArray<SeverityColorByNameOption> = ["all", "greyNulls", "greyBelowOne", "hideNonPositive"];
 
-  get severityColorByNameOption(): SeverityColorByNameOption {
-    if (!this._severityColorByNameOption) {
-      this._severityColorByNameOption =
-        (localStorage.getItem("severityColorByNameOption") as SeverityColorByNameOption) ?? this._severityColorByNameOptionDefault;
+  get severityCssStyleByIdOption(): SeverityColorByNameOption {
+    if (!this._severityCssStyleByIdOption) {
+      this._severityCssStyleByIdOption =
+        (localStorage.getItem("severityCssStyleByIdOption") as SeverityColorByNameOption) ?? this._severityCssStyleByIdOptionDefault;
     }
 
-    return this._severityColorByNameOption;
+    return this._severityCssStyleByIdOption;
   }
 
-  set severityColorByNameOption(value: SeverityColorByNameOption) {
-    this._severityColorByNameOption = value;
-    localStorage.setItem("severityColorByNameOption", value);
+  set severityCssStyleByIdOption(value: SeverityColorByNameOption) {
+    this._severityCssStyleByIdOption = value;
+    localStorage.setItem("severityCssStyleByIdOption", value);
   }
 }

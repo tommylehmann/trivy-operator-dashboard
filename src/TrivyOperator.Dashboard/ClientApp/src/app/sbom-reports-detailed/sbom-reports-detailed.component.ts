@@ -95,7 +95,7 @@ export class SbomReportsDetailedComponent {
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
         renderType: 'severityValue',
-        extraFields: ['CRITICAL'],
+        extraFields: ['0'],
       },
       {
         field: 'highCount',
@@ -105,7 +105,7 @@ export class SbomReportsDetailedComponent {
         multiSelectType: 'none',
         style: 'width: 50px;',
         renderType: 'severityValue',
-        extraFields: ['HIGH'],
+        extraFields: ['1'],
       },
       {
         field: 'mediumCount',
@@ -115,7 +115,7 @@ export class SbomReportsDetailedComponent {
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
         renderType: 'severityValue',
-        extraFields: ['MEDIUM'],
+        extraFields: ['2'],
       },
       {
         field: 'lowCount',
@@ -125,7 +125,7 @@ export class SbomReportsDetailedComponent {
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
         renderType: 'severityValue',
-        extraFields: ['LOW'],
+        extraFields: ['3'],
       },
       {
         field: 'unknownCount',
@@ -135,7 +135,7 @@ export class SbomReportsDetailedComponent {
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
         renderType: 'severityValue',
-        extraFields: ['UNKNOWN'],
+        extraFields: ['4'],
       },
     ];
     this.trivyTableOptions = {

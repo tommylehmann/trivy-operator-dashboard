@@ -20,7 +20,7 @@ import { ClearTablesOptions, SavedCsvFileName, TrivyReportConfig } from './setti
 import { SettingsService, SeverityColorByNameOption } from '../services/settings.service';
 
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
-import { SeverityColorByNamePipe } from '../pipes/severity-color-by-name.pipe';
+import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
 
 
 @Component({
@@ -38,7 +38,7 @@ import { SeverityColorByNamePipe } from '../pipes/severity-color-by-name.pipe';
     TableModule,
     TagModule,
     VulnerabilityCountPipe,
-    SeverityColorByNamePipe,
+    SeverityCssStyleByIdPipe,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -48,11 +48,11 @@ export class SettingsComponent implements OnInit {
   public csvFileNames: SavedCsvFileName[] = [];
   public trivyReportConfigs: TrivyReportConfig[] = [];
 
-  severityColorByNameOptionItems: MenuItem[] = [];
-  severityColorByNameOptions: SeverityColorByNameOption[] = [];
-  severityColorByNameOptionIndex: number = 0;
-  severityColorByNameOptionValueSamples: number[] = [1, 0, -1];
-  severityColorByNameOptionDescription: string = "";
+  severityCssStyleByIdOptionItems: MenuItem[] = [];
+  severityCssStyleByIdOptions: SeverityColorByNameOption[] = [];
+  severityCssStyleByIdOptionIndex: number = 0;
+  severityCssStyleByIdOptionValueSamples: number[] = [1, 0, -1];
+  severityCssStyleByIdOptionDescription: string = "";
 
   constructor(private mainAppInitService: MainAppInitService, private settingsService: SettingsService) { }
 
@@ -150,27 +150,27 @@ export class SettingsComponent implements OnInit {
   }
 
   private loadSeverityColorByName() {
-    this.severityColorByNameOptionItems = this.settingsService.severityColorByNameOptions.map(x => ({label: "-"}));
-    this.severityColorByNameOptions = this.settingsService.severityColorByNameOptions.map(x => x);
-    this.setSeverityColorByNameOptionIndex(this.settingsService.severityColorByNameOptions.indexOf(this.settingsService.severityColorByNameOption));
+    this.severityCssStyleByIdOptionItems = this.settingsService.severityCssStyleByIdOptions.map(x => ({label: "-"}));
+    this.severityCssStyleByIdOptions = this.settingsService.severityCssStyleByIdOptions.map(x => x);
+    this.setSeverityColorByNameOptionIndex(this.settingsService.severityCssStyleByIdOptions.indexOf(this.settingsService.severityCssStyleByIdOption));
 
   }
 
   private setSeverityColorByNameOptionIndex(index: number) {
-    this.severityColorByNameOptionIndex = index;
-    this.settingsService.severityColorByNameOption = this.settingsService.severityColorByNameOptions[index] ?? this.settingsService.severityColorByNameOption;
+    this.severityCssStyleByIdOptionIndex = index;
+    this.settingsService.severityCssStyleByIdOption = this.settingsService.severityCssStyleByIdOptions[index] ?? this.settingsService.severityCssStyleByIdOption;
     switch (index) {
       case 0:
-        this.severityColorByNameOptionDescription = "All are visible";
+        this.severityCssStyleByIdOptionDescription = "All are visible";
         break;
       case 1:
-        this.severityColorByNameOptionDescription = "All not null (0 and above) are visible; rest are faint";
+        this.severityCssStyleByIdOptionDescription = "All not null (0 and above) are visible; rest are faint";
         break;
       case 2:
-        this.severityColorByNameOptionDescription = "All above 0 are visible; rest are faint";
+        this.severityCssStyleByIdOptionDescription = "All above 0 are visible; rest are faint";
         break;
       case 3:
-        this.severityColorByNameOptionDescription = "All above 0 are visible; rest are not";
+        this.severityCssStyleByIdOptionDescription = "All above 0 are visible; rest are not";
         break;
     }
   }

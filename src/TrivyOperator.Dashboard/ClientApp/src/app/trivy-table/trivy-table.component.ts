@@ -13,7 +13,6 @@ import { Table, TableModule, TableRowSelectEvent } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 
 import { SeverityDto } from '../../api/models/severity-dto';
-import { SemaphoreStatusHelperService } from '../services/semaphore-status-helper.service';
 import { LocalStorageUtils } from '../utils/local-storage.utils';
 import { PrimengTableStateUtil } from '../utils/primeng-table-state.util';
 import { SeverityUtils } from '../utils/severity.utils';
@@ -29,9 +28,10 @@ import { SettingsService, SeverityColorByNameOption } from '../services/settings
 
 import { CellRowArrayPipe } from '../pipes/cell-row-array.pipe';
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
-import { BooleanStylePipe } from '../pipes/boolean-style.pipe';
+import { BooleanCssStylePipe } from '../pipes/boolean-css-style.pipe';
 import { CapitalizeFirstPipe } from '../pipes/capitalize-first.pipe';
-import { SeverityColorByNamePipe } from '../pipes/severity-color-by-name.pipe';
+import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
+import { SemaphoreCssStyleByNamePipe } from '../pipes/semaphore-css-style-by-name.pipe';
 
 import { MenuItem } from 'primeng/api';
 
@@ -52,9 +52,10 @@ import { MenuItem } from 'primeng/api';
     TagModule,
     CellRowArrayPipe,
     VulnerabilityCountPipe,
-    BooleanStylePipe,
+    BooleanCssStylePipe,
     CapitalizeFirstPipe,
-    SeverityColorByNamePipe,
+    SeverityCssStyleByIdPipe,
+    SemaphoreCssStyleByNamePipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',
@@ -118,8 +119,8 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   severitColorOption: SeverityColorByNameOption;
 
-  constructor(public semaphoreStatusHelper: SemaphoreStatusHelperService, private settingsService: SettingsService) {
-    this.severitColorOption = settingsService.severityColorByNameOption;
+  constructor(private settingsService: SettingsService) {
+    this.severitColorOption = settingsService.severityCssStyleByIdOption;
   }
 
   public get trivyTableTotalRecords(): number {

@@ -86,7 +86,7 @@ export class WatcherStateComponent {
       isRefreshFiltrable: false,
       isFooterVisible: true,
       tableSelectionMode: null,
-      tableStyle: {},
+      tableStyle: { width: '1205px' },
       stateKey: 'Watcher States',
       dataKey: null,
       rowExpansionRender: null,
