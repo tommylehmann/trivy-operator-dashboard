@@ -7,13 +7,21 @@ import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
+import { StepsModule } from 'primeng/steps';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { MenuItem } from 'primeng/api';
 
 import { BackendSettingsDto } from '../../api/models/backend-settings-dto';
 import { MainAppInitService } from '../services/main-app-init.service';
 import { LocalStorageUtils } from '../utils/local-storage.utils';
 import { PrimengTableStateUtil } from '../utils/primeng-table-state.util';
 import { ClearTablesOptions, SavedCsvFileName, TrivyReportConfig } from './settings.types';
+import { SettingsService, SeverityColorByNameOption } from '../services/settings.service';
+
+import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
+import { SeverityColorByNamePipe } from '../pipes/severity-color-by-name.pipe';
+
 
 @Component({
   selector: 'app-settings',
@@ -26,7 +34,11 @@ import { ClearTablesOptions, SavedCsvFileName, TrivyReportConfig } from './setti
     CheckboxModule,
     InputTextModule,
     PanelModule,
+    StepsModule,
     TableModule,
+    TagModule,
+    VulnerabilityCountPipe,
+    SeverityColorByNamePipe,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -36,11 +48,18 @@ export class SettingsComponent implements OnInit {
   public csvFileNames: SavedCsvFileName[] = [];
   public trivyReportConfigs: TrivyReportConfig[] = [];
 
-  constructor(private mainAppInitService: MainAppInitService) {}
+  severityColorByNameOptionItems: MenuItem[] = [];
+  severityColorByNameOptions: SeverityColorByNameOption[] = [];
+  severityColorByNameOptionIndex: number = 0;
+  severityColorByNameOptionValueSamples: number[] = [1, 0, -1];
+  severityColorByNameOptionDescription: string = "";
+
+  constructor(private mainAppInitService: MainAppInitService, private settingsService: SettingsService) { }
 
   ngOnInit() {
     this.loadTableOptions();
     this.loadCsvFileNames();
+    this.loadSeverityColorByName();
     this.mainAppInitService.backendSettingsDto$.subscribe((updatedBackendSettingsDto) => {
       this.loadTrivyReportsStates(updatedBackendSettingsDto);
     });
@@ -95,6 +114,10 @@ export class SettingsComponent implements OnInit {
     );
   }
 
+  onSeverityColorByNameOptionIndex(event: number) {
+    this.setSeverityColorByNameOptionIndex(event);
+  }
+
   private loadTableOptions() {
     this.clearTablesOptions = LocalStorageUtils.getKeysWithPrefix(LocalStorageUtils.trivyTableKeyPrefix)
       .sort((x, y) => (x > y ? 1 : -1))
@@ -124,5 +147,31 @@ export class SettingsComponent implements OnInit {
         backendEnabled: defaultBackedSettings.trivyReportConfigDtos?.find((def) => def.id === x.id)?.enabled ?? false,
         frontendEnabled: x.enabled ?? false,
       })) ?? [];
+  }
+
+  private loadSeverityColorByName() {
+    this.severityColorByNameOptionItems = this.settingsService.severityColorByNameOptions.map(x => ({label: "-"}));
+    this.severityColorByNameOptions = this.settingsService.severityColorByNameOptions.map(x => x);
+    this.setSeverityColorByNameOptionIndex(this.settingsService.severityColorByNameOptions.indexOf(this.settingsService.severityColorByNameOption));
+
+  }
+
+  private setSeverityColorByNameOptionIndex(index: number) {
+    this.severityColorByNameOptionIndex = index;
+    this.settingsService.severityColorByNameOption = this.settingsService.severityColorByNameOptions[index] ?? this.settingsService.severityColorByNameOption;
+    switch (index) {
+      case 0:
+        this.severityColorByNameOptionDescription = "All are visible";
+        break;
+      case 1:
+        this.severityColorByNameOptionDescription = "All not null (0 and above) are visible; rest are faint";
+        break;
+      case 2:
+        this.severityColorByNameOptionDescription = "All above 0 are visible; rest are faint";
+        break;
+      case 3:
+        this.severityColorByNameOptionDescription = "All above 0 are visible; rest are not";
+        break;
+    }
   }
 }

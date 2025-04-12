@@ -71,3 +71,20 @@ p-splitbutton.text-sm {
     }
   }
 }
+
+.rounded-steps .p-steps-number {
+  border-radius: 40%;
+  font-size: 12px;
+  background-color: #009bff;
+  font-weight: 700;
+}
+
+.rounded-steps .p-highlight .p-steps-number {
+  background-color: #005bff;
+  transition: background-color 0.3s ease;
+}
+
+.rounded-steps xxx {
+  background-color: black;
+}
+

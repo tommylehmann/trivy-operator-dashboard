@@ -155,4 +155,27 @@
       </ng-template>
     </p-panel>
   </div>
+  <div class="col-12 md:col-6">
+    <p-panel header="Display Settings" class="h-full">
+      <h4>Severities</h4>
+      <p-steps [model]="severityColorByNameOptionItems"
+               [readonly]="false"
+               [activeIndex]="severityColorByNameOptionIndex"
+               (activeIndexChange)="onSeverityColorByNameOptionIndex($event)"
+               styleClass="rounded-steps opaque-steps text-sm mb-2"
+               [style]="{ width: '200px' }"/>
+      <p-tag *ngFor="let sampleValue of severityColorByNameOptionValueSamples"
+             [rounded]="true"
+             [style]="'Low' | severityColorByName:sampleValue:severityColorByNameOptions[severityColorByNameOptionIndex]"
+             [value]="sampleValue | vulnerabilityCount"
+             class="p-2"/>
+      <span>{{ severityColorByNameOptionDescription }}</span>
+      <ng-template pTemplate="footer">
+        <p class="text-sm">
+          <i class="pi pi-info-circle"></i>
+          <b> Hint:</b> Use the options to change various dispaly settings.
+        </p>
+      </ng-template>
+    </p-panel>
+  </div>
 </div>

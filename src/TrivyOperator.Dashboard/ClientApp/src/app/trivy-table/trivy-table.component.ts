@@ -25,11 +25,13 @@ import {
   TrivyTableColumn,
   TrivyTableOptions,
 } from './trivy-table.types';
+import { SettingsService, SeverityColorByNameOption } from '../services/settings.service';
 
 import { CellRowArrayPipe } from '../pipes/cell-row-array.pipe';
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
 import { BooleanStylePipe } from '../pipes/boolean-style.pipe';
 import { CapitalizeFirstPipe } from '../pipes/capitalize-first.pipe';
+import { SeverityColorByNamePipe } from '../pipes/severity-color-by-name.pipe';
 
 import { MenuItem } from 'primeng/api';
 
@@ -52,6 +54,7 @@ import { MenuItem } from 'primeng/api';
     VulnerabilityCountPipe,
     BooleanStylePipe,
     CapitalizeFirstPipe,
+    SeverityColorByNamePipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',
@@ -113,7 +116,11 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   private isSelectionChangedExternally: boolean = false;
 
-  constructor(public semaphoreStatusHelper: SemaphoreStatusHelperService) {}
+  severitColorOption: SeverityColorByNameOption;
+
+  constructor(public semaphoreStatusHelper: SemaphoreStatusHelperService, private settingsService: SettingsService) {
+    this.severitColorOption = settingsService.severityColorByNameOption;
+  }
 
   public get trivyTableTotalRecords(): number {
     return this.dataDtos ? this.dataDtos.length : 0;
