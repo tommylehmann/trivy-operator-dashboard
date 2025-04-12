@@ -32,6 +32,8 @@ import { BooleanCssStylePipe } from '../pipes/boolean-css-style.pipe';
 import { CapitalizeFirstPipe } from '../pipes/capitalize-first.pipe';
 import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
 import { SemaphoreCssStyleByNamePipe } from '../pipes/semaphore-css-style-by-name.pipe';
+import { CronPipe } from '../pipes/cron.pipe';
+import { LocalTimePipe } from '../pipes/local-time.pipe';
 
 import { MenuItem } from 'primeng/api';
 
@@ -56,6 +58,8 @@ import { MenuItem } from 'primeng/api';
     CapitalizeFirstPipe,
     SeverityCssStyleByIdPipe,
     SemaphoreCssStyleByNamePipe,
+    CronPipe,
+    LocalTimePipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',

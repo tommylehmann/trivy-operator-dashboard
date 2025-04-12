@@ -6,7 +6,7 @@ using TrivyOperator.Dashboard.Utils;
 namespace TrivyOperator.Dashboard.Application.Controllers;
 
 [ApiController]
-[Route("api/rbac-assessment-report")]
+[Route("api/rbac-assessment-reports")]
 public class RbacAssessmentReportController(IRbacAssessmentReportService RbacAssessmentReportService) : ControllerBase
 {
     [HttpGet(Name = "GetRbacAssessmentReportDtos")]

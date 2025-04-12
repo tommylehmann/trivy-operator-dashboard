@@ -5,7 +5,7 @@ using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterComplianceReport
 namespace TrivyOperator.Dashboard.Application.Controllers;
 
 [ApiController]
-[Route("api/cluster-compliance-report")]
+[Route("api/cluster-compliance-reports")]
 public class ClusterComplianceReportController(IClusterComplianceReportService clusterComplianceReportService)
     : ControllerBase
 {

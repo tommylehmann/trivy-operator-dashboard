@@ -151,7 +151,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /api/cluster-compliance-report:
+  /api/cluster-compliance-reports:
     get:
       tags:
         - ClusterComplianceReport
@@ -177,7 +177,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /api/cluster-compliance-report/denormalized:
+  /api/cluster-compliance-reports/denormalized:
     get:
       tags:
         - ClusterComplianceReport
@@ -307,7 +307,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /api/cluster-vulnerability-report:
+  /api/cluster-vulnerability-reports:
     get:
       tags:
         - ClusterVulnerabilityReport
@@ -333,7 +333,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /api/cluster-vulnerability-report/denormalized:
+  /api/cluster-vulnerability-reports/denormalized:
     get:
       tags:
         - ClusterVulnerabilityReport
@@ -646,7 +646,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /api/rbac-assessment-report:
+  /api/rbac-assessment-reports:
     get:
       tags:
         - RbacAssessmentReport
@@ -681,7 +681,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /api/rbac-assessment-report/denormalized:
+  /api/rbac-assessment-reports/denormalized:
     get:
       tags:
         - RbacAssessmentReport
@@ -707,7 +707,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /api/rbac-assessment-report/active-namespaces:
+  /api/rbac-assessment-reports/active-namespaces:
     get:
       tags:
         - RbacAssessmentReport

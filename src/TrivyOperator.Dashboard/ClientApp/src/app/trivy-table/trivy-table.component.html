@@ -273,6 +273,8 @@
                              [rounded]="true"
                              [style]="{ 'margin-left': '10px', background: severityWrapperGetCssColor(1) }"
                              [value]="trivyExpandTableFunction(rowData, 'row', col, row).badge" />
+                      <span *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).localTime">{{ trivyExpandTableFunction(rowData, 'row', col, row).localTime | localTime }}</span>
+                      <span *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).cron">{{ trivyExpandTableFunction(rowData, 'row', col, row).cron | cron }}</span>
                     </div>
                     <a *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).url"
                        href="{{ trivyExpandTableFunction(rowData, 'row', col, row).url }}"

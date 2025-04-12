@@ -25,7 +25,6 @@ export class ClusterComplianceReportsComponent {
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;
   public mainTableExpandTableOptions: TrivyExpandTableOptions<ClusterComplianceReportDto>;
-  //public mainTableExpandCallbackDto: ClusterComplianceReportDto | null = null;
   public isMainTableLoading: boolean = true;
 
   public detailsTableColumns: TrivyTableColumn[] = [];
@@ -41,7 +40,7 @@ export class ClusterComplianceReportsComponent {
         isFiltrable: true,
         isSortable: true,
         multiSelectType: 'none',
-        style: 'white-space: normal;',
+        style: 'width: 130px; max-width: 130px;white-space: normal;',
         renderType: 'standard',
       },
       {
@@ -50,18 +49,48 @@ export class ClusterComplianceReportsComponent {
         isFiltrable: true,
         isSortable: true,
         multiSelectType: 'none',
-        style: 'white-space: normal;',
+        style: 'width: 265px; max-width: 265px; white-space: normal;',
         renderType: 'standard',
       },
       {
         field: 'totalFailCriticalCount',
-        header: 'Severity C / H / M / L',
+        header: 'C',
         isFiltrable: false,
-        isSortable: false,
+        isSortable: true,
         multiSelectType: 'none',
-        style: 'width: 170px; max-width: 145px; ',
-        renderType: 'severityMultiTags',
-        extraFields: ['totalFailHighCount', 'totalFailMediumCount', 'totalFailLowCount'],
+        style: 'width: 50px; max-width: 50px;',
+        renderType: 'severityValue',
+        extraFields: ['0'],
+      },
+      {
+        field: 'totalFailHighCount',
+        header: 'H',
+        isFiltrable: false,
+        isSortable: true,
+        multiSelectType: 'none',
+        style: 'width: 50px;',
+        renderType: 'severityValue',
+        extraFields: ['1'],
+      },
+      {
+        field: 'totalFailMediumCount',
+        header: 'M',
+        isFiltrable: false,
+        isSortable: true,
+        multiSelectType: 'none',
+        style: 'width: 50px; max-width: 50px;',
+        renderType: 'severityValue',
+        extraFields: ['2'],
+      },
+      {
+        field: 'totalFailLowCount',
+        header: 'L',
+        isFiltrable: false,
+        isSortable: true,
+        multiSelectType: 'none',
+        style: 'width: 50px; max-width: 50px;',
+        renderType: 'severityValue',
+        extraFields: ['3'],
       },
     ];
     this.mainTableOptions = {
@@ -72,7 +101,7 @@ export class ClusterComplianceReportsComponent {
       isRefreshFiltrable: false,
       isFooterVisible: true,
       tableSelectionMode: 'single',
-      tableStyle: {},
+      tableStyle: { width: '595px' },
       stateKey: 'Cluster Compliance Reports - Main',
       dataKey: 'uid',
       rowExpansionRender: 'table',
@@ -180,6 +209,8 @@ export class ClusterComplianceReportsComponent {
     let celBadge: string | undefined;
     let celButtonLink: string | undefined;
     let celUrl: string | undefined;
+    let celCron: string | undefined;
+    let celLocalTime: string | undefined;
 
     switch (colIndex) {
       case 0:
@@ -230,18 +261,12 @@ export class ClusterComplianceReportsComponent {
             celValue = dto.reportType ?? '';
             break;
           case 5:
-            celValue = dto.cron ?? '';
+            celValue = '';
+            celCron = dto.cron ?? undefined;
             break;
           case 6:
-            if (dto.updateTimestamp) {
-              const date = new Date(dto.updateTimestamp);
-              const year = date.getFullYear();
-              const month = ('0' + (date.getMonth() + 1)).slice(-2);
-              const day = ('0' + date.getDate()).slice(-2);
-              celValue = `${year}-${month}-${day}`;
-            } else {
-              celValue = '';
-            }
+            celValue = '';
+            celLocalTime = dto.updateTimestamp ?? undefined;
             break;
           case 7:
             celValue = dto.relatedResources ? dto.relatedResources[0] : '';
@@ -257,6 +282,8 @@ export class ClusterComplianceReportsComponent {
       badge: celBadge,
       buttonLink: celButtonLink,
       url: celUrl,
+      cron: celCron,
+      localTime: celLocalTime,
     };
   }
 

@@ -107,4 +107,6 @@ export interface TrivyTableCellCustomOptions {
   buttonLink: string | undefined;
   badge: string | undefined;
   url: string | undefined;
+  cron?: string;
+  localTime?: string;
 }
