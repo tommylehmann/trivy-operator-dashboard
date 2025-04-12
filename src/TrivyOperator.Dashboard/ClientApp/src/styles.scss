@@ -75,3 +75,32 @@ p-splitbutton.text-sm {
   background-color: #009bff;
   transition: background-color 0.3s ease;
 }
+
+.p-selectbutton {
+  border: 1px solid #ccc; /* Subtle border */
+  border-radius: 5px; /* Slight rounded edges */
+  background-color: transparent; /* No background */
+  width: auto;
+  display: inline-flex;
+}
+
+.p-selectbutton .p-button {
+  background-color: transparent; /* No background */
+  color: #666; /* Subtle text color */
+  border: none; /* Remove button borders */
+  padding: 10px 20px; /* Adjust padding for better spacing */
+  white-space: nowrap;
+  padding: 5px;
+  margin: 5px;
+}
+
+.p-selectbutton .p-button.p-highlight {
+  /*background-color: #3b82f6;*/ /* Active background color */
+  color: white; /* Text color for active button */
+  background-color: rgba(#005bff, 1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Highlighted button shadow */
+}
+
+p-selectbutton.text-sm .p-button-label {
+    font-size: 14px;
+}

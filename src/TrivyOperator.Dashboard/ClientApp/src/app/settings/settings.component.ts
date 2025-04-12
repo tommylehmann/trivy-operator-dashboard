@@ -7,6 +7,7 @@ import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
+import { SelectButtonModule, SelectButtonOptionClickEvent } from 'primeng/selectbutton';
 import { StepsModule } from 'primeng/steps';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -34,6 +35,7 @@ import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe
     CheckboxModule,
     InputTextModule,
     PanelModule,
+    SelectButtonModule,
     StepsModule,
     TableModule,
     TagModule,
@@ -53,6 +55,9 @@ export class SettingsComponent implements OnInit {
   severityCssStyleByIdOptionIndex: number = 0;
   severityCssStyleByIdOptionValueSamples: number[] = [1, 0, -1];
   severityCssStyleByIdOptionDescription: string = "";
+
+  severityCssStyleByIdOptions2: { id: SeverityColorByNameOption, label: string }[] = [];
+  severityCssStyleByIdOptionValue2: SeverityColorByNameOption = 'greyBelowOne';
 
   constructor(private mainAppInitService: MainAppInitService, private settingsService: SettingsService) { }
 
@@ -154,6 +159,31 @@ export class SettingsComponent implements OnInit {
     this.severityCssStyleByIdOptions = this.settingsService.severityCssStyleByIdOptions.map(x => x);
     this.setSeverityColorByNameOptionIndex(this.settingsService.severityCssStyleByIdOptions.indexOf(this.settingsService.severityCssStyleByIdOption));
 
+    this.severityCssStyleByIdOptions2 = this.settingsService.severityCssStyleByIdOptions.map(x => {
+      let label = "";
+      switch (x) {
+        case 'all':
+          label = "All";
+          break;
+        case 'greyBelowOne':
+          label = 'Non Zero';
+          break;
+        case 'greyNulls':
+          label = "Non Null";
+          break;
+        case 'hideNonPositive':
+          label = "Only Non Zero";
+          break;
+      }
+      return { id: x, label: label };
+    });
+    this.severityCssStyleByIdOptionValue2 = this.settingsService.severityCssStyleByIdOption;
+  }
+
+  onSeverityCssStyleByIdOptionsClick(event: SelectButtonOptionClickEvent) {
+    if (event.index) {
+      this.setSeverityColorByNameOptionIndex(event.index);
+    }
   }
 
   private setSeverityColorByNameOptionIndex(index: number) {

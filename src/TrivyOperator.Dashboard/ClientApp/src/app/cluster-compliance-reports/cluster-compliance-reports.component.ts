@@ -169,7 +169,8 @@ export class ClusterComplianceReportsComponent {
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal; text-align: right;',
-        renderType: 'standard',
+        renderType: 'severityValue',
+        extraFields: ['-1'],
       },
     ];
     this.detailsTableOptions = {
@@ -232,12 +233,15 @@ export class ClusterComplianceReportsComponent {
             celValue = 'Report Type';
             break;
           case 5:
-            celValue = 'Cron';
+            celValue = 'Checks'
             break;
           case 6:
-            celValue = 'Updated';
+            celValue = 'Cron';
             break;
           case 7:
+            celValue = 'Updated';
+            break;
+          case 8:
             celValue = 'Related Resources';
             break;
         }
@@ -261,14 +265,17 @@ export class ClusterComplianceReportsComponent {
             celValue = dto.reportType ?? '';
             break;
           case 5:
-            celValue = '';
-            celCron = dto.cron ?? undefined;
+            celValue = `${dto.totalFailCount ?? 0} failed vs ${dto.totalPassCount ?? 0} passed`;
             break;
           case 6:
             celValue = '';
-            celLocalTime = dto.updateTimestamp ?? undefined;
+            celCron = dto.cron ?? undefined;
             break;
           case 7:
+            celValue = '';
+            celLocalTime = dto.updateTimestamp ?? undefined;
+            break;
+          case 8:
             celValue = dto.relatedResources ? dto.relatedResources[0] : '';
             celUrl = dto.relatedResources ? dto.relatedResources[0] : '';
             break;

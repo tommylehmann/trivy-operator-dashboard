@@ -158,18 +158,29 @@
   <div class="col-12 md:col-6">
     <p-panel header="Display Settings" class="h-full">
       <h4>Severities</h4>
+      <h5>Select Severity display option</h5>
       <p-steps [model]="severityCssStyleByIdOptionItems"
                [readonly]="false"
                [activeIndex]="severityCssStyleByIdOptionIndex"
                (activeIndexChange)="onSeverityColorByNameOptionIndex($event)"
                styleClass="rounded-steps opaque-steps text-sm mb-2"
-               [style]="{ width: '200px' }"/>
-      <p-tag *ngFor="let sampleValue of severityCssStyleByIdOptionValueSamples"
-             [rounded]="true"
-             [style]="'Low' | severityCssStyleById:sampleValue:severityCssStyleByIdOptions[severityCssStyleByIdOptionIndex]"
-             [value]="sampleValue | vulnerabilityCount"
-             class="p-2"/>
-      <span>{{ severityCssStyleByIdOptionDescription }}</span>
+               [style]="{ width: '200px' }" />
+      <p-selectButton [options]="severityCssStyleByIdOptions2"
+                      [(ngModel)]="severityCssStyleByIdOptionValue2"
+                      optionLabel="label"
+                      optionValue="id"
+                      class="text-sm"
+                      unselectable="true"
+                      (onOptionClick)="onSeverityCssStyleByIdOptionsClick($event)"/>
+      <h5>Sample</h5>
+      <div class="mt-4">
+        <p-tag *ngFor="let sampleValue of severityCssStyleByIdOptionValueSamples"
+               [rounded]="true"
+               [style]="'Low' | severityCssStyleById:sampleValue:severityCssStyleByIdOptions[severityCssStyleByIdOptionIndex]"
+               [value]="sampleValue | vulnerabilityCount"
+               class="p-2" />
+        <span class="text-sm">{{ severityCssStyleByIdOptionDescription }}</span>
+      </div>
       <ng-template pTemplate="footer">
         <p class="text-sm">
           <i class="pi pi-info-circle"></i>
