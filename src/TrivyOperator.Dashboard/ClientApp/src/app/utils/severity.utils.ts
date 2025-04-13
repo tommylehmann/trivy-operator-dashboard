@@ -1,12 +1,16 @@
 import { SeverityDto } from '../../api/models/severity-dto';
 
+interface SeverityExtendedDto extends SeverityDto {
+  short: string;
+}
+
 export class SeverityUtils {
-  static severityDtos: SeverityDto[] = [
-    { id: 0, name: 'CRITICAL' },
-    { id: 1, name: 'HIGH' },
-    { id: 2, name: 'MEDIUM' },
-    { id: 3, name: 'LOW' },
-    { id: 4, name: 'UNKNOWN' },
+  static severityDtos: SeverityExtendedDto[] = [
+    { id: 0, name: 'CRITICAL', short: 'CRIT' },
+    { id: 1, name: 'HIGH', short: 'High' },
+    { id: 2, name: 'MEDIUM', short: 'MED' },
+    { id: 3, name: 'LOW', short: 'LOW' },
+    { id: 4, name: 'UNKNOWN', short: 'UNK' },
   ];
   private static colorIntensity: number = 400;
 
@@ -47,22 +51,21 @@ export class SeverityUtils {
   }
 
   public static getName(severityId: number): string {
-    if (SeverityUtils.severityDtos == null) {
-      return '';
-    }
+    return this.severityDtos.find(x => x.id === severityId)?.name ?? ''
+  }
 
-    for (let i = 0; i < SeverityUtils.severityDtos.length; i++) {
-      if (SeverityUtils.severityDtos[i].id != null && SeverityUtils.severityDtos[i].id == severityId) {
-        return SeverityUtils.severityDtos[i].name ?? '';
-      }
-    }
-
-    return '';
+  public static getShortName(severityId: number): string {
+    return this.severityDtos.find(x => x.id === severityId)?.short ?? ''
   }
 
   public static getCapitalizedName(severityId: number): string {
     const severityName = SeverityUtils.getName(severityId).toLowerCase();
-    return SeverityUtils.getCapitalizedString(severityName);
+    return this.getCapitalizedString(severityName);
+  }
+
+  public static getCapitalizedShortName(severityId: number): string {
+    const severityName = SeverityUtils.getShortName(severityId).toLowerCase();
+    return this.getCapitalizedString(severityName);
   }
 
   public static getCapitalizedString(severityName: string): string {
@@ -71,7 +74,7 @@ export class SeverityUtils {
   }
 
   public static getSeverityIds(): number[] {
-    return SeverityUtils.severityDtos ? SeverityUtils.severityDtos.map((x) => x.id).sort((a, b) => a - b) : [];
+    return this.severityDtos ? SeverityUtils.severityDtos.map((x) => x.id).sort((a, b) => a - b) : [];
   }
 
   public static getNames(severityIds: number[], maxDisplay?: number): string {
@@ -88,7 +91,7 @@ export class SeverityUtils {
       severityIds
         .sort((a, b) => a - b)
         .forEach((x) => {
-          selectedSeverityNames.push(SeverityUtils.getCapitalizedName(x));
+          selectedSeverityNames.push(this.getCapitalizedName(x));
         });
       return selectedSeverityNames.join(', ');
     }

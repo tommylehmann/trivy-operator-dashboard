@@ -8,27 +8,29 @@ import { SeverityColorByNameOption } from '../services/settings.service';
 })
 export class SeverityCssStyleByIdPipe implements PipeTransform {
   transform(
-      severityIdStr: string,
+      severityId: number | string,
       severityCount: number = 0,
       option: SeverityColorByNameOption = "hideNonPositive"): { [key: string]: string } {
     let cssColor = "";
     let opacity = '';
-    const severityId = !isNaN(Number(severityIdStr)) ? Number(severityIdStr) : -1;
+    const id = typeof severityId === "string"
+      ? (!isNaN(Number(severityId)) ? Number(severityId) : -1)
+      : severityId;
     switch (option) {
       case "all":
-        cssColor = SeverityUtils.getCssColor(severityId);
+        cssColor = SeverityUtils.getCssColor(id);
         opacity = '1';
         break;
       case "greyNulls":
-        cssColor = severityCount < 0 ? "grey" : SeverityUtils.getCssColor(severityId);
+        cssColor = severityCount < 0 ? "grey" : SeverityUtils.getCssColor(id);
         opacity = severityCount < 0 ? '0.2' : '1';
         break;
       case "greyBelowOne":
-        cssColor = severityCount < 1 ? "grey" : SeverityUtils.getCssColor(severityId);
+        cssColor = severityCount < 1 ? "grey" : SeverityUtils.getCssColor(id);
         opacity = severityCount < 1 ? '0.2' : '1';
         break;
       case "hideNonPositive":
-        cssColor = severityCount > 0 ? SeverityUtils.getCssColor(severityId) : "transparent";
+        cssColor = severityCount > 0 ? SeverityUtils.getCssColor(id) : "transparent";
         opacity = severityCount > 0 ? '1' : '0';
         break;
     }

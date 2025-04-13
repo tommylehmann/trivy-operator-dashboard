@@ -176,7 +176,7 @@
       <div class="mt-4">
         <p-tag *ngFor="let sampleValue of severityCssStyleByIdOptionValueSamples"
                [rounded]="true"
-               [style]="'Low' | severityCssStyleById:sampleValue:severityCssStyleByIdOptions[severityCssStyleByIdOptionIndex]"
+               [style]="3 | severityCssStyleById:sampleValue:severityCssStyleByIdOptions[severityCssStyleByIdOptionIndex]"
                [value]="sampleValue | vulnerabilityCount"
                class="p-2" />
         <span class="text-sm">{{ severityCssStyleByIdOptionDescription }}</span>

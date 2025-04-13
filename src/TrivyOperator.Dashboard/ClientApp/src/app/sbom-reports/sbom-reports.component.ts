@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -6,10 +7,19 @@ import { SbomReportDto } from '../../api/models/sbom-report-dto';
 import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
 import { SbomReportImageDto } from '../../api/models/sbom-report-image-dto';
 import { SbomReportService } from '../../api/services/sbom-report.service';
+import { SettingsService, SeverityColorByNameOption } from '../services/settings.service';
+import { SeverityUtils } from '../utils/severity.utils';
+import { NodeDataDto } from '../fcose/fcose.types';
+import { SbomDetailExtendedDto } from './sbom-reports.types'
+import { SbomReportImageResourceDto } from '../../api/models';
+
+import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
+import { SeverityNameByIdPipe } from '../pipes/severity-name-by-id.pipe';
+import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
 
 import { FcoseComponent } from '../fcose/fcose.component';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { TrivyExpandTableOptions, TrivyFilterData, TrivyTableCellCustomOptions, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import { TrivyExpandTableOptions, TrivyTableCellCustomOptions, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -25,13 +35,6 @@ import {
   faShieldHalved,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
-import { SeverityUtils } from '../utils/severity.utils';
-import { NodeDataDto } from '../fcose/fcose.types';
-import { SbomDetailExtendedDto } from './sbom-reports.types'
-import { SbomReportImageResourceDto } from '../../api/models';
-import { HttpClient, HttpContext, HttpContextToken, HttpHeaders } from '@angular/common/http';
-
 export interface ImageDto {
   uid: string;
   imageNameTag: string;
@@ -50,8 +53,9 @@ export interface DependsOn {
   standalone: true,
   imports: [CommonModule, FormsModule,
     FcoseComponent, TrivyTableComponent,
+    SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
     ButtonModule, CardModule, DialogModule, DropdownModule, PanelModule, TableModule, TagModule, TreeTableModule,
-    FontAwesomeModule],
+    FontAwesomeModule,],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
@@ -109,8 +113,11 @@ export class SbomReportsComponent {
 
   faShieldHalved = faShieldHalved;
 
-  constructor(private service: SbomReportService, private http: HttpClient) {
+  severityColorByNameOption: SeverityColorByNameOption;
+
+  constructor(private service: SbomReportService, private http: HttpClient, private settingsService: SettingsService) {
     this.getTableDataDtos();
+    this.severityColorByNameOption = settingsService.severityCssStyleByIdOption;
 
     this.dependsOnTableColumns = [
       {
@@ -513,11 +520,11 @@ export class SbomReportsComponent {
       this.sbomReportDetailLicensesTreeNodes = this.getSbomReportLicenseTreeNodes();
     }
     if (this.sbomReportDetailStatistics.length == 0) {
-      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.criticalCount) ?? []));
-      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.highCount) ?? []));
-      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.mediumCount) ?? []));
-      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.lowCount) ?? []));
-      this.sbomReportDetailStatistics.push(this.getSumForVulnerabilities(this.fullSbomDataDto?.details?.map(x => x.unknownCount) ?? []));
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.criticalCount ?? -1);
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.highCount ?? -1);
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.mediumCount ?? -1);
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.lowCount ?? -1);
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.unknownCount ?? -1);
 
       this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.length ?? 0);
       this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.map(item => item.dependsOn)
@@ -650,13 +657,6 @@ export class SbomReportsComponent {
     });
 
     return tree;
-  }
-
-  private getSumForVulnerabilities(vulnerabilities: Array<number | undefined | null>): number | undefined {
-    const usableVulnerabilities = vulnerabilities.filter((x): x is number => x != null);
-    return usableVulnerabilities.length > 0
-      ? usableVulnerabilities.reduce((acc, item) => acc + item, 0)
-      : undefined;
   }
   // #endregion
 
