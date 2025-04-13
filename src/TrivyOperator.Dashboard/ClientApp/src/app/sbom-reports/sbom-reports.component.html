@@ -122,7 +122,7 @@
             <div class="flex align-items-center justify-content-between">
               <span class="text-sm">{{ i | severityNameById:true }}</span>
               <p-tag [rounded]="true"
-                      [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1):severityColorByNameOption"
+                      [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
                       [value]="sbomReportDetailStatistics[i] ?? -1 | vulnerabilityCount" />
             </div>
           </div>

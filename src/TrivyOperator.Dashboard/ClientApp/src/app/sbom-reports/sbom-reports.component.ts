@@ -7,7 +7,6 @@ import { SbomReportDto } from '../../api/models/sbom-report-dto';
 import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
 import { SbomReportImageDto } from '../../api/models/sbom-report-image-dto';
 import { SbomReportService } from '../../api/services/sbom-report.service';
-import { SettingsService, SeverityColorByNameOption } from '../services/settings.service';
 import { SeverityUtils } from '../utils/severity.utils';
 import { NodeDataDto } from '../fcose/fcose.types';
 import { SbomDetailExtendedDto } from './sbom-reports.types'
@@ -113,11 +112,8 @@ export class SbomReportsComponent {
 
   faShieldHalved = faShieldHalved;
 
-  severityColorByNameOption: SeverityColorByNameOption;
-
-  constructor(private service: SbomReportService, private http: HttpClient, private settingsService: SettingsService) {
+  constructor(private service: SbomReportService, private http: HttpClient) {
     this.getTableDataDtos();
-    this.severityColorByNameOption = settingsService.severityCssStyleByIdOption;
 
     this.dependsOnTableColumns = [
       {

@@ -1,16 +1,18 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { SeverityUtils } from '../utils/severity.utils';
-import { SeverityColorByNameOption } from '../services/settings.service';
+import { SettingsService, SeverityColorByNameOption } from '../services/settings.service';
 
 @Pipe({
   name: 'severityCssStyleById',
   standalone: true,
 })
 export class SeverityCssStyleByIdPipe implements PipeTransform {
+  constructor(private settingsService: SettingsService) { }
+
   transform(
       severityId: number | string,
-      severityCount: number = 0,
-      option: SeverityColorByNameOption = "hideNonPositive"): { [key: string]: string } {
+    severityCount: number = 0,
+    option: SeverityColorByNameOption = this.settingsService.severityCssStyleByIdOption): { [key: string]: string } {
     let cssColor = "";
     let opacity = '';
     const id = typeof severityId === "string"

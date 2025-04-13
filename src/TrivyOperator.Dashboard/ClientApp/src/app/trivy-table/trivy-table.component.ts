@@ -24,7 +24,6 @@ import {
   TrivyTableColumn,
   TrivyTableOptions,
 } from './trivy-table.types';
-import { SettingsService, SeverityColorByNameOption } from '../services/settings.service';
 
 import { CellRowArrayPipe } from '../pipes/cell-row-array.pipe';
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
@@ -120,12 +119,6 @@ export class TrivyTableComponent<TData> implements OnInit {
   anyRowExpanded: boolean = false;
 
   private isSelectionChangedExternally: boolean = false;
-
-  severitColorOption: SeverityColorByNameOption;
-
-  constructor(private settingsService: SettingsService) {
-    this.severitColorOption = settingsService.severityCssStyleByIdOption;
-  }
 
   public get trivyTableTotalRecords(): number {
     return this.dataDtos ? this.dataDtos.length : 0;
