@@ -181,7 +181,7 @@ export class SettingsComponent implements OnInit {
   }
 
   onSeverityCssStyleByIdOptionsClick(event: SelectButtonOptionClickEvent) {
-    if (event.index) {
+    if (event.index !== undefined) {
       this.setSeverityColorByNameOptionIndex(event.index);
     }
   }

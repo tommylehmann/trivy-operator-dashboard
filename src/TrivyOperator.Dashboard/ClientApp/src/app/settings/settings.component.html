@@ -159,7 +159,8 @@
     <p-panel header="Display Settings" class="h-full">
       <h4>Severities</h4>
       <h5>Select Severity display option</h5>
-      <p-steps [model]="severityCssStyleByIdOptionItems"
+      <p-steps *ngIf="false"
+               [model]="severityCssStyleByIdOptionItems"
                [readonly]="false"
                [activeIndex]="severityCssStyleByIdOptionIndex"
                (activeIndexChange)="onSeverityColorByNameOptionIndex($event)"
