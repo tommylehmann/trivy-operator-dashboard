@@ -50,6 +50,10 @@ using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Clients;
 using TrivyOperator.Dashboard.Infrastructure.Services;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using System.Reflection;
 
 namespace TrivyOperator.Dashboard.Application.Services.BuilderServicesExtensions;
 
@@ -399,5 +403,64 @@ public static class BuilderServicesExtensions
             .AddSingleton<
                 INamespacedResourceWatchDomainService<VulnerabilityReportCr, CustomResourceList<VulnerabilityReportCr>>,
                 NamespacedTrivyReportDomainService<VulnerabilityReportCr>>();
+    }
+
+    public static void AddOpenTelemetry(this IServiceCollection services, IConfiguration configuration, string applicationName)
+    {
+        string fileVersion = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.0";
+        string? otelEndpoint = configuration.GetValue<string>("OtelEndpoint");
+        double[]? histogramBounds = configuration.GetValue<double[]>("HistogramBoundsInMs") ?? [200, 500, 1000, 5000];
+
+        services.AddOpenTelemetry()
+            .WithTracing(tracingBuilder =>
+            {
+                tracingBuilder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                        .AddService(applicationName)
+                        .AddAttributes(new Dictionary<string, object>
+                        {
+                            { "service.version", fileVersion }
+                        }))
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation();
+                if (string.IsNullOrWhiteSpace(otelEndpoint))
+                {
+                    tracingBuilder.AddConsoleExporter();
+                }
+                else
+                {
+                    tracingBuilder.AddOtlpExporter(options =>
+                    {
+                        options.Endpoint = new Uri(otelEndpoint);
+                        options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                    });
+                }
+                    
+            })
+            .WithMetrics(metricsBuilder =>
+            {
+                metricsBuilder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(applicationName))
+                    .AddRuntimeInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddView("*", new ExplicitBucketHistogramConfiguration
+                    {
+                        Boundaries = histogramBounds,
+                        // defaults: [ 0, 5, 10, 25, 50, 75, 100, 250, 500, 750, 1000, 2500, 5000, 7500, 10000 ]
+                    });
+                    //.AddMeter("CustomMetrics")
+                    if (string.IsNullOrWhiteSpace(otelEndpoint))
+                    {
+                        metricsBuilder.AddConsoleExporter();
+                    }
+                    else
+                    {
+                        metricsBuilder.AddOtlpExporter(options =>
+                        {
+                            options.Endpoint = new Uri(otelEndpoint);
+                            options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                        });
+                    }
+            });
     }
 }

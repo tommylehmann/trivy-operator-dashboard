@@ -86,6 +86,7 @@ builder.Services.AddClusterVulnerabilityReportServices(configuration.GetSection(
 builder.Services.AddRbacAssessmentReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddSbomReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddUiCommons();
+builder.Services.AddOpenTelemetry(configuration.GetSection("OpenTelemetry"), applicationName.Replace(".",string.Empty));
 
 WebApplication app = builder.Build();
 

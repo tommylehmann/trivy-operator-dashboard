@@ -42,7 +42,7 @@ public class AppVersionService(IGitHubClient gitHubClient, IOptions<GitHubOption
 
     public AppVersion GetCurrentVersion()
     {
-        var assembly = Assembly.GetExecutingAssembly();
+        Assembly assembly = Assembly.GetExecutingAssembly();
 
         return new AppVersion {
             FileVersion = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.0",
