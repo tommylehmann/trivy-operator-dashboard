@@ -6,7 +6,7 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Trivy.ConfigAuditReport;
 
-public class ConfigAuditReportService(IConcurrentCache<string, IList<ConfigAuditReportCr>> cache)
+public class ConfigAuditReportService(ITrivyConcurentCache<ConfigAuditReportCr> cache)
     : IConfigAuditReportService
 {
     public Task<IEnumerable<ConfigAuditReportDto>> GetConfigAuditReportDtos(

@@ -7,6 +7,7 @@ using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions
 using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
+using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
@@ -15,6 +16,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
         TBackgroundQueue backgroundQueue,
         IBackgroundQueue<WatcherStateInfo> backgroundQueueWatcherState,
         IOptions<WatchersOptions> options,
+        IMetricsService metricsService,
         ILogger<KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>> logger)
     : IKubernetesWatcher<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>, new()
@@ -136,6 +138,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                             cancellationToken))
                     {
                         await UpdateWatcherState(WatcherStateStatus.Green, watcherKey, cancellationToken);
+                        IncrementMetric(watcherKey, type);
 
                         if (type == WatchEventType.Bookmark)
                         {
@@ -281,6 +284,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
 
             continueToken = customResourceList.Metadata.ContinueProperty;
             lastResourceVersion = customResourceList.Metadata.ResourceVersion;
+            IncrementMetric(watcherKey, WatchEventType.Added, customResourceList.Items?.Count ?? 0);
         } while (!string.IsNullOrEmpty(continueToken) &&
                  !(cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested));
 
@@ -341,5 +345,14 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                 await Task.Delay(10000, cancellationToken);
             }
         }
+    }
+
+    protected void IncrementMetric(string watcherKey, WatchEventType watchEventType, int value = 1)
+    {
+        metricsService.WatcherProcessedMessagesCounter.Add(value,
+            new KeyValuePair<string, object?>("trivy_report", typeof(TKubernetesObject).Name),
+            new KeyValuePair<string, object?>("watch_event_type", watchEventType.ToString()),
+            new KeyValuePair<string, object?>("namespace_name", watcherKey == VarUtils.DefaultCacheRefreshKey ? null : watcherKey));
+            
     }
 }

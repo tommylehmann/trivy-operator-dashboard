@@ -1,12 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Metrics;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Infrastructure.Services;
 
 public class ConcurrentCache<TKey, TValue> : IConcurrentCache<TKey, TValue> where TKey : notnull
 {
+    public ConcurrentCache(IMetricsService metricsService)
+    {
+        metricsService.CreateObservableGauge(
+            $"{metricsService.AppName}.cache.size",
+            () => GetCacheMeasurements(),
+            "Tracks the size of the caches."
+        );
+    }
+    
     private readonly ConcurrentDictionary<TKey, TValue> dictionary = new();
 
     public TValue this[TKey key]
@@ -39,4 +49,16 @@ public class ConcurrentCache<TKey, TValue> : IConcurrentCache<TKey, TValue> wher
     IEnumerator IEnumerable.GetEnumerator() => dictionary.GetEnumerator();
 
     public void Clear() => dictionary.Clear();
+
+    protected virtual IEnumerable<Measurement<long>> GetCacheMeasurements()
+    {
+        List<Measurement<long>> measurements =
+        [
+            new Measurement<long>(
+                dictionary.Count,
+                new KeyValuePair<string, object?>("type", typeof(TValue).Name)),
+        ];
+
+        return measurements;
+    }
 }

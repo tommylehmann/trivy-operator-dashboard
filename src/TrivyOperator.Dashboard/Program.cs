@@ -13,6 +13,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 const string applicationName = "TrivyOperator.Dashboard";
+string applicationNameForOtlp = applicationName.Replace(".", string.Empty).ToLowerInvariant();
 
 Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
@@ -86,7 +87,7 @@ builder.Services.AddClusterVulnerabilityReportServices(configuration.GetSection(
 builder.Services.AddRbacAssessmentReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddSbomReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddUiCommons();
-builder.Services.AddOpenTelemetry(configuration.GetSection("OpenTelemetry"), applicationName.Replace(".",string.Empty));
+builder.Services.AddOpenTelemetry(configuration.GetSection("OpenTelemetry"), applicationNameForOtlp);
 
 WebApplication app = builder.Build();
 

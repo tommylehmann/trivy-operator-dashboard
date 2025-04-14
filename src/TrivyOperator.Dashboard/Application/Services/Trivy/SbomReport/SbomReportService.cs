@@ -16,8 +16,8 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 namespace TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport;
 
 public class SbomReportService(
-    IConcurrentCache<string, IList<SbomReportCr>> cache,
-    IConcurrentCache<string, IList<VulnerabilityReportCr>> vrCache,
+    ITrivyConcurentCache<SbomReportCr> cache,
+    ITrivyConcurentCache<VulnerabilityReportCr> vrCache,
     INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>> domainService,
     IOptions<FileExportOptions> fileExportOptions,
     ILogger<SbomReportService> logger)

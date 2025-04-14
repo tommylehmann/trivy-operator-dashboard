@@ -9,13 +9,13 @@ namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions
 
 public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
     TBackgroundQueue backgroundQueue,
-    IConcurrentCache<string, IList<TKubernetesObject>> cache,
+    ITrivyConcurentCache<TKubernetesObject> cache,
     ILogger<CacheRefresh<TKubernetesObject, TBackgroundQueue>> logger)
     : ICacheRefresh<TKubernetesObject, TBackgroundQueue> where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
     protected Task? CacheRefreshTask;
-    protected IConcurrentCache<string, IList<TKubernetesObject>> cache = cache;
+    protected ITrivyConcurentCache<TKubernetesObject> cache = cache;
 
     public void StartEventsProcessing(CancellationToken cancellationToken)
     {

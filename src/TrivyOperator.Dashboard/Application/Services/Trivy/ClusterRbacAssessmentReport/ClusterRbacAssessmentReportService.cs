@@ -6,7 +6,7 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Trivy.ClusterRbacAssessmentReport;
 
-public class ClusterRbacAssessmentReportService(IConcurrentCache<string, IList<ClusterRbacAssessmentReportCr>> cache)
+public class ClusterRbacAssessmentReportService(ITrivyConcurentCache<ClusterRbacAssessmentReportCr> cache)
     : IClusterRbacAssessmentReportService
 {
     public Task<IList<ClusterRbacAssessmentReportDto>> GetClusterRbacAssessmentReportDtos()
