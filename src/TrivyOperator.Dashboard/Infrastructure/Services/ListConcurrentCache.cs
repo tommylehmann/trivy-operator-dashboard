@@ -4,8 +4,8 @@ using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Infrastructure.Services;
 
-public class TrivyConcurentCache<TValue>(IMetricsService metricsService)
-    : ConcurrentCache<string, IList<TValue>>(metricsService), ITrivyConcurentCache<TValue>
+public class ListConcurrentCache<TValue>(IMetricsService metricsService)
+    : ConcurrentCache<string, IList<TValue>>(metricsService), IListConcurrentCache<TValue>
 {
     protected override IEnumerable<Measurement<long>> GetCacheMeasurements()
     {
@@ -15,8 +15,8 @@ public class TrivyConcurentCache<TValue>(IMetricsService metricsService)
         {
             measurements.Add(new Measurement<long>(
                 this[key].Count,
-                new KeyValuePair<string, object?>("namespace_name", key == VarUtils.DefaultCacheRefreshKey ? null : key),
-                new KeyValuePair<string, object?>("trivy_report", typeof(TValue).Name)));
+                new KeyValuePair<string, object?>("key_name", key == VarUtils.DefaultCacheRefreshKey ? null : key),
+                new KeyValuePair<string, object?>("value_type", typeof(TValue).Name)));
         }
         return measurements;
     }

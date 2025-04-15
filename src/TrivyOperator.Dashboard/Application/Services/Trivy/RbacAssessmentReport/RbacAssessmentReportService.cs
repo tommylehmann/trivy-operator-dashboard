@@ -6,7 +6,7 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Trivy.RbacAssessmentReport;
 
-public class RbacAssessmentReportService(ITrivyConcurentCache<RbacAssessmentReportCr> cache)
+public class RbacAssessmentReportService(IListConcurrentCache<RbacAssessmentReportCr> cache)
     : IRbacAssessmentReportService
 {
     public Task<IEnumerable<RbacAssessmentReportDto>> GetRbacAssessmentReportDtos(

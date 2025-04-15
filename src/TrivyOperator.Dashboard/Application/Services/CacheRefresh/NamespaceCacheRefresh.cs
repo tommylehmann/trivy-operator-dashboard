@@ -10,7 +10,7 @@ namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh;
 
 public class NamespaceCacheRefresh(
     IKubernetesBackgroundQueue<V1Namespace> backgroundQueue,
-    ITrivyConcurentCache<V1Namespace> cache,
+    IListConcurrentCache<V1Namespace> cache,
     IEnumerable<INamespacedCacheWatcherEventHandler> services,
     ILogger<NamespaceCacheRefresh> logger)
     : CacheRefresh<V1Namespace, IKubernetesBackgroundQueue<V1Namespace>>(backgroundQueue, cache, logger)

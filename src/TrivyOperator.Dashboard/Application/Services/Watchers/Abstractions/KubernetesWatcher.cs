@@ -284,7 +284,6 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
 
             continueToken = customResourceList.Metadata.ContinueProperty;
             lastResourceVersion = customResourceList.Metadata.ResourceVersion;
-            IncrementMetric(watcherKey, WatchEventType.Added, customResourceList.Items?.Count ?? 0);
         } while (!string.IsNullOrEmpty(continueToken) &&
                  !(cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested));
 

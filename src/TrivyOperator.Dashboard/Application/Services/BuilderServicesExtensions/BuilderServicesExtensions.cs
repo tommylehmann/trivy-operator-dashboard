@@ -62,7 +62,7 @@ public static class BuilderServicesExtensions
     public static void AddV1NamespaceServices(this IServiceCollection services, IConfiguration kubernetesConfiguration)
     {
         services
-            .AddSingleton<ITrivyConcurentCache<V1Namespace>, TrivyConcurentCache<V1Namespace>>();
+            .AddSingleton<IListConcurrentCache<V1Namespace>, ListConcurrentCache<V1Namespace>>();
         services.AddSingleton<IKubernetesBackgroundQueue<V1Namespace>, KubernetesBackgroundQueue<V1Namespace>>();
         if (string.IsNullOrWhiteSpace(kubernetesConfiguration.GetValue<string>("NamespaceList")))
         {
@@ -104,8 +104,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<ITrivyConcurentCache<ClusterRbacAssessmentReportCr>,
-                TrivyConcurentCache<ClusterRbacAssessmentReportCr>>();
+            .AddSingleton<IListConcurrentCache<ClusterRbacAssessmentReportCr>,
+                ListConcurrentCache<ClusterRbacAssessmentReportCr>>();
         services
             .AddSingleton<IKubernetesBackgroundQueue<ClusterRbacAssessmentReportCr>,
                 KubernetesBackgroundQueue<ClusterRbacAssessmentReportCr>>();
@@ -135,8 +135,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<ITrivyConcurentCache<ConfigAuditReportCr>,
-                TrivyConcurentCache<ConfigAuditReportCr>>();
+            .AddSingleton<IListConcurrentCache<ConfigAuditReportCr>,
+                ListConcurrentCache<ConfigAuditReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<ConfigAuditReportCr>, KubernetesBackgroundQueue<ConfigAuditReportCr>>();
         services.AddSingleton<INamespacedWatcher<ConfigAuditReportCr>,
             NamespacedWatcher<CustomResourceList<ConfigAuditReportCr>, ConfigAuditReportCr,
@@ -163,8 +163,8 @@ public static class BuilderServicesExtensions
         }
 
         services.AddSingleton<
-            ITrivyConcurentCache<ExposedSecretReportCr>,
-            TrivyConcurentCache<ExposedSecretReportCr>>();
+            IListConcurrentCache<ExposedSecretReportCr>,
+            ListConcurrentCache<ExposedSecretReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<ExposedSecretReportCr>, KubernetesBackgroundQueue<ExposedSecretReportCr>>();
         services.AddSingleton<INamespacedWatcher<ExposedSecretReportCr>,
             NamespacedWatcher<CustomResourceList<ExposedSecretReportCr>, ExposedSecretReportCr,
@@ -191,8 +191,8 @@ public static class BuilderServicesExtensions
         }
 
         services.AddSingleton<
-            ITrivyConcurentCache<VulnerabilityReportCr>,
-            TrivyConcurentCache<VulnerabilityReportCr>>();
+            IListConcurrentCache<VulnerabilityReportCr>,
+            ListConcurrentCache<VulnerabilityReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<VulnerabilityReportCr>, KubernetesBackgroundQueue<VulnerabilityReportCr>>();
         services.AddSingleton<INamespacedWatcher<VulnerabilityReportCr>,
             NamespacedWatcher<CustomResourceList<VulnerabilityReportCr>, VulnerabilityReportCr,
@@ -220,8 +220,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<ITrivyConcurentCache<ClusterComplianceReportCr>,
-                TrivyConcurentCache<ClusterComplianceReportCr>>();
+            .AddSingleton<IListConcurrentCache<ClusterComplianceReportCr>,
+                ListConcurrentCache<ClusterComplianceReportCr>>();
         services
             .AddSingleton<IKubernetesBackgroundQueue<ClusterComplianceReportCr>, KubernetesBackgroundQueue<ClusterComplianceReportCr>>();
         services.AddSingleton<IClusterScopedWatcher<ClusterComplianceReportCr>, ClusterScopedWatcher<
@@ -250,8 +250,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<ITrivyConcurentCache<ClusterVulnerabilityReportCr>,
-                TrivyConcurentCache<ClusterVulnerabilityReportCr>>();
+            .AddSingleton<IListConcurrentCache<ClusterVulnerabilityReportCr>,
+                ListConcurrentCache<ClusterVulnerabilityReportCr>>();
         services
             .AddSingleton<IKubernetesBackgroundQueue<ClusterVulnerabilityReportCr>,
                 KubernetesBackgroundQueue<ClusterVulnerabilityReportCr>>();
@@ -282,8 +282,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<ITrivyConcurentCache<RbacAssessmentReportCr>,
-                TrivyConcurentCache<RbacAssessmentReportCr>>();
+            .AddSingleton<IListConcurrentCache<RbacAssessmentReportCr>,
+                ListConcurrentCache<RbacAssessmentReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<RbacAssessmentReportCr>, KubernetesBackgroundQueue<RbacAssessmentReportCr>>();
         services.AddSingleton<INamespacedWatcher<RbacAssessmentReportCr>,
             NamespacedWatcher<CustomResourceList<RbacAssessmentReportCr>, RbacAssessmentReportCr,
@@ -309,8 +309,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<ITrivyConcurentCache<SbomReportCr>,
-                TrivyConcurentCache<SbomReportCr>>();
+            .AddSingleton<IListConcurrentCache<SbomReportCr>,
+                ListConcurrentCache<SbomReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<SbomReportCr>, KubernetesBackgroundQueue<SbomReportCr>>();
         services.AddSingleton<INamespacedWatcher<SbomReportCr>, SbomReportWatcher>();
         services.AddSingleton<ICacheRefresh<SbomReportCr, IKubernetesBackgroundQueue<SbomReportCr>>,
@@ -333,7 +333,7 @@ public static class BuilderServicesExtensions
     public static void AddAlertsServices(this IServiceCollection services)
     {
         services.AddSignalR();
-        services.AddSingleton<IConcurrentCache<string, IList<Alert>>, ConcurrentCache<string, IList<Alert>>>();
+        services.AddSingleton<IListConcurrentCache<Alert>, ListConcurrentCache<Alert>>();
         services.AddTransient<IAlertsService, AlertsService>();
     }
 
@@ -407,7 +407,7 @@ public static class BuilderServicesExtensions
 
     public static void AddOpenTelemetry(this IServiceCollection services, IConfiguration configuration, string applicationName)
     {
-        if (configuration.GetValue<bool?>("Enabled") == false || configuration.GetValue<bool?>("Enabled") == null)
+        if ((configuration.GetValue<bool?>("Enabled") ?? false) == false)
         {
             services.AddSingleton<IMetricsService>(provider => new MetricsService(applicationName));
             return;
@@ -439,7 +439,9 @@ public static class BuilderServicesExtensions
                     tracingBuilder.AddOtlpExporter(options =>
                     {
                         options.Endpoint = new Uri(otelEndpoint);
-                        options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                        options.Protocol = (configuration.GetValue<string?>("OtelProtocol")?.ToLowerInvariant() ?? "grpc") == "grpc"
+                            ? OpenTelemetry.Exporter.OtlpExportProtocol.Grpc
+                            : OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                     });
                 }
                     
@@ -465,7 +467,9 @@ public static class BuilderServicesExtensions
                     metricsBuilder.AddOtlpExporter(options =>
                     {
                         options.Endpoint = new Uri(otelEndpoint);
-                        options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                        options.Protocol = (configuration.GetValue<string?>("OtelProtocol")?.ToLowerInvariant() ?? "grpc") == "grpc"
+                            ? OpenTelemetry.Exporter.OtlpExportProtocol.Grpc
+                            : OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                     });
                 }
             });

@@ -8,7 +8,7 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 namespace TrivyOperator.Dashboard.Application.Services.Alerts;
 
 public class AlertsService(
-    IConcurrentCache<string, IList<Alert>> cache,
+    IListConcurrentCache<Alert> cache,
     IHubContext<AlertsHub> alertsHubContext,
     ILogger<AlertsService> logger) : IAlertsService
 {

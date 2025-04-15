@@ -5,7 +5,7 @@ using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.Namespaces;
 
-public class NamespaceService(ITrivyConcurentCache<V1Namespace> cache) : INamespaceService
+public class NamespaceService(IListConcurrentCache<V1Namespace> cache) : INamespaceService
 {
     public Task<List<string>> GetKubernetesNamespaces()
     {

@@ -5,7 +5,7 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Trivy.ClusterComplianceReport;
 
-public class ClusterComplianceReportService(ITrivyConcurentCache<ClusterComplianceReportCr> cache)
+public class ClusterComplianceReportService(IListConcurrentCache<ClusterComplianceReportCr> cache)
     : IClusterComplianceReportService
 {
     public Task<IEnumerable<ClusterComplianceReportDto>> GetClusterComplianceReportDtos()
