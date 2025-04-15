@@ -13,7 +13,8 @@ public class ConcurrentCache<TKey, TValue> : IConcurrentCache<TKey, TValue> wher
         metricsService.CreateObservableGauge(
             $"{metricsService.AppName}.cache.size",
             () => GetCacheMeasurements(),
-            "Tracks the size of the caches."
+            unit: "items",
+            description: "Tracks the size of the caches."
         );
     }
     

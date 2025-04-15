@@ -16,13 +16,14 @@ public class MetricsService : IMetricsService
         this.AppName = appName;
 
         WatcherProcessedMessagesCounter = _meter.CreateCounter<long>(
-            $"{appName}.watcher.processed_messages.count",
-            "Counts the total number of processed messages in watcher."
+            name: $"{appName}.watcher.processed_messages.count",
+            unit: "events",
+            description: "Counts the total number of processed messages in watcher."
         );
     }
 
-    public void CreateObservableGauge(string name, Func<IEnumerable<Measurement<long>>> observeValues, string description)
+    public void CreateObservableGauge(string name, Func<IEnumerable<Measurement<long>>> observeValues, string? unit, string? description)
     {
-        _meter.CreateObservableGauge(name, observeValues, description);
+        _meter.CreateObservableGauge(name, observeValues, unit: unit, description: description);
     }
 }
