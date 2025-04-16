@@ -8,7 +8,7 @@ import { PanelModule } from 'primeng/panel';
 import { TagModule} from 'primeng/tag'
 
 import { AppVersionService } from '../../api/services/app-version.service';
-import { GitHubRelease } from '../../api/models/git-hub-release';
+import { GitHubReleaseDto } from '../../api/models/git-hub-release-dto';
 import { AppVersion } from '../../api/models/app-version'
 import { AboutCredits } from './about.types';
 
@@ -21,8 +21,9 @@ import { AboutCredits } from './about.types';
   styleUrl: './about.component.scss',
 })
 export class AboutComponent {
-  releaseNotes?: GitHubRelease[];
+  releaseNotes?: GitHubReleaseDto[];
   currentVersion?: AppVersion;
+  latestVersion?: string;
   newVersionAvailable: boolean = false;
 
   credits: AboutCredits[] = [
@@ -68,8 +69,9 @@ export class AboutComponent {
     });
   }
 
-  private onReleaseNoteDtos(data: GitHubRelease[]) {
-    this.releaseNotes = data;
+  private onReleaseNoteDtos(data: GitHubReleaseDto[]) {
+    this.releaseNotes = data.sort((a, b) => this.parseVersion(b.tagName ?? '') - this.parseVersion(a.tagName ?? ''));
+    this.latestVersion = data.find(x => x.isLatest)?.tagName?.replace('v', '');
     this.checkNewVersionAvailable();
   }
 
@@ -94,7 +96,7 @@ export class AboutComponent {
     }
 
     const parsedCurrentVersion = this.parseVersion(this.currentVersion.fileVersion ?? "0.0");
-    const parsedLastVersion = this.parseVersion(this.releaseNotes[0].tag_name ?? "0.0");
+    const parsedLastVersion = this.parseVersion(this.releaseNotes[0].tagName ?? "0.0");
 
     this.newVersionAvailable = parsedLastVersion - parsedCurrentVersion > 0;
   }

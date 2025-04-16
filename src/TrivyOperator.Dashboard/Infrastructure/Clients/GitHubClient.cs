@@ -6,12 +6,12 @@ namespace TrivyOperator.Dashboard.Infrastructure.Clients;
 
 public class GitHubClient(HttpClient httpClient, ILogger<GitHubClient> logger) : IGitHubClient
 {
-    public async Task<GitHubRelease?> GetLatestRelease(string baseRepoUrl)
+    public async Task<GitHubRelease?> GetLatestRelease(string baseRepoUrl, CancellationToken cancellationToken)
     {
         try
         {
             httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Trivy.Operator.Dashboard/1.4");
-            HttpResponseMessage response = await httpClient.GetAsync($"{baseRepoUrl.TrimEnd('/')}/releases/latest");
+            HttpResponseMessage response = await httpClient.GetAsync($"{baseRepoUrl.TrimEnd('/')}/releases/latest", cancellationToken);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<GitHubRelease>(content);
@@ -22,12 +22,12 @@ public class GitHubClient(HttpClient httpClient, ILogger<GitHubClient> logger) :
             return null;
         }
     }
-    public async Task<GitHubRelease[]?> GitHubReleases(string baseRepoUrl)
+    public async Task<GitHubRelease[]?> GitHubReleases(string baseRepoUrl, CancellationToken cancellationToken)
     {
         try
         {
             httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Trivy.Operator.Dashboard/1.4");
-            HttpResponseMessage response = await httpClient.GetAsync($"{baseRepoUrl.TrimEnd('/')}/releases");
+            HttpResponseMessage response = await httpClient.GetAsync($"{baseRepoUrl.TrimEnd('/')}/releases", cancellationToken);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<GitHubRelease[]>(content);

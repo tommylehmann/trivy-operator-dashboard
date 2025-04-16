@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.AppVersions.Abstractions;
-using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
-using YamlDotNet.Core.Tokens;
 
 namespace TrivyOperator.Dashboard.Application.Controllers;
 
@@ -11,30 +9,21 @@ namespace TrivyOperator.Dashboard.Application.Controllers;
 public class AppVersionController(IAppVersionService appVersionService)
 {
     [HttpGet(Name = "GetGitHubVersions")]
-    [ProducesResponseType<IEnumerable<GitHubRelease>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IEnumerable<GitHubReleaseDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    public async Task<IEnumerable<GitHubRelease>> GetAll()
+    public async Task<IEnumerable<GitHubReleaseDto>> GetAll()
     {
-        return await appVersionService.GetTrivyDashboardReleases() ?? [];
+        return await appVersionService.GetTrivyDashboardReleases();
     }
 
     [HttpGet("latest", Name = "GetGitHubLatestVersion")]
-    [ProducesResponseType<GitHubRelease>(StatusCodes.Status200OK)]
+    [ProducesResponseType<GitHubReleaseDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    public async Task<GitHubRelease> GetLatest()
+    public async Task<GitHubReleaseDto> GetLatest()
     {
-        return await appVersionService.GetTrivyDashboardLatestRelease() ?? new GitHubRelease();
-    }
-
-    [HttpGet("trivy-operator-latest", Name = "GetTrivyOperatorGitHubLatestVersion")]
-    [ProducesResponseType<GitHubRelease>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    public async Task<GitHubRelease> GetTrivyOperatorLatest()
-    {
-        return await appVersionService.GetTrivyOperatorLatestRelease() ?? new GitHubRelease();
+        return await appVersionService.GetTrivyDashboardLatestRelease() ?? new GitHubReleaseDto();
     }
 
     [HttpGet("current-version", Name = "GetCurrentVersion")]

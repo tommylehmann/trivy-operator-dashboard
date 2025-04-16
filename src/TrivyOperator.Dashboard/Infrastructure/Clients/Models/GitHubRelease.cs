@@ -4,6 +4,8 @@ namespace TrivyOperator.Dashboard.Infrastructure.Clients.Models;
 
 public class GitHubRelease
 {
+    [JsonPropertyName("id")]
+    public long Id { get; set; } = 0;
     [JsonPropertyName("tag_name")]
     public string? TagName { get; set; }
     [JsonPropertyName("name")]
@@ -16,4 +18,6 @@ public class GitHubRelease
     public DateTime PublishedAt { get; set; }
     [JsonPropertyName("created_at")]
     public DateTime CreatedAt { get; set; }
+    [JsonIgnore]
+    public bool IsLatest { get; set; } = false;
 }

@@ -1,43 +1,23 @@
-﻿using Microsoft.Extensions.Options;
-using System.Reflection;
+﻿using System.Reflection;
 using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.AppVersions.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
 
 namespace TrivyOperator.Dashboard.Application.Services.AppVersions;
 
-public class AppVersionService(IGitHubClient gitHubClient, IOptions<GitHubOptions> options, ILogger<AppVersionService> logger) : IAppVersionService
+public class AppVersionService(IConcurrentCache<long, GitHubRelease> cache) : IAppVersionService
 {
-    public async Task<GitHubRelease?> GetTrivyDashboardLatestRelease()
+    public Task<GitHubReleaseDto?> GetTrivyDashboardLatestRelease()
     {
-        GitHubRelease? release = await gitHubClient.GetLatestRelease(options.Value.BaseTrivyDashboardRepoUrl);
-        if (release is null)
-        {
-            logger.LogWarning("Failed to fetch the latest release from GitHub.");
-        }
-        return release;
+        GitHubRelease? release = cache.Select(x => x.Value).FirstOrDefault(x => x.IsLatest == true);
+        return Task.FromResult(release?.ToGitHubReleaseDto());
     }
 
-    public async Task<GitHubRelease[]?> GetTrivyDashboardReleases()
+    public Task<IList<GitHubReleaseDto>> GetTrivyDashboardReleases()
     {
-        GitHubRelease[]? releases = await gitHubClient.GitHubReleases(options.Value.BaseTrivyDashboardRepoUrl);
-        if (releases is null)
-        {
-            logger.LogWarning("Failed to fetch releases from GitHub.");
-        }
-        return releases;
-    }
-
-    public async Task<GitHubRelease?> GetTrivyOperatorLatestRelease()
-    {
-        GitHubRelease? release = await gitHubClient.GetLatestRelease(options.Value.BaseTrivyOperatorRepoUrl);
-        if (release is null)
-        {
-            logger.LogWarning("Failed to fetch the latest release from GitHub.");
-        }
-        return release;
+        List<GitHubReleaseDto> releases = [.. cache.Select(x => x.Value.ToGitHubReleaseDto())];
+        return Task.FromResult((IList<GitHubReleaseDto>)releases);
     }
 
     public AppVersion GetCurrentVersion()

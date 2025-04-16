@@ -42,7 +42,7 @@
           </div>
           <div class="p-1">
             <span>Latest Version:</span>
-            <p-tag class="p-2" [rounded]="true" [value]=" releaseNotes ? (releaseNotes[0].tag_name ?? 'n/a') : 'n/a'" />
+            <p-tag class="p-2" [rounded]="true" [value]="latestVersion ?? 'n/a'" />
           </div>
           <div class="p-1">
             <p-tag *ngIf="newVersionAvailable" [rounded]="true" value="New version available!" icon="pi pi-info-circle" severity="info" />
@@ -58,7 +58,7 @@
           <p-card class="h-full small-header"
                   [ngClass]="{'p-card-bold-subtitle': i === 0}"
                   [header]="releaseNote.name ?? ''"
-                  subheader="{{ releaseNote.created_at ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
+                  subheader="{{ releaseNote.createdAt ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
             <markdown [data]="releaseNote.body ?? ''"></markdown>
           </p-card>
         </div>

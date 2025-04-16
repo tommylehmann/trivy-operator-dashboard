@@ -42,7 +42,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/GitHubRelease'
+                  $ref: '#/components/schemas/GitHubReleaseDto'
         '400':
           description: Bad Request
           content:
@@ -66,31 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GitHubRelease'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
-  /api/app-versions/trivy-operator-latest:
-    get:
-      tags:
-        - AppVersion
-      operationId: GetTrivyOperatorGitHubLatestVersion
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GitHubRelease'
+                $ref: '#/components/schemas/GitHubReleaseDto'
         '400':
           description: Bad Request
           content:
@@ -2290,10 +2266,10 @@ components:
           type: integer
           format: int32
       additionalProperties: false
-    GitHubRelease:
+    GitHubReleaseDto:
       type: object
       properties:
-        tag_name:
+        tagName:
           type: string
           nullable: true
         name:
@@ -2302,15 +2278,17 @@ components:
         body:
           type: string
           nullable: true
-        url:
+        htmlUrl:
           type: string
           nullable: true
-        published_at:
+        publishedAt:
           type: string
           format: date-time
-        created_at:
+        createdAt:
           type: string
           format: date-time
+        isLatest:
+          type: boolean
       additionalProperties: false
     ProblemDetails:
       type: object

@@ -54,6 +54,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Reflection;
+using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
 
 namespace TrivyOperator.Dashboard.Application.Services.BuilderServicesExtensions;
 
@@ -352,8 +353,11 @@ public static class BuilderServicesExtensions
 
         services.AddSingleton<IKubernetesClientFactory, KubernetesClientFactory>();
         
+        
+        services.AddSingleton<IConcurrentCache<long, GitHubRelease>, ConcurrentCache<long, GitHubRelease>>();
         services.AddSingleton<IGitHubClient, GitHubClient>();
         services.AddScoped<IAppVersionService, AppVersionService>();
+        services.AddHostedService<AppVersionTimedHostedService>();
     }
 
     public static void AddUiCommons(this IServiceCollection services) =>

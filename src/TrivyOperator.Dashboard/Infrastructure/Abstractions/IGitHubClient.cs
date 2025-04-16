@@ -3,6 +3,6 @@
 namespace TrivyOperator.Dashboard.Infrastructure.Abstractions;
 public interface IGitHubClient
 {
-    Task<GitHubRelease?> GetLatestRelease(string baseRepoUrl);
-    Task<GitHubRelease[]?> GitHubReleases(string baseRepoUrl);
+    Task<GitHubRelease?> GetLatestRelease(string baseRepoUrl, CancellationToken cancellationToken);
+    Task<GitHubRelease[]?> GitHubReleases(string baseRepoUrl, CancellationToken cancellationToken);
 }
