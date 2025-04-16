@@ -349,9 +349,11 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
     protected void IncrementMetric(string watcherKey, WatchEventType watchEventType, int value = 1)
     {
         metricsService.WatcherProcessedMessagesCounter.Add(value,
-            new KeyValuePair<string, object?>("trivy_report", typeof(TKubernetesObject).Name),
-            new KeyValuePair<string, object?>("watch_event_type", watchEventType.ToString()),
-            new KeyValuePair<string, object?>("namespace_name", watcherKey == VarUtils.DefaultCacheRefreshKey ? null : watcherKey));
+            new KeyValuePair<string, object?>("resource_kind", typeof(TKubernetesObject).Name),
+            new KeyValuePair<string, object?>("resource_level", watcherKey == VarUtils.DefaultCacheRefreshKey ? "cluster_scoped" : "namespaced"),
+            new KeyValuePair<string, object?>("namespace_name", watcherKey == VarUtils.DefaultCacheRefreshKey ? null : watcherKey),
+            new KeyValuePair<string, object?>("watch_event_type", watchEventType.ToString())
+        );
             
     }
 }

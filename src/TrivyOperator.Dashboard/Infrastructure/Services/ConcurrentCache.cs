@@ -57,6 +57,7 @@ public class ConcurrentCache<TKey, TValue> : IConcurrentCache<TKey, TValue> wher
         [
             new Measurement<long>(
                 dictionary.Count,
+                new KeyValuePair<string, object?>("value_kind", "generic"),
                 new KeyValuePair<string, object?>("value_type", typeof(TValue).Name)),
         ];
 
