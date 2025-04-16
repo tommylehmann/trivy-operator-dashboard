@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, forkJoin } from 'rxjs';
 
 import { BackendSettingsDto } from '../../api/models/backend-settings-dto';
 import { BackendSettingsService } from '../../api/services/backend-settings.service';
 import { LocalStorageUtils } from '../utils/local-storage.utils';
+import { SettingsService } from './settings.service';
+import { AppVersion } from '../../api/models';
 
 @Injectable({
   providedIn: 'root',
@@ -19,20 +21,24 @@ export class MainAppInitService {
   private isDarkModeSubject = new BehaviorSubject<boolean>(this.isDarkMode);
   isDarkMode$ = this.isDarkModeSubject.asObservable();
 
-  constructor(private backendSettingsService: BackendSettingsService) {}
+  constructor(private backendSettingsService: BackendSettingsService, private settingsService: SettingsService) { }
 
   initializeApp(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.backendSettingsService.getBackendSettings().subscribe({
-        next: (res) => {
-          this.defaultBackendSettingsDto = res;
-          this.mergeBackendSettingsDto(res);
+      forkJoin({
+        backendSettings: this.backendSettingsService.getBackendSettings(),
+        appVersion: this.settingsService.getAppVersion(),
+      }).subscribe({
+        next: ({ backendSettings, appVersion }) => {
+          this.defaultBackendSettingsDto = backendSettings;
+          this.mergeBackendSettingsDto(backendSettings);
           this.isDarkMode = this.getDarkMode();
           this.setDarkMode();
+          this.something(appVersion);
           resolve();
         },
         error: (err) => {
-          console.error(err);
+          console.error('Error during app initialization:', err);
           reject(err);
         },
       });
@@ -94,6 +100,22 @@ export class MainAppInitService {
       [];
     const mergedItems = [...savedItems, ...itemsToAdd.filter((item) => !savedItems.includes(item))];
     this.updateBackendSettingsTrivyReportConfigDto(mergedItems);
+  }
+
+  private something(appVersion: AppVersion) {
+    const appVersionKeyName = 'settings.appVersion';
+    const savedAppVersion = localStorage.getItem(appVersionKeyName);
+    if (!savedAppVersion) {
+      const keys: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('trivyTable')) {
+          keys.push(key);
+        }
+      }
+      keys.forEach(x => localStorage.removeItem(x));
+    }
+    localStorage.setItem(appVersionKeyName, appVersion.fileVersion ?? "1.0");
   }
 }
 
