@@ -111,7 +111,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   public filterRefreshActiveNamespace: string | null = '';
   public filterRefreshSeverities: SeverityDto[] | undefined;
   public isTableVisible: boolean = true;
-  public severityDtos: SeverityDto[] = SeverityUtils.severityDtos;
+  public severityDtos: SeverityDto[] = [...SeverityUtils.severityDtos];
   // custom back overlay
   public overlayVisible: boolean = false;
   //rows expand

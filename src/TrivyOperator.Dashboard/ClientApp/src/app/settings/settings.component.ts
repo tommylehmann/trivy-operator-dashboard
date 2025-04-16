@@ -57,7 +57,7 @@ export class SettingsComponent implements OnInit {
   severityCssStyleByIdOptionDescription: string = "";
 
   severityCssStyleByIdOptions2: { id: SeverityColorByNameOption, label: string }[] = [];
-  severityCssStyleByIdOptionValue2: SeverityColorByNameOption = 'greyBelowOne';
+  severityCssStyleByIdOptionValue2: SeverityColorByNameOption = 'grayBelowOne';
 
   constructor(private mainAppInitService: MainAppInitService, private settingsService: SettingsService) { }
 
@@ -165,10 +165,10 @@ export class SettingsComponent implements OnInit {
         case 'all':
           label = "All";
           break;
-        case 'greyBelowOne':
+        case 'grayBelowOne':
           label = 'Non Zero';
           break;
-        case 'greyNulls':
+        case 'grayNulls':
           label = "Non Null";
           break;
         case 'hideNonPositive':

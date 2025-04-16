@@ -5,12 +5,18 @@ interface SeverityExtendedDto extends SeverityDto {
 }
 
 export class SeverityUtils {
-  static severityDtos: SeverityExtendedDto[] = [
+  static severityDtos: ReadonlyArray<SeverityExtendedDto> = [
     { id: 0, name: 'CRITICAL', short: 'CRIT' },
     { id: 1, name: 'HIGH', short: 'High' },
     { id: 2, name: 'MEDIUM', short: 'MED' },
     { id: 3, name: 'LOW', short: 'LOW' },
     { id: 4, name: 'UNKNOWN', short: 'UNK' },
+  ];
+  static severityShortDtos: ReadonlyArray<SeverityExtendedDto> = [
+    { id: 0, name: 'CRITICAL', short: 'CRIT' },
+    { id: 1, name: 'HIGH', short: 'High' },
+    { id: 2, name: 'MEDIUM', short: 'MED' },
+    { id: 3, name: 'LOW', short: 'LOW' },
   ];
   private static colorIntensity: number = 400;
 

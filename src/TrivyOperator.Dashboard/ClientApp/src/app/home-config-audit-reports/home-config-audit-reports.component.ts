@@ -32,7 +32,7 @@ export class HomeConfigAuditReportsComponent {
   configAuditReportSummaryDtos: ConfigAuditReportSummaryDto[] | null = null;
   namespaceNames: string[] = [];
   kinds: string[] = [];
-  severities: number[] = [];
+  severities: number[] = SeverityUtils.severityShortDtos.map(x => x.id);
   carSeveritySummaries: CarSeveritySummary[] = [];
   carDetailsDtos: CarDetailsDto[] = [];
   carDetailsDtoFooter: CarDetailsDto = { namespaceName: '', values: [], isTotal: true };
@@ -129,7 +129,7 @@ export class HomeConfigAuditReportsComponent {
     const { namespaceNames, kinds, severities } = result;
     this.namespaceNames = namespaceNames.sort();
     this.kinds = kinds.sort();
-    this.severities = severities.sort((a, b) => a - b);
+    //this.severities = severities.sort((a, b) => a - b);
 
     this.namespaceNames.forEach(namespaceName => {
       const values: { severityId: number, count: number }[] = [];
