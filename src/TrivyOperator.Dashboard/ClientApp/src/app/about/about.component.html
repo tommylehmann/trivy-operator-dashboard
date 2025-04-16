@@ -70,92 +70,29 @@
 <p-panel header="Credits AKA Powered By" [toggleable]="true">
   <h4>Acknowledging the Building Blocks Behind the App</h4>
   <div class="grid align-items-stretch">
-    <div class="col-4 md:col-3 lg:col-2 xl:col-1">
+    <div *ngFor="let credit of credits" class="col-4 md:col-3 lg:col-2 xl:col-1">
       <p-card class="h-full small-header"
-              header="Trivy Operator">
+              header="{{ credit.name }}">
         <div class="grid">
           <div class="col-12">
-            <img src="assets/trivy-operator-logo.png" alt="Trivy Operator Logo"
-                 class="w-full" style="filter: invert(1)" />
+            <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}"
+                 class="w-full" style="{{ credit.imgExtraStyle }}" />
           </div>
           <div class="col-12 text-left">
             <div class="mt-2">
-              <a href="https://trivy.dev/latest/" target="_blank">Home</a>
+              <a href="{{ credit.homeUrl }}" target="_blank">Home</a>
             </div>
             <div class="mt-2">
-              <a href="https://github.com/aquasecurity/trivy-operator" target="_blank">GitHub</a>
+              <a href="{{ credit.gitUrl }}" target="_blank">Git</a>
             </div>
             <div class="mt-2">
-              <a href="https://aquasecurity.github.io/trivy-operator/latest/" target="_blank">Docs</a>
+              <a href="{{ credit.docsUrl }}" target="_blank">Docs</a>
             </div>
           </div>
         </div>
       </p-card>
     </div>
-    <div class="col-4 md:col-3 lg:col-2 xl:col-1">
-      <p-card class="h-full small-header"
-              header=".net 8">
-        <div class="grid">
-          <div class="col-12">
-            <img src="assets/net8.png" alt="dot net 8 Logo" class="w-full" />
-          </div>
-          <div class="col-12 text-left">
-            <div class="mt-2">
-              <a href="https://dotnet.microsoft.com/en-us/" target="_blank">Home</a>
-            </div>
-            <div class="mt-2">
-              <a href="https://github.com/dotnet/core" target="_blank">GitHub</a>
-            </div>
-            <div class="mt-2">
-              <a href="https://learn.microsoft.com/en-us/dotnet/" target="_blank">Docs</a>
-            </div>
-          </div>
-        </div>
-      </p-card>
-    </div>
-    <div class="col-4 md:col-3 lg:col-2 xl:col-1">
-      <p-card class="h-full small-header"
-              header="Angular">
-        <div class="grid">
-          <div class="col-12">
-            <img src="assets/angular-js.png" alt="angular 18 Logo" class="w-full" />
-          </div>
-          <div class="col-12 text-left">
-            <div class="mt-2">
-              <a href="https://angular.dev/" target="_blank">Home</a>
-            </div>
-            <div class="mt-2">
-              <a href="https://github.com/angular/angular" target="_blank">GitHub</a>
-            </div>
-            <div class="mt-2">
-              <a href="https://angular.dev/overview" target="_blank">Docs</a>
-            </div>
-          </div>
-        </div>
-      </p-card>
-    </div>
-    <div class="col-4 md:col-3 lg:col-2 xl:col-1">
-      <p-card class="h-full small-header"
-              header="PrimeNG">
-        <div class="grid">
-          <div class="col-12">
-            <img src="assets/primeng.png" alt="PrimeNG Logo" class="w-full" />
-          </div>
-          <div class="col-12 text-left">
-            <div class="mt-2">
-              <a href="https://primeng.org/" target="_blank">Home</a>
-            </div>
-            <div class="mt-2">
-              <a href="https://github.com/primefaces/primeng" target="_blank">GitHub</a>
-            </div>
-            <div class="mt-2">
-              <a href="https://primeng.org/installation" target="_blank">Docs</a>
-            </div>
-          </div>
-        </div>
-      </p-card>
-    </div>
-    <div class="col-8 md:col-6 lg:col-3 xl:col-2">
+    <div class="col-8 md:col-6 lg:col-2 xl:col-2">
       <p-card class="h-full small-header"
               header="Others">
         <div class="grid">
