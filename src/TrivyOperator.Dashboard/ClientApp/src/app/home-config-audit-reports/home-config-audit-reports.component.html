@@ -92,66 +92,57 @@
   dismissableMask="true"
   header="Config Audit Reports Details"
   resizable="true"
+  [maximizable]="true"
   [contentStyle]="{ height: '70vh' }"
   [modal]="true"
   [style]="{ width: '90vw' }"
   [(visible)]="isCarDetailsDialogVisible"
 >
-  <div *ngIf="configAuditReportSummaryDtos" style="height: 65vh">
-    <p-table scrollDirection="both" styleClass="p-datatable-sm text-sm" [scrollable]="true" [value]="namespaceNames">
-      <ng-template pTemplate="header">
-        <tr>
-          <th pFrozenColumn rowspan="2">Namespace</th>
-          <ng-container *ngFor="let severityId of severities">
-            <th class="text-center" [attr.colspan]="kinds.length">
-              {{ severityWrapperGetCapitalizedName(severityId) }}
-            </th>
-          </ng-container>
-        </tr>
-        <tr>
-          <ng-container *ngFor="let severityId of severities">
-            <ng-container *ngFor="let kind of kinds">
-              <th style="width: 90px; min-width: 75px" class="text-center">{{ kind }}</th>
-            </ng-container>
-          </ng-container>
-        </tr>
-      </ng-template>
-      <ng-template let-item pTemplate="body">
-        <tr>
-          <td pFrozenColumn>{{ item }}</td>
-          <ng-container *ngFor="let severityId of severities">
-            <ng-container *ngFor="let kind of kinds">
-              <td class="text-center w-9rem">
-                <ng-container *ngIf="getCountFromConfigAuditReportSummaryDtos(item, kind, severityId) as result">
-                  <p-tag
-                    *ngIf="result !== '0'"
-                    [rounded]="true"
-                    [style]="{ background: severityWrapperGetGetCssColor(severityId) }"
-                    [value]="result"
-                  />
-                </ng-container>
-              </td>
-            </ng-container>
-          </ng-container>
-        </tr>
-      </ng-template>
-      <ng-template let-footerItem pTemplate="footer">
-        <td pFrozenColumn class="font-bold p-2">Total</td>
+  <p-table scrollDirection="both"
+            styleClass="p-datatable-sm text-sm"
+            [scrollable]="true"
+            scrollHeight="flex"
+            [value]="carDetailsDtos">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pFrozenColumn rowspan="2">Namespace</th>
+        <ng-container *ngFor="let severityId of severities">
+          <th class="text-center" [attr.colspan]="kinds.length">
+            {{ severityId | severityNameById }}
+          </th>
+        </ng-container>
+      </tr>
+      <tr>
         <ng-container *ngFor="let severityId of severities">
           <ng-container *ngFor="let kind of kinds">
-            <td class="text-center w-9rem">
-              <ng-container *ngIf="getCountFromConfigAuditReportSummaryDtos('', kind, severityId) as result">
-                <p-tag
-                  *ngIf="result !== '0'"
-                  [rounded]="true"
-                  [style]="{ background: severityWrapperGetGetCssColor(severityId) }"
-                  [value]="result"
-                />
-              </ng-container>
-            </td>
+            <th style="width: 90px; min-width: 75px" class="text-center">{{ kind }}</th>
           </ng-container>
         </ng-container>
-      </ng-template>
-    </p-table>
-  </div>
+      </tr>
+    </ng-template>
+    <ng-template let-item pTemplate="body">
+      <tr>
+        <td pFrozenColumn>{{ item.namespaceName }}</td>
+        <ng-container *ngFor="let value of item.values">
+          <td class="text-center">
+            <p-tag [rounded]="true"
+                    [style]="value.severityId | severityCssStyleById:value.count"
+                    [value]="value.count | vulnerabilityCount" />
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <tr>
+        <td pFrozenColumn class="font-bold">Total</td>
+        <ng-container *ngFor="let value of carDetailsDtoFooter.values">
+          <td class="text-center">
+            <p-tag [rounded]="true"
+                    [style]="value.severityId | severityCssStyleById:value.count"
+                    [value]="value.count | vulnerabilityCount" />
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
 </p-dialog>

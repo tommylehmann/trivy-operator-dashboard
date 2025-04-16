@@ -4,7 +4,7 @@ import { Component, Input } from '@angular/core';
 import { ConfigAuditReportSummaryDto } from '../../api/models/config-audit-report-summary-dto';
 import { ConfigAuditReportService } from '../../api/services/config-audit-report.service';
 import { PrimeNgChartUtils, PrimeNgHorizontalBarChartData, SeveritiesSummary } from '../utils/primeng-chart.utils';
-import { CarSeveritySummary } from './home-config-audit-reports.types';
+import { CarDetailsDto, CarSeveritySummary } from './home-config-audit-reports.types';
 
 import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
@@ -12,12 +12,19 @@ import { ChartModule } from 'primeng/chart';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+
+import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
+import { SeverityNameByIdPipe } from '../pipes/severity-name-by-id.pipe';
+import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
 import { SeverityUtils } from '../utils/severity.utils';
 
 @Component({
   selector: 'app-home-config-audit-reports',
   standalone: true,
-  imports: [CommonModule, ButtonModule, CarouselModule, ChartModule, DialogModule, TableModule, TagModule],
+  imports: [CommonModule,
+    ButtonModule, CarouselModule, ChartModule, DialogModule, TableModule, TagModule,
+    SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
+  ],
   templateUrl: './home-config-audit-reports.component.html',
   styleUrl: './home-config-audit-reports.component.scss',
 })
@@ -27,6 +34,8 @@ export class HomeConfigAuditReportsComponent {
   kinds: string[] = [];
   severities: number[] = [];
   carSeveritySummaries: CarSeveritySummary[] = [];
+  carDetailsDtos: CarDetailsDto[] = [];
+  carDetailsDtoFooter: CarDetailsDto = { namespaceName: '', values: [], isTotal: true };
   public slides: string[] = ['nsByNs', 'nsBySev', 'kindByNs', 'kindBySev'];
   severitesSummariesNamespace: SeveritiesSummary[] = [];
   severitesSummariesKind: SeveritiesSummary[] = [];
@@ -121,6 +130,29 @@ export class HomeConfigAuditReportsComponent {
     this.namespaceNames = namespaceNames.sort();
     this.kinds = kinds.sort();
     this.severities = severities.sort((a, b) => a - b);
+
+    this.namespaceNames.forEach(namespaceName => {
+      const values: { severityId: number, count: number }[] = [];
+      this.severities.forEach(severityId => {
+        this.kinds.forEach(kind => {
+          const dto = this.configAuditReportSummaryDtos?.find(
+            x => x.namespaceName == namespaceName && x.severityId === severityId && x.kind == kind);
+          const count = this.localShowDistinctValues ? (dto?.distinctCount ?? -1) : (dto?.totalCount ?? -1);
+          values.push({ severityId: severityId, count: count });
+        });
+      });
+      this.carDetailsDtos.push({ namespaceName: namespaceName, values: values, isTotal: false });
+    });
+    const values: { severityId: number, count: number }[] = [];
+    this.severities.forEach(severityId => {
+      this.kinds.forEach(kind => {
+        const dto = this.configAuditReportSummaryDtos?.find(
+          x => x.namespaceName === '' && x.severityId === severityId && x.kind == kind);
+        const count = this.localShowDistinctValues ? (dto?.distinctCount ?? -1) : (dto?.totalCount ?? -1);
+        values.push({ severityId: severityId, count: count });
+      });
+    });
+    this.carDetailsDtoFooter = { namespaceName: '', values: values, isTotal: true};
   }
 
   private computeStatisticsByNs() {
