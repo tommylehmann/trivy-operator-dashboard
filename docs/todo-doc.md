@@ -38,7 +38,7 @@ Proper 200, 404 etc codes in controllers
 
 Add CreationDate in all CRs and dtos
 
-Github versions - Timed Hosted Service (every 6h? 24h?)
+Github versions - Timed Hosted Service - alert if error
 
 ## Both
 

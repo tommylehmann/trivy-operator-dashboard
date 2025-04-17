@@ -353,11 +353,14 @@ public static class BuilderServicesExtensions
 
         services.AddSingleton<IKubernetesClientFactory, KubernetesClientFactory>();
         
-        
+        if (configuration.GetSection("GitHub").GetValue<bool>("ServerCheckForUpdates"))
+        {
+            services.AddSingleton<IGitHubClient, GitHubClient>();
+            services.AddHostedService<GitHubReleaseCacheTimedHostedService>();
+        }
         services.AddSingleton<IConcurrentCache<long, GitHubRelease>, ConcurrentCache<long, GitHubRelease>>();
-        services.AddSingleton<IGitHubClient, GitHubClient>();
         services.AddScoped<IAppVersionService, AppVersionService>();
-        services.AddHostedService<AppVersionTimedHostedService>();
+        
     }
 
     public static void AddUiCommons(this IServiceCollection services) =>

@@ -21,7 +21,7 @@ import { AboutCredits } from './about.types';
   styleUrl: './about.component.scss',
 })
 export class AboutComponent {
-  releaseNotes?: GitHubReleaseDto[];
+  releaseNotes: GitHubReleaseDto[] = [];
   currentVersion?: AppVersion;
   latestVersion?: string;
   newVersionAvailable: boolean = false;

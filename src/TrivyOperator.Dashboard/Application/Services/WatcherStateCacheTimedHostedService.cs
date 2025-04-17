@@ -42,7 +42,7 @@ public class WatcherStateCacheTimedHostedService(
 
         timer?.Change(Timeout.Infinite, 0);
 
-        if (executingTask == null || executingTask.IsCompleted)
+        if (executingTask?.IsCompleted ?? true)
         {
             return;
         }
