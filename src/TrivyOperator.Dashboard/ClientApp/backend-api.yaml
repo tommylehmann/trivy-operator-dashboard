@@ -2744,6 +2744,9 @@ components:
         imageTag:
           type: string
           nullable: true
+        imageDigest:
+          type: string
+          nullable: true
         imageRepository:
           type: string
           nullable: true
@@ -2756,6 +2759,9 @@ components:
         imageEosl:
           type: boolean
           nullable: true
+        updateTimestamp:
+          type: string
+          format: date-time
         criticalCount:
           type: integer
           format: int64
@@ -2875,6 +2881,9 @@ components:
         imageTag:
           type: string
           nullable: true
+        imageDigest:
+          type: string
+          nullable: true
         imageRepository:
           type: string
           nullable: true
@@ -2902,6 +2911,9 @@ components:
         unknownCount:
           type: integer
           format: int64
+        updateTimestamp:
+          type: string
+          format: date-time
         details:
           type: array
           items:
@@ -2921,6 +2933,9 @@ components:
           type: string
           nullable: true
         imageTag:
+          type: string
+          nullable: true
+        imageDigest:
           type: string
           nullable: true
         imageRepository:
@@ -2955,6 +2970,9 @@ components:
         unknownCount:
           type: integer
           format: int64
+        updateTimestamp:
+          type: string
+          format: date-time
         details:
           type: array
           items:

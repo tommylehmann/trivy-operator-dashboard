@@ -8,6 +8,7 @@
                       [filter]="true"
                       [options]="activeNamespaces"
                       [showClear]="true"
+                      [disabled]="isSingleMode"
                       [(ngModel)]="selectedNamespace"
                       (onChange)="filterImageDtos()" />
         </div>
@@ -18,6 +19,7 @@
                       [filter]="true"
                       [options]="imageDtos"
                       [showClear]="true"
+                      [disabled]="isSingleMode"
                       [(ngModel)]="selectedImageDto">
             <ng-template let-imageDto pTemplate="imageDtos">
               <div class="flex align-items-center gap-2">
@@ -30,7 +32,8 @@
               </div>
             </ng-template>
           </p-dropdown>
-          <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small" (onClick)="reloadData()" class="flex-none pl-1"/>
+          <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small"
+                    (onClick)="reloadData()" class="flex-none pl-1" [disabled]="isSingleMode"/>
         </div>
       </div>
       <app-trivy-table tableHeight="30vh"

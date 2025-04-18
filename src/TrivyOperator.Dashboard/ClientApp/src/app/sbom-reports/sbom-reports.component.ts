@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { SbomReportDto } from '../../api/models/sbom-report-dto';
 import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
@@ -60,7 +60,7 @@ export interface DependsOn {
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
-export class SbomReportsComponent {
+export class SbomReportsComponent implements OnInit {
   // #region main data - SbomReportDtos, activeNS, fullSbomDataDto, table data
   dataDtos: SbomReportImageDto[] | null = null;
   activeNamespaces: string[] | undefined = [];
@@ -83,7 +83,7 @@ export class SbomReportsComponent {
   set selectedImageDto(value: ImageDto | null) {
     this._imageDto = value;
     this.selectedImageResources = this.dataDtos?.find(x => x.uid && x.uid === value?.uid)?.resources ?? [];
-    this.getFullSbomDto(value?.digest, this.selectedNamespace);
+    this.getFullSbomDto(value?.digest ?? undefined, this.selectedNamespace ?? undefined);
   }
   private _imageDto: ImageDto | null = null;
   // #endregion
@@ -114,8 +114,16 @@ export class SbomReportsComponent {
 
   faShieldHalved = faShieldHalved;
 
-  constructor(private service: SbomReportService, private http: HttpClient, private router: Router) {
-    this.getTableDataDtos();
+  queryNamespaceName?: string;
+  queryDigest?: string;
+  isSingleMode: boolean = false;
+
+  constructor(private service: SbomReportService, private http: HttpClient, private router: Router, private activatedRoute: ActivatedRoute) {
+    this.activatedRoute.queryParamMap.subscribe(params => {
+      this.queryNamespaceName = params.get('namespaceName') ?? undefined;
+      this.queryDigest = params.get('digest') ?? undefined;
+    });
+    this.isSingleMode = this.queryNamespaceName && this.queryDigest ? true : false;
 
     this.dependsOnTableColumns = [
       {
@@ -213,6 +221,13 @@ export class SbomReportsComponent {
     };
   }
 
+  ngOnInit() {
+    if (this.isSingleMode) {
+      this.getFullSbomDto(this.queryDigest, this.queryNamespaceName);
+    }
+    this.getTableDataDtos();
+  }
+
   // #region get data from api
   getTableDataDtos() {
     this.service.getSbomReportImageDtos().subscribe({
@@ -225,7 +240,7 @@ export class SbomReportsComponent {
     });
   }
 
-  getFullSbomDto(digest: string | null | undefined, selectedNamespace: string | null) {
+  getFullSbomDto(digest?: string, selectedNamespace?: string) {
     if (digest && selectedNamespace) {
       this.service.getSbomReportDtoByDigestNamespace({ digest: digest, namespaceName: selectedNamespace }).subscribe({
         next: (res) => this.onGetSbomReportDtoByDigestNamespace(res),
@@ -566,6 +581,9 @@ export class SbomReportsComponent {
   }
 
   goToVr() {
+    if (this.isSingleMode) {
+      return;
+    }
     const digest = this._imageDto?.digest;
     const namespace = this.selectedNamespace;
     if (digest && namespace && this._imageDto?.hasVr) {

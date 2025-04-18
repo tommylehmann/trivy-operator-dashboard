@@ -15,6 +15,7 @@
         (refreshRequested)="onRefreshRequested($event)"
         (selectedRowsChanged)="onMainTableSelectionChange($event)"
         (trivyDetailsTableCallback)="onMainTableExpandCallback($event)"
+        (multiHeaderActionRequested)="onMainTableMultiHeaderActionRequested($event)"
       />
     </div>
 
@@ -26,6 +27,7 @@
         [dataDtos]="selectedDataDto?.details"
         [trivyTableColumns]="detailsTableColumns"
         [trivyTableOptions]="detailsTableOptions"
+        (multiHeaderActionRequested)="onDetailsTableMultiHeaderActionRequested($event)"
       />
     </div>
   </div>

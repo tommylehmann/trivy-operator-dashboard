@@ -27,12 +27,15 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   @Input() mainTableColumns: TrivyTableColumn[] = [];
   @Input({ required: true }) mainTableOptions!: TrivyTableOptions;
   @Input() mainTableExpandTableOptions: TrivyExpandTableOptions<TDataDto> = new TrivyExpandTableOptions(false, 0, 0);
-  @Input() public isMainTableLoading: boolean = true;
+  @Input() isMainTableLoading: boolean = true;
   @ViewChild('mainTable', { static: true }) mainTable!: TrivyTableComponent<TDataDto>;
-  @Input() public detailsTableColumns: TrivyTableColumn[] = [];
+  @Input() detailsTableColumns: TrivyTableColumn[] = [];
   @Input({ required: true }) public detailsTableOptions!: TrivyTableOptions;
   @Output() refreshRequested = new EventEmitter<TrivyFilterData>();
-  @Output() public mainTableExpandCallback = new EventEmitter<TDataDto>();
+  @Output() mainTableExpandCallback = new EventEmitter<TDataDto>();
+  @Output() mainTableMultiHeaderActionRequested = new EventEmitter<string>();
+  @Output() detailsTableMultiHeaderActionRequested = new EventEmitter<string>();
+  @Output() mainTableSelectedRowChanged = new EventEmitter<TDataDto | null>();
   @Input() singleSelectDataDto?: TDataDto;
   selectedDataDto: TDataDto | null = null;
 
@@ -70,9 +73,11 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   onMainTableSelectionChange(event: TDataDto[]) {
     if (event == null || event.length == 0) {
       this.selectedDataDto = null;
+      this.mainTableSelectedRowChanged.emit(null);
       return;
     } else {
       this.selectedDataDto = event[0];
+      this.mainTableSelectedRowChanged.emit(event[0]);
     }
   }
 
@@ -82,5 +87,13 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
 
   onMainTableExpandCallback(event: TDataDto) {
     this.mainTableExpandCallback.emit(event);
+  }
+
+  onMainTableMultiHeaderActionRequested(event: string) {
+    this.mainTableMultiHeaderActionRequested.emit(event);
+  }
+
+  onDetailsTableMultiHeaderActionRequested(event: string) {
+    this.onDetailsTableMultiHeaderActionRequested(event);
   }
 }
