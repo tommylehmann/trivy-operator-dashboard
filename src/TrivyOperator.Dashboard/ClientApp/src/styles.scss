@@ -104,3 +104,7 @@ p-splitbutton.text-sm {
 p-selectbutton.text-sm .p-button-label {
     font-size: 14px;
 }
+
+.p-dialog {
+  max-height: unset !important; /* Removes the max-height limitation */
+}
