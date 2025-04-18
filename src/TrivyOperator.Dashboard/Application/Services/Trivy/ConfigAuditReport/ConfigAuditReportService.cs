@@ -14,10 +14,9 @@ public class ConfigAuditReportService(IListConcurrentCache<ConfigAuditReportCr> 
         IEnumerable<int>? excludedSeverities = null)
     {
         excludedSeverities ??= [];
-        int[] excludedSeveritiesArray = excludedSeverities.ToArray();
-        int[] includedSeverities = ((int[])Enum.GetValues(typeof(TrivySeverity))).ToList()
-            .Except(excludedSeveritiesArray)
-            .ToArray();
+        int[] excludedSeveritiesArray = [.. excludedSeverities];
+        int[] includedSeverities = [.. ((int[])Enum.GetValues(typeof(TrivySeverity)))
+            .ToList().Except(excludedSeveritiesArray)];
 
         IEnumerable<ConfigAuditReportDto> dtos = cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
@@ -85,7 +84,7 @@ public class ConfigAuditReportService(IListConcurrentCache<ConfigAuditReportCr> 
             .SelectMany(_ => allKinds, (ns, kind) => new { ns, kind })
             .SelectMany(_ => allSeverities, (nk, severityId) => new { nk.ns, nk.kind, severityId });
 
-        List<ConfigAuditReportSummaryDto> configAuditReportSummaryDtos = allCombinationsWithNs.GroupJoin(
+        List<ConfigAuditReportSummaryDto> configAuditReportSummaryDtos = [.. allCombinationsWithNs.GroupJoin(
                 valuesByNs,
                 combo => new { combo.ns, combo.kind, combo.severityId },
                 count => new { count.ns, count.kind, count.severityId },
@@ -100,8 +99,7 @@ public class ConfigAuditReportService(IListConcurrentCache<ConfigAuditReportCr> 
                         TotalCount = countGroupArray.FirstOrDefault()?.totalCount ?? 0,
                         DistinctCount = countGroupArray.FirstOrDefault()?.distinctCount ?? 0,
                     };
-                })
-            .ToList();
+                })];
         List<ConfigAuditReportSummaryDto> result = configAuditReportSummaryDtos;
 
         var allConbinationsForTotals = allKinds.SelectMany(
@@ -122,7 +120,7 @@ public class ConfigAuditReportService(IListConcurrentCache<ConfigAuditReportCr> 
                     distinctCount = group.Select(x => x.CheckId).Distinct().Count(),
                 });
 
-        List<ConfigAuditReportSummaryDto> resultsTotal = allConbinationsForTotals.GroupJoin(
+        List<ConfigAuditReportSummaryDto> resultsTotal = [.. allConbinationsForTotals.GroupJoin(
                 valueTotals,
                 combo => new { combo.kind, combo.severityId },
                 count => new { count.kind, count.severityId },
@@ -137,8 +135,7 @@ public class ConfigAuditReportService(IListConcurrentCache<ConfigAuditReportCr> 
                         TotalCount = countGroupArray.FirstOrDefault()?.totalCount ?? 0,
                         DistinctCount = countGroupArray.FirstOrDefault()?.distinctCount ?? 0,
                     };
-                })
-            .ToList();
+                })];
 
         result.AddRange(resultsTotal);
 

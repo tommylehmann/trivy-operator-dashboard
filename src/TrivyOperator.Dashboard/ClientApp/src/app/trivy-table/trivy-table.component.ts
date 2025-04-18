@@ -103,7 +103,9 @@ export class TrivyTableComponent<TData> implements OnInit {
       if (index) {
         this.trivyTable.scrollToVirtualIndex(index);
       }
+      this.selectedRowsChanged.emit([value]);
     }
+    
   }
   public filterSeverityOptions: number[] = [];
   public filterSelectedSeverityIds: number[] | null = [];

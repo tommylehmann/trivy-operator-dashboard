@@ -33,6 +33,7 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   @Input({ required: true }) public detailsTableOptions!: TrivyTableOptions;
   @Output() refreshRequested = new EventEmitter<TrivyFilterData>();
   @Output() public mainTableExpandCallback = new EventEmitter<TDataDto>();
+  @Input() singleSelectDataDto?: TDataDto;
   selectedDataDto: TDataDto | null = null;
 
   private _dataDtos: TDataDto[] | null = [];

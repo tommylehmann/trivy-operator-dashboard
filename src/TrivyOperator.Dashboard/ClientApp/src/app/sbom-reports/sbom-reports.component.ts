@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { SbomReportDto } from '../../api/models/sbom-report-dto';
 import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
@@ -34,6 +35,7 @@ import {
   faShieldHalved,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 export interface ImageDto {
   uid: string;
   imageNameTag: string;
@@ -112,7 +114,7 @@ export class SbomReportsComponent {
 
   faShieldHalved = faShieldHalved;
 
-  constructor(private service: SbomReportService, private http: HttpClient) {
+  constructor(private service: SbomReportService, private http: HttpClient, private router: Router) {
     this.getTableDataDtos();
 
     this.dependsOnTableColumns = [
@@ -207,7 +209,7 @@ export class SbomReportsComponent {
       dataKey: 'bomRef',
       rowExpansionRender: 'table',
       extraClasses: 'trivy-with-filters',
-      multiHeaderAction: ["Info", "Dive In", "Export CycloneDX JSON", "Export CycloneDX XML"],
+      multiHeaderAction: ["Info", "Dive In", "Export CycloneDX JSON", "Export CycloneDX XML", "Go to Vulenrability Report"],
     };
   }
 
@@ -503,6 +505,9 @@ export class SbomReportsComponent {
       case "Export CycloneDX XML":
         this.onExportCycloneDXJSON('xml');
         break;
+      case "Go to Vulenrability Report":
+        this.goToVr();
+        break;
       default:
         console.error("sbom - multi action call back - unknown: " + event);
     }
@@ -558,6 +563,21 @@ export class SbomReportsComponent {
         console.error(`Error fetching the file as ${contentType.toUpperCase()}:`, err);
       }
     });
+  }
+
+  goToVr() {
+    const digest = this._imageDto?.digest;
+    const namespace = this.selectedNamespace;
+    if (digest && namespace && this._imageDto?.hasVr) {
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree(['/vulnerability-reports'], { queryParams: { namespaceName: namespace, digest: digest } })
+      );
+      window.open(url, '_blank');
+    //  this.router.navigate(
+    //    ['/vulnerability-reports'],
+    //    { queryParams: { namespaceName: namespace, digest: digest } }
+    //  );
+    }
   }
 
   /**

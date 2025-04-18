@@ -46,6 +46,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
             (m) => m.VulnerabilityReportsComponent),
         data: { title: 'Vulnerability Reports' },
       },
+      //{
+      //  path: 'vulnerability-reports/:namespaceName?/:digest?',
+      //  loadComponent: () =>
+      //    import('./vulnerability-reports/vulnerability-reports.component').then(
+      //      (m) => m.VulnerabilityReportsComponent),
+      //  data: { title: 'Vulnerability Reports' },
+      //},
       {
         path: 'vulnerability-reports-detailed',
         loadComponent: () =>
