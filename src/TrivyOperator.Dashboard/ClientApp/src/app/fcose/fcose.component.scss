@@ -4,6 +4,7 @@
 
 /* Define variables for heights */
 $default-height: calc(100vh - 190px);
+$default-dialog-height: calc(100vh - 500px);
 $default-height-half: calc(50vh - 95px);
 
 /* base style */
@@ -21,6 +22,11 @@ $default-height-half: calc(50vh - 95px);
       height: $default-height;
     }
   }
+}
+
+// TODO not yest working (encapsulation)
+.p-dialog-content .fcose {
+  height: $default-dialog-height;
 }
 
 .hidden-sm {

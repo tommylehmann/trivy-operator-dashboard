@@ -8,7 +8,8 @@
            [formControl]="inputFilterByNameControl"
            placeholder="Highlight by name..."
            style="width: 200px; font-size: 12px" />
-    <p-button label="Hide Node"
+    <p-button *ngIf="!isStatic"
+              label="Hide Node"
               size="small"
               class="hidden-sm"
               [text]="true"
@@ -16,31 +17,35 @@
               (onClick)="onDeleteNode()">
       <fa-icon [icon]="faSquare" class="mr-2"></fa-icon>
     </p-button>
-    <p-button label="Hide Subtree"
+    <p-button *ngIf="!isStatic"
+              label="Hide Subtree"
               size="small"
               class="hidden-sm"
               [text]="true"
-              [disabled]="graphSelectedNodes.length == 0"
+              [disabled]="isStatic || graphSelectedNodes.length == 0"
               (onClick)="onDeleteNodeAndChildren()">
       <fa-icon [icon]="faClone" class="mr-2"></fa-icon>
     </p-button>
-    <p-button label="Undo"
+    <p-button *ngIf="!isStatic"
+              label="Undo"
               size="small"
               class="hidden-sm"
               [text]="true"
-              [disabled]="currentDeletedNodesIndex == -1 || deletedNodes.length == 0"
+              [disabled]="isStatic || currentDeletedNodesIndex == -1 || deletedNodes.length == 0"
               (onClick)="onUndo()">
       <fa-icon [icon]="faReply" class="mr-2"></fa-icon>
     </p-button>
-    <p-button label="Redo"
+    <p-button *ngIf="!isStatic"
+              label="Redo"
               size="small"
               class="hidden-sm"
               [text]="true"
-              [disabled]="currentDeletedNodesIndex >= deletedNodes.length - 1"
+              [disabled]="isStatic || currentDeletedNodesIndex >= deletedNodes.length - 1"
               (onClick)="onRedo()">
       <fa-icon [icon]="faShare" class="mr-2"></fa-icon>
     </p-button>
-    <p-button label="Show All"
+    <p-button *ngIf="!isStatic"
+              label="Show All"
               size="small"
               class="hidden-sm"
               [text]="true"
@@ -48,14 +53,37 @@
               (onClick)="onShowAll()">
       <fa-icon [icon]="faEye" class="mr-2"></fa-icon>
     </p-button>
+    <p-button *ngIf="!isStatic"
+              icon="pi pi-question-circle"
+              size="small"
+              class="hidden-sm"
+              [text]="true"
+              (onClick)="onHelp()">
+    </p-button>
   </div>
   <div class="flex align-items-center col-12 p-0">
-    <p-breadcrumb class="breadcrumb-no-background breadcrumb-no-overflow"
+    <p-breadcrumb *ngIf="!isStatic"
+                  class="breadcrumb-no-background breadcrumb-no-overflow"
                   [home]="navHome"
                   [model]="navItems"
-                  (onItemClick)="onNavItemClick($event)" />
+                  (onItemClick)="onNavItemClick($event)"/>
   </div>
   <div class="col-12 h-full">
     <div #graphContainer class="fcose fcose-half graph-container"></div>
   </div>
 </div>
+
+
+<p-dialog closable="true"
+          closeOnEscape="true"
+          dismissableMask="true"
+          resizable="true"
+          [breakpoints]="{ '1920px': '1800px', '576px': '90vw' }"
+          [style]="{ width: '1800px', height: '90vh' }"
+          [maximizable]="true"
+          [header]="'Mini Help'"
+          [modal]="true"
+          [(visible)]="isHelpDialogVisible">
+  <ng-container #helpContainer></ng-container>
+</p-dialog>
+

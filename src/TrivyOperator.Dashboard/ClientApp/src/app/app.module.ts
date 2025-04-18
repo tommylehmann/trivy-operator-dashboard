@@ -46,13 +46,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
             (m) => m.VulnerabilityReportsComponent),
         data: { title: 'Vulnerability Reports' },
       },
-      //{
-      //  path: 'vulnerability-reports/:namespaceName?/:digest?',
-      //  loadComponent: () =>
-      //    import('./vulnerability-reports/vulnerability-reports.component').then(
-      //      (m) => m.VulnerabilityReportsComponent),
-      //  data: { title: 'Vulnerability Reports' },
-      //},
       {
         path: 'vulnerability-reports-detailed',
         loadComponent: () =>
@@ -173,6 +166,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
         loadComponent: () => import('./sbom-reports-detailed/sbom-reports-detailed.component').then(
           (m) => m.SbomReportsDetailedComponent),
         data: { title: 'SBOM Reports Detailed' },
+      },
+      {
+        path: 'test',
+        loadComponent: () =>
+          import('./fcose-help/fcose-help.component').then(
+            (m) => m.FcoseHelpComponent),
+        data: { title: 'Test' },
       },
     ]),
     ApiModule.forRoot({ rootUrl: environment.baseUrl }),

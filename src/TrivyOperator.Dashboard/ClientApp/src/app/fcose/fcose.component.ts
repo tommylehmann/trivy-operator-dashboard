@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, input } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -9,9 +9,11 @@ import fcose, { FcoseLayoutOptions } from 'cytoscape-fcose';
 import { MenuItem } from 'primeng/api';
 import { BreadcrumbItemClickEvent, BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 
+import { FcoseHelpComponent } from '../fcose-help/fcose-help.component'
 import { DeletedNodes, NodeDataDto } from './fcose.types'
 
 import {
@@ -32,12 +34,14 @@ cytoscape.use(fcose);
 @Component({
   selector: 'app-fcose',
   standalone: true,
-  imports: [BreadcrumbModule, ButtonModule, InputTextModule, TagModule, CommonModule, ReactiveFormsModule, FontAwesomeModule],
+  imports: [BreadcrumbModule, ButtonModule, DialogModule, InputTextModule, TagModule,
+    CommonModule, ReactiveFormsModule, FontAwesomeModule],
   templateUrl: './fcose.component.html',
   styleUrl: './fcose.component.scss',
 })
 export class FcoseComponent implements AfterViewInit, OnInit {
   @ViewChild('graphContainer', { static: true }) graphContainer!: ElementRef;
+  @ViewChild('helpContainer', { read: ViewContainerRef }) helpContainer!: ViewContainerRef;
 
   // #region activeNodeId
   activeNodeId: string | undefined = undefined;
@@ -76,7 +80,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.graphSelectedNodes = [];
       this.deletedNodes = [];
       this.currentDeletedNodesIndex = -1;
-      this.redrawGraph();
+      if (this.cy) {
+        this.redrawGraph();
+      }
     }
   }
   private _nodeDataDtos: NodeDataDto[] = [];
@@ -147,9 +153,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     fit: true,
     padding: 10,
     sampleSize: 50,
-    nodeSeparation: 500,
-    tilingPaddingHorizontal: 1000,
-    tilingPaddingVertical: 1000,
+    nodeSeparation: 50,
+    tilingPaddingHorizontal: 100,
+    tilingPaddingVertical: 100,
     idealEdgeLength: (edge: EdgeSingular) => {
       return 150;
     },
@@ -158,7 +164,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     },
   };
   private isLayoutRedraw: boolean = false;
-  inputFilterByNameControl = new FormControl();
+  inputFilterByNameControl = new FormControl("");
   private inputFilterByNameValue: string = "";
 
   clickTimeout?: ReturnType<typeof setTimeout>;
@@ -172,7 +178,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   faClone = faClone;
   faSquare = faSquare;
 
-  constructor(private mainAppInitService: MainAppInitService) {
+  @Input() isStatic: boolean = false;
+  @Input() staticSelectedNodeId?: string;
+  @Input() staticHighlightedNodeId?: string;
+  @Input() staticInputFilterByNameValue: string = "";
+
+  isHelpDialogVisible: boolean = false;
+  constructor(private mainAppInitService: MainAppInitService) { }
+
+  ngOnInit() {
     this.mainAppInitService.isDarkMode$.subscribe((isDarkMode) => {
       const oldDarkLightMode = this.darkLightMode;
       this.darkLightMode = isDarkMode ? 'Dark' : 'Light';
@@ -180,17 +194,19 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         this.swapClassDarkLikghtMode(oldDarkLightMode, this.darkLightMode)
       }
     });
-  }
-
-  ngOnInit() {
     this.inputFilterByNameControl.valueChanges.pipe(debounceTime(500)).subscribe((value) => {
-      this.onInputChange(value);
+      this.onInputChange(value ?? "");
     });
+    if (this.isStatic) {
+      this.inputFilterByNameControl.setValue(this.staticInputFilterByNameValue);
+      this.inputFilterByNameControl.disable();
+    }
   }
 
   ngAfterViewInit() {
     this.setupCyLayout();
     this.setupCyEvents();
+    this.redrawGraph();
   }
 
   // #region Cy Setup
@@ -440,6 +456,9 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   private setupCyEvents() {
+    if (this.isStatic) {
+      return;
+    }
     this.cy.on('mouseover', 'node', (event) => {
       const node = event.target as NodeSingular
       this.hoveredNode = node;
@@ -740,6 +759,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.currentDeletedNodesIndex = -1;
   }
 
+  async onHelp() {
+    const { FcoseHelpComponent } = await import('../fcose-help/fcose-help.component'); // Lazy load the component
+    this.helpContainer.clear();
+    this.helpContainer.createComponent(FcoseHelpComponent);
+    this.isHelpDialogVisible = true;
+  }
   
   // #endregion
 
@@ -765,6 +790,17 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         const node = this.cy.$(`#${this._selectedNodeId}`);
         if (node) {
           node.select();
+        }
+        if (this.isStatic) {
+          let node = this.cy.$(`#${this.staticSelectedNodeId}`);
+          const x = this.cy.nodes();
+          if (node) {
+            this.highlightSelectedNode(node);
+          }
+          node = this.cy.$(`#${this.staticHighlightedNodeId}`);
+          if (node) {
+            this.highlightHoveredNode(node);
+          }
         }
         this.isLayoutRedraw = false;
       }, 500);
