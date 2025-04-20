@@ -12,6 +12,17 @@ kubernetes:
   trivyUseClusterComplianceReport: true                   # (in)activate Cluster Compliance Reports
   trivyUseClusterVulnerabilityReport: true                # (in)activate Cluster Vulnerability Reports
   trivyUseRbacAssessmentReport: true                      # (in)activate RBAC Assessment Reports
+  trivyUseSbomReport: true                                # (in)activate SBOM Reports
+  trivyUseClusterSbomReport: true                         # (in)activate Cluster SBOM Reports
+
+gitHub:
+  serverCheckForUpdates: true
+  checkForUpdatesIntervalInMinutes: 360
+
+openTelemetry:
+  enabled: false
+  otelEndpoint: 
+  otelProtocol: grpc
 
 # if needed extra environment values can be provided here
 extraEnvValues: []

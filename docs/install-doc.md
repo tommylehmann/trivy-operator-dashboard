@@ -35,17 +35,25 @@ helm install trivy-operator-dashboard trivy-operator-dashboard
 
 In helm values file, the following parameters are app related:
 
-| key name                            | description |
-|-------------------------------------|-----|
-| kubeConfigFileName                  | path to custom kube config file; normally needed only for dev stage. in k8s it should be empty |
-| namespaceList                       | a list of namespaces, comma delimited. if provided, the namespaces watcher is disabled |
-| trivyUseClusterRbacAssessmentReport | activate or deactivate Cluster RBAC Assessment Report module; if false, the watchers are disabled |
-| trivyUseConfigAuditReport           | activate or deactivate Config Audit Report module; if false, the watchers are disabled |
-| trivyUseExposedSecretReport         | activate or deactivate Exposed Secret Report module; if false, the watchers are disabled |
-| trivyUseVulnerabilityReport         | activate or deactivate Vulnerability Report module; if false, the watchers are disabled |
-| trivyUseClusterComplianceReport     | activate or deactivate Cluster Compliance Report module; if false, the watchers are disabled |
-| trivyUseClusterVulnerabilityReport  | activate or deactivate Cluster Vulnerability Report module; if false, the watchers are disabled |
-| trivyUseRbacAssessmentReport        | activate or deactivate RBAC Assessment Report module; if false, the watchers are disabled |
+| section       | key name                            | description |
+|---------------| ------------------------------------|-----|
+| kubernetes    | kubeConfigFileName                  | path to custom kube config file. normally needed only for dev stage and in k8s it should be empty |
+| kubernetes    | namespaceList                       | comma-separated list of namespaces. Providing this disables the namespaces watcher. |
+| kubernetes    | trivyUseClusterRbacAssessmentReport | enables or disables Cluster RBAC Assessment Report module; if false, the watchers are disabled |
+| kubernetes    | trivyUseConfigAuditReport           | enables or disables Config Audit Report module; if false, the watchers are disabled |
+| kubernetes    | trivyUseExposedSecretReport         | enables or disables Exposed Secret Report module; if false, the watchers are disabled |
+| kubernetes    | trivyUseVulnerabilityReport         | enables or disables Vulnerability Report module; if false, the watchers are disabled |
+| kubernetes    | trivyUseClusterComplianceReport     | enables or disables Cluster Compliance Report module; if false, the watchers are disabled |
+| kubernetes    | trivyUseClusterVulnerabilityReport  | enables or disables Cluster Vulnerability Report module; if false, the watchers are disabled |
+| kubernetes    | trivyUseRbacAssessmentReport        | enables or disables RBAC Assessment Report module; if false, the watchers are disabled |
+| kubernetes    | trivyUseSbomReport                  | enables or disables SBOM Report module; if false, the watchers are disabled |
+| kubernetes    | trivyUseClusterSbomReport           | enables or disables Cluster SBOM Report module; if false, the watchers are disabled |
+| gitHub        | serverCheckForUpdates               | enables or disables the backend check for new versions and cache release information. |
+| gitHub        | checkForUpdatesIntervalInMinutes    | the time interval in minutes used by the backend for new version polling |
+| openTelemetry | enabled                             | enables or disables OpenTelemetry instrumentatio |
+| openTelemetry | otelEndpoint                        | otel endpoint. normally, it is http://otel-endpoint(:port). if empty, and **enabled** is true, console will be used |
+| openTelemetry | otelProtocol                        | the protocol used for otel writer. can be **grpc** or **http** |
+
 
 > **Note:** the above described parameters have correspondence in appsettings.json. That file is for dev purposes
 
@@ -61,7 +69,7 @@ Although there are other means of running the app, such as a "thick client" on a
 
 ### Kubernetes RBAC
 
-In the Kubernetes cluster, there are some other ways of combining RBAC rights. For instance, instead of cluster roles, simple namespaced roles can be created. This is a more restricted way of running the app and is pertinent to "multi-tenant clusters" (where same cluster is shared by distinct groups). Also, they are not in the scope of this document.
+In the Kubernetes cluster, there are some other ways of combining RBAC rights. For instance, instead of cluster role, simple namespaced roles can be created. This is a more restricted way of running the app and is pertinent to "multi-tenant clusters" (where same cluster is shared by distinct groups). Also, they are not in the scope of this document.
 
 ### Logging - Serilog
 

@@ -116,6 +116,20 @@ spec:
           value: "true"
         - name: KUBERNETES__TRIVYUSERBACASSESSMENTREPORT
           value: "true"
+        - name: KUBERNETES__TRIVYUSESBOMREPORT
+          value: "true"
+        - name: KUBERNETES__TRIVYUSECLUSTERSBOMREPORT
+          value: "true"
+        - name: GITHUB__SERVERCHECKFORUPDATES
+          value: "true"
+        - name: GITHUB__CHECKFORUPDATESINTERVALINMINUTES
+          value: "360"
+        - name: OPENTELEMETRY__ENABLED
+          value: "false"
+        - name: OPENTELEMETRY__OTELENDPOINT
+          value:
+        - name: OPENTELEMETRY__OTELPROTOCOL
+          value: "grpc"
         - name: SERILOG__MINIMUMLEVEL__DEFAULT
           value: Information
         - name: ASPNETCORE_URLS

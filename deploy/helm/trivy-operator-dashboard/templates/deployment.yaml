@@ -53,6 +53,20 @@ spec:
           value: {{ .Values.kubernetes.trivyUseClusterVulnerabilityReport | quote }}
         - name: KUBERNETES__TRIVYUSERBACASSESSMENTREPORT
           value: {{ .Values.kubernetes.trivyUseRbacAssessmentReport | quote }}
+        - name: KUBERNETES__TRIVYUSESBOMREPORT
+          value: {{ .Values.kubernetes.trivyUseSbomReport | quote }}
+        - name: KUBERNETES__TRIVYUSECLUSTERSBOMREPORT
+          value: {{ .Values.kubernetes.trivyUseClusterSbomReport | quote }}
+        - name: GITHUB__SERVERCHECKFORUPDATES
+          value: {{ .Values.gitHub.serverCheckForUpdates | quote }}
+        - name: GITHUB__CHECKFORUPDATESINTERVALINMINUTES
+          value: {{ .Values.gitHub.checkForUpdatesIntervalInMinutes | quote }}
+        - name: OPENTELEMETRY__ENABLED
+          value: {{ .Values.openTelemetry.enabled | quote }}
+        - name: OPENTELEMETRY__OTELENDPOINT
+          value: {{ .Values.openTelemetry.otelEndpoint | quote }}
+        - name: OPENTELEMETRY__OTELPROTOCOL
+          value: {{ .Values.openTelemetry.otelProtocol | quote }}
         - name: SERILOG__MINIMUMLEVEL__DEFAULT
           value: {{ .Values.logging.level }}
         - name: ASPNETCORE_URLS

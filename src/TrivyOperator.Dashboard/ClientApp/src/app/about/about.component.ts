@@ -48,7 +48,7 @@ export class AboutComponent {
       docsUrl: 'https://primeng.org/installation'
     },
     {
-      name: 'OpenTelemetry', imgSrc: 'assets/opentelemetry.png', imgAlt: 'OpenTelemetry Logo',
+      name: 'Open Telemetry', imgSrc: 'assets/opentelemetry.png', imgAlt: 'OpenTelemetry Logo',
       homeUrl: 'https://opentelemetry.io/', gitUrl: 'https://github.com/open-telemetry',
       docsUrl: 'https://opentelemetry.io/docs/'
     }
