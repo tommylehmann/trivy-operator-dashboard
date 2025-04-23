@@ -111,6 +111,16 @@ It consists in four main sections:
 ![](imgs/settings.png)
 <br>*Settings Page*
 
+### About
+
+The page provides essential information about the app, including version details, release notes, and acknowledgments.
+
+**Version Check** allows users to see their current version and whether an update is available.
+
+**Release Notes** document recent updates, including improvements and bug fixes.
+
+**Powered By** lists the technologies and frameworks that support the app.
+
 ### Dark/Light Mode
 
 The application fully supports Dark/Light mode. It can be switched on the fly at any desired moment and persists between sessions. By default, the application uses the mode provided by the browser/system.

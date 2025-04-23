@@ -30,3 +30,11 @@ Version 1.3 Demeter (Jan 2025)
 Version 1.3.1 Dike (March 2025)
 ------------------------
 * Watchdog for Kubernetes Watchers
+
+Version 1.4 Erebus (April 2025)
+------------------------
+* Added SBOM Reports with graph visualization; exports in CycloneDX and SPDX formats
+* Direct navigation between Vulnerability Reports and SBOM Reports in both directions
+* Instrumentation with OpenTelemetry for metrics and traces
+* Major overhaul of About page
+* Vulnerability Value Count in pages: values of 0 and null are grayed out (improves visibility)
