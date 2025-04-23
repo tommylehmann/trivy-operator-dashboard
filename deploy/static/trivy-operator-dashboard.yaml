@@ -5,10 +5,10 @@ kind: ServiceAccount
 metadata:
   name: trivy-operator-dashboard
   labels:
-    helm.sh/chart: trivy-operator-dashboard-0.1.0
+    helm.sh/chart: trivy-operator-dashboard-1.4
     app.kubernetes.io/name: trivy-operator-dashboard
     app.kubernetes.io/instance: trivy-operator-dashboard
-    app.kubernetes.io/version: "0.9"
+    app.kubernetes.io/version: "1.4"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: trivy-operator-dashboard/templates/clusterrole.yaml
@@ -44,10 +44,10 @@ kind: Service
 metadata:
   name: trivy-operator-dashboard
   labels:
-    helm.sh/chart: trivy-operator-dashboard-0.1.0
+    helm.sh/chart: trivy-operator-dashboard-1.4
     app.kubernetes.io/name: trivy-operator-dashboard
     app.kubernetes.io/instance: trivy-operator-dashboard
-    app.kubernetes.io/version: "0.9"
+    app.kubernetes.io/version: "1.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
@@ -66,10 +66,10 @@ kind: Deployment
 metadata:
   name: trivy-operator-dashboard
   labels:
-    helm.sh/chart: trivy-operator-dashboard-0.1.0
+    helm.sh/chart: trivy-operator-dashboard-1.4
     app.kubernetes.io/name: trivy-operator-dashboard
     app.kubernetes.io/instance: trivy-operator-dashboard
-    app.kubernetes.io/version: "0.9"
+    app.kubernetes.io/version: "1.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -80,10 +80,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: trivy-operator-dashboard-0.1.0
+        helm.sh/chart: trivy-operator-dashboard-1.4
         app.kubernetes.io/name: trivy-operator-dashboard
         app.kubernetes.io/instance: trivy-operator-dashboard
-        app.kubernetes.io/version: "0.9"
+        app.kubernetes.io/version: "1.4"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: web
         app.kubernetes.io/part-of: trivy-operator
@@ -95,7 +95,7 @@ spec:
       - name: trivy-operator-dashboard
         securityContext:
           {}
-        image: "ghcr.io/raoulx24/trivy-operator-dashboard:1.3"
+        image: "ghcr.io/raoulx24/trivy-operator-dashboard:1.4"
         imagePullPolicy: Always
         env:
         - name: KUBERNETES__KUBECONFIGFILENAME
@@ -162,10 +162,10 @@ kind: Ingress
 metadata:
   name: trivy-operator-dashboard
   labels:
-    helm.sh/chart: trivy-operator-dashboard-0.1.0
+    helm.sh/chart: trivy-operator-dashboard-1.4
     app.kubernetes.io/name: trivy-operator-dashboard
     app.kubernetes.io/instance: trivy-operator-dashboard
-    app.kubernetes.io/version: "0.9"
+    app.kubernetes.io/version: "1.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   ingressClassName: nginx
@@ -187,10 +187,10 @@ kind: Pod
 metadata:
   name: "trivy-operator-dashboard-test-connection"
   labels:
-    helm.sh/chart: trivy-operator-dashboard-0.1.0
+    helm.sh/chart: trivy-operator-dashboard-1.4
     app.kubernetes.io/name: trivy-operator-dashboard
     app.kubernetes.io/instance: trivy-operator-dashboard
-    app.kubernetes.io/version: "0.9"
+    app.kubernetes.io/version: "1.4"
     app.kubernetes.io/managed-by: Helm
   annotations:
     "helm.sh/hook": test

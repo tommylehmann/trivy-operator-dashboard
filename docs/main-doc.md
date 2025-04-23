@@ -49,6 +49,46 @@ In this mode, all data is denormalized in a single large table, with all info fr
 ![](imgs/vr-detailed.png)
 <br>*Details page*
 
+### SBOM Reports
+
+SUnlike other reports, SBOM Reports are not well-suited for a simple master-detail view. Due to their structure, they are more effectively displayed as a table and a graph.
+
+SBOMs can be exported in CycloneDX format on both the Inspect/Browse and Detailed pages, while SPDX format is available only on the Inspect/Browse page.
+
+A synthetic graph is as follows:
+
+![](imgs/sbom-graph.png)
+<br>*SBOM Graph*
+
+#### Colors
+
+- **Red** - Selected node and adjacent nodes (neighbors)
+- **Blue** - Hovered node and adjacent nodes (neighbors)
+- **Dimmed** - Unhighlighted Nodes
+- **Gray** - Group of nodes. It appears slightly transparent.
+- **White** - Other nodes
+
+#### Shapes
+
+- **Rectangle** - Nodes with children
+- **Rounded Rectangle** - Leaf nodes (nodes without children)
+- **Container with nodes** - A container that groups nodes. Usually, it is based on something similar to namespaces or package repositories
+
+#### Color Intensity
+
+- **Darker (red or blue)** - Parent of selected/hovered nodes
+- **Lighter (red or blue)** - Child of selected/hovered nodes
+- **Gradient (red or blue)** - Selected/hovered nodes. These nodes are also emphasized using a strong contrasting border
+
+#### Interaction with Graph
+
+- **Click** - Select a node. Any previously selected nodes will be deselected
+- **Ctrl + Click** - Select additional nodes
+- **Ctrl + Mouse Drag** - If dragging starts in empty space, all nodes within the selection range will be selected
+- **Dbl Click** - Dive into the graph. The clicked node becomes the new root, and only its descendants (of any kind) will be displayed
+- **Hide Node** - The selected node will be hidden. If orphans remain (nodes with no parents or children), they will also be hidden
+- **Hide Subtree** - The selected node and all its direct descendants will be hidden. If orphans remain (nodes with no parents or children), they will also be hidden
+
 ## Others
 
 ### Watcher States
@@ -62,10 +102,11 @@ The backend uses Kubernetes Watchers to get the changes in real-time. Their stat
 
 ### Settings
 
-It consists in three main sections:
-- Table States - all tables from the app persist their states (column order and size, sorts, filters etc.). Here you can clear per need the saved state.
+It consists in four main sections:
+- Table States - all tables from the app persist their states (column order and size, sorts, filters etc.). Here you can clear the saved state as needed.
 - CSV File Names - all file names used for exports to CSV are persisted. If you wish to change their defaults, here it is the place to do it
 - Trivy Reports States - here sections related to a Trivy Report can be (in)activated in the frontend (i.e. there is no need to use Config Audit Reports). Also, if inactivated in the backend, it will be shown here.
+- Display Settings - here you can choose how the severities count are displayed. There is also possibility to preview the choice.
 
 ![](imgs/settings.png)
 <br>*Settings Page*
@@ -76,3 +117,11 @@ The application fully supports Dark/Light mode. It can be switched on the fly at
 
 ![](imgs/vr-combined.png)
 <br>*Dark/Light Mode*
+
+## Important note
+
+Some sample images from this documentation are not reflecting the latest ones from the application. The differences a subtle, and not impacting the information depicted here. Some notable differences are the vulnerability count colors (zero/null ones are grayed) and in Inpect (browse) pages, they are now splitted in columns (vs one column, as in previous versions).
+
+Also, more details on SBOM Reports pages are not yet available.
+
+The main reason the images have not been updated is that the next version includes a planned technological upgrade from Angular 18 to 19 and PrimeNG 17 to 19. As a result, the images are expected to look somewhat different.
