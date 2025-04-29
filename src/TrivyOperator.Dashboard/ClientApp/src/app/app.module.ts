@@ -11,24 +11,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApiModule } from '../api/api.module';
 import { environment } from '../environments/environment';
 
-import { BadgeModule } from 'primeng/badge';
-import { ButtonModule } from 'primeng/button';
-import { MenubarModule } from 'primeng/menubar';
-import { PanelMenuModule } from 'primeng/panelmenu';
-import { SidebarModule } from 'primeng/sidebar';
-import { TagModule } from 'primeng/tag';
-import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
 import { initializeAppFactory, MainAppInitService } from './services/main-app-init.service';
-import { TrivyTableComponent } from './trivy-table/trivy-table.component';
+//import { TrivyTableComponent } from './trivy-table/trivy-table.component';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavMenuComponent,
   ],
   imports: [
     BrowserModule,
@@ -177,15 +169,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ]),
     ApiModule.forRoot({ rootUrl: environment.baseUrl }),
     BrowserAnimationsModule,
-    BadgeModule,
-    ButtonModule,
-    MenubarModule,
-    PanelMenuModule,
-    SidebarModule,
-    TagModule,
-    ToastModule,
-    TrivyTableComponent,
-    FontAwesomeModule,
+    NavMenuComponent,
   ],
   providers: [
     provideHttpClient(),

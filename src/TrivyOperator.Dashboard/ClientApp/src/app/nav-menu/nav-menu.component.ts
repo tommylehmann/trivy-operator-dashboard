@@ -1,12 +1,26 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+
 import { Subscription } from 'rxjs';
 
 import { AlertDto } from '../../api/models/alert-dto';
 import { AlertsService } from '../services/alerts.service';
 import { MainAppInitService } from '../services/main-app-init.service';
 import { RouterEventEmitterService } from '../services/router-event-emitter.service';
+
+import { BadgeModule } from 'primeng/badge';
+import { ButtonModule } from 'primeng/button';
+import { MenubarModule } from 'primeng/menubar';
+import { PanelMenuModule } from 'primeng/panelmenu';
+import { SidebarModule } from 'primeng/sidebar';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+
+import { MenuItem } from 'primeng/api';
+
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 
 import {
   faClipboardList,
@@ -27,6 +41,18 @@ interface TrivyMenuItem extends MenuItem {
 
 @Component({
   selector: 'app-nav-menu',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MenubarModule,
+    SidebarModule,
+    PanelMenuModule,
+    ButtonModule,
+    TagModule,
+    BadgeModule,
+    ToastModule,
+    FontAwesomeModule,
+  ],
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.scss'],
 })
