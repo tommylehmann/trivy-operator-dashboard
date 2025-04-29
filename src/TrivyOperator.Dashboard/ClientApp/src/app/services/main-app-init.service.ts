@@ -79,11 +79,11 @@ export class MainAppInitService {
   }
 
   private setDarkMode() {
-    const primengThemeLink = document.getElementById('primeng-theme') as HTMLLinkElement | null;
-    if (primengThemeLink == null) {
-      return;
-    }
-    primengThemeLink.href = this.isDarkMode ? 'primeng-dark.css' : 'primeng-light.css';
+    //const primengThemeLink = document.getElementById('primeng-theme') as HTMLLinkElement | null;
+    //if (primengThemeLink == null) {
+    //  return;
+    //}
+    //primengThemeLink.href = this.isDarkMode ? 'primeng-dark.css' : 'primeng-light.css';
     localStorage.setItem('mainSettings.isDarkMode', this.isDarkMode.toString());
     this.isDarkModeSubject.next(this.isDarkMode);
   }

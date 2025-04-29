@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 import { EsSeveritiesByNsSummaryDto } from '../../api/models/es-severities-by-ns-summary-dto';
@@ -17,7 +18,7 @@ import { TagModule } from 'primeng/tag';
 @Component({
   selector: 'app-home-exposed-secret-reports',
   standalone: true,
-  imports: [ButtonModule, CarouselModule, ChartModule, DialogModule, TableModule, TagModule],
+  imports: [CommonModule, ButtonModule, CarouselModule, ChartModule, DialogModule, TableModule, TagModule],
   templateUrl: './home-exposed-secret-reports.component.html',
   styleUrl: './home-exposed-secret-reports.component.scss',
 })
