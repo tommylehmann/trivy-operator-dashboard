@@ -12,20 +12,20 @@ import { initializeAppFactory, MainAppInitService } from './services/main-app-in
 import { routes } from './app.routes';
 
 import { providePrimeNG } from 'primeng/config';
-import Nora from '@primeng/themes/nora';
+import Lara from '@primeng/themes/lara';
 
 import { TitleService } from './services/title.service';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes), // Provide your app's routes
-    provideHttpClient(), // HTTP client
-    provideAnimationsAsync(), // Animations
-    importProvidersFrom(ApiModule.forRoot({ rootUrl: environment.baseUrl })), // Use importProvidersFrom for ApiModule
-    MainAppInitService, // Custom service
-    Title, // Title service
-    MessageService, // PrimeNG message service
+    provideRouter(routes),
+    provideHttpClient(),
+    provideAnimationsAsync(),
+    importProvidersFrom(ApiModule.forRoot({ rootUrl: environment.baseUrl })),
+    MainAppInitService,
+    Title,
+    MessageService,
     {
       provide: APP_INITIALIZER,
       useFactory: initializeAppFactory,
@@ -34,7 +34,7 @@ export const appConfig: ApplicationConfig = {
     },
     providePrimeNG({
       theme: {
-        preset: Nora
+        preset: Lara,
       }
     }),
   ],
