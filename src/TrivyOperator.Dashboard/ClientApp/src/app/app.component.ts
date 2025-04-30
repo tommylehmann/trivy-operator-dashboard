@@ -11,6 +11,9 @@ import { environment } from '../environments/environment';
 import { initializeAppFactory, MainAppInitService } from './services/main-app-init.service';
 import { routes } from './app.routes';
 
+import { providePrimeNG } from 'primeng/config';
+import Nora from '@primeng/themes/nora';
+
 import { TitleService } from './services/title.service';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 
@@ -29,6 +32,11 @@ export const appConfig: ApplicationConfig = {
       deps: [MainAppInitService],
       multi: true,
     },
+    providePrimeNG({
+      theme: {
+        preset: Nora
+      }
+    }),
   ],
 };
 
