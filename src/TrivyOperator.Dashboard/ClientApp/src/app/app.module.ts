@@ -19,9 +19,7 @@ import { initializeAppFactory, MainAppInitService } from './services/main-app-in
 
 
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
+  declarations: [],
   imports: [
     BrowserModule,
     FormsModule,
