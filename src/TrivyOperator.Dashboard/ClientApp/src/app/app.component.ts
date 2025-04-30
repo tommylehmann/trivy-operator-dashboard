@@ -1,13 +1,17 @@
-import { APP_INITIALIZER, ApplicationConfig, Component } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { APP_INITIALIZER, ApplicationConfig, Component, importProvidersFrom } from '@angular/core';
+import { provideRouter, RouterOutlet } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { ApiModule } from '../api/api.module';
-import { environment } from '../environments/environment';
 import { Title } from '@angular/platform-browser';
 import { MessageService } from 'primeng/api';
+
+import { ApiModule } from '../api/api.module';
+import { environment } from '../environments/environment';
+
 import { initializeAppFactory, MainAppInitService } from './services/main-app-init.service';
-import { routes } from './app.routes'; // Define your routes in a separate file
+import { routes } from './app.routes';
+
+import { TitleService } from './services/title.service';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 
 export const appConfig: ApplicationConfig = {
@@ -15,7 +19,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes), // Provide your app's routes
     provideHttpClient(), // HTTP client
     provideAnimationsAsync(), // Animations
-    ApiModule.forRoot({ rootUrl: environment.baseUrl }), // API module
+    importProvidersFrom(ApiModule.forRoot({ rootUrl: environment.baseUrl })), // Use importProvidersFrom for ApiModule
     MainAppInitService, // Custom service
     Title, // Title service
     MessageService, // PrimeNG message service
@@ -31,7 +35,7 @@ export const appConfig: ApplicationConfig = {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NavMenuComponent], // Import NavMenuComponent
+  imports: [NavMenuComponent, RouterOutlet], // Import RouterOutlet here
   templateUrl: './app.component.html',
 })
 export class AppComponent {

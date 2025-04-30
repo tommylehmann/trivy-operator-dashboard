@@ -16,7 +16,7 @@ export class AlertsService {
   public alerts$: Observable<AlertDto[]> = this.alertsSubject.asObservable();
 
   private retryPolicy = new RetryPolicyUtils();
-  private readonly hubPath: string = 'http://localhost:5032/alerts-hub';
+  private readonly hubPath: string = '/alerts-hub';
   private hubUrl: string = '';
 
   constructor(private apiConfiguration: ApiConfiguration) {
