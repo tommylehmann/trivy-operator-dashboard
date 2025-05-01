@@ -9,7 +9,7 @@ export class BooleanCssStylePipe implements PipeTransform {
     const documentStyle = getComputedStyle(document.documentElement);
 
     return {
-      'background': documentStyle.getPropertyValue(`--${data ? 'blue' : 'bluegray'}-400`),
+      'background': documentStyle.getPropertyValue(`--p-${data ? 'blue' : 'gray'}-400`),
     };
   }
 }

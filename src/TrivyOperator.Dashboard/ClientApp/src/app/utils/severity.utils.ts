@@ -22,14 +22,14 @@ export class SeverityUtils {
 
   public static getCssColor(severityId: number): string {
     const documentStyle = getComputedStyle(document.documentElement);
-    const color: string = '--' + this.getColor(severityId) + '-' + (this.colorIntensity + 100);
+    const color: string = '--p-' + this.getColor(severityId) + '-' + (this.colorIntensity + 100);
 
     return documentStyle.getPropertyValue(color);
   }
 
   public static getCssColorHover(severityId: number): string {
     const documentStyle = getComputedStyle(document.documentElement);
-    const color: string = '--' + this.getColor(severityId) + '-' + this.colorIntensity;
+    const color: string = '--p-' + this.getColor(severityId) + '-' + this.colorIntensity;
 
     return documentStyle.getPropertyValue(color);
   }

@@ -5,7 +5,7 @@ export class SemaphoreStatusUtils {
 
   public static getCssColorByName(statusName: string): string {
     const documentStyle = getComputedStyle(document.documentElement);
-    const color: string = '--' + this.getColorByName(statusName) + '-' + (this.colorIntensity + 100);
+    const color: string = '--p-' + this.getColorByName(statusName) + '-' + (this.colorIntensity + 100);
 
     return documentStyle.getPropertyValue(color);
   }
