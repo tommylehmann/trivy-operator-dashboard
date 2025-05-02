@@ -114,9 +114,9 @@ export class PrimeNgChartUtils {
 
   public static getHorizontalBarChartOption(): any {
     const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-    const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+    const textColor = documentStyle.getPropertyValue('--p-text-color');
+    const textColorSecondary = documentStyle.getPropertyValue('--p-surface-300');
+    const surfaceBorder = documentStyle.getPropertyValue('--p-surface-700');
     return {
       indexAxis: 'y',
       responsive: true,
