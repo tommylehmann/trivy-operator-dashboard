@@ -3,9 +3,9 @@ import { BehaviorSubject, Subject, forkJoin } from 'rxjs';
 
 import { BackendSettingsDto } from '../../api/models/backend-settings-dto';
 import { BackendSettingsService } from '../../api/services/backend-settings.service';
-import { LocalStorageUtils } from '../utils/local-storage.utils';
 import { SettingsService } from './settings.service';
 import { AppVersion } from '../../api/models';
+import { DarkModeService } from './dark-mode.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,11 +17,10 @@ export class MainAppInitService {
   });
   backendSettingsDto$ = this.backendSettingsDtoSubject.asObservable();
 
-  isDarkMode: boolean = false;
-  private isDarkModeSubject = new BehaviorSubject<boolean>(this.isDarkMode);
-  isDarkMode$ = this.isDarkModeSubject.asObservable();
-
-  constructor(private backendSettingsService: BackendSettingsService, private settingsService: SettingsService) { }
+  constructor(
+    private backendSettingsService: BackendSettingsService,
+    private settingsService: SettingsService,
+    private darkModeService: DarkModeService) { }
 
   initializeApp(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -30,10 +29,9 @@ export class MainAppInitService {
         appVersion: this.settingsService.getAppVersion(),
       }).subscribe({
         next: ({ backendSettings, appVersion }) => {
+          this.darkModeService.restoreMode();
           this.defaultBackendSettingsDto = backendSettings;
           this.mergeBackendSettingsDto(backendSettings);
-          this.isDarkMode = this.getDarkMode();
-          this.setDarkMode();
           this.something(appVersion);
           resolve();
         },
@@ -64,28 +62,6 @@ export class MainAppInitService {
         ',',
       ),
     );
-  }
-
-  switchLightDarkMode() {
-    this.isDarkMode = !this.isDarkMode;
-    this.setDarkMode();
-  }
-
-  private getDarkMode(): boolean {
-    return (
-      LocalStorageUtils.getBoolKeyValue('mainSettings.isDarkMode') ??
-      (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    );
-  }
-
-  private setDarkMode() {
-    //const primengThemeLink = document.getElementById('primeng-theme') as HTMLLinkElement | null;
-    //if (primengThemeLink == null) {
-    //  return;
-    //}
-    //primengThemeLink.href = this.isDarkMode ? 'primeng-dark.css' : 'primeng-light.css';
-    localStorage.setItem('mainSettings.isDarkMode', this.isDarkMode.toString());
-    this.isDarkModeSubject.next(this.isDarkMode);
   }
 
   private mergeBackendSettingsDto(backendSettingsDto: BackendSettingsDto) {

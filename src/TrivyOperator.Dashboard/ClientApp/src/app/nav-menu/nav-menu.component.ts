@@ -33,6 +33,7 @@ import {
   faDiagramProject,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
+import { DarkModeService } from '../services/dark-mode.service';
 
 
 interface TrivyMenuItem extends MenuItem {
@@ -76,17 +77,19 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   constructor(
     public router: Router,
     private alertsService: AlertsService,
+    private darkModeService: DarkModeService,
     private mainAppInitService: MainAppInitService,
     private routerEventEmitterService: RouterEventEmitterService
   ) {
-    this.routerEventEmitterService.title$.subscribe((title) => {
-      this.activePage = title;
-    });
+    this.routerEventEmitterService.title$.subscribe((title) => { this.activePage = title; });
+    this.darkModeService.isDarkMode$.subscribe((isDarkMode) => { this.isDarkMode = isDarkMode; });
   }
 
-  get isDarkMode(): boolean {
-    return this.mainAppInitService.isDarkMode;
-  }
+  //get isDarkMode(): boolean {
+  //  return this.mainAppInitService.isDarkMode;
+  //}
+
+  isDarkMode: boolean = false;
 
   ngOnInit() {
     this.alertSubscription = this.alertsService.alerts$.subscribe((alerts: AlertDto[]) => {
@@ -105,7 +108,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   }
 
   public switchLightDarkMode() {
-    this.mainAppInitService.switchLightDarkMode();
+    this.darkModeService.toggleDarkMode();
   }
 
   public onAlertsClick() {
@@ -116,9 +119,9 @@ export class NavMenuComponent implements OnInit, OnDestroy {
     this.isSidebarVisible = true;
   }
 
-  private getDarkMode(): boolean {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
+  //private getDarkMode(): boolean {
+  //  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  //}
 
   private onNewAlerts(alerts: AlertDto[]) {
     this.alerts = alerts;

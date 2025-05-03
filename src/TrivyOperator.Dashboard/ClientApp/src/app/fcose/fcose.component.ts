@@ -26,7 +26,7 @@ import {
   faClone,
 } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MainAppInitService } from '../services/main-app-init.service';
+import { DarkModeService } from '../services/dark-mode.service';
 
 
 cytoscape.use(fcose);
@@ -184,10 +184,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   @Input() staticInputFilterByNameValue: string = "";
 
   isHelpDialogVisible: boolean = false;
-  constructor(private mainAppInitService: MainAppInitService) { }
+  constructor(private darkModeService: DarkModeService) { }
 
   ngOnInit() {
-    this.mainAppInitService.isDarkMode$.subscribe((isDarkMode) => {
+    this.darkModeService.isDarkMode$.subscribe((isDarkMode) => {
       const oldDarkLightMode = this.darkLightMode;
       this.darkLightMode = isDarkMode ? 'Dark' : 'Light';
       if (oldDarkLightMode != this.darkLightMode) {

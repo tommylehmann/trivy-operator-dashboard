@@ -16,6 +16,7 @@ import Nora from '@primeng/themes/nora';
 
 import { TitleService } from './services/title.service';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
+import { DarkModeService } from './services/dark-mode.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,6 +37,7 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: Nora,
         options: {
+          darkModeSelector: `.${DarkModeService.DARK_MODE_SELECTOR}`,
           cssLayer: {
             name: 'primeng',
             order: 'tailwind, primeng',

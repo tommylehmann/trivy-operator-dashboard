@@ -5,25 +5,27 @@
   <p-panel header="Trivy Operator Dashboard" class="mb-4" [toggleable]="true">
     <div class="grid grid-cols-12 gap-4">
       <div class="col-span-12 grid grid-cols-12 gap-4">
-        <div class="col-span-12 xl:col-span-6">
-          <div class="w-[300px]">
+        <div class="col-span-12 xl:col-span-6 flex items-start gap-4">
+          <div class="w-[300px] flex-none">
             <img src="assets/logo.blurred.png" class="w-full" />
           </div>
-          <h4>Intro</h4>
-          <p>
-            Welcome to the Trivy Operator Dashboard, a comprehensive security management tool for Kubernetes environments.
-            Built on top of the powerful Trivy Operator from Aqua Security, this dashboard provides insights into your
-            cluster's security posture. It offers detailed insights on vulnerability scans, policy validation scans and
-            other ones. With an intuitive and user-friendly interface, you can easily monitor, detect, and respond to
-            security threats, ensuring your Kubernetes environment remains robust and secure.
-          </p>
-          <p>
-            All features consist in dashboards (for view on a glance), browse and inspect findings (with table filters,
-            sorts), export data.
-          </p>
-          <p>This app is fully operational, with new features currently in development. Stay tuned for more updates!</p>
-          <p>More info on <a href="https://github.com/raoulx24/trivy-operator-dashboard" target="_blank">GitHub page</a>.</p>
+          <div class="flex-1">
+            <h4>Intro</h4>
+            <p>
+              Welcome to the Trivy Operator Dashboard, a comprehensive security management tool for Kubernetes environments.
+              Built on top of the powerful Trivy Operator from Aqua Security, this dashboard provides insights into your
+              cluster's security posture. It offers detailed insights on vulnerability scans, policy validation scans, and
+              other ones. With an intuitive and user-friendly interface, you can easily monitor, detect, and respond to
+              security threats, ensuring your Kubernetes environment remains robust and secure.
+            </p>
+            <p>
+              All features consist of dashboards (for a quick overview), browsing and inspecting findings (with table filters, sorts), and exporting data.
+            </p>
+            <p>This app is fully operational, with new features currently in development. Stay tuned for more updates!</p>
+            <p>More info on <a href="https://github.com/raoulx24/trivy-operator-dashboard" target="_blank">GitHub page</a>.</p>
+          </div>
         </div>
+
         <div class="col-span-12 md:col-span-6 xl:col-span-3">
           <h4>Features</h4>
           <ul>
@@ -37,6 +39,7 @@
             <li>SBOM Reports</li>
           </ul>
         </div>
+
         <div class="col-span-12 md:col-span-6 xl:col-span-3">
           <h4>Version Info</h4>
           <div class="p-1">
@@ -77,9 +80,9 @@
       <p-card class="h-full small-header"
               header="{{ credit.name }}">
         <div class="grid grid-cols-12 gap-4">
-          <div class="col-span-12">
+          <div class="col-span-12 flex-grow">
             <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}"
-                 class="w-full" style="{{ credit.imgExtraStyle }}" />
+                 class="w-full max-w-none" style="{{ credit.imgExtraStyle }}" />
           </div>
           <div class="col-span-12 text-left">
             <div class="mt-2">
