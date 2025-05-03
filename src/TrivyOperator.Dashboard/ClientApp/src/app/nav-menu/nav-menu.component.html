@@ -14,22 +14,12 @@
         <p-button icon="pi pi-bell" label="" [raised]="true" [rounded]="true" [text]="true" (click)="onAlertsClick()" />
         <span class="p-badge p-badge-danger text-xs">{{ alertsCount }}</span>
       </div>
-      <p-button
-        *ngIf="isDarkMode"
-        icon="pi pi-sun"
-        [raised]="true"
-        [rounded]="true"
-        [text]="true"
-        (click)="switchLightDarkMode()"
-      ></p-button>
-      <p-button
-        *ngIf="!isDarkMode"
-        icon="pi pi-moon"
-        [raised]="true"
-        [rounded]="true"
-        [text]="true"
-        (click)="switchLightDarkMode()"
-      ></p-button>
+      <p-button [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
+                [raised]="true"
+                [rounded]="true"
+                [text]="true"
+                (click)="switchLightDarkMode()">
+      </p-button>
     </div>
   </ng-template>
 </p-menubar>

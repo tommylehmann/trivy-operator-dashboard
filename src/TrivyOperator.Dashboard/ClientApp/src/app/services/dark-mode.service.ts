@@ -21,10 +21,18 @@ export class DarkModeService {
     return this.isDarkModeSubject.getValue();
   }
 
-  private set darkMode(value: boolean) {
+  private setDarkMode(value: boolean, isUserEvent: boolean) {
     this.isDarkMode = value;
     this.isDarkModeSubject.next(value);
-    localStorage.setItem(this.locaStorageIsDarkModeKey, value.toString());
+    if (isUserEvent) {
+      localStorage.setItem(this.locaStorageIsDarkModeKey, value.toString());
+    }
+    else {
+      const savedTheme = LocalStorageUtils.getBoolKeyValue(this.locaStorageIsDarkModeKey);
+      if (savedTheme !== null) {
+        return;
+      }
+    }
 
     const root = document.documentElement;
     if (value) {
@@ -37,22 +45,21 @@ export class DarkModeService {
   public restoreMode() {
     const savedTheme = LocalStorageUtils.getBoolKeyValue(this.locaStorageIsDarkModeKey);
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    this.darkMode = savedTheme ?? prefersDarkMode;
+    this.setDarkMode(savedTheme ?? prefersDarkMode, false);
   }
 
   public toggleDarkMode() {
-    this.darkMode = !this.darkMode;
+    this.setDarkMode(!this.darkMode, true);
   }
 
   private watchSystemDarkMode() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addEventListener('change', (event) => {
-      console.log('mama ' + event.matches);
       const newIsDarkMode = event.matches;
       if (this.isDarkMode === newIsDarkMode) {
         return;
       }
-      this.darkMode = newIsDarkMode;
+      this.setDarkMode(newIsDarkMode, false);
     });
   }
 }
