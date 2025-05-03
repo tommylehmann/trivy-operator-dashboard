@@ -1,18 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
-@import "tailwindcss";
+
 @import '../node_modules/primeicons/primeicons.css';
-/*@import '../node_modules/primeflex/primeflex.min.css';*/
-/*@import '../node_modules/primeng/resources/primeng.css';*/
-/*@import '../node_modules/primeicons/primeicons.css';*/
-/*@import '../node_modules/primeflex/primeflex.min.css';*/
+@layer tailwind, primeng, app-layer;
+
+@layer tailwind {
+  @import "./styles/tailwind.local.css";
+}
 
 /* Components fixes*/
-@import './styles/p-breadcrumb.scss';
-@import './styles/p-inputswitch.scss';
-@import './styles/p-panel.scss';
-@import './styles/p-card.scss';
+@layer app-layer {
+  @import './styles/p-breadcrumb.scss';
+  @import './styles/p-inputswitch.scss';
+  @import './styles/p-panel.scss';
+  @import './styles/p-card.scss';
+}
 
-/* Others */
+ Others 
 .hide-on-small {
   display: none;
 }
@@ -28,28 +31,28 @@ h4.no-margins {
   margin-block-end: 0;
 }
 
-/* tests */
+ tests 
 .custom-small-row tr {
-  height: 25px; /* Adjust the height as needed */
+  height: 25px;  
 }
 
 .custom-small-row td {
-  padding: 0px; /* Adjust padding for a more compact look */
+  padding: 0px;  
   padding-left: 4px;
-  height: 25px !important; /* Ensure cell height matches row height */
-  line-height: 1em; /* Adjust line height if needed */
+  height: 25px !important;
+  line-height: 1em;
 }
 
 p-sortIcon.sm-sortIcon .p-sortable-column-icon {
-  font-size: 0.8rem !important; /* Adjust the size */
-  width: 12px !important; /* Adjust the dimensions if needed */
+  font-size: 0.8rem !important;
+  width: 12px !important;
   height: 12px !important;
 }
 
 p-columnFilter.sm-filterIcon .pi-filter-icon {
-  width: 12px !important; /* Adjust width */
-  height: 12px !important; /* Adjust height */
-  font-size: 0.8rem !important; /* Optional */
+  width: 12px !important;
+  height: 12px !important;
+  font-size: 0.8rem !important;
 }
 
 p-splitbutton.text-sm {
@@ -80,34 +83,34 @@ p-splitbutton.text-sm {
 }
 
 .p-selectbutton {
-  border: 1px solid #ccc; /* Subtle border */
-  border-radius: 5px; /* Slight rounded edges */
-  background-color: transparent; /* No background */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: transparent;
   width: auto;
   display: inline-flex;
 }
 
 .p-selectbutton .p-button {
-  background-color: transparent; /* No background */
-  color: #666; /* Subtle text color */
-  border: none; /* Remove button borders */
-  padding: 10px 20px; /* Adjust padding for better spacing */
+  background-color: transparent;
+  color: #666;
+  border: none;
+  padding: 10px 20px;
   white-space: nowrap;
   padding: 5px;
   margin: 5px;
 }
 
 .p-selectbutton .p-button.p-highlight {
-  /*background-color: #3b82f6;*/ /* Active background color */
-  color: white; /* Text color for active button */
+  background-color: #3b82f6;
+  color: white;
   background-color: rgba(#005bff, 1);
-  box-shadow: 0 5px 10px rgba(0,0,0,0.6); /* Highlighted button shadow */
+  box-shadow: 0 5px 10px rgba(0,0,0,0.6);
 }
 
 p-selectbutton.text-sm .p-button-label {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 .p-dialog {
-  max-height: unset !important; /* Removes the max-height limitation */
+  max-height: unset !important;
 }

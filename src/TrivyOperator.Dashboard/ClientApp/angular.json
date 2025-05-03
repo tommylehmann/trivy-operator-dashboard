@@ -19,13 +19,13 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "progress": false,
             "outputPath": "dist",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": [ "src/polyfills.ts" ],
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [
               "oidc-client"
@@ -59,9 +59,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -98,20 +96,7 @@
             "assets": [
               "src/assets"
             ],
-            "styles": [
-              {
-                "input": "src/primeng-dark.scss",
-                "bundleName": "primeng-dark",
-                "inject": false
-              },
-              {
-                "input": "src/primeng-light.scss",
-                "bundleName": "primeng-light",
-                "inject": false
-              },
-              "src/styles.scss"
-
-            ],
+            "styles": [ "src/styles.scss" ],
             "scripts": []
           }
         },
