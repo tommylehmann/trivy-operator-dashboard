@@ -12,7 +12,7 @@ import { initializeAppFactory, MainAppInitService } from './services/main-app-in
 import { routes } from './app.routes';
 
 import { providePrimeNG } from 'primeng/config';
-import Lara from '@primeng/themes/lara';
+import Nora from '@primeng/themes/nora';
 
 import { TitleService } from './services/title.service';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -34,7 +34,7 @@ export const appConfig: ApplicationConfig = {
     },
     providePrimeNG({
       theme: {
-        preset: Lara,
+        preset: Nora,
         options: {
           cssLayer: {
             name: 'primeng',

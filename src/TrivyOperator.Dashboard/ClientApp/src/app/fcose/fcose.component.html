@@ -1,5 +1,5 @@
-<div class="grid">
-  <div class="flex align-items-center col-12">
+<div class="grid grid-cols-12 gap-4">
+  <div class="flex items-center col-span-12">
     <p-button icon="pi pi-search-plus" label="Zoom In" size="small" [text]="true" (onClick)="onZoomIn()" />
     <p-button icon="pi pi-search-minus" label="Zoom Out" size="small" [text]="true" (onClick)="onZoomOut()" />
     <p-button icon="pi pi-arrows-alt" label="Fit" size="small" [text]="true" (onClick)="onZoomFit()" />
@@ -61,14 +61,14 @@
               (onClick)="onHelp()">
     </p-button>
   </div>
-  <div class="flex align-items-center col-12 p-0">
+  <div class="flex items-center col-span-12 p-0">
     <p-breadcrumb *ngIf="!isStatic"
                   class="breadcrumb-no-background breadcrumb-no-overflow"
                   [home]="navHome"
                   [model]="navItems"
                   (onItemClick)="onNavItemClick($event)"/>
   </div>
-  <div class="col-12 h-full">
+  <div class="col-span-12 h-full">
     <div #graphContainer class="fcose fcose-half graph-container"></div>
   </div>
 </div>

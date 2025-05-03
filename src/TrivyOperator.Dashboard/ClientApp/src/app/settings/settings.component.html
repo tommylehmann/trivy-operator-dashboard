@@ -1,5 +1,5 @@
-<div class="grid align-items-start md:align-items-stretch">
-  <div class="col-12 md:col-6">
+<div class="grid grid-cols-12 gap-4 items-start md:items-stretch">
+  <div class="col-span-12 md:col-span-6">
     <p-panel header="Table States" class="h-full">
       <p-table styleClass="p-datatable-sm text-sm" [tableStyle]="" [value]="clearTablesOptions">
         <ng-template pTemplate="header">
@@ -34,7 +34,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="6" class="font-italic text-color-secondary text-sm text-center">
+            <td colspan="6" class="italic text-muted-color text-sm text-center">
               No data: no saved table layouts found...
             </td>
           </tr>
@@ -73,14 +73,14 @@
       </ng-template>
     </p-panel>
   </div>
-  <div class="col-12 md:col-6">
+  <div class="col-span-12 md:col-span-6">
     <p-panel header="CSV File Names" class="h-full">
       <div *ngFor="let file of csvFileNames" class="field">
         <label for="{{ file.dataKey }}" class="text-sm">{{ file.description }}</label>
         <input id="{{ file.dataKey }}" pInputText class="text-sm w-full" [(ngModel)]="file.savedCsvName" />
       </div>
       <div *ngIf="csvFileNames.length == 0">
-        <p class="font-italic text-color-secondary text-sm">No data: no CSV files saved...</p>
+        <p class="italic text-muted-color text-sm">No data: no CSV files saved...</p>
       </div>
       <p-button
         icon="pi pi-file-check"
@@ -99,7 +99,7 @@
       </ng-template>
     </p-panel>
   </div>
-  <div class="col-12 md:col-6">
+  <div class="col-span-12 md:col-span-6">
     <p-panel header="Trivy Reports States" class="h-full">
       <p-table styleClass="p-datatable-sm text-sm" [tableStyle]="" [value]="trivyReportConfigs">
         <ng-template pTemplate="header">
@@ -126,7 +126,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="6" class="font-italic text-color-secondary text-sm text-center">
+            <td colspan="6" class="italic text-muted-color text-sm text-center">
               No data: no Trivy Report Configs found...
             </td>
           </tr>
@@ -155,7 +155,7 @@
       </ng-template>
     </p-panel>
   </div>
-  <div class="col-12 md:col-6">
+  <div class="col-span-12 md:col-span-6">
     <p-panel header="Display Settings" class="h-full">
       <h4>Severities</h4>
       <h5>Select Severity display option</h5>
@@ -174,7 +174,7 @@
                       unselectable="true"
                       (onOptionClick)="onSeverityCssStyleByIdOptionsClick($event)"/>
       <h5>Sample</h5>
-      <div class="mt-4">
+      <div class="mt-6">
         <p-tag *ngFor="let sampleValue of severityCssStyleByIdOptionValueSamples"
                [rounded]="true"
                [style]="3 | severityCssStyleById:sampleValue:severityCssStyleByIdOptions[severityCssStyleByIdOptionIndex]"

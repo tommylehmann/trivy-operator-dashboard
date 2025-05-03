@@ -1,14 +1,14 @@
 
-<div class="grid">
-  <div class="col-6">
+<div class="grid grid-cols-12 gap-4">
+  <div class="col-span-6">
     <app-fcose [nodeDataDtos]="nodeDataDtos"
                [isStatic]="true"
                [staticInputFilterByNameValue]="'notdimmed'"
                [staticSelectedNodeId]="'n11'"
                [staticHighlightedNodeId]="'n21'" />
   </div>
-  <div class="col-6 text-sm">
-    <div class="ml-4">
+  <div class="col-span-6 text-sm">
+    <div class="ml-6">
       <h4>Colors</h4>
       <ul>
         <li><b>Red</b> - Selected node and adjacent nodes (neighbors)</li>

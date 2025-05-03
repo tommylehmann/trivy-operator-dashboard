@@ -1,8 +1,8 @@
 <div class="row">
-  <div class="flex flex-wrap align-items-stretch">
-    <div class="col-12 md:col-5 lg:col-4 p-0 pr-1">
-      <div class="grid">
-        <div class="col-4 p-fluid pr-1">
+  <div class="flex flex-wrap items-stretch">
+    <div class="col-span-12 md:col-span-5 lg:col-span-4 p-0 pr-1">
+      <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-4 p-fluid pr-1">
           <p-dropdown placeholder="Select a Namespace"
                       class="p-inputtext-sm"
                       [filter]="true"
@@ -12,17 +12,17 @@
                       [(ngModel)]="selectedNamespace"
                       (onChange)="filterImageDtos()" />
         </div>
-        <div class="col-8 p-fluid flex align-items-center pl-1">
+        <div class="col-span-8 p-fluid flex items-center pl-1">
           <p-dropdown optionLabel="imageNameTag"
                       placeholder="Select an Image"
-                      class="p-inputtext-sm flex-grow-1 pr-1 text-truncate p-dropdown-max"
+                      class="p-inputtext-sm grow pr-1 text-truncate p-dropdown-max"
                       [filter]="true"
                       [options]="imageDtos"
                       [showClear]="true"
                       [disabled]="isSingleMode"
                       [(ngModel)]="selectedImageDto">
             <ng-template let-imageDto pTemplate="imageDtos">
-              <div class="flex align-items-center gap-2">
+              <div class="flex items-center gap-2">
                 <div>{{ imageDto.imageNameTag }}</div>
                 <p-tag *ngIf="imageDto.hasVr" rounded>
                   <span>
@@ -48,7 +48,7 @@
                        (rowActionRequested)="onRowActionRequested($event)"
                        (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)"/>
     </div>
-    <div class="col-12 md:col-7 lg:col-8 p-0 pl-1">
+    <div class="col-span-12 md:col-span-7 lg:col-span-8 p-0 pl-1">
       <app-fcose [nodeDataDtos]="nodeDataDtos"
                  [selectedNodeId]="selectedSbomDetailBomRef"
                  (activeNodeIdChange)="onActiveNodeIdChange($event)"
@@ -99,30 +99,30 @@
           [modal]="true"
           [(visible)]="isSbomReportOverviewDialogVisible">
  
-  <div class="grid h-full">
-    <div class="col-12 md:col-4 h-full flex flex-column">
+  <div class="grid grid-cols-12 gap-4 h-full">
+    <div class="col-span-12 md:col-span-4 h-full flex flex-col">
       <div style="height: 180px; min-height: 180px">
-        <b class="col-12 text-sm">S-BoM</b>
-        <div class="grid ml-1 mt-1">
-          <div class="col-3">
-            <div class="flex align-items-center justify-content-between">
+        <b class="col-span-12 text-sm">S-BoM</b>
+        <div class="grid grid-cols-12 gap-4 ml-1 mt-1">
+          <div class="col-span-3">
+            <div class="flex items-center justify-between">
               <span class="text-sm">Nodes</span>
               <p-tag [rounded]="true"
                      [value]="sbomReportDetailStatistics[5]?.toString() ?? 'N/A'" />
             </div>
           </div>
-          <div class="col-3">
-            <div class="flex align-items-center justify-content-between">
+          <div class="col-span-3">
+            <div class="flex items-center justify-between">
               <span class="text-sm">Edges</span>
               <p-tag [rounded]="true"
                      [value]="sbomReportDetailStatistics[6]?.toString() ?? 'N/A'" />
             </div>
           </div>
         </div>
-        <b class="col-12 text-sm">Vulnerabilities</b>
-        <div class="grid ml-1 mt-1">
-          <div *ngFor="let _ of [].constructor(5); let i = index" class="col-3">
-            <div class="flex align-items-center justify-content-between">
+        <b class="col-span-12 text-sm">Vulnerabilities</b>
+        <div class="grid grid-cols-12 gap-4 ml-1 mt-1">
+          <div *ngFor="let _ of [].constructor(5); let i = index" class="col-span-3">
+            <div class="flex items-center justify-between">
               <span class="text-sm">{{ i | severityNameById:true }}</span>
               <p-tag [rounded]="true"
                       [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
@@ -131,7 +131,7 @@
           </div>
         </div>
       </div>
-      <div class="h-full flex-column">
+      <div class="h-full flex-col">
         <p-treeTable [value]="sbomReportDetailLicensesTreeNodes"
                      [scrollable]="true"
                      [virtualScroll]="true"
@@ -158,7 +158,7 @@
         </p-treeTable>
       </div>
     </div>
-    <div class="col-12 md:col-8 h-full flex flex-column">
+    <div class="col-span-12 md:col-span-8 h-full flex flex-col">
       <div style="height: 180px; min-height: 180px">
         <p-table scrollHeight="flex"
                  sortMode="multiple"
@@ -197,7 +197,7 @@
         </p-table>
 
       </div>
-      <div class="h-full flex-column">
+      <div class="h-full flex-col">
         <p-treeTable [value]="sbomReportDetailPropertiesTreeNodes"
                      [scrollable]="true"
                      [virtualScroll]="true"

@@ -3,7 +3,7 @@
     #trivyTable
     columnResizeMode="expand"
     dataKey="{{ trivyTableOptions!.dataKey }}"
-    scrollHeight="75vh"
+    scrollHeight="flex"
     sortMode="multiple"
     stateStorage="local"
     styleClass="p-datatable-sm text-sm"
@@ -158,7 +158,7 @@
                   <div>{{ severityWrapperGetNames(severityIds, 2) }}</div>
                 </ng-template>
                 <ng-template let-option pTemplate="item">
-                  <div class="flex align-items-center gap-2" [style]="{ 'font-size': '14px' }">
+                  <div class="flex items-center gap-2" [style]="{ 'font-size': '14px' }">
                     {{ severityWrapperGetCapitalizedName(option) }}
                   </div>
                 </ng-template>
@@ -245,7 +245,7 @@
     <ng-template *ngIf="trivyTableOptions!.rowExpansionRender" let-rowData pTemplate="rowexpansion">
       <tr>
         <td [attr.colspan]="trivyTableColumns.length + 1">
-          <div *ngIf="trivyTableOptions!.rowExpansionRender == 'table'" class="pl-3">
+          <div *ngIf="trivyTableOptions!.rowExpansionRender == 'table'" class="pl-4">
             <p-table styleClass="text-sm p-datatable-sm" [value]="[{}]">
               <ng-template *ngIf="trivyExpandTableOptions.isHeaderVisible" pTemplate="header">
                 <tr>
@@ -286,7 +286,7 @@
               </ng-template>
             </p-table>
           </div>
-          <div *ngIf="trivyTableOptions!.rowExpansionRender == 'messages'" class="pl-3 white-space-normal">
+          <div *ngIf="trivyTableOptions!.rowExpansionRender == 'messages'" class="pl-4 whitespace-normal">
             <li *ngFor="let mess of rowData.messages">{{ mess }}</li>
           </div>
         </td>
@@ -308,8 +308,8 @@
         <label for="csvFileName" class="text-sm">CSV File Name</label>
         <input id="csvFileName" pInputText class="text-sm w-full" [(ngModel)]="csvFileName" />
       </div>
-      <div class="grid">
-        <div class="col-6">
+      <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
           <p-button
             icon="pi pi-filter"
             label="Export Filtered"
@@ -321,7 +321,7 @@
             (onClick)="onExportToCsv('filtered')"
           />
         </div>
-        <div class="col-6">
+        <div class="col-span-6">
           <p-button
             icon="pi pi-align-justify"
             label="Export All"
@@ -345,7 +345,7 @@
     (onHide)="onOverlayToogle()"
     (onShow)="onOverlayToogle()"
   >
-    <div class="flex-column gap-3 w-15rem">
+    <div class="flex-col gap-4 w-60">
       <div class="row w-full tex-xs">
         <p-dropdown
           #filterNamespacesDropdown
@@ -362,7 +362,7 @@
       <div class="row">
         <a>Severities</a>
         <div>
-          <div class="flex-column gap-0 mt-2">
+          <div class="flex-col gap-0 mt-2">
             <div *ngFor="let severityDto of severityDtos" class="field-checkbox mb-2 text-sm">
               <p-checkbox
                 name="group"
@@ -377,8 +377,8 @@
       </div>
       <hr />
       <div class="row">
-        <div class="grid">
-          <div class="col-6">
+        <div class="grid grid-cols-12 gap-4">
+          <div class="col-span-6">
             <p-button
               icon="pi pi-refresh"
               label="Refresh"
@@ -389,7 +389,7 @@
               (onClick)="onFilterData()"
             />
           </div>
-          <div class="col-6">
+          <div class="col-span-6">
             <p-button
               icon="pi pi-replay"
               label="Reset"

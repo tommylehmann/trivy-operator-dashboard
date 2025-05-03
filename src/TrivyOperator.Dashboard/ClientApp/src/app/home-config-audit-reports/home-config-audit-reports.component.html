@@ -1,6 +1,6 @@
 <div style="height: 78vh" class="row">
-  <div class="grid flex">
-    <div class="col-12 lg:col-3 h-full">
+  <div class="grid grid-cols-12 gap-4 flex">
+    <div class="col-span-12 lg:col-span-3 h-full">
       <h4 class="text-center">Config Audit Reports Statistics</h4>
       <div class="flex row">
         <p-table ngClass="w-full" styleClass="p-datatable-sm text-sm" [value]="carSeveritySummaries">
@@ -18,24 +18,24 @@
           </ng-template>
         </p-table>
       </div>
-      <div class="flex row mb-5 text-sm justify-content-end -ml-1">
+      <div class="flex row mb-8 text-sm justify-end -ml-1">
         <p-button label="More on Config Audits..." size="small" [text]="true" (onClick)="onCarsMore($event)" />
       </div>
     </div>
 
-    <div class="hide-on-small lg:col-9 h-full justify-content-center">
+    <div class="hide-on-small lg:col-span-9 h-full justify-center">
       <p-carousel [autoplayInterval]="10000" [numScroll]="1" [numVisible]="1" [value]="slides">
         <ng-template let-slide pTemplate="item">
           <div class="custom-slide">
             <ng-container [ngSwitch]="slide">
               <div *ngSwitchCase="'nsByNs'">
                 <h4 style="text-align: center">Config Audits - Severity by Namespace</h4>
-                <div *ngIf="barchartDataNsByNs" class="flex justify-content-center">
+                <div *ngIf="barchartDataNsByNs" class="flex justify-center">
                   <p-chart
                     height="60vh"
                     type="bar"
                     width="60vw"
-                    class="justify-content-center"
+                    class="justify-center"
                     [data]="barchartDataNsByNs"
                     [options]="horizontalBarChartOption"
                   />
@@ -43,7 +43,7 @@
               </div>
               <div *ngSwitchCase="'nsBySev'">
                 <h4 style="text-align: center">Config Audits - Namespace by Severity</h4>
-                <div *ngIf="barchartDataNsBySev" class="flex justify-content-center">
+                <div *ngIf="barchartDataNsBySev" class="flex justify-center">
                   <p-chart
                     height="60vh"
                     type="bar"
@@ -55,12 +55,12 @@
               </div>
               <div *ngSwitchCase="'kindByNs'">
                 <h4 style="text-align: center">Config Audits - Severity by Kinds</h4>
-                <div *ngIf="barchartDataKindByNs" class="flex justify-content-center">
+                <div *ngIf="barchartDataKindByNs" class="flex justify-center">
                   <p-chart
                     height="60vh"
                     type="bar"
                     width="60vw"
-                    class="justify-content-center"
+                    class="justify-center"
                     [data]="barchartDataKindByNs"
                     [options]="horizontalBarChartOption"
                   />
@@ -68,7 +68,7 @@
               </div>
               <div *ngSwitchCase="'kindBySev'">
                 <h4 style="text-align: center">Config Audits - Kinds by Severity</h4>
-                <div *ngIf="barchartDataKindBySev" class="flex justify-content-center">
+                <div *ngIf="barchartDataKindBySev" class="flex justify-center">
                   <p-chart
                     height="60vh"
                     type="bar"
