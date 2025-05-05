@@ -76,57 +76,32 @@
 <p-panel header="Credits AKA Powered By" [toggleable]="true">
   <h4>Acknowledging the Building Blocks Behind the App</h4>
   <div class="grid grid-cols-12 gap-4 items-stretch">
-    <div *ngFor="let credit of credits" class="col-span-4 md:col-span-3 lg:col-span-2 xl:col-span-1">
-      <p-card class="h-full small-header"
-              header="{{ credit.name }}">
-        <div class="grid grid-cols-12 gap-4">
-          <div class="col-span-12 flex-grow">
-            <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}"
-                 class="w-full max-w-none" style="{{ credit.imgExtraStyle }}" />
-          </div>
-          <div class="col-span-12 text-left">
-            <div class="mt-2">
-              <a href="{{ credit.homeUrl }}" target="_blank">Home</a>
-            </div>
-            <div class="mt-2">
-              <a href="{{ credit.gitUrl }}" target="_blank">Git</a>
-            </div>
-            <div class="mt-2">
-              <a href="{{ credit.docsUrl }}" target="_blank">Docs</a>
-            </div>
+    <div *ngFor="let credit of credits" class="col-span-4 md:col-span-3 lg:col-span-2 flex items-stretch">
+      <p-card class="h-full small-header flex flex-col" header="{{ credit.name }}">
+        <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}" loading="lazy"
+             class="w-full h-auto object-cover" style="{{ credit.imgExtraStyle }}" />
+        <div class="col-span-12 text-left mt-auto">
+          <div class="mt-2"><a href="{{ credit.homeUrl }}" target="_blank">Home</a></div>
+          <div class="mt-2"><a href="{{ credit.gitUrl }}" target="_blank">Git</a></div>
+          <div class="mt-2"><a href="{{ credit.docsUrl }}" target="_blank">Docs</a></div>
+        </div>
+      </p-card>
+    </div>
+    <div class="col-span-4 md:col-span-2 flex items-stretch">
+      <p-card class="h-full small-header flex flex-col" header="Others">
+        <div class="grid grid-cols-12 gap-4 flex-grow">
+          <div class="col-span-12 text-left mt-auto">
+            <div class="-ml-1"><b>Frontend</b></div>
+            <div class="mt-2"><a href="https://github.com/cytoscape/cytoscape" target="_blank">Cytoscape</a></div>
+            <div class="mt-2"><a href="https://github.com/iVis-at-Bilkent/cytoscape.js-fcose" target="_blank">fCoSE</a></div>
+            <div class="mt-2"><a href="https://github.com/chartjs" target="_blank">Chart.js</a></div>
+            <div class="mt-4 -ml-1"><b>Backend</b></div>
+            <div class="mt-2"><a href="https://github.com/kubernetes-client/csharp" target="_blank">K8s C# Client</a></div>
+            <div class="mt-2"><a href="https://github.com/serilog/serilog" target="_blank">Serilog</a></div>
           </div>
         </div>
       </p-card>
     </div>
-    <div class="col-span-8 md:col-span-6 lg:col-span-2 xl:col-span-2">
-      <p-card class="h-full small-header"
-              header="Others">
-        <div class="grid grid-cols-12 gap-4">
-          <div class="col-span-12 text-left">
-            <div class="-ml-1">
-              <b>Frontend</b>
-            </div>
-            <div class="mt-2">
-              <a href="https://github.com/cytoscape/cytoscape" target="_blank">Cytoscape</a>
-            </div>
-            <div class="mt-2">
-              <a href="https://github.com/iVis-at-Bilkent/cytoscape.js-fcose" target="_blank">fCoSE</a>
-            </div>
-            <div class="mt-2">
-              <a href="https://github.com/chartjs" target="_blank">Chart.js</a>
-            </div>
-            <div class="mt-4 -ml-1">
-              <b>Backend</b>
-            </div>
-            <div class="mt-2">
-              <a href="https://github.com/kubernetes-client/csharp" target="_blank">Kubernetes C# Client</a>
-            </div>
-            <div class="mt-2">
-              <a href="https://github.com/serilog/serilog" target="_blank">Serilog</a>
-            </div>
-          </div>
-        </div>
-      </p-card>
-    </div>
+
   </div>
 </p-panel>
