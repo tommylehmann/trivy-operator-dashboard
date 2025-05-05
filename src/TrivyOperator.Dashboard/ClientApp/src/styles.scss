@@ -17,12 +17,8 @@
   @import './styles/p-card.scss';
 
   a {
-    @apply text-blue-400 underline hover:text-blue-800 hover:no-underline;
+    @apply text-blue-400 underline hover:text-blue-500 hover:no-underline;
   }
-}
-
-@layer base {
-  
 }
 
 // Others 
@@ -133,3 +129,4 @@ markdown ul {
 markdown p {
   padding-top: 20px;
 }
+

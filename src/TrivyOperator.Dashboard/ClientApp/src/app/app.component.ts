@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig, Component, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, Component, importProvidersFrom, inject, provideAppInitializer } from '@angular/core';
 import { provideRouter, RouterOutlet } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -27,12 +27,7 @@ export const appConfig: ApplicationConfig = {
     MainAppInitService,
     Title,
     MessageService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeAppFactory,
-      deps: [MainAppInitService],
-      multi: true,
-    },
+    provideAppInitializer(() => initializeAppFactory(inject(MainAppInitService))),
     providePrimeNG({
       theme: {
         preset: Nora,
@@ -40,7 +35,7 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: `.${DarkModeService.DARK_MODE_SELECTOR}`,
           cssLayer: {
             name: 'primeng',
-            order: 'tailwind, primeng',
+            order: 'tailwind, primeng, app-layer',
           },
         }
       }

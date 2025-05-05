@@ -95,6 +95,6 @@ export class MainAppInitService {
   }
 }
 
-export function initializeAppFactory(service: MainAppInitService) {
-  return () => service.initializeApp();
+export function initializeAppFactory(service: MainAppInitService): Promise<void> {
+  return service.initializeApp(); // Return the actual Promise
 }
