@@ -15,9 +15,17 @@
   @import './styles/p-inputswitch.scss';
   @import './styles/p-panel.scss';
   @import './styles/p-card.scss';
+
+  a {
+    @apply text-blue-400 underline hover:text-blue-800 hover:no-underline;
+  }
 }
 
- Others 
+@layer base {
+  
+}
+
+// Others 
 .hide-on-small {
   display: none;
 }

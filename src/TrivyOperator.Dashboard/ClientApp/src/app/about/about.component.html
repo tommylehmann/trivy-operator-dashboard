@@ -40,11 +40,11 @@
         <div class="col-span-12 md:col-span-6 xl:col-span-3">
           <p class="text-lg font-semibold">Version Info</p>
           <div class="p-1">
-            <span>Current Version:</span>
-            <p-tag class="p-2" [rounded]="true" [value]="currentVersion ? (currentVersion.fileVersion ?? 'n/a') : 'n/a'" />
+            <span class="pr-2">Current Version:</span>
+            <p-tag [rounded]="true" [value]="currentVersion ? (currentVersion.fileVersion ?? 'n/a') : 'n/a'" />
           </div>
           <div class="p-1">
-            <span>Latest Version:</span>
+            <span class="pr-2">Latest Version:</span>
             <p-tag class="p-2" [rounded]="true" [value]="latestVersion ?? 'n/a'" />
           </div>
           <div class="p-1">
