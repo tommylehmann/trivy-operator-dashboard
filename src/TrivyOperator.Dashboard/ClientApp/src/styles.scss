@@ -116,3 +116,12 @@ p-selectbutton.text-sm .p-button-label {
 .p-dialog {
   max-height: unset !important;
 }
+
+markdown ul {
+  list-style-type: disc !important;
+  padding-left: 20px;
+}
+
+markdown p {
+  padding-top: 20px;
+}

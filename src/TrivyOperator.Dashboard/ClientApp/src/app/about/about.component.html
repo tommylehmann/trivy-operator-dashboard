@@ -1,8 +1,5 @@
-<h1 class="text-3xl font-bold underline">
-  Hello world!
-</h1>
-<div class="pb-4">
-  <p-panel header="Trivy Operator Dashboard" class="mb-4" [toggleable]="true">
+<div class="pb-2">
+  <p-panel header="Trivy Operator Dashboard" [toggleable]="true">
     <div class="grid grid-cols-12 gap-4">
       <div class="col-span-12 grid grid-cols-12 gap-4">
         <div class="col-span-12 xl:col-span-6 flex items-start gap-4">
@@ -10,7 +7,7 @@
             <img src="assets/logo.blurred.png" class="w-full" />
           </div>
           <div class="flex-1">
-            <h4>Intro</h4>
+            <p class="text-lg font-semibold">Intro</p>
             <p>
               Welcome to the Trivy Operator Dashboard, a comprehensive security management tool for Kubernetes environments.
               Built on top of the powerful Trivy Operator from Aqua Security, this dashboard provides insights into your
@@ -27,21 +24,21 @@
         </div>
 
         <div class="col-span-12 md:col-span-6 xl:col-span-3">
-          <h4>Features</h4>
-          <ul>
-            <li>Vulnerability Reports</li>
-            <li>Config Audit Reports</li>
-            <li>Cluster RBAC Assessment Reports</li>
-            <li>Exposed Secret Reports</li>
-            <li>Cluster Compliance Reports</li>
-            <li>Cluster Vulnerability Reports</li>
-            <li>RBAC Assessment Reports</li>
-            <li>SBOM Reports</li>
-          </ul>
+          <p class="text-lg font-semibold">Features</p>
+            <ul class="list-disc pl-5">
+              <li>Vulnerability Reports</li>
+              <li>Config Audit Reports</li>
+              <li>Cluster RBAC Assessment Reports</li>
+              <li>Exposed Secret Reports</li>
+              <li>Cluster Compliance Reports</li>
+              <li>Cluster Vulnerability Reports</li>
+              <li>RBAC Assessment Reports</li>
+              <li>SBOM Reports</li>
+            </ul>
         </div>
 
         <div class="col-span-12 md:col-span-6 xl:col-span-3">
-          <h4>Version Info</h4>
+          <p class="text-lg font-semibold">Version Info</p>
           <div class="p-1">
             <span>Current Version:</span>
             <p-tag class="p-2" [rounded]="true" [value]="currentVersion ? (currentVersion.fileVersion ?? 'n/a') : 'n/a'" />
@@ -56,25 +53,29 @@
         </div>
       </div>
     </div>
-    <div *ngIf="releaseNotes.length > 0">
-      <h3>Release Notes</h3>
-      <div class="grid grid-cols-12 gap-4 items-start md:items-stretch">
-        <div *ngFor="let releaseNote of releaseNotes; let i = index"
-             class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3">
-          <p-card class="h-full small-header"
-                  [ngClass]="{'p-card-bold-subtitle': i === 0}"
-                  [header]="releaseNote.name ?? ''"
-                  subheader="{{ releaseNote.createdAt ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
-            <markdown [data]="releaseNote.body ?? ''"></markdown>
-          </p-card>
-        </div>
+  </p-panel>
+</div>
+
+<div class="pb-2">
+  <p-panel *ngIf="releaseNotes.length > 0" header="Release Notes" [toggleable]="true">
+    <div class="grid grid-cols-12 gap-4 items-start md:items-stretch">
+      <div *ngFor="let releaseNote of releaseNotes; let i = index"
+           class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3">
+        <p-card class="h-full small-header"
+                [ngClass]="{'p-card-bold-subtitle': i === 0}"
+                [header]="releaseNote.name ?? ''"
+                subheader="{{ releaseNote.createdAt ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
+          <div class="prose prose-ul">
+            <markdown class="list-disc pl-5" [data]="releaseNote.body ?? ''"></markdown>
+          </div>
+        </p-card>
       </div>
     </div>
   </p-panel>
 </div>
 
-<p-panel header="Credits AKA Powered By" [toggleable]="true">
-  <h4>Acknowledging the Building Blocks Behind the App</h4>
+<p-panel header="Credits" [toggleable]="true">
+  <p class="text-lg font-semibold">Acknowledging the Building Blocks Behind the App</p>
   <div class="grid grid-cols-12 gap-4 items-stretch">
     <div *ngFor="let credit of credits" class="col-span-4 md:col-span-3 lg:col-span-2 flex items-stretch">
       <p-card class="h-full small-header flex flex-col" header="{{ credit.name }}">
