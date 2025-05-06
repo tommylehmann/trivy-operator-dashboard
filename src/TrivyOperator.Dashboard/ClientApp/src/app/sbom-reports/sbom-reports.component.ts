@@ -24,8 +24,8 @@ import { TrivyExpandTableOptions, TrivyTableCellCustomOptions, TrivyTableColumn,
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
 import { PanelModule } from 'primeng/panel';
+import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
@@ -55,7 +55,7 @@ export interface DependsOn {
   imports: [CommonModule, FormsModule,
     FcoseComponent, TrivyTableComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
-    ButtonModule, CardModule, DialogModule, DropdownModule, PanelModule, TableModule, TagModule, TreeTableModule,
+    ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, TableModule, TagModule, TreeTableModule,
     FontAwesomeModule,],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
@@ -356,6 +356,7 @@ export class SbomReportsComponent implements OnInit {
   // #endregion
 
   filterImageDtos() {
+    console.log("mama " + this.selectedNamespace);
     this.imageDtos = this.dataDtos
       ?.filter((x) => x.resourceNamespace == this.selectedNamespace)
       .map((x) => ({

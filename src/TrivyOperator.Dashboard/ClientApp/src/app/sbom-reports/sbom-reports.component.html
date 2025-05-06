@@ -1,29 +1,29 @@
-<div class="row">
-  <div class="flex flex-wrap items-stretch">
-    <div class="col-span-12 md:col-span-5 lg:col-span-4 p-0 pr-1">
-      <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-4 p-fluid pr-1">
-          <p-dropdown placeholder="Select a Namespace"
-                      class="p-inputtext-sm"
-                      [filter]="true"
-                      [options]="activeNamespaces"
-                      [showClear]="true"
-                      [disabled]="isSingleMode"
-                      [(ngModel)]="selectedNamespace"
-                      (onChange)="filterImageDtos()" />
-        </div>
-        <div class="col-span-8 p-fluid flex items-center pl-1">
-          <p-dropdown optionLabel="imageNameTag"
-                      placeholder="Select an Image"
-                      class="p-inputtext-sm grow pr-1 text-truncate p-dropdown-max"
-                      [filter]="true"
-                      [options]="imageDtos"
-                      [showClear]="true"
-                      [disabled]="isSingleMode"
-                      [(ngModel)]="selectedImageDto">
+<div class="grid grid-cols-12 gap-4">
+  <div class="col-span-12 md:col-span-5 lg:col-span-4 p-0 ">
+    <div class="grid grid-cols-12 gap-4">
+      <div class="col-span-4 w-full">
+        <p-select placeholder="Select a Namespace"
+                  class="text-sm w-full mb-2"
+                  [filter]="true"
+                  [options]="activeNamespaces"
+                  [showClear]="true"
+                  [disabled]="isSingleMode"
+                  [(ngModel)]="selectedNamespace"
+                  (onChange)="filterImageDtos()" />
+      </div>
+      <div class="col-span-8 flex items-center space-x-2">
+        <div class="w-full mb-2">
+          <p-select optionLabel="imageNameTag"
+                    placeholder="Select an Image"
+                    class="text-sm w-full"
+                    [filter]="true"
+                    [options]="imageDtos"
+                    [showClear]="true"
+                    [disabled]="isSingleMode"
+                    [(ngModel)]="selectedImageDto">
             <ng-template let-imageDto pTemplate="imageDtos">
-              <div class="flex items-center gap-2">
-                <div>{{ imageDto.imageNameTag }}</div>
+              <div class="flex items-center gap-2 w-full overflow-hidden">
+                <div class="truncate whitespace-nowrap">{{ imageDto.imageNameTag }}</div>
                 <p-tag *ngIf="imageDto.hasVr" rounded>
                   <span>
                     <fa-icon [icon]="faShieldHalved"></fa-icon> VRs
@@ -31,61 +31,63 @@
                 </p-tag>
               </div>
             </ng-template>
-          </p-dropdown>
-          <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small"
-                    (onClick)="reloadData()" class="flex-none pl-1" [disabled]="isSingleMode"/>
+          </p-select>
         </div>
+        <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small"
+                  class="flex-shrink-0"
+                  (onClick)="reloadData()" [disabled]="isSingleMode" />
       </div>
-      <app-trivy-table tableHeight="30vh"
-                       [dataDtos]="dependsOnBoms"
-                       [isLoading]="isTableLoading"
-                       [trivyTableColumns]="dependsOnTableColumns"
-                       [trivyTableOptions]="dependsOnTableOptions"
-                       [trivyExpandTableFunction]="dependsOnTableExpandCellOptions"
-                       [trivyExpandTableOptions]="dependsOnTableExpandTableOptions"
-                       [singleSelectDataDto]="selectedSbomDetailDto"
-                       (selectedRowsChanged)="onTableSelectedRowChange($event)"
-                       (rowActionRequested)="onRowActionRequested($event)"
-                       (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)"/>
     </div>
-    <div class="col-span-12 md:col-span-7 lg:col-span-8 p-0 pl-1">
-      <app-fcose [nodeDataDtos]="nodeDataDtos"
-                 [selectedNodeId]="selectedSbomDetailBomRef"
-                 (activeNodeIdChange)="onActiveNodeIdChange($event)"
-                 (hoveredNodeIdChange)="onHoveredNodeDtoChange($event)"
-                 (selectedNodeIdChange)="onNodeIdChange($event)"
-                 (deletedNodeIdsChange)="onDeletedNodeIds($event)"
-                 (undeletedNodeIdsChange)="onUndeletedNodeIds($event)"/>
-      <div *ngIf="hoveredSbomDetailDto">
-        <span>
-          <b>Name:</b> {{ hoveredSbomDetailDto.name }} -
-          <b>Version:</b> {{ this.hoveredSbomDetailDto.version }} -
-          <b>Dependencies:</b> {{ this.hoveredSbomDetailDto.dependsOn?.length ?? 0 }}
-        </span>
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="0 | severityCssStyleById:(hoveredSbomDetailDto.criticalCount ?? -1)"
-               [value]="hoveredSbomDetailDto.criticalCount ?? -1 | vulnerabilityCount" />
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="1 | severityCssStyleById:(hoveredSbomDetailDto.highCount ?? -1)"
-               [value]="hoveredSbomDetailDto.highCount ?? -1 | vulnerabilityCount" />
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="2 | severityCssStyleById:(hoveredSbomDetailDto.mediumCount ?? -1)"
-               [value]="hoveredSbomDetailDto.mediumCount ?? -1 | vulnerabilityCount" />
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="3 | severityCssStyleById:(hoveredSbomDetailDto.lowCount ?? -1)"
-               [value]="hoveredSbomDetailDto.lowCount ?? -1 | vulnerabilityCount" />
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="4 | severityCssStyleById:(hoveredSbomDetailDto.unknownCount ?? -1)"
-               [value]="hoveredSbomDetailDto.unknownCount ?? -1 | vulnerabilityCount" />
-      </div>
+    <app-trivy-table tableHeight="30vh"
+                     [dataDtos]="dependsOnBoms"
+                     [isLoading]="isTableLoading"
+                     [trivyTableColumns]="dependsOnTableColumns"
+                     [trivyTableOptions]="dependsOnTableOptions"
+                     [trivyExpandTableFunction]="dependsOnTableExpandCellOptions"
+                     [trivyExpandTableOptions]="dependsOnTableExpandTableOptions"
+                     [singleSelectDataDto]="selectedSbomDetailDto"
+                     (selectedRowsChanged)="onTableSelectedRowChange($event)"
+                     (rowActionRequested)="onRowActionRequested($event)"
+                     (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)" />
+  </div>
+  <div class="col-span-12 md:col-span-7 lg:col-span-8 p-0 pl-1">
+    <app-fcose [nodeDataDtos]="nodeDataDtos"
+               [selectedNodeId]="selectedSbomDetailBomRef"
+               (activeNodeIdChange)="onActiveNodeIdChange($event)"
+               (hoveredNodeIdChange)="onHoveredNodeDtoChange($event)"
+               (selectedNodeIdChange)="onNodeIdChange($event)"
+               (deletedNodeIdsChange)="onDeletedNodeIds($event)"
+               (undeletedNodeIdsChange)="onUndeletedNodeIds($event)" />
+    <div *ngIf="hoveredSbomDetailDto">
+      <span>
+        <b>Name:</b> {{ hoveredSbomDetailDto.name }} -
+        <b>Version:</b> {{ this.hoveredSbomDetailDto.version }} -
+        <b>Dependencies:</b> {{ this.hoveredSbomDetailDto.dependsOn?.length ?? 0 }}
+      </span>
+      <p-tag class="ml-2"
+             [rounded]="true"
+             [style]="0 | severityCssStyleById:(hoveredSbomDetailDto.criticalCount ?? -1)"
+             [value]="hoveredSbomDetailDto.criticalCount ?? -1 | vulnerabilityCount" />
+      <p-tag class="ml-2"
+             [rounded]="true"
+             [style]="1 | severityCssStyleById:(hoveredSbomDetailDto.highCount ?? -1)"
+             [value]="hoveredSbomDetailDto.highCount ?? -1 | vulnerabilityCount" />
+      <p-tag class="ml-2"
+             [rounded]="true"
+             [style]="2 | severityCssStyleById:(hoveredSbomDetailDto.mediumCount ?? -1)"
+             [value]="hoveredSbomDetailDto.mediumCount ?? -1 | vulnerabilityCount" />
+      <p-tag class="ml-2"
+             [rounded]="true"
+             [style]="3 | severityCssStyleById:(hoveredSbomDetailDto.lowCount ?? -1)"
+             [value]="hoveredSbomDetailDto.lowCount ?? -1 | vulnerabilityCount" />
+      <p-tag class="ml-2"
+             [rounded]="true"
+             [style]="4 | severityCssStyleById:(hoveredSbomDetailDto.unknownCount ?? -1)"
+             [value]="hoveredSbomDetailDto.unknownCount ?? -1 | vulnerabilityCount" />
     </div>
   </div>
 </div>
+
 
 <p-dialog *ngIf="fullSbomDataDto"
           closable="true"
@@ -98,7 +100,7 @@
           [header]="'SBOM Reports Details - ' + (fullSbomDataDto.imageName ?? 'unknown') + ':' + (fullSbomDataDto.imageTag ?? 'unknown')"
           [modal]="true"
           [(visible)]="isSbomReportOverviewDialogVisible">
- 
+
   <div class="grid grid-cols-12 gap-4 h-full">
     <div class="col-span-12 md:col-span-4 h-full flex flex-col">
       <div style="height: 180px; min-height: 180px">
@@ -125,8 +127,8 @@
             <div class="flex items-center justify-between">
               <span class="text-sm">{{ i | severityNameById:true }}</span>
               <p-tag [rounded]="true"
-                      [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
-                      [value]="sbomReportDetailStatistics[i] ?? -1 | vulnerabilityCount" />
+                     [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
+                     [value]="sbomReportDetailStatistics[i] ?? -1 | vulnerabilityCount" />
             </div>
           </div>
         </div>
