@@ -12,11 +12,13 @@ import { initializeAppFactory, MainAppInitService } from './services/main-app-in
 import { routes } from './app.routes';
 
 import { providePrimeNG } from 'primeng/config';
-import Nora from '@primeng/themes/nora';
 
 import { TitleService } from './services/title.service';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { DarkModeService } from './services/dark-mode.service';
+
+import { trivyOperatorDashboardPreset } from './themes/trivy-operator-dashboard.preset';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,7 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => initializeAppFactory(inject(MainAppInitService))),
     providePrimeNG({
       theme: {
-        preset: Nora,
+        preset: trivyOperatorDashboardPreset,
         options: {
           darkModeSelector: `.${DarkModeService.DARK_MODE_SELECTOR}`,
           cssLayer: {
@@ -42,6 +44,7 @@ export const appConfig: ApplicationConfig = {
     }),
   ],
 };
+
 
 @Component({
   selector: 'app-root',
