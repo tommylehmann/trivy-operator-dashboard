@@ -11,11 +11,11 @@
                   [(ngModel)]="selectedNamespace"
                   (onChange)="filterImageDtos()" />
       </div>
-      <div class="col-span-8 flex items-center space-x-2">
-        <div class="w-full mb-2">
+      <div class="col-span-8 flex items-center space-x-2 flex-nowrap">
+        <div class="w-full mb-2 flex-grow">
           <p-select optionLabel="imageNameTag"
                     placeholder="Select an Image"
-                    class="text-sm w-full"
+                    class="text-sm w-full flex"
                     [filter]="true"
                     [options]="imageDtos"
                     [showClear]="true"

@@ -10,7 +10,7 @@ import { HomeConfigAuditReportsComponent } from '../home-config-audit-reports/ho
 import { HomeExposedSecretReportsComponent } from '../home-exposed-secret-reports/home-exposed-secret-reports.component';
 import { HomeVulnerabilityReportsComponent } from '../home-vulnerability-reports/home-vulnerability-reports.component';
 
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TabViewChangeEvent, TabViewModule } from 'primeng/tabview';
 
 @Component({
@@ -23,7 +23,7 @@ import { TabViewChangeEvent, TabViewModule } from 'primeng/tabview';
     HomeConfigAuditReportsComponent,
     HomeClusterRbacAssessmentReportsComponent,
     HomeExposedSecretReportsComponent,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TabViewModule,
   ],
   templateUrl: './home.component.html',

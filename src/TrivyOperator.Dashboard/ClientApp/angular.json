@@ -28,6 +28,7 @@
             "polyfills": [ "src/polyfills.ts" ],
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [
+              "cytoscape-fcose",
               "oidc-client"
             ],
             "assets": [

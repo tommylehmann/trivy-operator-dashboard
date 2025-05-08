@@ -11,9 +11,9 @@ import { RouterEventEmitterService } from '../services/router-event-emitter.serv
 
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
+import { DrawerModule } from 'primeng/drawer';
 import { MenubarModule } from 'primeng/menubar';
 import { PanelMenuModule } from 'primeng/panelmenu';
-import { SidebarModule } from 'primeng/sidebar';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 
@@ -46,7 +46,7 @@ interface TrivyMenuItem extends MenuItem {
   imports: [
     CommonModule,
     MenubarModule,
-    SidebarModule,
+    DrawerModule,
     PanelMenuModule,
     ButtonModule,
     TagModule,
@@ -63,7 +63,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   alerts: AlertDto[] = [];
   enabledTrivyReports: string[] = ['crar', 'car', 'esr', 'vr'];
   activePage: string = "";
-  isSidebarVisible = false;
+  isDrawerVisible = false;
   faHouse = faHouse;
   faShieldHalved = faShieldHalved;
   faClipboardList = faClipboardList;
@@ -115,8 +115,8 @@ export class NavMenuComponent implements OnInit, OnDestroy {
     this.router.navigate(['/watcher-states']);
   }
 
-  openSidebar() {
-    this.isSidebarVisible = true;
+  openDrawer() {
+    this.isDrawerVisible = true;
   }
 
   //private getDarkMode(): boolean {
@@ -136,7 +136,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         faIcon: faHouse,
         command: () => {
           this.router.navigate(['/']);
-          this.isSidebarVisible = false;
+          this.isDrawerVisible = false;
         },
       },
       {
@@ -150,7 +150,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('vr'),
             command: () => {
               this.router.navigate(['/vulnerability-reports']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
@@ -158,7 +158,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('vr'),
             command: () => {
               this.router.navigate(['/vulnerability-reports-detailed']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
         ],
@@ -174,7 +174,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('sr'),
             command: () => {
               this.router.navigate(['/sbom-reports']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
@@ -182,7 +182,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('sr'),
             command: () => {
               this.router.navigate(['/sbom-reports-detailed']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
         ],
@@ -198,7 +198,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('car'),
             command: () => {
               this.router.navigate(['/config-audit-reports']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
@@ -206,7 +206,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('car'),
             command: () => {
               this.router.navigate(['/config-audit-reports-detailed']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
         ],
@@ -222,7 +222,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('crar'),
             command: () => {
               this.router.navigate(['/cluster-rbac-assessment-reports']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
@@ -230,7 +230,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('crar'),
             command: () => {
               this.router.navigate(['/cluster-rbac-assessment-reports-detailed']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
         ],
@@ -246,7 +246,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('esr'),
             command: () => {
               this.router.navigate(['/exposed-secret-reports']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
@@ -254,7 +254,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('esr'),
             command: () => {
               this.router.navigate(['/exposed-secret-reports-detailed']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
         ],
@@ -270,7 +270,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('ccr'),
             command: () => {
               this.router.navigate(['/cluster-compliance-reports']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
@@ -278,7 +278,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('ccr'),
             command: () => {
               this.router.navigate(['/cluster-compliance-reports-detailed']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
         ],
@@ -294,7 +294,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('cvr'),
             command: () => {
               this.router.navigate(['/cluster-vulnerability-reports']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
@@ -302,7 +302,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('cvr'),
             command: () => {
               this.router.navigate(['/cluster-vulnerability-reports-detailed']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
         ],
@@ -318,7 +318,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('rar'),
             command: () => {
               this.router.navigate(['/rbac-assessment-reports']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
@@ -326,7 +326,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             disabled: !this.enabledTrivyReports.includes('rar'),
             command: () => {
               this.router.navigate(['/rbac-assessment-reports-detailed']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
         ],
@@ -340,21 +340,21 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             label: 'Watcher States',
             command: () => {
               this.router.navigate(['/watcher-states']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
             label: 'Settings',
             command: () => {
               this.router.navigate(['/settings']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
           {
             label: 'About',
             command: () => {
               this.router.navigate(['/about']);
-              this.isSidebarVisible = false;
+              this.isDrawerVisible = false;
             },
           },
         ],

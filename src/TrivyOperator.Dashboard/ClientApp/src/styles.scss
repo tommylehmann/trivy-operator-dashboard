@@ -1,4 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+@use './styles/p-breadcrumb.scss';
+//@import './styles/p-inputswitch.scss';
+@use './styles/p-panel.scss';
+@use './styles/p-card.scss';
 
 @import '../node_modules/primeicons/primeicons.css';
 @plugin "tailwindcss-primeui";
@@ -11,12 +15,7 @@
 
 /* Components fixes*/
 @layer app-layer {
-  @import './styles/p-breadcrumb.scss';
-  @import './styles/p-inputswitch.scss';
-  @import './styles/p-panel.scss';
-  @import './styles/p-card.scss';
-
-  a {
+  a:not([pRipple]):not(.p-tieredmenu-item-link) {
     @apply text-blue-400 underline hover:text-blue-500 hover:no-underline;
   }
 }

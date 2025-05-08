@@ -1,7 +1,7 @@
 <p-menubar>
   <ng-template pTemplate="start">
     <div class="flex items-center gap-4">
-      <p-button icon="pi pi-bars" [raised]="true" [text]="true" (click)="openSidebar()" />
+      <p-button icon="pi pi-bars" [raised]="true" [text]="true" (click)="openDrawer()" />
       <img alt="logo" src="assets/logo_AL.ico" style="cursor: pointer; height: 45px" (click)="router.navigate(['/'])" />
       <h4 class="no-margins">
         <span class="hidden sm:inline">Trivy Operator Dashboard - </span>{{ activePage }}
@@ -23,7 +23,7 @@
     </div>
   </ng-template>
 </p-menubar>
-<p-sidebar [baseZIndex]="10000" [showCloseIcon]="false" [(visible)]="isSidebarVisible">
+<p-drawer [baseZIndex]="10000" [showCloseIcon]="false" [(visible)]="isDrawerVisible">
   <p-panelMenu styleClass="w-full" [model]="items">
     <ng-template let-item let-root="root" pTemplate="item">
       <a pRipple class="flex items-center cursor-pointer text-color px-4 py-2">
@@ -33,5 +33,5 @@
       </a>
     </ng-template>
   </p-panelMenu>
-</p-sidebar>
+</p-drawer>
 <p-toast />
