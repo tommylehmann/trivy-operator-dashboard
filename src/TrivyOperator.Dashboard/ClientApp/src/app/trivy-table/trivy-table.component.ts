@@ -7,7 +7,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { Dropdown, DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
+import { Popover, PopoverModule } from 'primeng/popover';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
 import { Table, TableModule, TableRowSelectEvent } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -47,7 +47,7 @@ import { MenuItem } from 'primeng/api';
     DropdownModule,
     InputTextModule,
     MultiSelectModule,
-    OverlayPanelModule,
+    PopoverModule,
     SplitButtonModule,
     TableModule,
     TagModule,
@@ -73,8 +73,8 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   @Input() exportColumns: ExportColumn[] = [];
   @ViewChild('trivyTable') trivyTable!: Table;
-  @ViewChild('serverFilterDataOp') serverFilterDataOp?: OverlayPanel;
-  @ViewChild('csvExportOp') csvExportOp?: OverlayPanel;
+  @ViewChild('serverFilterDataOp') serverFilterDataOp?: Popover;
+  @ViewChild('csvExportOp') csvExportOp?: Popover;
   @ViewChild('refreshSplitButton') refreshSplitButton?: SplitButton;
   @ViewChild('filterNamespacesDropdown') filterNamespacesDropdown?: Dropdown;
 

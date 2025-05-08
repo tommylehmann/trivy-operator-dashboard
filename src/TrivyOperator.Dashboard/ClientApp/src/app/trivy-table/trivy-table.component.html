@@ -302,7 +302,7 @@
     </ng-template>
   </p-table>
 
-  <p-overlayPanel #csvExportOp [dismissable]="true" (onHide)="onOverlayToogle()" (onShow)="onOverlayToogle()">
+  <p-popover #csvExportOp [dismissable]="true" (onHide)="onOverlayToogle()" (onShow)="onOverlayToogle()">
     <div style="width: 300px">
       <div class="field">
         <label for="csvFileName" class="text-sm">CSV File Name</label>
@@ -334,9 +334,9 @@
         </div>
       </div>
     </div>
-  </p-overlayPanel>
+  </p-popover>
 
-  <p-overlayPanel
+  <p-popover
     *ngIf="filterRefreshSeverities"
     #serverFilterDataOp
     [dismissable]="true"
@@ -360,17 +360,16 @@
       <hr />
 
       <div class="row">
-        <a>Severities</a>
+        <span>Severities</span>
         <div>
           <div class="flex-col gap-0 mt-2">
             <div *ngFor="let severityDto of severityDtos" class="field-checkbox mb-2 text-sm">
-              <p-checkbox
-                name="group"
-                styleClass="ml-2"
-                [value]="severityWrapperGetCapitalizedName(severityDto.id)"
-                
-                [(ngModel)]="filterRefreshSeverities"
-              />
+              <p-checkbox name="group"
+                          styleClass="ml-2"
+                          [value]="severityDto"
+                          [inputId]="severityDto.id.toString()"
+                          [(ngModel)]="filterRefreshSeverities" />
+              <label [for]="severityDto.id" class="ml-2"> {{ severityDto.name | capitalizeFirst }} </label>
             </div>
           </div>
         </div>
@@ -403,6 +402,6 @@
         </div>
       </div>
     </div>
-  </p-overlayPanel>
+  </p-popover>
 </div>
 <div *ngIf="overlayVisible" class="custom-backdrop"></div>
