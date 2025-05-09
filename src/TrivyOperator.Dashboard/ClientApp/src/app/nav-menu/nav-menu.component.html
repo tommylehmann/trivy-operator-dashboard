@@ -24,12 +24,12 @@
   </ng-template>
 </p-menubar>
 <p-drawer [baseZIndex]="10000" [showCloseIcon]="false" [(visible)]="isDrawerVisible">
-  <p-panelMenu styleClass="w-full" [model]="items">
-    <ng-template let-item let-root="root" pTemplate="item">
+  <p-panelMenu styleClass="w-full" [model]="items" [multiple]="true">
+    <ng-template let-item #item>
       <a pRipple class="flex items-center cursor-pointer text-color px-4 py-2">
         <fa-icon *ngIf="item.faIcon" icon="" [icon]="item.faIcon"></fa-icon>
         <span class="ml-2">{{ item.label }}</span>
-        <p-badge *ngIf="item.badge" [ngClass]="{ 'ml-auto': !root, 'ml-2': root }" [value]="item.badge" />
+        <!--<p-badge *ngIf="item.badge" [ngClass]="{ 'ml-auto': !root, 'ml-2': root }" [value]="item.badge" />-->
       </a>
     </ng-template>
   </p-panelMenu>

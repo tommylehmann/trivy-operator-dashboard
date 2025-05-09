@@ -37,7 +37,7 @@ import { DarkModeService } from '../services/dark-mode.service';
 
 
 interface TrivyMenuItem extends MenuItem {
-  faIcon: IconDefinition | null | undefined;
+  faIcon?: IconDefinition;
 }
 
 @Component({
