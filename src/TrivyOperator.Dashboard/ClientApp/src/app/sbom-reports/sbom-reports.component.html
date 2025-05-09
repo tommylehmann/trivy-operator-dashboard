@@ -1,9 +1,9 @@
 <div class="grid grid-cols-12 gap-4">
-  <div class="col-span-12 md:col-span-5 lg:col-span-4 p-0 ">
-    <div class="grid grid-cols-12 gap-4">
+  <div class="col-span-12 md:col-span-5 lg:col-span-4 p-0">
+    <div class="grid grid-cols-12 gap-2 mb-2">
       <div class="col-span-4 w-full">
         <p-select placeholder="Select a Namespace"
-                  class="text-sm w-full mb-2"
+                  class="text-sm w-full"
                   [filter]="true"
                   [options]="activeNamespaces"
                   [showClear]="true"
@@ -11,11 +11,11 @@
                   [(ngModel)]="selectedNamespace"
                   (onChange)="filterImageDtos()" />
       </div>
-      <div class="col-span-8 flex items-center space-x-2 flex-nowrap">
-        <div class="w-full mb-2 flex-grow">
+      <div class="col-span-8 flex items-center gap-2 justify-center">
+        <div class="p-select-max">
           <p-select optionLabel="imageNameTag"
                     placeholder="Select an Image"
-                    class="text-sm w-full flex"
+                    class="text-sm w-full"
                     [filter]="true"
                     [options]="imageDtos"
                     [showClear]="true"
