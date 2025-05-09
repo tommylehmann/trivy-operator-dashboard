@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
-import { Dropdown, DropdownModule } from 'primeng/dropdown';
+
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Popover, PopoverModule } from 'primeng/popover';
+import { Select, SelectModule } from 'primeng/select';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
 import { Table, TableModule, TableRowSelectEvent } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -44,10 +45,10 @@ import { MenuItem } from 'primeng/api';
     FormsModule,
     ButtonModule,
     CheckboxModule,
-    DropdownModule,
     InputTextModule,
     MultiSelectModule,
     PopoverModule,
+    Select,
     SplitButtonModule,
     TableModule,
     TagModule,
@@ -76,7 +77,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   @ViewChild('serverFilterDataOp') serverFilterDataOp?: Popover;
   @ViewChild('csvExportOp') csvExportOp?: Popover;
   @ViewChild('refreshSplitButton') refreshSplitButton?: SplitButton;
-  @ViewChild('filterNamespacesDropdown') filterNamespacesDropdown?: Dropdown;
+  @ViewChild('filterNamespacesSelect') filterNamespacesSelect?: Select;
 
   @Input() public tableHeight: string = '10vh';
   @Input() public isLoading: boolean = false;
@@ -215,8 +216,8 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   onFilterReset() {
     this.filterRefreshSeverities = [...this.severityDtos];
-    if (this.filterNamespacesDropdown) {
-      this.filterNamespacesDropdown.clear();
+    if (this.filterNamespacesSelect) {
+      this.filterNamespacesSelect.clear();
     }
   }
 
