@@ -31,6 +31,8 @@ import {
   faShieldHalved,
   faUserShield,
   faDiagramProject,
+  faFolderOpen,
+  faDharmachakra,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import { DarkModeService } from '../services/dark-mode.service';
@@ -72,6 +74,8 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   faGears = faGears;
   faServer = faServer;
   faDiagramProject = faDiagramProject;
+  faFolderOpen = faFolderOpen;
+  faDharmachakra = faDharmachakra;
   private alertSubscription!: Subscription;
 
   constructor(
@@ -130,6 +134,239 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   }
 
   private setMenu() {
+    // #region Old Menu
+    //this.items = [
+    //  {
+    //    label: 'Home',
+    //    faIcon: faHouse,
+    //    command: () => {
+    //      this.router.navigate(['/']);
+    //      this.isDrawerVisible = false;
+    //    },
+    //  },
+    //  {
+    //    label: 'Vulnerabilities',
+    //    faIcon: this.faShieldHalved,
+    //    disabled: !this.enabledTrivyReports.includes('vr'),
+    //    expanded: true,
+    //    items: [
+    //      {
+    //        label: 'Browse',
+    //        disabled: !this.enabledTrivyReports.includes('vr'),
+    //        command: () => {
+    //          this.router.navigate(['/vulnerability-reports']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'Detailed',
+    //        disabled: !this.enabledTrivyReports.includes('vr'),
+    //        command: () => {
+    //          this.router.navigate(['/vulnerability-reports-detailed']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //    ],
+    //  },
+    //  {
+    //    label: 'SBoMs',
+    //    faIcon: faDiagramProject,
+    //    disabled: !this.enabledTrivyReports.includes('sr'),
+    //    expanded: true,
+    //    items: [
+    //      {
+    //        label: 'Browse',
+    //        disabled: !this.enabledTrivyReports.includes('sr'),
+    //        command: () => {
+    //          this.router.navigate(['/sbom-reports']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'Detailed',
+    //        disabled: !this.enabledTrivyReports.includes('sr'),
+    //        command: () => {
+    //          this.router.navigate(['/sbom-reports-detailed']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //    ],
+    //  },
+    //  {
+    //    label: 'Config Audits',
+    //    faIcon: faClipboardList,
+    //    disabled: !this.enabledTrivyReports.includes('car'),
+    //    expanded: true,
+    //    items: [
+    //      {
+    //        label: 'Browse',
+    //        disabled: !this.enabledTrivyReports.includes('car'),
+    //        command: () => {
+    //          this.router.navigate(['/config-audit-reports']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'Detailed',
+    //        disabled: !this.enabledTrivyReports.includes('car'),
+    //        command: () => {
+    //          this.router.navigate(['/config-audit-reports-detailed']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //    ],
+    //  },
+    //  {
+    //    label: 'Cluster RBAC Assessments',
+    //    faIcon: faUserShield,
+    //    disabled: !this.enabledTrivyReports.includes('crar'),
+    //    expanded: true,
+    //    items: [
+    //      {
+    //        label: 'Browse',
+    //        disabled: !this.enabledTrivyReports.includes('crar'),
+    //        command: () => {
+    //          this.router.navigate(['/cluster-rbac-assessment-reports']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'Detailed',
+    //        disabled: !this.enabledTrivyReports.includes('crar'),
+    //        command: () => {
+    //          this.router.navigate(['/cluster-rbac-assessment-reports-detailed']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //    ],
+    //  },
+    //  {
+    //    label: 'Exposed Secrets',
+    //    faIcon: faKey,
+    //    disabled: !this.enabledTrivyReports.includes('esr'),
+    //    expanded: true,
+    //    items: [
+    //      {
+    //        label: 'Browse',
+    //        disabled: !this.enabledTrivyReports.includes('esr'),
+    //        command: () => {
+    //          this.router.navigate(['/exposed-secret-reports']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'Detailed',
+    //        disabled: !this.enabledTrivyReports.includes('esr'),
+    //        command: () => {
+    //          this.router.navigate(['/exposed-secret-reports-detailed']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //    ],
+    //  },
+    //  {
+    //    label: 'Cluster Compliance',
+    //    faIcon: faServer,
+    //    disabled: !this.enabledTrivyReports.includes('ccr'),
+    //    expanded: true,
+    //    items: [
+    //      {
+    //        label: 'Browse',
+    //        disabled: !this.enabledTrivyReports.includes('ccr'),
+    //        command: () => {
+    //          this.router.navigate(['/cluster-compliance-reports']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'Detailed',
+    //        disabled: !this.enabledTrivyReports.includes('ccr'),
+    //        command: () => {
+    //          this.router.navigate(['/cluster-compliance-reports-detailed']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //    ],
+    //  },
+    //  {
+    //    label: 'Cluster Vulnerabilities',
+    //    faIcon: this.faShieldHalved,
+    //    disabled: !this.enabledTrivyReports.includes('cvr'),
+    //    expanded: true,
+    //    items: [
+    //      {
+    //        label: 'Browse',
+    //        disabled: !this.enabledTrivyReports.includes('cvr'),
+    //        command: () => {
+    //          this.router.navigate(['/cluster-vulnerability-reports']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'Detailed',
+    //        disabled: !this.enabledTrivyReports.includes('cvr'),
+    //        command: () => {
+    //          this.router.navigate(['/cluster-vulnerability-reports-detailed']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //    ],
+    //  },
+    //  {
+    //    label: 'RBAC Assessments',
+    //    faIcon: this.faUserShield,
+    //    disabled: !this.enabledTrivyReports.includes('rar'),
+    //    expanded: true,
+    //    items: [
+    //      {
+    //        label: 'Browse',
+    //        disabled: !this.enabledTrivyReports.includes('rar'),
+    //        command: () => {
+    //          this.router.navigate(['/rbac-assessment-reports']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'Detailed',
+    //        disabled: !this.enabledTrivyReports.includes('rar'),
+    //        command: () => {
+    //          this.router.navigate(['/rbac-assessment-reports-detailed']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //    ],
+    //  },
+    //  {
+    //    label: 'System',
+    //    faIcon: faGears,
+    //    expanded: true,
+    //    items: [
+    //      {
+    //        label: 'Watcher States',
+    //        command: () => {
+    //          this.router.navigate(['/watcher-states']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'Settings',
+    //        command: () => {
+    //          this.router.navigate(['/settings']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //      {
+    //        label: 'About',
+    //        command: () => {
+    //          this.router.navigate(['/about']);
+    //          this.isDrawerVisible = false;
+    //        },
+    //      },
+    //    ],
+    //  },
+    //];
+    // #endregion
+    // #region New Menu
     this.items = [
       {
         label: 'Home',
@@ -140,13 +377,13 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         },
       },
       {
-        label: 'Vulnerabilities',
-        faIcon: this.faShieldHalved,
-        disabled: !this.enabledTrivyReports.includes('vr'),
+        label: 'Namespaced',
+        faIcon: faFolderOpen,
         expanded: true,
         items: [
           {
-            label: 'Browse',
+            label: 'Vulnerabilities',
+            faIcon: this.faShieldHalved,
             disabled: !this.enabledTrivyReports.includes('vr'),
             command: () => {
               this.router.navigate(['/vulnerability-reports']);
@@ -154,23 +391,8 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             },
           },
           {
-            label: 'Detailed',
-            disabled: !this.enabledTrivyReports.includes('vr'),
-            command: () => {
-              this.router.navigate(['/vulnerability-reports-detailed']);
-              this.isDrawerVisible = false;
-            },
-          },
-        ],
-      },
-      {
-        label: 'SBoMs',
-        faIcon: faDiagramProject,
-        disabled: !this.enabledTrivyReports.includes('sr'),
-        expanded: true,
-        items: [
-          {
-            label: 'Browse',
+            label: 'SBOMs',
+            faIcon: faDiagramProject,
             disabled: !this.enabledTrivyReports.includes('sr'),
             command: () => {
               this.router.navigate(['/sbom-reports']);
@@ -178,23 +400,8 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             },
           },
           {
-            label: 'Detailed',
-            disabled: !this.enabledTrivyReports.includes('sr'),
-            command: () => {
-              this.router.navigate(['/sbom-reports-detailed']);
-              this.isDrawerVisible = false;
-            },
-          },
-        ],
-      },
-      {
-        label: 'Config Audits',
-        faIcon: faClipboardList,
-        disabled: !this.enabledTrivyReports.includes('car'),
-        expanded: true,
-        items: [
-          {
-            label: 'Browse',
+            label: 'Config Audits',
+            faIcon: faClipboardList,
             disabled: !this.enabledTrivyReports.includes('car'),
             command: () => {
               this.router.navigate(['/config-audit-reports']);
@@ -202,47 +409,8 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             },
           },
           {
-            label: 'Detailed',
-            disabled: !this.enabledTrivyReports.includes('car'),
-            command: () => {
-              this.router.navigate(['/config-audit-reports-detailed']);
-              this.isDrawerVisible = false;
-            },
-          },
-        ],
-      },
-      {
-        label: 'Cluster RBAC Assessments',
-        faIcon: faUserShield,
-        disabled: !this.enabledTrivyReports.includes('crar'),
-        expanded: true,
-        items: [
-          {
-            label: 'Browse',
-            disabled: !this.enabledTrivyReports.includes('crar'),
-            command: () => {
-              this.router.navigate(['/cluster-rbac-assessment-reports']);
-              this.isDrawerVisible = false;
-            },
-          },
-          {
-            label: 'Detailed',
-            disabled: !this.enabledTrivyReports.includes('crar'),
-            command: () => {
-              this.router.navigate(['/cluster-rbac-assessment-reports-detailed']);
-              this.isDrawerVisible = false;
-            },
-          },
-        ],
-      },
-      {
-        label: 'Exposed Secrets',
-        faIcon: faKey,
-        disabled: !this.enabledTrivyReports.includes('esr'),
-        expanded: true,
-        items: [
-          {
-            label: 'Browse',
+            label: 'Exposed Secrets',
+            faIcon: faKey,
             disabled: !this.enabledTrivyReports.includes('esr'),
             command: () => {
               this.router.navigate(['/exposed-secret-reports']);
@@ -250,47 +418,24 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             },
           },
           {
-            label: 'Detailed',
-            disabled: !this.enabledTrivyReports.includes('esr'),
+            label: 'RBAC Assessments',
+            faIcon: this.faUserShield,
+            disabled: !this.enabledTrivyReports.includes('rar'),
             command: () => {
-              this.router.navigate(['/exposed-secret-reports-detailed']);
+              this.router.navigate(['/rbac-assessment-reports']);
               this.isDrawerVisible = false;
             },
           },
-        ],
+        ]
       },
       {
-        label: 'Cluster Compliance',
-        faIcon: faServer,
-        disabled: !this.enabledTrivyReports.includes('ccr'),
+        label: 'Cluster Level',
+        faIcon: faDharmachakra,
         expanded: true,
         items: [
           {
-            label: 'Browse',
-            disabled: !this.enabledTrivyReports.includes('ccr'),
-            command: () => {
-              this.router.navigate(['/cluster-compliance-reports']);
-              this.isDrawerVisible = false;
-            },
-          },
-          {
-            label: 'Detailed',
-            disabled: !this.enabledTrivyReports.includes('ccr'),
-            command: () => {
-              this.router.navigate(['/cluster-compliance-reports-detailed']);
-              this.isDrawerVisible = false;
-            },
-          },
-        ],
-      },
-      {
-        label: 'Cluster Vulnerabilities',
-        faIcon: this.faShieldHalved,
-        disabled: !this.enabledTrivyReports.includes('cvr'),
-        expanded: true,
-        items: [
-          {
-            label: 'Browse',
+            label: 'Vulnerabilities',
+            faIcon: this.faShieldHalved,
             disabled: !this.enabledTrivyReports.includes('cvr'),
             command: () => {
               this.router.navigate(['/cluster-vulnerability-reports']);
@@ -298,38 +443,110 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             },
           },
           {
-            label: 'Detailed',
-            disabled: !this.enabledTrivyReports.includes('cvr'),
+            label: 'RBAC Assessments',
+            faIcon: faUserShield,
+            disabled: !this.enabledTrivyReports.includes('crar'),
             command: () => {
-              this.router.navigate(['/cluster-vulnerability-reports-detailed']);
+              this.router.navigate(['/cluster-rbac-assessment-reports']);
               this.isDrawerVisible = false;
             },
           },
-        ],
+          {
+            label: 'Compliance',
+            faIcon: faServer,
+            disabled: !this.enabledTrivyReports.includes('ccr'),
+            command: () => {
+              this.router.navigate(['/cluster-compliance-reports']);
+              this.isDrawerVisible = false;
+            },
+          },
+        ]
       },
       {
-        label: 'RBAC Assessments',
-        faIcon: this.faUserShield,
-        disabled: !this.enabledTrivyReports.includes('rar'),
-        expanded: true,
+        label: 'Namespaced - Detailed',
+        faIcon: faFolderOpen,
+        expanded: false,
         items: [
           {
-            label: 'Browse',
-            disabled: !this.enabledTrivyReports.includes('rar'),
+            label: 'Vulnerabilities',
+            faIcon: this.faShieldHalved,
+            disabled: !this.enabledTrivyReports.includes('vr'),
             command: () => {
-              this.router.navigate(['/rbac-assessment-reports']);
+              this.router.navigate(['/vulnerability-reports-detailed']);
               this.isDrawerVisible = false;
             },
           },
           {
-            label: 'Detailed',
+            label: 'SBOMs',
+            faIcon: faDiagramProject,
+            disabled: !this.enabledTrivyReports.includes('sr'),
+            command: () => {
+              this.router.navigate(['/sbom-reports-detailed']);
+              this.isDrawerVisible = false;
+            },
+          },
+          {
+            label: 'Config Audits',
+            faIcon: faClipboardList,
+            disabled: !this.enabledTrivyReports.includes('car'),
+            command: () => {
+              this.router.navigate(['/config-audit-reports-detailed']);
+              this.isDrawerVisible = false;
+            },
+          },
+          {
+            label: 'Exposed Secrets',
+            faIcon: faKey,
+            disabled: !this.enabledTrivyReports.includes('esr'),
+            command: () => {
+              this.router.navigate(['/exposed-secret-reports-detailed']);
+              this.isDrawerVisible = false;
+            },
+          },
+          {
+            label: 'RBAC Assessments',
+            faIcon: this.faUserShield,
             disabled: !this.enabledTrivyReports.includes('rar'),
             command: () => {
               this.router.navigate(['/rbac-assessment-reports-detailed']);
               this.isDrawerVisible = false;
             },
           },
-        ],
+        ]
+      },
+      {
+        label: 'Cluster Level - Detailed',
+        faIcon: faDharmachakra,
+        expanded: false,
+        items: [
+          {
+            label: 'Vulnerabilities',
+            faIcon: this.faShieldHalved,
+            disabled: !this.enabledTrivyReports.includes('cvr'),
+            command: () => {
+              this.router.navigate(['/cluster-vulnerability-reports-detailed']);
+              this.isDrawerVisible = false;
+            },
+          },
+          {
+            label: 'RBAC Assessments',
+            faIcon: faUserShield,
+            disabled: !this.enabledTrivyReports.includes('crar'),
+            command: () => {
+              this.router.navigate(['/cluster-rbac-assessment-reports-detailed']);
+              this.isDrawerVisible = false;
+            },
+          },
+          {
+            label: 'Compliance',
+            faIcon: faServer,
+            disabled: !this.enabledTrivyReports.includes('ccr'),
+            command: () => {
+              this.router.navigate(['/cluster-compliance-reports-detailed']);
+              this.isDrawerVisible = false;
+            },
+          },
+        ]
       },
       {
         label: 'System',
@@ -360,5 +577,6 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         ],
       },
     ];
+    // #endregion
   }
 }
