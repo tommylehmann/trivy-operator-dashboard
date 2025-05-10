@@ -77,7 +77,7 @@
 <p-panel header="Credits" [toggleable]="true">
   <p class="text-lg font-semibold">Acknowledging the Building Blocks Behind the App</p>
   <div class="grid grid-cols-12 gap-4 items-stretch">
-    <div *ngFor="let credit of credits" class="col-span-4 md:col-span-3 lg:col-span-2 flex items-stretch">
+    <div *ngFor="let credit of credits" class="col-span-3 md:col-span-2 xl:col-span-1 flex items-stretch">
       <p-card class="h-full small-header flex flex-col" header="{{ credit.name }}">
         <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}" loading="lazy"
              class="w-full h-auto object-cover" style="{{ credit.imgExtraStyle }}" />
