@@ -8,10 +8,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
 import { SelectButtonModule, SelectButtonOptionClickEvent } from 'primeng/selectbutton';
-import { StepsModule } from 'primeng/steps';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { MenuItem } from 'primeng/api';
 
 import { BackendSettingsDto } from '../../api/models/backend-settings-dto';
 import { MainAppInitService } from '../services/main-app-init.service';
@@ -36,7 +34,6 @@ import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe
     InputTextModule,
     PanelModule,
     SelectButtonModule,
-    StepsModule,
     TableModule,
     TagModule,
     VulnerabilityCountPipe,
@@ -50,14 +47,12 @@ export class SettingsComponent implements OnInit {
   public csvFileNames: SavedCsvFileName[] = [];
   public trivyReportConfigs: TrivyReportConfig[] = [];
 
-  severityCssStyleByIdOptionItems: MenuItem[] = [];
-  severityCssStyleByIdOptions: SeverityColorByNameOption[] = [];
+  severityCssStyleByIdOptions: { id: SeverityColorByNameOption, label: string }[] = [];
   severityCssStyleByIdOptionIndex: number = 0;
+  severityCssStyleByIdOptionValue: SeverityColorByNameOption = 'grayBelowOne';
   severityCssStyleByIdOptionValueSamples: number[] = [1, 0, -1];
   severityCssStyleByIdOptionDescription: string = "";
-
-  severityCssStyleByIdOptions2: { id: SeverityColorByNameOption, label: string }[] = [];
-  severityCssStyleByIdOptionValue2: SeverityColorByNameOption = 'grayBelowOne';
+  
 
   constructor(private mainAppInitService: MainAppInitService, private settingsService: SettingsService) { }
 
@@ -119,10 +114,6 @@ export class SettingsComponent implements OnInit {
     );
   }
 
-  onSeverityColorByNameOptionIndex(event: number) {
-    this.setSeverityColorByNameOptionIndex(event);
-  }
-
   private loadTableOptions() {
     this.clearTablesOptions = LocalStorageUtils.getKeysWithPrefix(LocalStorageUtils.trivyTableKeyPrefix)
       .sort((x, y) => (x > y ? 1 : -1))
@@ -155,11 +146,9 @@ export class SettingsComponent implements OnInit {
   }
 
   private loadSeverityColorByName() {
-    this.severityCssStyleByIdOptionItems = this.settingsService.severityCssStyleByIdOptions.map(x => ({label: "-"}));
-    this.severityCssStyleByIdOptions = this.settingsService.severityCssStyleByIdOptions.map(x => x);
     this.setSeverityColorByNameOptionIndex(this.settingsService.severityCssStyleByIdOptions.indexOf(this.settingsService.severityCssStyleByIdOption));
 
-    this.severityCssStyleByIdOptions2 = this.settingsService.severityCssStyleByIdOptions.map(x => {
+    this.severityCssStyleByIdOptions = this.settingsService.severityCssStyleByIdOptions.map(x => {
       let label = "";
       switch (x) {
         case 'all':
@@ -177,7 +166,7 @@ export class SettingsComponent implements OnInit {
       }
       return { id: x, label: label };
     });
-    this.severityCssStyleByIdOptionValue2 = this.settingsService.severityCssStyleByIdOption;
+    this.severityCssStyleByIdOptionValue = this.settingsService.severityCssStyleByIdOption;
   }
 
   onSeverityCssStyleByIdOptionsClick(event: SelectButtonOptionClickEvent) {

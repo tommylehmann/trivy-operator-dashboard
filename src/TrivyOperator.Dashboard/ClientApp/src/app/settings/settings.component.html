@@ -159,15 +159,8 @@
     <p-panel header="Display Settings" class="h-full">
       <h4>Severities</h4>
       <h5>Select Severity display option</h5>
-      <p-steps *ngIf="false"
-               [model]="severityCssStyleByIdOptionItems"
-               [readonly]="false"
-               [activeIndex]="severityCssStyleByIdOptionIndex"
-               (activeIndexChange)="onSeverityColorByNameOptionIndex($event)"
-               styleClass="rounded-steps opaque-steps text-sm mb-2"
-               [style]="{ width: '200px' }" />
-      <p-selectButton [options]="severityCssStyleByIdOptions2"
-                      [(ngModel)]="severityCssStyleByIdOptionValue2"
+      <p-selectButton [options]="severityCssStyleByIdOptions"
+                      [(ngModel)]="severityCssStyleByIdOptionValue"
                       optionLabel="label"
                       optionValue="id"
                       class="text-sm"
@@ -177,7 +170,7 @@
       <div class="mt-6">
         <p-tag *ngFor="let sampleValue of severityCssStyleByIdOptionValueSamples"
                [rounded]="true"
-               [style]="3 | severityCssStyleById:sampleValue:severityCssStyleByIdOptions[severityCssStyleByIdOptionIndex]"
+               [style]="3 | severityCssStyleById:sampleValue:severityCssStyleByIdOptions[severityCssStyleByIdOptionIndex].id"
                [value]="sampleValue | vulnerabilityCount"
                class="p-2" />
         <span class="text-sm">{{ severityCssStyleByIdOptionDescription }}</span>
