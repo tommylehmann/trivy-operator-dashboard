@@ -75,47 +75,6 @@ p-splitbutton.text-sm {
   }
 }
 
-.rounded-steps .p-steps-number {
-  border-radius: 40%;
-  font-size: 12px;
-  background-color: #005bff;
-  font-weight: 700;
-}
-
-.rounded-steps .p-highlight .p-steps-number {
-  background-color: #009bff;
-  transition: background-color 0.3s ease;
-}
-
-.p-selectbutton {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: transparent;
-  width: auto;
-  display: inline-flex;
-}
-
-.p-selectbutton .p-button {
-  background-color: transparent;
-  color: #666;
-  border: none;
-  padding: 10px 20px;
-  white-space: nowrap;
-  padding: 5px;
-  margin: 5px;
-}
-
-.p-selectbutton .p-button.p-highlight {
-  background-color: #3b82f6;
-  color: white;
-  background-color: rgba(#005bff, 1);
-  box-shadow: 0 5px 10px rgba(0,0,0,0.6);
-}
-
-p-selectbutton.text-sm .p-button-label {
-  font-size: 14px;
-}
-
 .p-dialog {
   max-height: unset !important;
 }

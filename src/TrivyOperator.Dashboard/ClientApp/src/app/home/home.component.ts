@@ -10,8 +10,8 @@ import { HomeConfigAuditReportsComponent } from '../home-config-audit-reports/ho
 import { HomeExposedSecretReportsComponent } from '../home-exposed-secret-reports/home-exposed-secret-reports.component';
 import { HomeVulnerabilityReportsComponent } from '../home-vulnerability-reports/home-vulnerability-reports.component';
 
+import { TabsModule } from 'primeng/tabs';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { TabViewChangeEvent, TabViewModule } from 'primeng/tabview';
 
 @Component({
   selector: 'app-home',
@@ -23,15 +23,15 @@ import { TabViewChangeEvent, TabViewModule } from 'primeng/tabview';
     HomeConfigAuditReportsComponent,
     HomeClusterRbacAssessmentReportsComponent,
     HomeExposedSecretReportsComponent,
+    TabsModule,
     ToggleSwitchModule,
-    TabViewModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
   enabledTrivyReports: string[] = ['crar', 'car', 'esr', 'vr'];
-  tabPageActiveIndex: number = 0;
+  tabPageActiveIndex: string = "0";
 
   constructor(private mainAppInitService: MainAppInitService) {}
 
@@ -54,10 +54,10 @@ export class HomeComponent implements OnInit {
     });
 
     this.showDistinctValues = LocalStorageUtils.getBoolKeyValue('home.showDistinctValues') ?? true;
-    this.tabPageActiveIndex = LocalStorageUtils.getNumberKeyValue('home.tabPageActiveIndex') ?? 0;
+    this.tabPageActiveIndex = localStorage.getItem('home.tabPageActiveIndex') ?? "0";
   }
 
-  onTabPageChange(event: TabViewChangeEvent) {
-    localStorage.setItem('home.tabPageActiveIndex', event.index.toString());
+  onTabPageChange(event: string | number) {
+    localStorage.setItem('home.tabPageActiveIndex', event.toString());
   }
 }
