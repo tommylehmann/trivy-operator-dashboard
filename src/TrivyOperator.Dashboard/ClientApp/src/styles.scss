@@ -18,6 +18,8 @@
   a:not([pRipple]):not(.p-tieredmenu-item-link) {
     @apply text-blue-400 underline hover:text-blue-500 hover:no-underline;
   }
+
+  @import './app/themes/trivy-operator-dashboard.variables.css';
 }
 
 // Others 

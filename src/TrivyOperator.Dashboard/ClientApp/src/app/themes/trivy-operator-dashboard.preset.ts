@@ -32,6 +32,23 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
           950: '#171E27'
         }
       }
-    }
-  }
+    },
+  },
+  components: {
+    datatable: {
+      header: {
+        cell: {
+          padding: 'var(--tod-datatable-header-cell-padding)',
+          sm: {
+            padding: 'var(--tod-datatable-header-cell-padding)',
+          }
+        },
+      },
+    },
+    tabs: {
+      tab: {
+        padding: 'var(--tod-tabs-tab-padding)',
+      },
+    },
+  },
 });
