@@ -183,6 +183,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   @Input() staticHighlightedNodeId?: string;
   @Input() staticInputFilterByNameValue: string = "";
 
+  @Input() fcoseClasses: string = "fcose fcose-half";
+
   isHelpDialogVisible: boolean = false;
   constructor(private darkModeService: DarkModeService) { }
 

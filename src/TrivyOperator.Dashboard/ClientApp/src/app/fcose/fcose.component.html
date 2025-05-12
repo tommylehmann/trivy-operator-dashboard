@@ -69,7 +69,7 @@
                   (onItemClick)="onNavItemClick($event)"/>
   </div>
   <div class="col-span-12">
-    <div #graphContainer class="fcose fcose-half graph-container"></div>
+    <div #graphContainer [ngClass]="fcoseClasses" class="graph-container"></div>
   </div>
 </div>
 

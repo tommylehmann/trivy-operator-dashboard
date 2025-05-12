@@ -24,8 +24,7 @@ $default-height-half: calc(50vh - 95px);
   }
 }
 
-// TODO not yest working (encapsulation)
-.p-dialog-content .fcose {
+.fcose-dialog {
   height: $default-dialog-height;
 }
 
