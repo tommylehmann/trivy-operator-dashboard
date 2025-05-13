@@ -1,7 +1,9 @@
 import { definePreset } from "@primeng/themes";
+import Aura from '@primeng/themes/aura';
 import Nora from '@primeng/themes/nora';
+import Lara from '@primeng/themes/lara';
 
-export const trivyOperatorDashboardPreset = definePreset(Nora, {
+export const trivyOperatorDashboardPreset = definePreset(Aura, {
   semantic: {
     primary: {
       50: '{sky.50}',
@@ -35,7 +37,32 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
     },
   },
   components: {
+    button: {
+      label: {
+        font: {
+          weight: 'var(--tod-button-label-font-weight)',
+        },
+      },
+    },
     datatable: {
+      body: {
+        cell: {
+          padding: 'var(--tod-datatable-body-cell-padding)',
+        },
+      },
+      column: {
+        title: {
+          font: {
+            weight: 'var(--tod-datatable-column-title-font-weight)',
+          },
+        },
+      },
+      footer: {
+        background: 'var(--p-surface-700)',
+        cell: {
+          background: 'var(--p-surface-700)',
+        },
+      },
       header: {
         cell: {
           padding: 'var(--tod-datatable-header-cell-padding)',
@@ -48,6 +75,15 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
     tabs: {
       tab: {
         padding: 'var(--tod-tabs-tab-padding)',
+      },
+    },
+    tag: {
+      font: {
+        size: 'var(--tod-tag-font-size)',
+        weight: 'var(--tod-tag-font-weight)',
+      },
+      primary: {
+        color: 'var(--tod-tag-primary-color)',
       },
     },
   },

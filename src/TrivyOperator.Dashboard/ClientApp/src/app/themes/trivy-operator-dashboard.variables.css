@@ -1,4 +1,15 @@
 :root {
-  --tod-tabs-tab-padding: .75rem 1rem;
+  --p-datatable-header-cell-padding: .5rem .5rem;
+  --p-icon-size: .75rem;
+  --tod-button-label-font-weight: 400;
+  --tod-datatable-body-cell-padding: .6rem .75rem;
   --tod-datatable-header-cell-padding: .5rem .5rem;
+  --tod-datatable-column-title-font-weight: 400;
+  --tod-tabs-tab-padding: .5rem .75rem;
+  --tod-tag-font-size: .75rem;
+  --tod-tag-font-weight: 600;
+  --tod-tag-primary-color: var(--p-primary-contrast-color);
+  --p-tag-primary-color: var(--p-primary-contrast-color);
+  --p-datatable-header-cell-selected-background: var(--p-surface-900);
+  --p-datatable-header-cell-selected-color: var(--p-button-text-primary-color);
 }

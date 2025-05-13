@@ -33,11 +33,6 @@
   }
 }
 
-h4.no-margins {
-  margin-block-start: 0;
-  margin-block-end: 0;
-}
-
  // tests 
 .custom-small-row tr {
   height: 25px;  
@@ -50,16 +45,9 @@ h4.no-margins {
   line-height: 1em;
 }
 
-p-sortIcon.sm-sortIcon .p-sortable-column-icon {
-  font-size: 0.8rem !important;
-  width: 12px !important;
-  height: 12px !important;
-}
-
-p-columnFilter.sm-filterIcon .pi-filter-icon {
-  width: 12px !important;
-  height: 12px !important;
-  font-size: 0.8rem !important;
+.p-round-datatable {
+  border-radius: 2px;
+  border: 1px solid var(--p-menubar-border-color);
 }
 
 p-splitbutton.text-sm {

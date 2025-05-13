@@ -295,9 +295,9 @@
     <ng-template *ngIf="trivyTableOptions!.isFooterVisible" pTemplate="summary">
       <div>
         Total
-        <p-tag value="{{ trivyTableTotalRecords }}" [rounded]="true" />
+        <p-tag value="{{ trivyTableTotalRecords }}" [rounded]="true" severity="contrast"/>
         | Filtered
-        <p-tag value="{{ trivyTableFilteredRecords }}" [rounded]="true" />
+        <p-tag value="{{ trivyTableFilteredRecords }}" [rounded]="true" severity="contrast"/>
       </div>
     </ng-template>
   </p-table>
