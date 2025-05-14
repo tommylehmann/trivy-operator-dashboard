@@ -3,7 +3,7 @@ import Aura from '@primeng/themes/aura';
 import Nora from '@primeng/themes/nora';
 import Lara from '@primeng/themes/lara';
 
-export const trivyOperatorDashboardPreset = definePreset(Aura, {
+export const trivyOperatorDashboardPreset = definePreset(Nora, {
   semantic: {
     primary: {
       50: '{sky.50}',
@@ -70,6 +70,11 @@ export const trivyOperatorDashboardPreset = definePreset(Aura, {
             padding: 'var(--tod-datatable-header-cell-padding)',
           }
         },
+      },
+    },
+    selectbutton: {
+      border: {
+        radius: 'var(--tod-selectbutton-border-radius)',
       },
     },
     tabs: {
