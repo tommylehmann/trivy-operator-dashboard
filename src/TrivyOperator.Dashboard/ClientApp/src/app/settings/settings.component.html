@@ -64,7 +64,7 @@
           </tr>
         </ng-template>
       </p-table>
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <p class="text-sm">
           <i class="pi pi-info-circle"></i>
           <b> Hint:</b> Use the options to reset saved states of the tables. This will return the table to its default
@@ -91,7 +91,7 @@
         [disabled]="csvFileNames.length == 0"
         (onClick)="onUpdateCsvFileNames($event)"
       />
-      <ng-template pTemplate="footer">
+      <ng-template #footer>
         <p class="text-sm">
           <i class="pi pi-info-circle"></i>
           <b> Hint:</b> Use the options to change the default file names used from CSV exports from Detailed pages.

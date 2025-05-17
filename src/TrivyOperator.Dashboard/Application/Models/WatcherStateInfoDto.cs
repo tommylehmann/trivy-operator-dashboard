@@ -23,7 +23,7 @@ public static class WatcherStateInfoExtensions
             : new WatcherStateInfoDto
             {
                 KubernetesObjectType = watcherStateInfo.WatchedKubernetesObjectType.Name,
-                NamespaceName = watcherStateInfo.WatcherKey == VarUtils.DefaultCacheRefreshKey 
+                NamespaceName = watcherStateInfo.WatcherKey == VarUtils.DefaultCacheRefreshKey
                     ? string.Empty
                     : watcherStateInfo.WatcherKey,
                 Status = watcherStateInfo.Status.ToString(),
@@ -36,12 +36,15 @@ public static class WatcherStateInfoExtensions
     {
         if (watcherStateInfo.LastException == null)
             return "All ok";
-        if (((HttpOperationException)watcherStateInfo.LastException).Response.StatusCode == HttpStatusCode.Unauthorized)
-            return "Unauthorized: The kube config file does not provide a porper token";
-        if (((HttpOperationException)watcherStateInfo.LastException).Response.StatusCode == HttpStatusCode.Forbidden)
-            return "Forbidden: The k8s user is not allowed to perform the watch operation";
-        if (((HttpOperationException)watcherStateInfo.LastException).Response.StatusCode == HttpStatusCode.NotFound)
-            return "Not Found: The specified resource type does not exist in cluster (it might be that Trivy is not installed)";
+        if (watcherStateInfo.LastException is HttpOperationException httpOpException)
+        {
+            if (httpOpException.Response.StatusCode == HttpStatusCode.Unauthorized)
+                return "Unauthorized: The kube config file does not provide a porper token";
+            if (httpOpException.Response.StatusCode == HttpStatusCode.Forbidden)
+                return "Forbidden: The k8s user is not allowed to perform the watch operation";
+            if (httpOpException.Response.StatusCode == HttpStatusCode.NotFound)
+                return "Not Found: The specified resource type does not exist in cluster (it might be that Trivy is not installed)";
+        }
         if (watcherStateInfo.LastException is StaleWatcheCacheException ex)
             return $"{watcherStateInfo.LastException.Message} - {ex.KubernetesObjectType.Name} - {ex.WatcherKey}";
 

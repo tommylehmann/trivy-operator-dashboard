@@ -78,3 +78,17 @@ markdown p {
   padding-top: 20px;
 }
 
+p-panel.h-full > .p-panel.p-component {
+  height: 100% !important;
+}
+
+p-panel.h-full .p-panel-content-container {
+  height: calc(100% - 2*var(--p-panel-header-padding) - 1rem) !important;
+  @apply flex flex-col;
+}
+
+p-panel.h-full .p-panel-footer {
+  @apply mt-auto;
+}
+
+

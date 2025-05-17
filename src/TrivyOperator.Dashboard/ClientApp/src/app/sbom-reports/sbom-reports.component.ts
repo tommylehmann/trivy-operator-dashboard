@@ -356,7 +356,6 @@ export class SbomReportsComponent implements OnInit {
   // #endregion
 
   filterImageDtos() {
-    console.log("mama " + this.selectedNamespace);
     this.imageDtos = this.dataDtos
       ?.filter((x) => x.resourceNamespace == this.selectedNamespace)
       .map((x) => ({

@@ -1,4 +1,4 @@
-.breadcrumb-size {
+/*.breadcrumb-size {
   font-size: 14px;
 }
 
@@ -8,15 +8,15 @@
 }
 
 .breadcrumb-no-background .p-breadcrumb {
-  background-color: transparent !important; /* Remove background color */
-  border: none; /* Remove border if any */
-  color: inherit; /* Keep the text color inherited */
-  box-shadow: none; /* Remove any box-shadow */
-  padding-bottom: 0;
+  background-color: transparent !important;*/ /* Remove background color */
+  /*border: none;*/ /* Remove border if any */
+  /*color: inherit;*/ /* Keep the text color inherited */
+  /*box-shadow: none;*/ /* Remove any box-shadow */
+  /*padding-bottom: 0;
   padding-top: 0;
 }
 
 .breadcrumb-no-overflow {
-  max-width: 100%; /* You can adjust this width as needed */
-  overflow: hidden;
-}
+  max-width: 100%;*/ /* You can adjust this width as needed */
+  /*overflow: hidden;
+}*/

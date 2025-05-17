@@ -19,9 +19,27 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
       950: '{sky.950}'
     },
     colorScheme: {
+      light: {
+        surface: {
+          0:   '#F8F8FD',
+          50: '{sky.50}',
+          100: '{sky.100}',
+          200: '{sky.200}',
+          300: '{sky.300}',
+          400: '{sky.400}',
+          500: '{sky.500}',
+          600: '{sky.600}',
+          700: '{sky.700}',
+          800: '{sky.800}',
+          900: '{sky.900}',
+          950: '{sky.950}'
+        },
+        text: { color: '#000000' },
+      },
       dark: {
         surface: {
-          50: '#EAEDEF',
+          0:   '#FDFDFD',
+          50:  '#EAEDEF',
           100: '#D4DAE0',
           200: '#B8C2CD',
           300: '#9DAAB9',
@@ -32,8 +50,10 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
           800: '#2D374E',
           900: '#2A323D',
           950: '#171E27'
-        }
-      }
+        },
+        text: { color: '#ffffff' },
+      },
+      
     },
   },
   components: {
@@ -58,9 +78,9 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         },
       },
       footer: {
-        background: 'var(--p-surface-700)',
+        background: 'var(--tod-datatable-footer-cell-background)',
         cell: {
-          background: 'var(--p-surface-700)',
+          background: 'var(--tod-datatable-footer-cell-background)',
         },
       },
       header: {
