@@ -78,6 +78,7 @@ markdown p {
   padding-top: 20px;
 }
 
+// panel
 p-panel.h-full > .p-panel.p-component {
   height: 100% !important;
 }
@@ -92,3 +93,12 @@ p-panel.h-full .p-panel-footer {
 }
 
 
+p-table.p-datatable-xxs .p-datatable-tbody > tr > td {
+  font-size: .8125rem;
+  padding: .5rem .6rem;
+}
+
+p-table.p-datatable-xxs .p-datatable-thead > tr > th {
+  font-size: .875rem;
+  font-weight: 600;
+}
