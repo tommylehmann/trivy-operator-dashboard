@@ -77,26 +77,26 @@
 <p-panel header="Credits" [toggleable]="true">
   <p class="text-lg font-semibold">Acknowledging the Building Blocks Behind the App</p>
   <div class="grid grid-cols-12 gap-4 items-stretch">
-    <div *ngFor="let credit of credits" class="col-span-3 md:col-span-2 xl:col-span-1 flex items-stretch">
+    <div *ngFor="let credit of credits" class="col-span-3 md:col-span-2 xl:col-span-1 items-stretch">
       <p-card class="h-full small-header flex flex-col" header="{{ credit.name }}">
         <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}" loading="lazy"
              class="w-full h-auto object-cover" style="{{ credit.imgExtraStyle }}" />
-        <div class="col-span-12 text-left mt-auto">
+        <div class="flex-col text-left mt-auto">
           <div class="mt-2"><a href="{{ credit.homeUrl }}" target="_blank">Home</a></div>
           <div class="mt-2"><a href="{{ credit.gitUrl }}" target="_blank">Git</a></div>
           <div class="mt-2"><a href="{{ credit.docsUrl }}" target="_blank">Docs</a></div>
         </div>
       </p-card>
     </div>
-    <div class="col-span-4 md:col-span-2 flex items-stretch">
-      <p-card class="h-full small-header flex flex-col" header="Others">
-        <div class="grid grid-cols-12 gap-4 flex-grow">
-          <div class="col-span-12 text-left mt-auto">
-            <div class="-ml-1"><b>Frontend</b></div>
+    <div class="col-span-6 md:col-span-2 items-stretch">
+      <p-card class="h-full small-header" header="Others">
+        <div class="gap-4">
+          <div class="flex-col text-left mt-auto">
+            <div class="font-semibold">Frontend</div>
             <div class="mt-2"><a href="https://github.com/cytoscape/cytoscape" target="_blank">Cytoscape</a></div>
             <div class="mt-2"><a href="https://github.com/iVis-at-Bilkent/cytoscape.js-fcose" target="_blank">fCoSE</a></div>
             <div class="mt-2"><a href="https://github.com/chartjs" target="_blank">Chart.js</a></div>
-            <div class="mt-4 -ml-1"><b>Backend</b></div>
+            <div class="mt-4 font-semibold">Backend</div>
             <div class="mt-2"><a href="https://github.com/kubernetes-client/csharp" target="_blank">K8s C# Client</a></div>
             <div class="mt-2"><a href="https://github.com/serilog/serilog" target="_blank">Serilog</a></div>
           </div>

@@ -7,13 +7,13 @@
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 50%; max-width: 75%">Severity</th>
-              <th style="width: 25%; max-width: 25%" class="text-right">Count</th>
+              <th style="width: 25%; max-width: 25%" class="tod-text-right">Count</th>
             </tr>
           </ng-template>
           <ng-template let-severity pTemplate="body">
             <tr>
               <td style="width: 50%; max-width: 75%">{{ severity.severityName }}</td>
-              <td style="width: 25%; max-width: 25%" class="text-right">{{ severity.count }}</td>
+              <td style="width: 25%; max-width: 25%" class="tod-text-right">{{ severity.count }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -107,7 +107,7 @@
       <tr>
         <th pFrozenColumn rowspan="2">Namespace</th>
         <ng-container *ngFor="let severityId of severities">
-          <th class="text-center" [attr.colspan]="kinds.length">
+          <th class="tod-text-center" [attr.colspan]="kinds.length">
             {{ severityId | severityNameById }}
           </th>
         </ng-container>
@@ -115,7 +115,7 @@
       <tr>
         <ng-container *ngFor="let severityId of severities">
           <ng-container *ngFor="let kind of kinds">
-            <th style="width: 90px; min-width: 75px" class="text-center">{{ kind }}</th>
+            <th style="width: 90px; min-width: 75px" class="tod-text-center">{{ kind }}</th>
           </ng-container>
         </ng-container>
       </tr>
@@ -124,7 +124,7 @@
       <tr>
         <td pFrozenColumn>{{ item.namespaceName }}</td>
         <ng-container *ngFor="let value of item.values">
-          <td class="text-center">
+          <td class="tod-text-center">
             <p-tag [rounded]="true"
                     [style]="value.severityId | severityCssStyleById:value.count"
                     [value]="value.count | vulnerabilityCount" />
@@ -136,7 +136,7 @@
       <tr>
         <td pFrozenColumn class="font-bold">Total</td>
         <ng-container *ngFor="let value of carDetailsDtoFooter.values">
-          <td class="text-center">
+          <td class="tod-text-center">
             <p-tag [rounded]="true"
                     [style]="value.severityId | severityCssStyleById:value.count"
                     [value]="value.count | vulnerabilityCount" />

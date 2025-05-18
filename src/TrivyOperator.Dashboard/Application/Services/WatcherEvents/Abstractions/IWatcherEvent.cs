@@ -4,6 +4,6 @@ namespace TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstraction
 
 public interface IWatcherEvent<TKubernetesObject> where TKubernetesObject : IKubernetesObject
 {
-    WatchEventType WatcherEventType { get; init; }
+    WatcherEventType WatcherEventType { get; init; }
     TKubernetesObject KubernetesObject { get; init; }
 }

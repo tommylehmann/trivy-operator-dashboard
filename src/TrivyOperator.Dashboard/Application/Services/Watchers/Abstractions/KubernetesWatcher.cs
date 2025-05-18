@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using System.Net;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
+using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -107,7 +108,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                         watcherKey,
                         lastResourceVersion);
                     TKubernetesWatcherEvent kubernetesWatcherEvent =
-                                new() { KubernetesObject = new(), WatcherEventType = WatchEventType.Bookmark };
+                                new() { KubernetesObject = new(), WatcherEventType = WatcherEventType.Init };
                     await BackgroundQueue.QueueBackgroundWorkItemAsync(kubernetesWatcherEvent);
                 }
 
@@ -160,7 +161,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                                 item.Metadata.ResourceVersion);
                             ProcessReceivedKubernetesObject(item);
                             TKubernetesWatcherEvent kubernetesWatcherEvent =
-                                new() { KubernetesObject = item, WatcherEventType = type };
+                                new() { KubernetesObject = item, WatcherEventType = type.ToWatcherEventType() };
                             await BackgroundQueue.QueueBackgroundWorkItemAsync(kubernetesWatcherEvent);
                         }
                     }
@@ -278,7 +279,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
             {
                 ProcessReceivedKubernetesObject(item);
                 TKubernetesWatcherEvent kubernetesWatcherEvent =
-                    new() { KubernetesObject = item, WatcherEventType = WatchEventType.Added };
+                    new() { KubernetesObject = item, WatcherEventType = WatcherEventType.Added };
                 await BackgroundQueue.QueueBackgroundWorkItemAsync(kubernetesWatcherEvent);
             }
 

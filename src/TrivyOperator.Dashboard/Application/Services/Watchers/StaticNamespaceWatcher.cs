@@ -1,7 +1,7 @@
 ﻿using k8s;
 using k8s.Models;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Utils;
@@ -21,7 +21,7 @@ public class StaticNamespaceWatcher(
             WatcherEvent<V1Namespace> watcherEvent = new()
             {
                 KubernetesObject = kubernetesNamespace,
-                WatcherEventType = WatchEventType.Added,
+                WatcherEventType = WatcherEventType.Added,
             };
 
             await backgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);

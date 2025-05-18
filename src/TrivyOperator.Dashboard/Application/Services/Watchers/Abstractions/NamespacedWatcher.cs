@@ -4,6 +4,7 @@ using k8s.Models;
 using Microsoft.Extensions.Options;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
+using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
@@ -63,7 +64,7 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
             },
         };
         TKubernetesWatcherEvent watcherEvent =
-            new() { KubernetesObject = kubernetesObject, WatcherEventType = WatchEventType.Error };
+            new() { KubernetesObject = kubernetesObject, WatcherEventType = WatcherEventType.Error };
 
         await BackgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);
     }

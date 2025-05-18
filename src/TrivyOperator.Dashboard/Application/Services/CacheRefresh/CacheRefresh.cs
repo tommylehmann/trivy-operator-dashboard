@@ -1,11 +1,13 @@
 ﻿using k8s;
 using k8s.Models;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
-namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions;
+namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh;
 
 public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
     TBackgroundQueue backgroundQueue,
@@ -42,23 +44,29 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
                 IWatcherEvent<TKubernetesObject>? watcherEvent = await backgroundQueue.DequeueAsync(cancellationToken);
                 switch (watcherEvent?.WatcherEventType)
                 {
-                    case WatchEventType.Added:
+                    case WatcherEventType.Added:
                         ProcessAddEvent(watcherEvent, cancellationToken);
                         break;
-                    case WatchEventType.Deleted:
+                    case WatcherEventType.Deleted:
                         await ProcessDeleteEvent(watcherEvent, cancellationToken);
                         break;
-                    case WatchEventType.Error:
+                    case WatcherEventType.Error:
                         ProcessErrorEvent(watcherEvent);
                         break;
-                    case WatchEventType.Modified:
+                    case WatcherEventType.Modified:
                         ProcessModifiedEvent(watcherEvent, cancellationToken);
                         break;
-                    case WatchEventType.Bookmark:
+                    case WatcherEventType.Init:
                         await ProcessBookmarkEvent(watcherEvent, cancellationToken);
                         break;
-                        //default:
-                        //    break;
+                    case WatcherEventType.Unknown:
+                        logger.LogWarning(
+                            "Unknown event type {eventType} for {kubernetesObjectType}.",
+                            watcherEvent.WatcherEventType,
+                            typeof(TKubernetesObject).Name);
+                        break;
+                    default:
+                        break;
                 }
             }
             catch (Exception ex)
@@ -144,5 +152,4 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
     {
         return Task.CompletedTask;
     }
-    // TODO: new for ns cleanup
 }

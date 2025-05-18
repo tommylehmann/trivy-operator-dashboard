@@ -30,7 +30,6 @@ using TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Trivy.VulnerabilityReport;
 using TrivyOperator.Dashboard.Application.Services.Trivy.VulnerabilityReport.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
@@ -55,6 +54,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Reflection;
 using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
+using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 
 namespace TrivyOperator.Dashboard.Application.Services.BuilderServicesExtensions;
 
