@@ -7,7 +7,7 @@
     sortMode="multiple"
     stateStorage="local"
     styleClass=""
-    class="p-datatable-xxs"
+    class="p-datatable-xs"
     [autoLayout]="true"
     [columns]="trivyTableColumns"
     [expandedRowKeys]="expandedRows"
@@ -22,7 +22,7 @@
     [tableStyle]="trivyTableOptions!.tableStyle"
     [value]="dataDtos!"
     [virtualScroll]="true"
-    [virtualScrollItemSize]="55"
+    [virtualScrollItemSize]="47"
     [(selection)]="selectedDataDtos"
     (onRowCollapse)="onRowExpandCollapse($event)"
     (onRowExpand)="onRowExpandCollapse($event)"
@@ -170,7 +170,7 @@
       </tr>
     </ng-template>
     <ng-template let-columns="columns" let-expanded="expanded" let-rowData let-rowIndex="rowIndex" pTemplate="body">
-      <tr style="height: 55px" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex">
+      <tr style="height: 47px" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex">
         <td *ngIf="trivyTableOptions!.dataKey" style="max-width: 50px">
           <p-button
             pRipple

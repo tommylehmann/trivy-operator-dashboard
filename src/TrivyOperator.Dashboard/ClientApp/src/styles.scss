@@ -69,13 +69,15 @@ p-splitbutton.text-sm {
   max-height: unset !important;
 }
 
+// various tailwind reverts
+
 ul {
   list-style-type: disc !important;
-  padding-left: 20px;
+  padding-left: 1.25rem;
 }
 
 markdown p {
-  padding-top: 20px;
+  padding-top: 1.25rem;
 }
 
 // panel
@@ -92,13 +94,43 @@ p-panel.h-full .p-panel-footer {
   @apply mt-auto;
 }
 
+// table
 
-p-table.p-datatable-xxs .p-datatable-tbody > tr > td {
+p-table.p-datatable-xs .p-datatable-tbody > tr > td {
   font-size: .8125rem;
-  padding: .5rem .6rem;
+  padding: .25rem .6rem;
 }
 
-p-table.p-datatable-xxs .p-datatable-thead > tr > th {
+p-table.p-datatable-xs .p-datatable-thead > tr > th {
   font-size: .875rem;
   font-weight: 600;
+}
+
+span.p-sortable-column-badge {
+  background-color: var(--p-primary-color);
+  border-radius: var(--p-tag-rounded-border-radius);
+  color: var(--p-tag-primary-color);
+  font-size: var(--p-tag-font-size);
+  font-weight: var(--p-tag-font-weight);
+  gap: var(--p-tag-gap);
+  padding: var(--p-tag-padding);
+  margin: .3rem;
+}
+
+p-table-row-height {
+  height: calc(var(--tod-host-line-height) * 2 + 0.5rem);
+}
+
+// card
+p-card.h-full > .p-card.p-component {
+  @apply h-full;
+}
+
+p-card.p-card-bold-subtitle .p-card-subtitle {
+  @apply font-bold;
+}
+
+p-card.small-header .p-card-title {
+  font-size: 1rem;
+  font-weight: 700;
 }

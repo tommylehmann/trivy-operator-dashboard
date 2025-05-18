@@ -64,6 +64,9 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         },
       },
     },
+    card: {
+      shadow: 'var(--tod-card-shadow)',
+    },
     datatable: {
       body: {
         cell: {
@@ -86,6 +89,10 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
       header: {
         cell: {
           padding: 'var(--tod-datatable-header-cell-padding)',
+          selected: {
+            background: 'var(--p-datatable-header-cell-background)',
+            color:'var(--p-button-text-primary-color)',
+          },
           sm: {
             padding: 'var(--tod-datatable-header-cell-padding)',
           }
