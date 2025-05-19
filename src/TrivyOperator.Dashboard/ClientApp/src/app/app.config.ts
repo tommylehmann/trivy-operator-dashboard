@@ -24,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     provideAppInitializer(() => initializeAppFactory(inject(MainAppInitService))),
     providePrimeNG({
+      ripple: true,
       theme: {
         preset: trivyOperatorDashboardPreset,
         options: {

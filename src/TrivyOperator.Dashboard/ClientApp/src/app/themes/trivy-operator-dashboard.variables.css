@@ -7,13 +7,7 @@
   --tod-datatable-footer-cell-background: var(--p-datatable-header-cell-background);
   --tod-datatable-header-cell-padding: .5rem .5rem;
   --tod-datatable-column-title-font-weight: 400;
-  --tod-selectbutton-border-radius: 6px;
-  --p-togglebutton-border-radius: 6px;
-  --p-togglebutton-font-weight: 500;
-  --p-togglebutton-padding: .25rem .5rem;
-  --p-togglebutton-content-border-radius: 6px;
-  --p-togglebutton-content-padding: 0.25rem 0.25rem;
-  /*--p-togglebutton-checked-background: var(--p-togglebutton-background);*/
+  --tod-selectbutton-border-radius: 4px;
   --tod-tabs-tab-padding: .5rem .75rem;
   --tod-tag-font-size: .75rem;
   --tod-tag-font-weight: 600;
@@ -24,4 +18,18 @@
   --p-datatable-header-cell-padding: .5rem .5rem;
   --p-datatable-header-cell-selected-background: var(--p-datatable-header-cell-background);
   --p-datatable-header-cell-selected-color: var(--p-button-text-primary-color);
+  /* to be added via providePrimeng */
+  --p-breadcrumb-padding: 0;
+  --p-togglebutton-content-checked-background: var(--p-surface-500);
+  --p-togglebutton-background: var(--p-surface-600);
+  --p-togglebutton-checked-background: var(--p-surface-600);
+  --p-togglebutton-border-color: var(--p-surface-600);
+  --p-togglebutton-checked-border-color: var(--p-surface-600);
+  --p-togglebutton-content-checked-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.6);
+  --p-togglebutton-transition-duration: .5s;
+  --p-togglebutton-border-radius: 4px;
+  --p-togglebutton-font-weight: 500;
+  --p-togglebutton-padding: .20rem .20rem;
+  --p-togglebutton-content-border-radius: 4px;
+  --p-togglebutton-content-padding: 0.25rem 0.25rem;
 }
