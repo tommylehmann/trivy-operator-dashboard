@@ -33,7 +33,7 @@ export class AboutComponent {
       docsUrl: 'https://aquasecurity.github.io/trivy-operator/latest/'
     },
     {
-      name: '.net 8', imgSrc: 'assets/net8.png', imgAlt: 'dot net 8 Logo',
+      name: '.net', imgSrc: 'assets/dotnet.png', imgAlt: 'dot net Logo',
       homeUrl: 'https://dotnet.microsoft.com/en-us/', gitUrl: 'https://github.com/dotnet/core',
       docsUrl: 'https://learn.microsoft.com/en-us/dotnet/'
     },
@@ -46,6 +46,11 @@ export class AboutComponent {
       name: 'PrimeNG', imgSrc: 'assets/primeng.png', imgAlt: 'PrimeNG Logo',
       homeUrl: 'https://primeng.org/', gitUrl: 'https://github.com/primefaces/primeng',
       docsUrl: 'https://primeng.org/installation'
+    },
+    {
+      name: 'tailwind css', imgSrc: 'assets/tailwind.png', imgAlt: 'tailwind Logo',
+      homeUrl: 'https://tailwindcss.com/', gitUrl: 'https://github.com/tailwindlabs/tailwindcss',
+      docsUrl: 'https://tailwindcss.com/docs/installation/using-vite'
     },
     {
       name: 'Open Telemetry', imgSrc: 'assets/opentelemetry.png', imgAlt: 'OpenTelemetry Logo',

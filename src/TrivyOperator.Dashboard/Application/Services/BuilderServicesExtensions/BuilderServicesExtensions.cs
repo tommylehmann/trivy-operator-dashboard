@@ -55,6 +55,7 @@ using OpenTelemetry.Trace;
 using System.Reflection;
 using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
+using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers;
 
 namespace TrivyOperator.Dashboard.Application.Services.BuilderServicesExtensions;
 

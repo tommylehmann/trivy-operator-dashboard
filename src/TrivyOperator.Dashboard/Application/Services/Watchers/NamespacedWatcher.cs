@@ -6,11 +6,12 @@ using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions
 using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
-namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
+namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
 public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
     INamespacedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList>
@@ -39,8 +40,8 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
         IEnumerable<string> newWatcherKeys = newNamespaceNames.Except(existingWatcherKeys);
         IEnumerable<string> staleWatcherKeys = existingWatcherKeys.Except(newNamespaceNames);
         List<Task> tasks = [];
-        tasks.AddRange(newWatcherKeys.Select(watcherKey => this.Add(cancellationToken, watcherKey)));
-        tasks.AddRange(staleWatcherKeys.Select(watcherKey => this.Delete(watcherKey, cancellationToken)));
+        tasks.AddRange(newWatcherKeys.Select(watcherKey => Add(cancellationToken, watcherKey)));
+        tasks.AddRange(staleWatcherKeys.Select(watcherKey => Delete(watcherKey, cancellationToken)));
         await Task.WhenAll(tasks);
     }
 
