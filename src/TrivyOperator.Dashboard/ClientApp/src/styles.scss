@@ -71,7 +71,7 @@ p-splitbutton.text-sm {
 
 // various tailwind reverts
 
-ul {
+ul:not(.p-carousel-indicator-list) {
   list-style-type: disc !important;
   padding-left: 1.25rem;
 }
