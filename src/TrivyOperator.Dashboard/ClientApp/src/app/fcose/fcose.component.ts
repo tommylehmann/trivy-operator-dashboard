@@ -335,6 +335,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
             // @ts-ignore
             'background-fill': 'linear-gradient',
             //'background-gradient-stop-colors': 'RoyalBlue Aqua RoyalBlue', //DeepSkyBlue
+            // @ts-ignore
             'background-gradient-stop-colors': 'RoyalBlue DeepSkyBlue', //DeepSkyBlue
             'background-gradient-direction': 'to-right'
           },
@@ -364,7 +365,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           style: {
             // @ts-ignore
             'background-fill': 'linear-gradient',
-            //'background-gradient-stop-colors': 'Red Silver Red', //Salmon
+            // @ts-ignore
             'background-gradient-stop-colors': 'Red Salmon', //Salmon
             'background-gradient-direction': 'to-right'
           },
