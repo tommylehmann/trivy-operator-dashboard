@@ -7,7 +7,6 @@ using TrivyOperator.Dashboard.Application.Services.BackendSettings.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.CacheRefresh;
-using TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.AppVersions;
 using TrivyOperator.Dashboard.Application.Services.AppVersions.Abstractions;
@@ -89,7 +88,7 @@ public static class BuilderServicesExtensions
             services.AddSingleton<IClusterScopedWatcher<V1Namespace>, StaticNamespaceWatcher>();
         }
 
-        services.AddSingleton<ICacheRefresh<V1Namespace, IKubernetesBackgroundQueue<V1Namespace>>, NamespaceCacheRefresh>();
+        services.AddSingleton<IKubernetesEventProcessor<V1Namespace>, NamespaceCacheRefresh>();
         services.AddSingleton<IClusterScopedCacheWatcherEventHandler,
             ClusterScopedCacheWatcherEventHandler<IKubernetesEventDispatcher<V1Namespace>,
                 IClusterScopedWatcher<V1Namespace>, V1Namespace>>();
@@ -116,9 +115,8 @@ public static class BuilderServicesExtensions
         services.AddSingleton<IClusterScopedWatcher<ClusterRbacAssessmentReportCr>, ClusterScopedWatcher<
             CustomResourceList<ClusterRbacAssessmentReportCr>, ClusterRbacAssessmentReportCr,
             IKubernetesBackgroundQueue<ClusterRbacAssessmentReportCr>, WatcherEvent<ClusterRbacAssessmentReportCr>>>();
-        services
-            .AddSingleton<ICacheRefresh<ClusterRbacAssessmentReportCr, IKubernetesBackgroundQueue<ClusterRbacAssessmentReportCr>>,
-                CacheRefresh<ClusterRbacAssessmentReportCr, IKubernetesBackgroundQueue<ClusterRbacAssessmentReportCr>>>();
+        services.AddSingleton<IKubernetesEventProcessor<ClusterRbacAssessmentReportCr>,
+                CacheRefresh<ClusterRbacAssessmentReportCr>>();
         services.AddSingleton<IClusterScopedCacheWatcherEventHandler,
             ClusterScopedCacheWatcherEventHandler<IKubernetesEventDispatcher<ClusterRbacAssessmentReportCr>,
                 IClusterScopedWatcher<ClusterRbacAssessmentReportCr>, ClusterRbacAssessmentReportCr>>();
@@ -136,16 +134,15 @@ public static class BuilderServicesExtensions
             return;
         }
 
-        services
-            .AddSingleton<IListConcurrentCache<ConfigAuditReportCr>,
-                ListConcurrentCache<ConfigAuditReportCr>>();
+        services.AddSingleton<IListConcurrentCache<ConfigAuditReportCr>,
+            ListConcurrentCache<ConfigAuditReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<ConfigAuditReportCr>, KubernetesBackgroundQueue<ConfigAuditReportCr>>();
         services.AddSingleton<INamespacedWatcher<ConfigAuditReportCr>,
             NamespacedWatcher<CustomResourceList<ConfigAuditReportCr>, ConfigAuditReportCr,
                 IKubernetesBackgroundQueue<ConfigAuditReportCr>, WatcherEvent<ConfigAuditReportCr>>>();
         services.AddSingleton<
-            ICacheRefresh<ConfigAuditReportCr, IKubernetesBackgroundQueue<ConfigAuditReportCr>>,
-            CacheRefresh<ConfigAuditReportCr, IKubernetesBackgroundQueue<ConfigAuditReportCr>>>();
+            IKubernetesEventProcessor<ConfigAuditReportCr>,
+            CacheRefresh<ConfigAuditReportCr>>();
         services.AddSingleton<INamespacedCacheWatcherEventHandler,
             NamespacedCacheWatcherEventHandler<IKubernetesEventDispatcher<ConfigAuditReportCr>, 
                 INamespacedWatcher<ConfigAuditReportCr>, ConfigAuditReportCr>>();
@@ -171,8 +168,8 @@ public static class BuilderServicesExtensions
             NamespacedWatcher<CustomResourceList<ExposedSecretReportCr>, ExposedSecretReportCr,
                 IKubernetesBackgroundQueue<ExposedSecretReportCr>, WatcherEvent<ExposedSecretReportCr>>>();
         services.AddSingleton<
-            ICacheRefresh<ExposedSecretReportCr, IKubernetesBackgroundQueue<ExposedSecretReportCr>>,
-            CacheRefresh<ExposedSecretReportCr, IKubernetesBackgroundQueue<ExposedSecretReportCr>>>();
+            IKubernetesEventProcessor<ExposedSecretReportCr>,
+            CacheRefresh<ExposedSecretReportCr>>();
         services.AddSingleton<INamespacedCacheWatcherEventHandler,
             NamespacedCacheWatcherEventHandler<IKubernetesEventDispatcher<ExposedSecretReportCr>, 
                 INamespacedWatcher<ExposedSecretReportCr>, ExposedSecretReportCr>>();
@@ -198,8 +195,8 @@ public static class BuilderServicesExtensions
             NamespacedWatcher<CustomResourceList<VulnerabilityReportCr>, VulnerabilityReportCr,
                 IKubernetesBackgroundQueue<VulnerabilityReportCr>, WatcherEvent<VulnerabilityReportCr>>>();
         services.AddSingleton<
-            ICacheRefresh<VulnerabilityReportCr, IKubernetesBackgroundQueue<VulnerabilityReportCr>>,
-            CacheRefresh<VulnerabilityReportCr, IKubernetesBackgroundQueue<VulnerabilityReportCr>>>();
+            IKubernetesEventProcessor<VulnerabilityReportCr>,
+            CacheRefresh<VulnerabilityReportCr>>();
         services.AddSingleton<INamespacedCacheWatcherEventHandler,
             NamespacedCacheWatcherEventHandler<IKubernetesEventDispatcher<VulnerabilityReportCr>,
                 INamespacedWatcher<VulnerabilityReportCr>, VulnerabilityReportCr>>();
@@ -226,8 +223,8 @@ public static class BuilderServicesExtensions
         services.AddSingleton<IClusterScopedWatcher<ClusterComplianceReportCr>, ClusterScopedWatcher<
             CustomResourceList<ClusterComplianceReportCr>, ClusterComplianceReportCr,
             IKubernetesBackgroundQueue<ClusterComplianceReportCr>, WatcherEvent<ClusterComplianceReportCr>>>();
-        services.AddSingleton<ICacheRefresh<ClusterComplianceReportCr, IKubernetesBackgroundQueue<ClusterComplianceReportCr>>,
-            CacheRefresh<ClusterComplianceReportCr, IKubernetesBackgroundQueue<ClusterComplianceReportCr>>>();
+        services.AddSingleton<IKubernetesEventProcessor<ClusterComplianceReportCr>,
+            CacheRefresh<ClusterComplianceReportCr>>();
         services.AddSingleton<IClusterScopedCacheWatcherEventHandler,
             ClusterScopedCacheWatcherEventHandler<IKubernetesEventDispatcher<ClusterComplianceReportCr>,
                 IClusterScopedWatcher<ClusterComplianceReportCr>, ClusterComplianceReportCr>>();
@@ -256,8 +253,8 @@ public static class BuilderServicesExtensions
             CustomResourceList<ClusterVulnerabilityReportCr>, ClusterVulnerabilityReportCr,
             IKubernetesBackgroundQueue<ClusterVulnerabilityReportCr>, WatcherEvent<ClusterVulnerabilityReportCr>>>();
         services
-            .AddSingleton<ICacheRefresh<ClusterVulnerabilityReportCr, IKubernetesBackgroundQueue<ClusterVulnerabilityReportCr>>,
-                CacheRefresh<ClusterVulnerabilityReportCr, IKubernetesBackgroundQueue<ClusterVulnerabilityReportCr>>>();
+            .AddSingleton<IKubernetesEventProcessor<ClusterVulnerabilityReportCr>,
+                CacheRefresh<ClusterVulnerabilityReportCr>>();
         services.AddSingleton<IClusterScopedCacheWatcherEventHandler,
             ClusterScopedCacheWatcherEventHandler<IKubernetesEventDispatcher<ClusterVulnerabilityReportCr>,
                 IClusterScopedWatcher<ClusterVulnerabilityReportCr>, ClusterVulnerabilityReportCr>>();
@@ -283,8 +280,8 @@ public static class BuilderServicesExtensions
         services.AddSingleton<INamespacedWatcher<RbacAssessmentReportCr>,
             NamespacedWatcher<CustomResourceList<RbacAssessmentReportCr>, RbacAssessmentReportCr,
                 IKubernetesBackgroundQueue<RbacAssessmentReportCr>, WatcherEvent<RbacAssessmentReportCr>>>();
-        services.AddSingleton<ICacheRefresh<RbacAssessmentReportCr, IKubernetesBackgroundQueue<RbacAssessmentReportCr>>,
-            CacheRefresh<RbacAssessmentReportCr, IKubernetesBackgroundQueue<RbacAssessmentReportCr>>>();
+        services.AddSingleton<IKubernetesEventProcessor<RbacAssessmentReportCr>,
+            CacheRefresh<RbacAssessmentReportCr>>();
         services.AddSingleton<INamespacedCacheWatcherEventHandler,
             NamespacedCacheWatcherEventHandler<IKubernetesEventDispatcher<RbacAssessmentReportCr>,
                 INamespacedWatcher<RbacAssessmentReportCr>, RbacAssessmentReportCr>>();
@@ -306,8 +303,8 @@ public static class BuilderServicesExtensions
                 ListConcurrentCache<SbomReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<SbomReportCr>, KubernetesBackgroundQueue<SbomReportCr>>();
         services.AddSingleton<INamespacedWatcher<SbomReportCr>, SbomReportWatcher>();
-        services.AddSingleton<ICacheRefresh<SbomReportCr, IKubernetesBackgroundQueue<SbomReportCr>>,
-            CacheRefresh<SbomReportCr, IKubernetesBackgroundQueue<SbomReportCr>>>();
+        services.AddSingleton<IKubernetesEventProcessor<SbomReportCr>,
+            CacheRefresh<SbomReportCr>>();
         services.AddSingleton<INamespacedCacheWatcherEventHandler,
             NamespacedCacheWatcherEventHandler<IKubernetesEventDispatcher<SbomReportCr>,
                 INamespacedWatcher<SbomReportCr>, SbomReportCr>>();

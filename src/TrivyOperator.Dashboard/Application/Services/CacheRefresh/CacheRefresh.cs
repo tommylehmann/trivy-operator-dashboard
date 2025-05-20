@@ -1,7 +1,6 @@
 ﻿using k8s;
 using k8s.Models;
-using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -9,74 +8,42 @@ using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh;
 
-public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
-    TBackgroundQueue backgroundQueue,
+public class CacheRefresh<TKubernetesObject>(
     IListConcurrentCache<TKubernetesObject> cache,
-    ILogger<CacheRefresh<TKubernetesObject, TBackgroundQueue>> logger)
-    : ICacheRefresh<TKubernetesObject, TBackgroundQueue>
+    ILogger<CacheRefresh<TKubernetesObject>> logger)
+    : IKubernetesEventProcessor<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
-    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
     protected Task? CacheRefreshTask;
     protected IListConcurrentCache<TKubernetesObject> cache = cache;
 
-    public void StartEventsProcessing(CancellationToken cancellationToken)
+    public async Task ProcessKubernetesEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
-        if (IsQueueProcessingStarted())
+        switch (watcherEvent.WatcherEventType)
         {
-            logger.LogWarning(
-                "Processing for {kubernetesObjectType} already started. Ignoring...",
-                typeof(TKubernetesObject).Name);
-            return;
-        }
-
-        logger.LogInformation("CacheRefresh for {kubernetesObjectType} is starting.", typeof(TKubernetesObject).Name);
-        CacheRefreshTask = ProcessChannelMessages(cancellationToken);
-    }
-
-    public bool IsQueueProcessingStarted() => CacheRefreshTask is not null; // TODO: check for other task states
-
-    protected virtual async Task ProcessChannelMessages(CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            try
-            {
-                IWatcherEvent<TKubernetesObject>? watcherEvent = await backgroundQueue.DequeueAsync(cancellationToken);
-                switch (watcherEvent?.WatcherEventType)
-                {
-                    case WatcherEventType.Added:
-                        ProcessAddEvent(watcherEvent, cancellationToken);
-                        break;
-                    case WatcherEventType.Deleted:
-                        await ProcessDeleteEvent(watcherEvent, cancellationToken);
-                        break;
-                    case WatcherEventType.Error:
-                        ProcessErrorEvent(watcherEvent);
-                        break;
-                    case WatcherEventType.Modified:
-                        ProcessModifiedEvent(watcherEvent, cancellationToken);
-                        break;
-                    case WatcherEventType.Init:
-                        await ProcessBookmarkEvent(watcherEvent, cancellationToken);
-                        break;
-                    case WatcherEventType.Unknown:
-                        logger.LogWarning(
-                            "Unknown event type {eventType} for {kubernetesObjectType}.",
-                            watcherEvent.WatcherEventType,
-                            typeof(TKubernetesObject).Name);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(
-                    ex,
-                    "Error processing event for {kubernetesObjectType}.",
+            case WatcherEventType.Added:
+                ProcessAddEvent(watcherEvent, cancellationToken);
+                break;
+            case WatcherEventType.Deleted:
+                await ProcessDeleteEvent(watcherEvent, cancellationToken);
+                break;
+            case WatcherEventType.Error:
+                ProcessErrorEvent(watcherEvent);
+                break;
+            case WatcherEventType.Modified:
+                ProcessModifiedEvent(watcherEvent, cancellationToken);
+                break;
+            case WatcherEventType.Init:
+                await ProcessInitEvent(watcherEvent, cancellationToken);
+                break;
+            case WatcherEventType.Unknown:
+                logger.LogWarning(
+                    "Unknown event type {eventType} for {kubernetesObjectType}.",
+                    watcherEvent.WatcherEventType,
                     typeof(TKubernetesObject).Name);
-            }
+                break;
+            default:
+                break;
         }
     }
 
@@ -149,8 +116,10 @@ public class CacheRefresh<TKubernetesObject, TBackgroundQueue>(
         ProcessAddEvent(watcherEvent, cancellationToken);
     }
 
-    protected virtual Task ProcessBookmarkEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
+    protected virtual Task ProcessInitEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }
+
+    
 }

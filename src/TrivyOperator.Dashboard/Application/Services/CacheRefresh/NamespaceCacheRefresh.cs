@@ -1,5 +1,4 @@
 ﻿using k8s.Models;
-using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -8,11 +7,10 @@ using TrivyOperator.Dashboard.Utils;
 namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh;
 
 public class NamespaceCacheRefresh(
-    IKubernetesBackgroundQueue<V1Namespace> backgroundQueue,
     IListConcurrentCache<V1Namespace> cache,
     IEnumerable<INamespacedCacheWatcherEventHandler> services,
     ILogger<NamespaceCacheRefresh> logger)
-    : CacheRefresh<V1Namespace, IKubernetesBackgroundQueue<V1Namespace>>(backgroundQueue, cache, logger)
+    : CacheRefresh<V1Namespace>(cache, logger)
 {
     protected override void ProcessAddEvent(
         IWatcherEvent<V1Namespace> watcherEvent,
@@ -32,7 +30,7 @@ public class NamespaceCacheRefresh(
         await Task.WhenAll(tasks);
     }
 
-    protected override async Task ProcessBookmarkEvent(IWatcherEvent<V1Namespace> watcherEvent, CancellationToken cancellationToken)
+    protected override async Task ProcessInitEvent(IWatcherEvent<V1Namespace> watcherEvent, CancellationToken cancellationToken)
     {
         if (cache.TryGetValue(VarUtils.DefaultCacheRefreshKey, out IList<V1Namespace>? namespaceNames))
         {
