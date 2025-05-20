@@ -14,11 +14,11 @@ public class KubernetesEventDispatcher<TKubernetesObject, TBackgroundQueue>(
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
     protected Task? dispatcherQueueProcessor;
-    protected bool isQueueProcessingStarted => !dispatcherQueueProcessor?.IsCanceled ?? false;
+    public bool IsQueueProcessingStarted => !dispatcherQueueProcessor?.IsCanceled ?? false;
 
     public void StartEventsProcessing(CancellationToken cancellationToken)
     {
-        if (isQueueProcessingStarted)
+        if (IsQueueProcessingStarted)
         {
             logger.LogWarning(
                 "Kubernetes Event Dispatcher for {kubernetesObjectType} already started. Ignoring...",

@@ -1,24 +1,21 @@
 ﻿using k8s;
 using k8s.Models;
-using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.CacheRefresh.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers;
 
 public class
-    NamespacedCacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcher,
-        TKubernetesObject>(
-        TCacheRefresh cacheRefresh,
+    NamespacedCacheWatcherEventHandler<TKubernetesEventDispatcher, TKubernetesWatcher, TKubernetesObject>(
+        TKubernetesEventDispatcher kubernetesEventDispatcher,
         TKubernetesWatcher kubernetesWatcher,
-        ILogger<CacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcher,
+        ILogger<NamespacedCacheWatcherEventHandler<TKubernetesEventDispatcher, TKubernetesWatcher,
             TKubernetesObject>> logger)
-    : CacheWatcherEventHandler<TBackgroundQueue, TCacheRefresh, TKubernetesWatcher,
-            TKubernetesObject>(cacheRefresh, kubernetesWatcher, logger),
+    : CacheWatcherEventHandler<TKubernetesEventDispatcher, TKubernetesWatcher,
+            TKubernetesObject>(kubernetesEventDispatcher, kubernetesWatcher, logger),
         INamespacedCacheWatcherEventHandler
-    where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
-    where TCacheRefresh : ICacheRefresh<TKubernetesObject, TBackgroundQueue>
+    where TKubernetesEventDispatcher : IKubernetesEventDispatcher<TKubernetesObject>
     where TKubernetesWatcher : INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>
 {
