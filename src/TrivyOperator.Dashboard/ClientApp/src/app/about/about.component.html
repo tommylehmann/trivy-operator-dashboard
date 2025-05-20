@@ -79,12 +79,14 @@
   <div class="grid grid-cols-12 gap-4 items-stretch">
     <div *ngFor="let credit of credits" class="col-span-3 md:col-span-2 xl:col-span-1 items-stretch">
       <p-card class="h-full small-header flex flex-col" header="{{ credit.name }}">
-        <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}" loading="lazy"
-             class="w-full h-auto object-cover" style="{{ credit.imgExtraStyle }}" />
-        <div class="flex-col text-left mt-auto">
+        <div class="flex-col text-left pb-4">
           <div class="mt-2"><a href="{{ credit.homeUrl }}" target="_blank">Home</a></div>
           <div class="mt-2"><a href="{{ credit.gitUrl }}" target="_blank">Git</a></div>
           <div class="mt-2"><a href="{{ credit.docsUrl }}" target="_blank">Docs</a></div>
+        </div>
+        <div class="mt-auto">
+          <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}" loading="lazy"
+               class="w-full h-auto object-cover" style="{{ credit.imgExtraStyle }}" />
         </div>
       </p-card>
     </div>
