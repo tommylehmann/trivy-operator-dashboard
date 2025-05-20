@@ -2,7 +2,7 @@
 using k8s.Models;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 
-namespace TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatcher.Abstractions;
+namespace TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 
 public interface IKubernetesEventProcessor<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>

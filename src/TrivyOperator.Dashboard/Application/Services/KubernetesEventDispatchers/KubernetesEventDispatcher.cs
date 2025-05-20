@@ -1,15 +1,15 @@
 ﻿using k8s;
 using k8s.Models;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatcher.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 
-namespace TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatcher;
+namespace TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers;
 
 public class KubernetesEventDispatcher<TKubernetesObject, TBackgroundQueue>(
     IEnumerable<IKubernetesEventProcessor<TKubernetesObject>> services,
     TBackgroundQueue backgroundQueue,
-    ILogger<KubernetesEventDispatcher<TKubernetesObject, TBackgroundQueue>> logger)
+    ILogger<KubernetesEventDispatcher<TKubernetesObject, TBackgroundQueue>> logger) : IKubernetesEventDispatcher<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
     where TBackgroundQueue : IKubernetesBackgroundQueue<TKubernetesObject>
 {
@@ -28,7 +28,7 @@ public class KubernetesEventDispatcher<TKubernetesObject, TBackgroundQueue>(
         logger.LogInformation("KubernetesEventDispatcher for {kubernetesObjectType} is starting.", typeof(TKubernetesObject).Name);
         dispatcherQueueProcessor = ProcessChannelMessages(cancellationToken);
     }
-    
+
     protected virtual async Task ProcessChannelMessages(CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
