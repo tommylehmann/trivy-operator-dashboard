@@ -1,72 +1,51 @@
-﻿using TrivyOperator.Dashboard.Application.Services.Alerts;
+﻿using k8s;
+using k8s.Models;
+using TrivyOperator.Dashboard.Application.Services.Alerts;
 using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.WatcherStates.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.WatcherStates;
 
-
-// TODO: unify WathcerState and CacheRefresh with a base class
-public class WatcherState(
-    IBackgroundQueue<WatcherStateInfo> backgroundQueue,
+public class WatcherState<TKubernetesObject>(
     IConcurrentCache<string, WatcherStateInfo> cache,
     IAlertsService alertService,
-    ILogger<WatcherState> logger) : IWatcherState
+    ILogger<WatcherState<TKubernetesObject>> logger) 
+    : IKubernetesEventProcessor<TKubernetesObject>
+    where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
 {
-    protected Task? WatcherStateTask;
-
-    public void StartEventsProcessing(CancellationToken cancellationToken)
+    public async Task ProcessKubernetesEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
-        if (IsQueueProcessingStarted())
+        WatcherStateInfo watcherStateInfo = new()
         {
-            logger.LogWarning("Processing for WatcherStates already started. Ignoring...");
-            return;
-        }
+            WatchedKubernetesObjectType = typeof(TKubernetesObject),
+            WatcherKey = watcherEvent.WatcherKey,
+            Status = WatcherStateStatus.Green,
+            LastException = watcherEvent.Exception,
+        };
 
-        logger.LogInformation("WatcherState is starting.");
-        WatcherStateTask = ProcessChannelMessages(cancellationToken);
+        await ProcessChannelMessages(watcherStateInfo, cancellationToken);
     }
 
-    public bool IsQueueProcessingStarted() => WatcherStateTask is not null; // TODO: check for other task states
-
-    protected async Task ProcessChannelMessages(CancellationToken cancellationToken)
+    protected async Task ProcessChannelMessages(WatcherStateInfo watcherStateInfo, CancellationToken cancellationToken)
     {
-        while (!cancellationToken.IsCancellationRequested)
+        logger.LogDebug(
+            "Sending to Queue - {kubernetesObjectType} - WatchState - {watcherKey}",
+            watcherStateInfo?.WatchedKubernetesObjectType.Name,
+            watcherStateInfo?.WatcherKey);
+        switch (watcherStateInfo?.Status)
         {
-            try
-            {
-                WatcherStateInfo? watcherStateInfo = await backgroundQueue.DequeueAsync(cancellationToken);
-                logger.LogDebug(
-                    "Sending to Queue - {kubernetesObjectType} - WatchState - {watcherKey}",
-                    watcherStateInfo?.WatchedKubernetesObjectType.Name,
-                    watcherStateInfo?.WatcherKey);
-                switch (watcherStateInfo?.Status)
-                {
-                    case WatcherStateStatus.Red:
-                    case WatcherStateStatus.Yellow:
-                    case WatcherStateStatus.Green:
-                    case WatcherStateStatus.Unknown:
-                        await ProcessAddEvent(watcherStateInfo, cancellationToken);
-                        break;
-                    case WatcherStateStatus.Deleted:
-                        await ProcessDeleteEvent(watcherStateInfo);
-                        break;
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // Prevent throwing if stoppingToken was signaled
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(
-                    ex,
-                    "Error processing event for Watcher State.");
-                await Task.Delay(1000, cancellationToken);
-            }
-            
+            case WatcherStateStatus.Red:
+            case WatcherStateStatus.Yellow:
+            case WatcherStateStatus.Green:
+            case WatcherStateStatus.Unknown:
+                await ProcessAddEvent(watcherStateInfo, cancellationToken);
+                break;
+            case WatcherStateStatus.Deleted:
+                await ProcessDeleteEvent(watcherStateInfo);
+                break;
         }
     }
 
@@ -122,4 +101,5 @@ public class WatcherState(
     private readonly string alertEmitter = "Watcher";
     private static string GetCacheKey(WatcherStateInfo watcherStateInfo) =>
         $"{watcherStateInfo.WatchedKubernetesObjectType.Name}|{watcherStateInfo.WatcherKey}";
+    
 }

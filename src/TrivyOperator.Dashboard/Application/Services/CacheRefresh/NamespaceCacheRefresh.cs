@@ -1,5 +1,5 @@
 ﻿using k8s.Models;
-using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Utils;
@@ -8,7 +8,7 @@ namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh;
 
 public class NamespaceCacheRefresh(
     IListConcurrentCache<V1Namespace> cache,
-    IEnumerable<INamespacedCacheWatcherEventHandler> services,
+    IEnumerable<INamespacedKubernetesEventCoordinator> services,
     ILogger<NamespaceCacheRefresh> logger)
     : CacheRefresh<V1Namespace>(cache, logger)
 {
@@ -17,7 +17,7 @@ public class NamespaceCacheRefresh(
         CancellationToken cancellationToken)
     {
         base.ProcessAddEvent(watcherEvent, cancellationToken);
-        foreach (INamespacedCacheWatcherEventHandler service in services)
+        foreach (INamespacedKubernetesEventCoordinator service in services)
         {
             service.Start(cancellationToken, watcherEvent.KubernetesObject.Metadata.Name);
         }

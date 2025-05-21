@@ -24,4 +24,18 @@ try {
 } catch (error) {
   console.error('Failed to update tailwindcss-primeui/package.json:', error);
 }
-   ```
+```
+
+```c#
+public interface IInterface1 { }
+public interface IInterface2 { }
+
+public class MyClass : IInterface1, IInterface2 { }
+
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSingleton<MyClass>(); // Register the class itself
+    services.AddSingleton<IInterface1>(sp => sp.GetRequiredService<MyClass>());
+    services.AddSingleton<IInterface2>(sp => sp.GetRequiredService<MyClass>());
+}
+```

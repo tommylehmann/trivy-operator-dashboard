@@ -1,19 +1,19 @@
 ﻿using k8s;
 using k8s.Models;
-using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
-namespace TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers;
+namespace TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators;
 
 public class
-    CacheWatcherEventHandler<TKubernetesEventDispatcher, TKubernetesWatcher, TKubernetesObject>(
+    KubernetesEventCoordinator<TKubernetesEventDispatcher, TKubernetesWatcher, TKubernetesObject>(
         TKubernetesEventDispatcher kubernetesEventDispatcher,
         TKubernetesWatcher kubernetesWatcher,
-        ILogger<CacheWatcherEventHandler<TKubernetesEventDispatcher, TKubernetesWatcher,
+        ILogger<KubernetesEventCoordinator<TKubernetesEventDispatcher, TKubernetesWatcher,
             TKubernetesObject>> logger)
-    : ICacheWatcherEventHandler
+    : IKubernetesEventCoordinator
     where TKubernetesEventDispatcher : IKubernetesEventDispatcher<TKubernetesObject>
     where TKubernetesWatcher : IKubernetesWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>
@@ -21,7 +21,7 @@ public class
     protected readonly TKubernetesEventDispatcher KubernetesEventDispatcher = kubernetesEventDispatcher;
     protected readonly TKubernetesWatcher KubernetesWatcher = kubernetesWatcher;
 
-    protected readonly ILogger<CacheWatcherEventHandler<TKubernetesEventDispatcher, TKubernetesWatcher,
+    protected readonly ILogger<KubernetesEventCoordinator<TKubernetesEventDispatcher, TKubernetesWatcher,
             TKubernetesObject>> Logger = logger;
 
     public void Start(

@@ -1,11 +1,9 @@
-﻿using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.WatcherStates.Abstractions;
+﻿using TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services;
 
 public class CacheWatcherEventHandlerHostedService(
-    IEnumerable<IClusterScopedCacheWatcherEventHandler> services,
-    IWatcherState watcherState,
+    IEnumerable<IClusterScopedKubernetesEventCoordinator> services,
     ILogger<CacheWatcherEventHandlerHostedService> logger) : BackgroundService
 {
     public override async Task StopAsync(CancellationToken stoppingToken)
@@ -17,8 +15,7 @@ public class CacheWatcherEventHandlerHostedService(
     protected override Task ExecuteAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Kubernetes Watcher Hosted Service started.");
-        watcherState.StartEventsProcessing(cancellationToken);
-        foreach (IClusterScopedCacheWatcherEventHandler service in services)
+        foreach (IClusterScopedKubernetesEventCoordinator service in services)
         {
             service.Start(cancellationToken);
         }

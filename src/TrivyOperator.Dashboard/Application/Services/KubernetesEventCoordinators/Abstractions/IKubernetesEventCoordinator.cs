@@ -2,9 +2,9 @@
 using k8s.Models;
 using TrivyOperator.Dashboard.Utils;
 
-namespace TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
+namespace TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators.Abstractions;
 
-public interface ICacheWatcherEventHandler
+public interface IKubernetesEventCoordinator
 {
     void Start(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey);
 }

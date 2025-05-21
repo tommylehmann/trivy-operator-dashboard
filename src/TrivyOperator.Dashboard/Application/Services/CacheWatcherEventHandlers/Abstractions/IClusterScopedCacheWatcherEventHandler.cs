@@ -1,3 +1,0 @@
-﻿namespace TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
-
-public interface IClusterScopedCacheWatcherEventHandler : ICacheWatcherEventHandler;

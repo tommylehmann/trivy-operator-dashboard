@@ -1,20 +1,20 @@
 ﻿using k8s;
 using k8s.Models;
-using TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
-namespace TrivyOperator.Dashboard.Application.Services.CacheWatcherEventHandlers;
+namespace TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators;
 
 public class
-    NamespacedCacheWatcherEventHandler<TKubernetesEventDispatcher, TKubernetesWatcher, TKubernetesObject>(
+    NamespacedKubernetesEventCoordinator<TKubernetesEventDispatcher, TKubernetesWatcher, TKubernetesObject>(
         TKubernetesEventDispatcher kubernetesEventDispatcher,
         TKubernetesWatcher kubernetesWatcher,
-        ILogger<NamespacedCacheWatcherEventHandler<TKubernetesEventDispatcher, TKubernetesWatcher,
+        ILogger<NamespacedKubernetesEventCoordinator<TKubernetesEventDispatcher, TKubernetesWatcher,
             TKubernetesObject>> logger)
-    : CacheWatcherEventHandler<TKubernetesEventDispatcher, TKubernetesWatcher,
+    : KubernetesEventCoordinator<TKubernetesEventDispatcher, TKubernetesWatcher,
             TKubernetesObject>(kubernetesEventDispatcher, kubernetesWatcher, logger),
-        INamespacedCacheWatcherEventHandler
+        INamespacedKubernetesEventCoordinator
     where TKubernetesEventDispatcher : IKubernetesEventDispatcher<TKubernetesObject>
     where TKubernetesWatcher : INamespacedWatcher<TKubernetesObject>
     where TKubernetesObject : class, IKubernetesObject<V1ObjectMeta>
