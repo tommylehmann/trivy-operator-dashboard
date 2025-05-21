@@ -39,7 +39,10 @@ public class KubernetesEventDispatcher<TKubernetesObject, TBackgroundQueue>(
 
                 if (watcherEvent is null)
                 {
-                    logger.LogWarning("Received null watcher event. Ignoring...");
+                    if(!cancellationToken.IsCancellationRequested)
+                    {
+                        logger.LogWarning("Received null watcher event. Ignoring...");
+                    }
                     continue;
                 }
                 try

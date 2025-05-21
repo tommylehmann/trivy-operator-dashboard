@@ -4,10 +4,8 @@ using k8s.Models;
 using Microsoft.Extensions.Options;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
-using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
@@ -17,14 +15,12 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     INamespacedResourceWatchDomainService<TKubernetesObject, TKubernetesObjectList>
         namespacedResourceWatchDomainService,
     TBackgroundQueue backgroundQueue,
-    IBackgroundQueue<WatcherStateInfo> backgroundQueueWatcherState,
     IOptions<WatchersOptions> options,
     IMetricsService metricsService,
     ILogger<NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>>
         logger)
     : KubernetesWatcher<TKubernetesObjectList, TKubernetesObject, TBackgroundQueue, TKubernetesWatcherEvent>(
         backgroundQueue,
-        backgroundQueueWatcherState,
         options,
         metricsService,
         logger), INamespacedWatcher<TKubernetesObject>
@@ -53,22 +49,6 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
         lastResourceVersion,
         GetWatcherRandomTimeout(),
         cancellationToken);
-
-    protected override async Task EnqueueWatcherEventWithError(string watcherKey)
-    {
-        TKubernetesObject kubernetesObject = new()
-        {
-            Metadata = new V1ObjectMeta
-            {
-                Name = "fakeObject",
-                NamespaceProperty = watcherKey,
-            },
-        };
-        TKubernetesWatcherEvent watcherEvent =
-            new() { KubernetesObject = kubernetesObject, WatcherEventType = WatcherEventType.Error };
-
-        await BackgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);
-    }
 
     protected override async Task<TKubernetesObjectList> GetInitialResources(
         string watcherKey,

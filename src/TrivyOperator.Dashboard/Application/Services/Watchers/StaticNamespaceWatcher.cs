@@ -24,7 +24,7 @@ public class StaticNamespaceWatcher(
                 WatcherEventType = WatcherEventType.Added,
             };
 
-            await backgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent);
+            await backgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent, cancellationToken);
         }
     }
 

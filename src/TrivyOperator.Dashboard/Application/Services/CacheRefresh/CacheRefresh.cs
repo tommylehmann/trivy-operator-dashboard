@@ -33,7 +33,7 @@ public class CacheRefresh<TKubernetesObject>(
             case WatcherEventType.Modified:
                 ProcessModifiedEvent(watcherEvent, cancellationToken);
                 break;
-            case WatcherEventType.Init:
+            case WatcherEventType.Initialized:
                 await ProcessInitEvent(watcherEvent, cancellationToken);
                 break;
             case WatcherEventType.Unknown:

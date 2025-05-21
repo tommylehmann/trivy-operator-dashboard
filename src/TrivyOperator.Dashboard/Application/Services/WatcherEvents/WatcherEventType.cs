@@ -4,17 +4,19 @@ namespace TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 
 public enum WatcherEventType
 {
-    Init,
+    Initialized,
     Added,
     Modified,
     Deleted,
     Error,
+    Bookmark,
+    Flushed,
     Unknown,
 }
 
 public static class WatchEventTypeExtensions
 {
-    public static WatcherEventType ToWatcherEventType(this WatchEventType watchEvent)
+    public static WatcherEventType ToWatcherEvent(this WatchEventType watchEvent)
     {
         return watchEvent switch
         {
@@ -22,6 +24,7 @@ public static class WatchEventTypeExtensions
             WatchEventType.Modified => WatcherEventType.Modified,
             WatchEventType.Deleted => WatcherEventType.Deleted,
             WatchEventType.Error => WatcherEventType.Error,
+            WatchEventType.Bookmark => WatcherEventType.Bookmark,
             _ => WatcherEventType.Unknown // Handle Bookmark or any unexpected values
         };
     }

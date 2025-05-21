@@ -70,18 +70,11 @@ public static class BuilderServicesExtensions
         services.AddSingleton<IKubernetesBackgroundQueue<V1Namespace>, KubernetesBackgroundQueue<V1Namespace>>();
         if (string.IsNullOrWhiteSpace(kubernetesConfiguration.GetValue<string>("NamespaceList")))
         {
-            services.AddSingleton<NamespaceDomainService>(); // Register the class itself
+            services.AddSingleton<NamespaceDomainService>();
             services.AddSingleton<IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList>>(
                 sp => sp.GetRequiredService<NamespaceDomainService>());
             services.AddSingleton<IClusterScopedResourceWatchDomainService<V1Namespace, V1NamespaceList>>(
                 sp => sp.GetRequiredService<NamespaceDomainService>());
-            // ex wtf!? - solved above
-            //services
-            //    .AddSingleton<IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList>,
-            //        NamespaceDomainService>();
-            //services
-            //    .AddSingleton<IClusterScopedResourceWatchDomainService<V1Namespace, V1NamespaceList>,
-            //        NamespaceDomainService>();
             services.AddSingleton<IClusterScopedWatcher<V1Namespace>,
                 ClusterScopedWatcher<V1NamespaceList, V1Namespace, IKubernetesBackgroundQueue<V1Namespace>,
                     WatcherEvent<V1Namespace>>>();
@@ -93,7 +86,6 @@ public static class BuilderServicesExtensions
                     StaticNamespaceDomainService>();
             services.AddSingleton<IClusterScopedWatcher<V1Namespace>, StaticNamespaceWatcher>();
         }
-
         
         services.AddSingleton<IClusterScopedKubernetesEventCoordinator,
             ClusterScopedKubernetesEventCoordinator<IKubernetesEventDispatcher<V1Namespace>,

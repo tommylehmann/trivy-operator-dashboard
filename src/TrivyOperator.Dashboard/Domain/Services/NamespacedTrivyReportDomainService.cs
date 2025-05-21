@@ -53,11 +53,15 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
             resourceName,
             cancellationToken ?? CancellationToken.None);
 
-    public override async Task<HttpOperationResponse<CustomResourceList<TKubernetesObject>>> GetResourceWatchList(
+    public override Task<HttpOperationResponse<CustomResourceList<TKubernetesObject>>> GetResourceWatchList(
         string namespaceName,
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null)
+    {
+        try
+        {
+            return KubernetesClientFactory.GetClient()
         .CustomObjects.ListNamespacedCustomObjectWithHttpMessagesAsync<CustomResourceList<TKubernetesObject>>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
@@ -68,4 +72,11 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
             allowWatchBookmarks: true,
             timeoutSeconds: timeoutSeconds,
             cancellationToken: cancellationToken ?? CancellationToken.None);
+        }
+        catch 
+        { }
+
+        var canceledTask = Task.FromCanceled<HttpOperationResponse<CustomResourceList<TKubernetesObject>>>(new CancellationToken(true));
+        return canceledTask;
+    }
 }

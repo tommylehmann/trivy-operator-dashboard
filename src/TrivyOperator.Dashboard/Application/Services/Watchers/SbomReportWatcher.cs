@@ -2,7 +2,6 @@
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
-using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
@@ -14,13 +13,12 @@ public class SbomReportWatcher(
     INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>>
         namespacedResourceWatchDomainService,
     IKubernetesBackgroundQueue<SbomReportCr> backgroundQueue,
-    IBackgroundQueue<WatcherStateInfo> backgroundQueueWatcherState,
     IOptions<WatchersOptions> options,
     IMetricsService metricsService,
     ILogger<SbomReportWatcher> logger)
     : NamespacedWatcher<CustomResourceList<SbomReportCr>, SbomReportCr, IKubernetesBackgroundQueue<SbomReportCr>,
         WatcherEvent<SbomReportCr>>(namespacedResourceWatchDomainService, backgroundQueue,
-            backgroundQueueWatcherState, options, metricsService, logger)
+            options, metricsService, logger)
 {
     protected override void ProcessReceivedKubernetesObject(SbomReportCr kubernetesObject)
     {
