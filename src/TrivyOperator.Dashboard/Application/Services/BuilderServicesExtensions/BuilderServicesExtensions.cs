@@ -57,6 +57,7 @@ using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers;
+using TrivyOperator.Dashboard.Application.WatcherStateAlertRefreshers;
 
 namespace TrivyOperator.Dashboard.Application.Services.BuilderServicesExtensions;
 
@@ -94,6 +95,7 @@ public static class BuilderServicesExtensions
             KubernetesEventDispatcher<V1Namespace, IKubernetesBackgroundQueue<V1Namespace>>>();
         services.AddSingleton<IKubernetesEventProcessor<V1Namespace>, NamespaceCacheRefresh>();
         services.AddSingleton<IKubernetesEventProcessor<V1Namespace>, WatcherState<V1Namespace>>();
+        services.AddSingleton<IKubernetesEventProcessor<V1Namespace>, WatcherStateAlertRefresh<V1Namespace>>();
         services.AddScoped<INamespaceService, NamespaceService>();
         
     }
@@ -153,6 +155,7 @@ public static class BuilderServicesExtensions
             KubernetesEventDispatcher<ConfigAuditReportCr, IKubernetesBackgroundQueue<ConfigAuditReportCr>>>();
         services.AddSingleton<IKubernetesEventProcessor<ConfigAuditReportCr>, CacheRefresh<ConfigAuditReportCr>>();
         services.AddSingleton<IKubernetesEventProcessor<ConfigAuditReportCr>, WatcherState<ConfigAuditReportCr>>();
+        services.AddSingleton<IKubernetesEventProcessor<ConfigAuditReportCr>, WatcherStateAlertRefresh<ConfigAuditReportCr>>();
         services.AddScoped<IConfigAuditReportService, ConfigAuditReportService>();
     }
 
@@ -181,6 +184,7 @@ public static class BuilderServicesExtensions
             KubernetesEventDispatcher<ExposedSecretReportCr, IKubernetesBackgroundQueue<ExposedSecretReportCr>>>();
         services.AddSingleton<IKubernetesEventProcessor<ExposedSecretReportCr>, CacheRefresh<ExposedSecretReportCr>>();
         services.AddSingleton<IKubernetesEventProcessor<ExposedSecretReportCr>, WatcherState<ExposedSecretReportCr>>();
+        services.AddSingleton<IKubernetesEventProcessor<ExposedSecretReportCr>, WatcherStateAlertRefresh<ExposedSecretReportCr>>();
         services.AddScoped<IExposedSecretReportService, ExposedSecretReportService>();
     }
 
@@ -209,6 +213,7 @@ public static class BuilderServicesExtensions
             KubernetesEventDispatcher<VulnerabilityReportCr, IKubernetesBackgroundQueue<VulnerabilityReportCr>>>();
         services.AddSingleton<IKubernetesEventProcessor<VulnerabilityReportCr>, CacheRefresh<VulnerabilityReportCr>>();
         services.AddSingleton<IKubernetesEventProcessor<VulnerabilityReportCr>, WatcherState<VulnerabilityReportCr>>();
+        services.AddSingleton<IKubernetesEventProcessor<VulnerabilityReportCr>, WatcherStateAlertRefresh<VulnerabilityReportCr>>();
         services.AddScoped<IVulnerabilityReportService, VulnerabilityReportService>();
     }
 
@@ -239,6 +244,7 @@ public static class BuilderServicesExtensions
             KubernetesEventDispatcher<ClusterComplianceReportCr, IKubernetesBackgroundQueue<ClusterComplianceReportCr>>>();
         services.AddSingleton<IKubernetesEventProcessor<ClusterComplianceReportCr>, CacheRefresh<ClusterComplianceReportCr>>();
         services.AddSingleton<IKubernetesEventProcessor<ClusterComplianceReportCr>, WatcherState<ClusterComplianceReportCr>>();
+        services.AddSingleton<IKubernetesEventProcessor<ClusterComplianceReportCr>, WatcherStateAlertRefresh<ClusterComplianceReportCr>>();
         services.AddScoped<IClusterComplianceReportService, ClusterComplianceReportService>();
     }
 
@@ -270,6 +276,7 @@ public static class BuilderServicesExtensions
             KubernetesEventDispatcher<ClusterVulnerabilityReportCr, IKubernetesBackgroundQueue<ClusterVulnerabilityReportCr>>>();
         services.AddSingleton<IKubernetesEventProcessor<ClusterVulnerabilityReportCr>, CacheRefresh<ClusterVulnerabilityReportCr>>();
         services.AddSingleton<IKubernetesEventProcessor<ClusterVulnerabilityReportCr>, WatcherState<ClusterVulnerabilityReportCr>>();
+        services.AddSingleton<IKubernetesEventProcessor<ClusterVulnerabilityReportCr>, WatcherStateAlertRefresh<ClusterVulnerabilityReportCr>>();
         services.AddScoped<IClusterVulnerabilityReportService, ClusterVulnerabilityReportService>();
     }
 
@@ -299,6 +306,7 @@ public static class BuilderServicesExtensions
             KubernetesEventDispatcher<RbacAssessmentReportCr, IKubernetesBackgroundQueue<RbacAssessmentReportCr>>>();
         services.AddSingleton<IKubernetesEventProcessor<RbacAssessmentReportCr>, CacheRefresh<RbacAssessmentReportCr>>();
         services.AddSingleton<IKubernetesEventProcessor<RbacAssessmentReportCr>, WatcherState<RbacAssessmentReportCr>>();
+        services.AddSingleton<IKubernetesEventProcessor<RbacAssessmentReportCr>, WatcherStateAlertRefresh<RbacAssessmentReportCr>>();
         services.AddScoped<IRbacAssessmentReportService, RbacAssessmentReportService>();
     }
 
@@ -326,6 +334,7 @@ public static class BuilderServicesExtensions
             KubernetesEventDispatcher<SbomReportCr, IKubernetesBackgroundQueue<SbomReportCr>>>();
         services.AddSingleton<IKubernetesEventProcessor<SbomReportCr>, CacheRefresh<SbomReportCr>>();
         services.AddSingleton<IKubernetesEventProcessor<SbomReportCr>, WatcherState<SbomReportCr>>();
+        services.AddSingleton<IKubernetesEventProcessor<SbomReportCr>, WatcherStateAlertRefresh<SbomReportCr>>();
         services.AddScoped<ISbomReportService, SbomReportService>();
     }
 
@@ -333,7 +342,7 @@ public static class BuilderServicesExtensions
     {
         
         services.AddSingleton<IConcurrentCache<string, WatcherStateInfo>, ConcurrentCache<string, WatcherStateInfo>>();
-        services.AddSingleton<IBackgroundQueue<WatcherStateInfo>, BackgroundQueue<WatcherStateInfo>>();
+        //services.AddSingleton<IBackgroundQueue<WatcherStateInfo>, BackgroundQueue<WatcherStateInfo>>();
         services.AddScoped<IWatcherStateInfoService, WatcherStateInfoService>();
     }
 

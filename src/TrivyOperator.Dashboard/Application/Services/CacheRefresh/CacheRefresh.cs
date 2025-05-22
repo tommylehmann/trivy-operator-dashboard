@@ -28,6 +28,7 @@ public class CacheRefresh<TKubernetesObject>(
                 await ProcessDeleteEvent(watcherEvent, cancellationToken);
                 break;
             case WatcherEventType.Error:
+            case WatcherEventType.Flushed:
                 ProcessErrorEvent(watcherEvent);
                 break;
             case WatcherEventType.Modified:
@@ -37,10 +38,8 @@ public class CacheRefresh<TKubernetesObject>(
                 await ProcessInitEvent(watcherEvent, cancellationToken);
                 break;
             case WatcherEventType.Unknown:
-                logger.LogWarning(
-                    "Unknown event type {eventType} for {kubernetesObjectType}.",
-                    watcherEvent.WatcherEventType,
-                    typeof(TKubernetesObject).Name);
+                logger.LogWarning("Unknown event type {eventType} for {kubernetesObjectType}.",
+                    watcherEvent.WatcherEventType, typeof(TKubernetesObject).Name);
                 break;
             default:
                 break;
@@ -51,15 +50,20 @@ public class CacheRefresh<TKubernetesObject>(
         IWatcherEvent<TKubernetesObject> watcherEvent,
         CancellationToken cancellationToken)
     {
-        string watcherKey = VarUtils.GetCacheRefreshKey(watcherEvent.KubernetesObject);
+        if (watcherEvent.KubernetesObject == null)
+        {
+            logger.LogWarning("ProcessAddEvent - KubernetesObject is null for {watcherKey} {kubernetesObjectType}. Ignoring", 
+                watcherEvent.WatcherKey, typeof(TKubernetesObject).Name);
+            return;
+        }
 
         logger.LogDebug(
             "ProcessAddEvent - {kubernetesObjectType} - {watcherKey} - {kubernetesObjectName}",
             typeof(TKubernetesObject).Name,
-            watcherKey,
+            watcherEvent.WatcherKey,
             watcherEvent.KubernetesObject.Metadata.Name);
 
-        if (cache.TryGetValue(watcherKey, out IList<TKubernetesObject>? kubernetesObjects))
+        if (cache.TryGetValue(watcherEvent.WatcherKey, out IList<TKubernetesObject>? kubernetesObjects))
         {
             IList<TKubernetesObject> existingKubernetesObjects =
                 kubernetesObjects.Where(x => x.Name() == watcherEvent.KubernetesObject.Name()).ToList() ?? [];
@@ -72,21 +76,26 @@ public class CacheRefresh<TKubernetesObject>(
         }
         else // first time, the cache is really empty
         {
-            cache.TryAdd(watcherKey, [watcherEvent.KubernetesObject]);
+            cache.TryAdd(watcherEvent.WatcherKey, [watcherEvent.KubernetesObject]);
         }
     }
 
     protected virtual Task ProcessDeleteEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
-        string watcherKey = VarUtils.GetCacheRefreshKey(watcherEvent.KubernetesObject);
+        if (watcherEvent.KubernetesObject == null)
+        {
+            logger.LogWarning("ProcessDeleteEvent - KubernetesObject is null for {watcherKey} {kubernetesObjectType}. Ignoring", 
+                watcherEvent.WatcherKey, typeof(TKubernetesObject).Name);
+            return Task.CompletedTask;
+        }
 
         logger.LogDebug(
             "ProcessDeleteEvent - {kubernetesObjectType} - {watcherKey} - {kubernetesObjectName}",
             typeof(TKubernetesObject).Name,
-            watcherKey,
+            watcherEvent.WatcherKey,
             watcherEvent.KubernetesObject.Metadata.Name);
 
-        if (cache.TryGetValue(watcherKey, out IList<TKubernetesObject>? kubernetesObjects))
+        if (cache.TryGetValue(watcherEvent.WatcherKey, out IList<TKubernetesObject>? kubernetesObjects))
         {
             IList<TKubernetesObject> existingKubernetesObjects =
                 kubernetesObjects.Where(x => x.Name() == watcherEvent.KubernetesObject.Name()).ToList() ?? [];
@@ -120,6 +129,4 @@ public class CacheRefresh<TKubernetesObject>(
     {
         return Task.CompletedTask;
     }
-
-    
 }

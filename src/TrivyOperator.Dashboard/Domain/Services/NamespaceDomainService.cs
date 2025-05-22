@@ -8,8 +8,7 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 namespace TrivyOperator.Dashboard.Domain.Services;
 
 public class NamespaceDomainService(
-    IKubernetesClientFactory kubernetesClientFactory,
-    ILogger<NamespaceDomainService> logger)
+    IKubernetesClientFactory kubernetesClientFactory)
     : ClusterScopedResourceDomainService<V1Namespace, V1NamespaceList>(kubernetesClientFactory)
 {
     public override Task<V1Namespace> GetResource(

@@ -16,6 +16,13 @@ public class NamespaceCacheRefresh(
         IWatcherEvent<V1Namespace> watcherEvent,
         CancellationToken cancellationToken)
     {
+        if (watcherEvent.KubernetesObject == null)
+        {
+            logger.LogWarning("ProcessAddEvent - KubernetesObject is null for {watcherKey} - {kubernetesObjectType}. Ignoring",
+                watcherEvent.WatcherKey, typeof(V1Namespace).Name);
+            return;
+        }
+
         base.ProcessAddEvent(watcherEvent, cancellationToken);
         foreach (INamespacedKubernetesEventCoordinator service in services)
         {
@@ -25,6 +32,13 @@ public class NamespaceCacheRefresh(
 
     protected override async Task ProcessDeleteEvent(IWatcherEvent<V1Namespace> watcherEvent, CancellationToken cancellationToken)
     {
+        if (watcherEvent.KubernetesObject == null)
+        {
+            logger.LogWarning("ProcessDeleteEvent - KubernetesObject is null for {watcherKey} - {kubernetesObjectType}. Ignoring",
+                watcherEvent.WatcherKey, typeof(V1Namespace).Name);
+            return;
+        }
+
         await base.ProcessDeleteEvent(watcherEvent, cancellationToken);
         IEnumerable<Task> tasks = services.Select(s => s.Stop(cancellationToken, watcherEvent.KubernetesObject.Metadata.Name));
         await Task.WhenAll(tasks);

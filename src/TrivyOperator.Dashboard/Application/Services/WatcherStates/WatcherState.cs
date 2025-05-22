@@ -1,105 +1,81 @@
 ﻿using k8s;
 using k8s.Models;
-using TrivyOperator.Dashboard.Application.Services.Alerts;
 using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
-using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.WatcherStates;
 
 public class WatcherState<TKubernetesObject>(
     IConcurrentCache<string, WatcherStateInfo> cache,
-    IAlertsService alertService,
     ILogger<WatcherState<TKubernetesObject>> logger) 
     : IKubernetesEventProcessor<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
 {
-    public async Task ProcessKubernetesEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
+    public Task ProcessKubernetesEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
+    {
+        switch (watcherEvent.WatcherEventType)
+        {
+            case WatcherEventType.Added:
+            case WatcherEventType.Deleted:
+            case WatcherEventType.Modified:
+            case WatcherEventType.Bookmark:
+                ProcessGreenEvent(watcherEvent, cancellationToken);
+                break;
+            case WatcherEventType.Flushed:
+                ProcessDeleteEvent(watcherEvent, cancellationToken);
+                break;
+            case WatcherEventType.Error:
+                ProcessRedEvent(watcherEvent, cancellationToken);
+                break;
+            case WatcherEventType.Initialized:
+                break;
+            case WatcherEventType.Unknown:
+                logger.LogWarning("{watcherEventType} event type {eventType} for {kubernetesObjectType}.",
+                    watcherEvent.WatcherEventType.ToString(), watcherEvent.WatcherEventType, typeof(TKubernetesObject).Name);
+                break;
+            default:
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private void ProcessGreenEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
         WatcherStateInfo watcherStateInfo = new()
         {
-            WatchedKubernetesObjectType = typeof(TKubernetesObject),
             WatcherKey = watcherEvent.WatcherKey,
+            WatchedKubernetesObjectType = typeof(TKubernetesObject),
+            LastException = null,
+            LastEventMoment = DateTime.UtcNow,
             Status = WatcherStateStatus.Green,
-            LastException = watcherEvent.Exception,
         };
-
-        await ProcessChannelMessages(watcherStateInfo, cancellationToken);
+        
+        cache[GetCacheKey(watcherEvent)] = watcherStateInfo;
     }
 
-    protected async Task ProcessChannelMessages(WatcherStateInfo watcherStateInfo, CancellationToken cancellationToken)
+    private void ProcessRedEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
-        logger.LogDebug(
-            "Sending to Queue - {kubernetesObjectType} - WatchState - {watcherKey}",
-            watcherStateInfo?.WatchedKubernetesObjectType.Name,
-            watcherStateInfo?.WatcherKey);
-        switch (watcherStateInfo?.Status)
+        WatcherStateInfo watcherStateInfo = new()
         {
-            case WatcherStateStatus.Red:
-            case WatcherStateStatus.Yellow:
-            case WatcherStateStatus.Green:
-            case WatcherStateStatus.Unknown:
-                await ProcessAddEvent(watcherStateInfo, cancellationToken);
-                break;
-            case WatcherStateStatus.Deleted:
-                await ProcessDeleteEvent(watcherStateInfo);
-                break;
-        }
+            WatcherKey = watcherEvent.WatcherKey,
+            WatchedKubernetesObjectType = typeof(TKubernetesObject),
+            LastException = watcherEvent.Exception,
+            LastEventMoment = DateTime.UtcNow,
+            Status = WatcherStateStatus.Red,
+        };
+        
+        cache[GetCacheKey(watcherEvent)] = watcherStateInfo;
     }
 
-    private async Task ProcessAddEvent(WatcherStateInfo watcherStateInfo, CancellationToken cancellationToken)
+    private void ProcessDeleteEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
-        string cacheKey = GetCacheKey(watcherStateInfo);
-        cache[cacheKey] = watcherStateInfo;
-        logger.LogDebug("Processing event for {cacherKey} with state {watcherStateStatus}",
-            cacheKey,
-            watcherStateInfo.Status);
-
-        await SetAlert(watcherStateInfo, cancellationToken);
+        cache.TryRemove(GetCacheKey(watcherEvent), out _);
     }
-
-    private ValueTask ProcessDeleteEvent(WatcherStateInfo watcherStateInfo)
-    {
-        cache.TryRemove(GetCacheKey(watcherStateInfo), out _);
-        logger.LogInformation(
-            "Removed WatcherState for {kubernetesObjectType} and key {watcherKey}.",
-            watcherStateInfo.WatchedKubernetesObjectType.Name,
-            watcherStateInfo.WatcherKey);
-        return ValueTask.CompletedTask;
-    }
-
-    private async Task SetAlert(WatcherStateInfo watcherStateInfo, CancellationToken cancellationToken)
-    {
-        if (watcherStateInfo.LastException != null)
-        {
-            string namespaceName = watcherStateInfo.WatcherKey == VarUtils.DefaultCacheRefreshKey ? "n/a" : watcherStateInfo.WatcherKey;
-            await alertService.AddAlert(
-                alertEmitter,
-                new Alert
-                {
-                    EmitterKey = GetCacheKey(watcherStateInfo),
-                    Message =
-                        $"Watcher for {watcherStateInfo.WatchedKubernetesObjectType.Name} and Namespace {namespaceName} failed.",
-                    Severity = watcherStateInfo.Status == WatcherStateStatus.Red ? Severity.Error : Severity.Warning,
-                });
-        }
-        else
-        {
-            await alertService.RemoveAlert(
-                alertEmitter,
-                new Alert
-                {
-                    EmitterKey = GetCacheKey(watcherStateInfo),
-                    Message = string.Empty,
-                    Severity = Severity.Info,
-                });
-        }
-    }
-
-    private readonly string alertEmitter = "Watcher";
-    private static string GetCacheKey(WatcherStateInfo watcherStateInfo) =>
-        $"{watcherStateInfo.WatchedKubernetesObjectType.Name}|{watcherStateInfo.WatcherKey}";
     
+    private static string GetCacheKey(IWatcherEvent<TKubernetesObject> watcherEvent) =>
+        $"{typeof(TKubernetesObject).Name}|{watcherEvent.WatcherKey}";
 }

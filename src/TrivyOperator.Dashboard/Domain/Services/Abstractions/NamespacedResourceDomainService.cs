@@ -15,27 +15,37 @@ public abstract class NamespacedResourceDomainService<TKubernetesObject, TKubern
 {
     public override async Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null)
     {
-        IEnumerable<V1Namespace> v1Namespaces = await namespaceDomainService.GetResources(cancellationToken);
-        List<TKubernetesObject> trivyReports = [];
-        foreach (V1Namespace? v1Namespace in v1Namespaces ?? [])
+        try
         {
-            IList<TKubernetesObject> trivyReportsInNamespace =
-                await GetResources(v1Namespace.Name(), cancellationToken);
-            if (cancellationToken is { IsCancellationRequested: true })
+            IEnumerable<V1Namespace> v1Namespaces = await namespaceDomainService.GetResources(cancellationToken);
+            List<TKubernetesObject> trivyReports = [];
+            foreach (V1Namespace? v1Namespace in v1Namespaces ?? [])
             {
-                return [];
+                IList<TKubernetesObject> trivyReportsInNamespace =
+                    await GetResources(v1Namespace.Name(), cancellationToken);
+                if (cancellationToken is { IsCancellationRequested: true })
+                {
+                    return [];
+                }
+
+                trivyReports.AddRange(trivyReportsInNamespace);
             }
 
-            trivyReports.AddRange(trivyReportsInNamespace);
+            return trivyReports;
         }
-
-        return trivyReports;
+        catch { throw; }
     }
 
     public async Task<IList<TKubernetesObject>> GetResources(
-        string namespaceName,
-        CancellationToken? cancellationToken = null) =>
-        (await GetResourceList(namespaceName, cancellationToken: cancellationToken)).Items;
+        string namespaceName, CancellationToken? cancellationToken = null)
+    {
+        try
+        {
+            TKubernetesObjectList kubernetesObjectList = await GetResourceList(namespaceName, cancellationToken: cancellationToken);
+            return kubernetesObjectList.Items;
+        }
+        catch { throw; }
+    }
 
     public abstract Task<TKubernetesObjectList> GetResourceList(
         string namespaceName,

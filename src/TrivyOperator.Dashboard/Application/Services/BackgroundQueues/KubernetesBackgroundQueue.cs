@@ -19,7 +19,7 @@ public class KubernetesBackgroundQueue<TKubernetesObject>(IOptions<BackgroundQue
             "Queueing Event {watcherEventType} - {kubernetesObjectType} - {kubernetesObjectName}",
             enqueuedObject.WatcherEventType,
             typeof(TKubernetesObject).Name,
-            enqueuedObject.KubernetesObject.Metadata?.Name);
+            enqueuedObject.KubernetesObject?.Metadata?.Name);
     }
     protected override void LogDequeue(IWatcherEvent<TKubernetesObject> dequeuedObject)
     {
@@ -27,6 +27,6 @@ public class KubernetesBackgroundQueue<TKubernetesObject>(IOptions<BackgroundQue
             "Queueing Event {watcherEventType} - {kubernetesObjectType} - {kubernetesObjectName}",
             dequeuedObject.WatcherEventType,
             typeof(TKubernetesObject).Name,
-            dequeuedObject.KubernetesObject.Metadata?.Name);
+            dequeuedObject.KubernetesObject?.Metadata?.Name);
     }
 }

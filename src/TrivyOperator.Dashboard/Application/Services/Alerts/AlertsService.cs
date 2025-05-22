@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using System.Linq;
 using TrivyOperator.Dashboard.Application.Hubs;
 using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
@@ -12,7 +11,7 @@ public class AlertsService(
     IHubContext<AlertsHub> alertsHubContext,
     ILogger<AlertsService> logger) : IAlertsService
 {
-    public async Task AddAlert(string emitter, Alert alert)
+    public async Task AddAlert(string emitter, Alert alert, CancellationToken cancellationToken)
     {
         cache.TryGetValue(emitter, out IList<Alert>? alerts);
         if (alerts != null && alerts.Where(x => x.EmitterKey == alert.EmitterKey).Any())
@@ -31,7 +30,7 @@ public class AlertsService(
             alerts.Add(alert);
         }
 
-        await alertsHubContext.Clients.All.SendAsync("ReceiveAddedAlert", alert.ToAlertDto(emitter));
+        await alertsHubContext.Clients.All.SendAsync("ReceiveAddedAlert", alert.ToAlertDto(emitter), cancellationToken);
 
         logger.LogDebug("Added alert for {emitter} and {emitterKey} with severity {alertSeverity}.",
             emitter,
@@ -39,7 +38,7 @@ public class AlertsService(
             alert.Severity);
     }
 
-    public async Task RemoveAlert(string emitter, Alert alert)
+    public async Task RemoveAlert(string emitter, Alert alert, CancellationToken cancellationToken)
     {
         cache.TryGetValue(emitter, out IList<Alert>? alerts);
         if (alerts != null)
@@ -50,7 +49,7 @@ public class AlertsService(
             }
         }
 
-        await alertsHubContext.Clients.All.SendAsync("ReceiveRemovedAlert", alert.ToAlertDto(emitter));
+        await alertsHubContext.Clients.All.SendAsync("ReceiveRemovedAlert", alert.ToAlertDto(emitter), cancellationToken);
 
         logger.LogDebug($"Removed alert for {emitter} and {alert.EmitterKey}.");
     }

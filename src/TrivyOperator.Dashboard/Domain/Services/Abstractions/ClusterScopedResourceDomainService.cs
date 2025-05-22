@@ -13,8 +13,15 @@ public abstract class
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>, IMetadata<V1ObjectMeta>
     where TKubernetesObjectList : IKubernetesObject<V1ListMeta>, IItems<TKubernetesObject>
 {
-    public override async Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null) =>
-        (await GetResourceList(cancellationToken: cancellationToken)).Items;
+    public override async Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null)
+    {
+        try
+        {
+            TKubernetesObjectList kubernetesObjectList = await GetResourceList(cancellationToken: cancellationToken);
+            return kubernetesObjectList.Items;
+        }
+        catch { throw; }
+    }
 
     public abstract Task<TKubernetesObjectList> GetResourceList(
         int? pageLimit = null,
