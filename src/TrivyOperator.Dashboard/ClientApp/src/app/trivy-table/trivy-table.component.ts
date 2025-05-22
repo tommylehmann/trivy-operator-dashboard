@@ -367,6 +367,14 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.multiHeaderActionRequested.emit(actionLabel);
   }
   multiHeaderActionItems: MenuItem[] = [];
+
+  onRowsChange(event: number) {
+    if (event > 0) {
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+    }
+  }
   // #endregion
 
 

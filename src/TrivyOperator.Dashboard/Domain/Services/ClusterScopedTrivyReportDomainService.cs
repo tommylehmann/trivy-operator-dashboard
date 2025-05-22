@@ -24,10 +24,10 @@ public class ClusterScopedTrivyReportDomainService<TKubernetesObject>(
         }
     }
 
-    public override async Task<CustomResourceList<TKubernetesObject>> GetResourceList(
+    public override Task<CustomResourceList<TKubernetesObject>> GetResourceList(
         int? pageLimit = null,
         string? continueToken = null,
-        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => KubernetesClientFactory.GetClient()
         .ListClusterCustomObjectAsync<CustomResourceList<TKubernetesObject>>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
@@ -36,8 +36,8 @@ public class ClusterScopedTrivyReportDomainService<TKubernetesObject>(
             continueParameter: continueToken,
             cancellationToken: cancellationToken ?? CancellationToken.None);
 
-    public override async Task<TKubernetesObject>
-        GetResource(string resourceName, CancellationToken? cancellationToken = null) => await KubernetesClientFactory
+    public override Task<TKubernetesObject>
+        GetResource(string resourceName, CancellationToken? cancellationToken = null) => KubernetesClientFactory
         .GetClient()
         .CustomObjects.GetClusterCustomObjectAsync<TKubernetesObject>(
             TrivyReportCrd.Group,
@@ -46,10 +46,10 @@ public class ClusterScopedTrivyReportDomainService<TKubernetesObject>(
             resourceName,
             cancellationToken ?? CancellationToken.None);
 
-    public override async Task<HttpOperationResponse<CustomResourceList<TKubernetesObject>>> GetResourceWatchList(
+    public override Task<HttpOperationResponse<CustomResourceList<TKubernetesObject>>> GetResourceWatchList(
         string? lastResourceVersion = null,
         int? timeoutSeconds = null,
-        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => KubernetesClientFactory.GetClient()
         .CustomObjects.ListClusterCustomObjectWithHttpMessagesAsync<CustomResourceList<TKubernetesObject>>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,

@@ -27,11 +27,11 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
         }
     }
 
-    public override async Task<CustomResourceList<TKubernetesObject>> GetResourceList(
+    public override Task<CustomResourceList<TKubernetesObject>> GetResourceList(
         string namespaceName,
         int? pageLimit = null,
         string? continueToken = null,
-        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => KubernetesClientFactory.GetClient()
         .ListNamespacedCustomObjectAsync<CustomResourceList<TKubernetesObject>>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
@@ -41,10 +41,10 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
             continueParameter: continueToken,
             cancellationToken: cancellationToken ?? CancellationToken.None);
 
-    public override async Task<TKubernetesObject> GetResource(
+    public override Task<TKubernetesObject> GetResource(
         string resourceName,
         string namespaceName,
-        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => KubernetesClientFactory.GetClient()
         .CustomObjects.GetNamespacedCustomObjectAsync<TKubernetesObject>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
@@ -76,6 +76,7 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
         catch 
         { }
 
+        // teoretically, we shouldn.t get here...
         var canceledTask = Task.FromCanceled<HttpOperationResponse<CustomResourceList<TKubernetesObject>>>(new CancellationToken(true));
         return canceledTask;
     }

@@ -12,38 +12,19 @@ public class NamespaceDomainService(
     ILogger<NamespaceDomainService> logger)
     : ClusterScopedResourceDomainService<V1Namespace, V1NamespaceList>(kubernetesClientFactory)
 {
-    public override async Task<V1Namespace> GetResource(
+    public override Task<V1Namespace> GetResource(
         string resourceName,
-        CancellationToken? cancellationToken = null) => await KubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => KubernetesClientFactory.GetClient()
         .CoreV1.ReadNamespaceAsync(resourceName, cancellationToken: cancellationToken ?? CancellationToken.None);
 
-    public override async Task<V1NamespaceList> GetResourceList(
+    public override Task<V1NamespaceList> GetResourceList(
         int? pageLimit = null,
         string? continueToken = null,
-        CancellationToken? cancellationToken = null)
-    {
-        try
-        {
-            return await KubernetesClientFactory.GetClient()
+        CancellationToken? cancellationToken = null) => KubernetesClientFactory.GetClient()
                 .CoreV1.ListNamespaceAsync(
                     limit: pageLimit,
                     continueParameter: continueToken,
                     cancellationToken: cancellationToken ?? CancellationToken.None);
-        }
-        catch (HttpOperationException ex) when (ex.Response.StatusCode == HttpStatusCode.Forbidden)
-        {
-            logger.LogWarning(
-                ex,
-                "Cannot get Kubernetes Namespaces. Forbidden (403). Error: {responseContent}",
-                ex.Response.Content);
-            return new V1NamespaceList { Items = [] };
-        }
-        catch (Exception ex)
-        {
-            logger.LogCritical(ex, "Cannot get Kubernetes Namespaces. Error {exceptionMessage}", ex.Message);
-            throw;
-        }
-    }
 
     public override Task<HttpOperationResponse<V1NamespaceList>> GetResourceWatchList(
         string? lastResourceVersion = null,
