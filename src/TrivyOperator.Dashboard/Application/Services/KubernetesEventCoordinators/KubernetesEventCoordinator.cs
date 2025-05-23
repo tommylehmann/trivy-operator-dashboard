@@ -24,12 +24,12 @@ public class
     protected readonly ILogger<KubernetesEventCoordinator<TKubernetesEventDispatcher, TKubernetesWatcher,
             TKubernetesObject>> Logger = logger;
 
-    public void Start(
+    public async Task Start(
         CancellationToken cancellationToken,
         string watcherKey = VarUtils.DefaultCacheRefreshKey)
     {
         Logger.LogDebug("Adding Watcher for {kubernetesObjectType} - {watcherKey}.", typeof(TKubernetesObject).Name, watcherKey);
-        KubernetesWatcher.Add(cancellationToken, watcherKey);
+        await KubernetesWatcher.Add(cancellationToken, watcherKey);
         if (!KubernetesEventDispatcher.IsQueueProcessingStarted)
         {
             Logger.LogDebug("Adding CacheRefresher for {kubernetesObjectType}.", typeof(TKubernetesObject).Name);

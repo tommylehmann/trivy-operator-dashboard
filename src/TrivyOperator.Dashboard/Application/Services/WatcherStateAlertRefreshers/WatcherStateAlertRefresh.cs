@@ -7,7 +7,7 @@ using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
-namespace TrivyOperator.Dashboard.Application.WatcherStateAlertRefreshers;
+namespace TrivyOperator.Dashboard.Application.Services.WatcherStateAlertRefreshers;
 
 public class WatcherStateAlertRefresh<TKubernetesObject>(
     IAlertsService alertService,
@@ -23,6 +23,7 @@ public class WatcherStateAlertRefresh<TKubernetesObject>(
             case WatcherEventType.Deleted:
             case WatcherEventType.Modified:
             case WatcherEventType.Bookmark:
+            case WatcherEventType.WatcherConnected:
             case WatcherEventType.Flushed:
                 await RemoveAlert(watcherEvent, cancellationToken);
                 break;

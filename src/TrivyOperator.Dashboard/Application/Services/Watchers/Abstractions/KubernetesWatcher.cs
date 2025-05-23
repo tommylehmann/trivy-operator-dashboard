@@ -6,7 +6,6 @@ using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions
 using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
@@ -68,7 +67,23 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
         if (Watchers.TryGetValue(watcherKey, out TaskWithCts taskWithCts))
         {
             taskWithCts.Cts.Cancel();
-            // TODO: do I have to wait for Task.IsCanceled?
+            try
+            {
+                await taskWithCts.Task;
+            }
+            catch (TaskCanceledException)
+            {
+                // Task was cancelled, ignore
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(
+                    ex,
+                    "Watcher for {kubernetesObjectType} and key {watcherKey} crashed on Cts.Cancel() - {exceptionMessage}",
+                    typeof(TKubernetesObject).Name,
+                    watcherKey,
+                    ex.Message);
+            }
             Watchers.Remove(watcherKey);
         }
     }
@@ -133,24 +148,15 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                         if (type == WatchEventType.Bookmark)
                         {
                             lastResourceVersion = item.Metadata.ResourceVersion;
-                            await EnqueueWatcherEvent(watcherKey, type.ToWatcherEvent(), cancellationToken);
-                            logger.LogDebug(
-                                "Bookmark Event - {kubernetesObjectType} - {watcherKey} - Resource Version - {resourceVersion}",
-                                typeof(TKubernetesObject).Name,
-                                watcherKey,
-                                lastResourceVersion);
                         }
-                        else
-                        {
-                            logger.LogInformation(
-                                "Sending to Queue - {kubernetesObjectType} - {kubernetesWatchEvent} - {watcherKey} - {kubernetesObjectName} - {kubernetesObjectResourceVersion}",
-                                typeof(TKubernetesObject).Name,
-                                type.ToString(),
-                                watcherKey,
-                                item.Metadata.Name,
-                                item.Metadata.ResourceVersion);
-                            await EnqueueWatcherEvent(watcherKey, type.ToWatcherEvent(), cancellationToken);
-                        }
+                        logger.LogDebug(
+                            "Sending to Queue - {kubernetesObjectType} - {kubernetesWatchEvent} - {watcherKey} - {kubernetesObjectName} - {kubernetesObjectResourceVersion}",
+                            typeof(TKubernetesObject).Name,
+                            type.ToString(),
+                            watcherKey,
+                            item.Metadata.Name,
+                            item.Metadata.ResourceVersion);
+                        await EnqueueWatcherEvent(watcherKey, type.ToWatcherEvent(), cancellationToken, item);
                     }
 
                     logger.LogDebug(

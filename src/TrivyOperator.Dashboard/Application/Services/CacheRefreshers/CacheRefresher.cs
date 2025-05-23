@@ -6,11 +6,11 @@ using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
-namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh;
+namespace TrivyOperator.Dashboard.Application.Services.CacheRefreshers;
 
-public class CacheRefresh<TKubernetesObject>(
+public class CacheRefresher<TKubernetesObject>(
     IListConcurrentCache<TKubernetesObject> cache,
-    ILogger<CacheRefresh<TKubernetesObject>> logger)
+    ILogger<CacheRefresher<TKubernetesObject>> logger)
     : IKubernetesEventProcessor<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
 {

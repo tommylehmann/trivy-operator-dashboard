@@ -4,13 +4,13 @@ using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
-namespace TrivyOperator.Dashboard.Application.Services.CacheRefresh;
+namespace TrivyOperator.Dashboard.Application.Services.CacheRefreshers;
 
-public class NamespaceCacheRefresh(
+public class NamespaceCacheRefresher(
     IListConcurrentCache<V1Namespace> cache,
     IEnumerable<INamespacedKubernetesEventCoordinator> services,
-    ILogger<NamespaceCacheRefresh> logger)
-    : CacheRefresh<V1Namespace>(cache, logger)
+    ILogger<NamespaceCacheRefresher> logger)
+    : CacheRefresher<V1Namespace>(cache, logger)
 {
     protected override void ProcessAddEvent(
         IWatcherEvent<V1Namespace> watcherEvent,

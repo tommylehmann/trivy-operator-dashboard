@@ -59,9 +59,7 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
         int? timeoutSeconds = null,
         CancellationToken? cancellationToken = null)
     {
-        try
-        {
-            return KubernetesClientFactory.GetClient()
+         return KubernetesClientFactory.GetClient()
         .CustomObjects.ListNamespacedCustomObjectWithHttpMessagesAsync<CustomResourceList<TKubernetesObject>>(
             TrivyReportCrd.Group,
             TrivyReportCrd.Version,
@@ -72,12 +70,5 @@ public class NamespacedTrivyReportDomainService<TKubernetesObject>(
             allowWatchBookmarks: true,
             timeoutSeconds: timeoutSeconds,
             cancellationToken: cancellationToken ?? CancellationToken.None);
-        }
-        catch 
-        { }
-
-        // teoretically, we shouldn.t get here...
-        var canceledTask = Task.FromCanceled<HttpOperationResponse<CustomResourceList<TKubernetesObject>>>(new CancellationToken(true));
-        return canceledTask;
     }
 }

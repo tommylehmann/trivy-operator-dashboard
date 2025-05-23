@@ -10,6 +10,7 @@ public enum WatcherEventType
     Deleted,
     Error,
     Bookmark,
+    WatcherConnected,
     Flushed,
     Unknown,
 }

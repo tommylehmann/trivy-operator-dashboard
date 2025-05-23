@@ -1,6 +1,5 @@
 ﻿using k8s;
 using k8s.Models;
-using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
@@ -22,6 +21,7 @@ public class WatcherState<TKubernetesObject>(
             case WatcherEventType.Deleted:
             case WatcherEventType.Modified:
             case WatcherEventType.Bookmark:
+            case WatcherEventType.WatcherConnected:
                 ProcessGreenEvent(watcherEvent, cancellationToken);
                 break;
             case WatcherEventType.Flushed:
