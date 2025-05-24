@@ -8,23 +8,38 @@
   <p-tabpanels>
     <p-tabpanel value="0">
       <app-home-vulnerability-reports *ngIf="enabledTrivyReports.includes('vr')"
-                                      [showDistinctValues]="showDistinctValues" />
+                                      [showDistinctValues]="showDistinctValues"
+                                      id="home-vr" />
     </p-tabpanel>
     <p-tabpanel value="1">
       <app-home-config-audit-reports *ngIf="enabledTrivyReports.includes('car')"
-                                     [showDistinctValues]="showDistinctValues" />
+                                     [showDistinctValues]="showDistinctValues"
+                                     id="home-car" />
     </p-tabpanel>
     <p-tabpanel value="2">
       <app-home-cluster-rbac-assessment-reports *ngIf="enabledTrivyReports.includes('crar')"
-                                                [showDistinctValues]="showDistinctValues" />
+                                                [showDistinctValues]="showDistinctValues"
+                                                id="home-crar" />
     </p-tabpanel>
     <p-tabpanel value="3">
       <app-home-exposed-secret-reports *ngIf="enabledTrivyReports.includes('esr')"
-                                       [showDistinctValues]="showDistinctValues" />
+                                       [showDistinctValues]="showDistinctValues"
+                                       id="home-esr"/>
     </p-tabpanel>
-    <div class="flex row text-sm items-center pb-1 pt-4">
+    <div class="flex text-sm items-center justify-items-center gap-4 pb-1 pt-2">
+      <p-button
+        icon="pi pi-refresh"
+        label="Refresh Data"
+        raised
+        size="small"
+        class="-mt-1"
+        text
+        (onClick)="onRefreshData()"
+      />
       <p-toggleswitch inputId="distinctSwitch" [(ngModel)]="showDistinctValues" />
-      <label for="switch1" class="ml-2">Distinct values</label>
+      <label for="distinctSwitch" class="">Distinct values</label>
+
     </div>
+
   </p-tabpanels>
 </p-tabs>

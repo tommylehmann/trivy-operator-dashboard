@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { MainAppInitService } from '../services/main-app-init.service';
@@ -10,6 +10,7 @@ import { HomeConfigAuditReportsComponent } from '../home-config-audit-reports/ho
 import { HomeExposedSecretReportsComponent } from '../home-exposed-secret-reports/home-exposed-secret-reports.component';
 import { HomeVulnerabilityReportsComponent } from '../home-vulnerability-reports/home-vulnerability-reports.component';
 
+import { Button, ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
@@ -25,6 +26,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     HomeExposedSecretReportsComponent,
     TabsModule,
     ToggleSwitchModule,
+    Button,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -32,6 +34,11 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 export class HomeComponent implements OnInit {
   enabledTrivyReports: string[] = ['crar', 'car', 'esr', 'vr'];
   tabPageActiveIndex: string = "0";
+
+  @ViewChild(HomeVulnerabilityReportsComponent) homeVr?: HomeVulnerabilityReportsComponent;
+  @ViewChild(HomeConfigAuditReportsComponent) homeCar?: HomeConfigAuditReportsComponent;
+  @ViewChild(HomeClusterRbacAssessmentReportsComponent) homeCrar?: HomeClusterRbacAssessmentReportsComponent;
+  @ViewChild(HomeExposedSecretReportsComponent) homeEsr?: HomeExposedSecretReportsComponent;
 
   constructor(private mainAppInitService: MainAppInitService) {}
 
@@ -59,5 +66,11 @@ export class HomeComponent implements OnInit {
 
   onTabPageChange(event: string | number) {
     localStorage.setItem('home.tabPageActiveIndex', event.toString());
+  }
+
+  onRefreshData() {
+    if (this.homeVr) {
+      this.homeVr.loadData();
+    }
   }
 }

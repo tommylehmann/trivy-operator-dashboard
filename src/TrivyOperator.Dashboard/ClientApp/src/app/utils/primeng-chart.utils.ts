@@ -45,6 +45,9 @@ export class PrimeNgChartUtils {
       labels: [],
       title: 'a title',
     };
+    if (severitiesSummary.length === 0) {
+      return chartData;
+    }
     severitiesSummary
       .filter((x) => !x.isTotal)
       .forEach((x) => {
@@ -83,6 +86,9 @@ export class PrimeNgChartUtils {
       labels: [],
       title: 'a title',
     };
+    if  (severitiesSummary.length === 0) {
+      return chartData;
+    }
     const severities = severitiesSummary[0].details!.map((x) => x.id).sort((a, b) => a! - b!);
     let namespacesCounter: number = 0;
     severities.forEach((x) => {
@@ -115,7 +121,7 @@ export class PrimeNgChartUtils {
   public static getHorizontalBarChartOption(): any {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-surface-300');
+    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
     const surfaceBorder = documentStyle.getPropertyValue('--p-surface-700');
     return {
       indexAxis: 'y',
