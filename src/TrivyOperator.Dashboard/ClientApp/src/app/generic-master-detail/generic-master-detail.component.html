@@ -1,34 +1,34 @@
-<div class="row pt-0">
-  <div class="flex grid grid-cols-12 gap-4">
-    <div class="col-span-12 md:col-span-5 lg:col-span-4 pr-1">
+<p-splitter styleClass="mb-8" layout="horizontal" [panelSizes]="[35, 65]" stateStorage="local" stateKey="splitter">
+  <ng-template #panel>
+    <div class="w-full">
       <app-trivy-table
         #mainTable
-        tableHeight="82vh"
-        [activeNamespaces]="activeNamespaces"
+        tableHeight="70vh"
+        [activeNamespaces]="activeNamespaces()"
         [dataDtos]="dataDtos!"
         [singleSelectDataDto]="singleSelectDataDto"
-        [isLoading]="isMainTableLoading"
+        [isLoading]="_isMainTableLoading"
         [trivyExpandTableFunction]="mainTableExpandCellOptions"
         [trivyExpandTableOptions]="mainTableExpandTableOptions"
-        [trivyTableColumns]="mainTableColumns"
-        [trivyTableOptions]="mainTableOptions"
+        [trivyTableColumns]="mainTableColumns()"
+        [trivyTableOptions]="mainTableOptions()"
         (refreshRequested)="onRefreshRequested($event)"
         (selectedRowsChanged)="onMainTableSelectionChange($event)"
         (trivyDetailsTableCallback)="onMainTableExpandCallback($event)"
-        (multiHeaderActionRequested)="onMainTableMultiHeaderActionRequested($event)"
-      />
+        (multiHeaderActionRequested)="onMainTableMultiHeaderActionRequested($event)" />
     </div>
-
-    <div class="col-span-12 md:col-span-7 lg:col-span-8 pl-1">
+  </ng-template>
+  <ng-template #panel>
+    <div class="w-full">
       <app-trivy-table
-        tableHeight="82vh"
+        tableHeight="70vh"
         class="row"
-        [activeNamespaces]="activeNamespaces"
+        [activeNamespaces]="activeNamespaces()"
         [dataDtos]="selectedDataDto?.details"
-        [trivyTableColumns]="detailsTableColumns"
-        [trivyTableOptions]="detailsTableOptions"
+        [trivyTableColumns]="detailsTableColumns()"
+        [trivyTableOptions]="detailsTableOptions()"
         (multiHeaderActionRequested)="onDetailsTableMultiHeaderActionRequested($event)"
       />
     </div>
-  </div>
-</div>
+  </ng-template>
+</p-splitter>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, effect, EventEmitter, HostListener, input, Input, Output, signal, ViewChild } from '@angular/core';
 
 import { SeverityDto } from '../../api/models/severity-dto';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
@@ -10,6 +10,8 @@ import {
   TrivyTableOptions,
 } from '../trivy-table/trivy-table.types';
 
+import { SplitterModule } from 'primeng/splitter';
+
 export interface IMasterDetail<TDetailDto> {
   details?: Array<TDetailDto> | null;
 }
@@ -17,29 +19,32 @@ export interface IMasterDetail<TDetailDto> {
 @Component({
   selector: 'app-generic-master-detail',
   standalone: true,
-  imports: [TrivyTableComponent],
+  imports: [TrivyTableComponent, SplitterModule],
   templateUrl: './generic-master-detail.component.html',
   styleUrl: './generic-master-detail.component.scss',
 })
 export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetailDto>, TDetailDto> {
-  @Input() severityDtos: SeverityDto[] | null = [];
-  @Input() activeNamespaces: string[] | null = [];
-  @Input() mainTableColumns: TrivyTableColumn[] = [];
-  @Input({ required: true }) mainTableOptions!: TrivyTableOptions;
+  severityDtos= input<SeverityDto[]>([]);
+  activeNamespaces = input<string[] | null>([]);
+  mainTableColumns = input.required<TrivyTableColumn[]>();
+  mainTableOptions = input.required<TrivyTableOptions>();
   @Input() mainTableExpandTableOptions: TrivyExpandTableOptions<TDataDto> = new TrivyExpandTableOptions(false, 0, 0);
-  @Input() isMainTableLoading: boolean = true;
-  @ViewChild('mainTable', { static: true }) mainTable!: TrivyTableComponent<TDataDto>;
-  @Input() detailsTableColumns: TrivyTableColumn[] = [];
-  @Input({ required: true }) public detailsTableOptions!: TrivyTableOptions;
+  isMainTableLoading = input<boolean>(true);
+  detailsTableColumns = input.required<TrivyTableColumn[]>();
+  detailsTableOptions = input.required<TrivyTableOptions>();
   @Output() refreshRequested = new EventEmitter<TrivyFilterData>();
   @Output() mainTableExpandCallback = new EventEmitter<TDataDto>();
   @Output() mainTableMultiHeaderActionRequested = new EventEmitter<string>();
   @Output() detailsTableMultiHeaderActionRequested = new EventEmitter<string>();
   @Output() mainTableSelectedRowChanged = new EventEmitter<TDataDto | null>();
   @Input() singleSelectDataDto?: TDataDto;
+
+  @ViewChild('mainTable', { static: true }) mainTable?: TrivyTableComponent<TDataDto>;
+
   selectedDataDto: TDataDto | null = null;
 
   private _dataDtos: TDataDto[] | null = [];
+  protected _isMainTableLoading: boolean = this.isMainTableLoading();
 
   get dataDtos(): TDataDto[] | null {
     return this._dataDtos;
@@ -64,10 +69,18 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
     url: undefined,
   });
 
+  constructor() {
+    effect(() => {
+      this._isMainTableLoading = this.isMainTableLoading();
+    })
+  }
+
   onGetTDataDtos() {
-    this.mainTable.onTableClearSelected();
+    if (this.mainTable) {
+      this.mainTable.onTableClearSelected();
+    }
     this.selectedDataDto = null;
-    this.isMainTableLoading = false;
+    this._isMainTableLoading = false;
   }
 
   onMainTableSelectionChange(event: TDataDto[]) {
@@ -94,6 +107,17 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   }
 
   onDetailsTableMultiHeaderActionRequested(event: string) {
-    this.onDetailsTableMultiHeaderActionRequested(event);
+    this.detailsTableMultiHeaderActionRequested.emit(event);
+  }
+
+  screenSize: string = this.getScreenSize();
+
+  @HostListener('window:resize', [])
+  onResize() {
+    this.screenSize = this.getScreenSize();
+  }
+
+  getScreenSize(): string {
+    return window.innerWidth < 640 ? 'sm' : 'lg';
   }
 }
