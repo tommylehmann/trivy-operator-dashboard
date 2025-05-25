@@ -1,7 +1,7 @@
 <div style="height: 78vh" class="row">
-  <div class="grid grid-cols-12 gap-4 flex">
+  <div class="grid grid-cols-12 gap-4">
     <div class="col-span-12 lg:col-span-3 h-full">
-      <h4 class="tod-text-center">Cluster RBAC Assessment Reports Statistics</h4>
+      <span class="block text-center font-semibold">Cluster RBAC Assessment Reports Statistics</span>
       <p-table ngClass="w-full" styleClass="p-datatable-sm text-sm" [value]="clusterRbacAssessmentReportSummaryDtos">
         <ng-template pTemplate="header">
           <tr>
@@ -11,9 +11,9 @@
         </ng-template>
         <ng-template let-severity pTemplate="body">
           <tr>
-            <td style="width: 50%; max-width: 75%">{{ severityWrapperGetCapitalizedName(severity.severityId) }}</td>
+            <td style="width: 50%; max-width: 75%">{{ severity.severityId | severityNameById }}</td>
             <td style="width: 25%; max-width: 25%" class="tod-text-right">
-              {{ showDistinctValues ? severity.distinctCount : severity.totalCount }}
+              {{ showDistinctValues() ? severity.distinctCount : severity.totalCount }}
             </td>
           </tr>
         </ng-template>

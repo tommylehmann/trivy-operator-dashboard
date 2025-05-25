@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, effect, input, OnInit } from '@angular/core';
 
 import { EsSeveritiesByNsSummaryDto } from '../../api/models/es-severities-by-ns-summary-dto';
 import { ExposedSecretReportService } from '../../api/services/exposed-secret-report.service';
 import { EsTableSummary } from './home-exposed-secret-reports.types';
 
 import { PrimeNgChartUtils, PrimeNgHorizontalBarChartData, SeveritiesSummary } from '../utils/primeng-chart.utils';
-import { SeverityUtils } from '../utils/severity.utils';
+import { DarkModeService } from '../services/dark-mode.service';
+import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
+import { SeverityNameByIdPipe } from '../pipes/severity-name-by-id.pipe';
 
 import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
@@ -15,14 +17,18 @@ import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 
+
+
 @Component({
   selector: 'app-home-exposed-secret-reports',
   standalone: true,
-  imports: [CommonModule, ButtonModule, CarouselModule, ChartModule, DialogModule, TableModule, TagModule],
+  imports: [CommonModule,
+    ButtonModule, CarouselModule, ChartModule, DialogModule, TableModule, TagModule,
+    SeverityNameByIdPipe, SeverityCssStyleByIdPipe],
   templateUrl: './home-exposed-secret-reports.component.html',
   styleUrl: './home-exposed-secret-reports.component.scss',
 })
-export class HomeExposedSecretReportsComponent {
+export class HomeExposedSecretReportsComponent implements OnInit {
   exposedSecretReportSummaryDtos: EsSeveritiesByNsSummaryDto[] = [];
   esTableSummary: EsTableSummary[] = [];
   namespaceNames: string[] = [];
@@ -32,22 +38,37 @@ export class HomeExposedSecretReportsComponent {
   barchartDataNsBySev: PrimeNgHorizontalBarChartData | null = null;
   public horizontalBarChartOption: any;
   public isMoreESDetailsModalVisible: boolean = false;
-  private localShowDistinctValues: boolean = true;
 
-  constructor(private exposedSecretReportService: ExposedSecretReportService) {
+  private darkLightMode: 'Dark' | 'Light' = 'Dark';
+
+  showDistinctValues = input.required<boolean>();
+
+  constructor(private exposedSecretReportService: ExposedSecretReportService, private darkModeService: DarkModeService) {
+    effect(() => {
+      const x = this.showDistinctValues();
+      this.computeValues();
+    });
+  }
+
+  ngOnInit() {
+    this.loadData();
+    this.darkModeService.isDarkMode$.subscribe((isDarkMode) => {
+      const oldDarkLightMode = this.darkLightMode;
+      this.darkLightMode = isDarkMode ? 'Dark' : 'Light';
+      if (oldDarkLightMode != this.darkLightMode) {
+        setTimeout(() => {
+          this.horizontalBarChartOption = PrimeNgChartUtils.getHorizontalBarChartOption();
+        }, 0);
+      }
+    });
+    this.horizontalBarChartOption = PrimeNgChartUtils.getHorizontalBarChartOption();
+  }
+
+  loadData(): void {
     this.exposedSecretReportService.getExposedSecretReportSummaryDtos().subscribe({
       next: (res) => this.onDtos(res),
       error: (err) => console.error(err),
     });
-  }
-
-  get showDistinctValues(): boolean {
-    return this.localShowDistinctValues;
-  }
-
-  @Input() set showDistinctValues(value: boolean) {
-    this.localShowDistinctValues = value;
-    this.onDistinctSwitch();
   }
 
   getCountFromExposedSecretReportSummaryDtos(namespaceName: string, severityId: number): string {
@@ -58,7 +79,7 @@ export class HomeExposedSecretReportsComponent {
 
     const stat = summary.details.find((y) => y.id == severityId);
 
-    const result = this.showDistinctValues ? (stat?.distinctCount ?? 0) : (stat?.totalCount ?? 0);
+    const result = this.showDistinctValues() ? (stat?.distinctCount ?? 0) : (stat?.totalCount ?? 0);
 
     return result.toString();
   }
@@ -67,37 +88,24 @@ export class HomeExposedSecretReportsComponent {
     this.isMoreESDetailsModalVisible = true;
   }
 
-  severityWrapperGetCapitalizedName(severityId: number): string {
-    return SeverityUtils.getCapitalizedName(severityId);
-  }
+  // severityWrapperGetCapitalizedName(severityId: number): string {
+  //   return SeverityUtils.getCapitalizedName(severityId);
+  // }
 
-  severityWrapperGetCssColor(severityId: number): string {
-    return SeverityUtils.getCssColor(severityId);
-  }
+  // severityWrapperGetCssColor(severityId: number): string {
+  //   return SeverityUtils.getCssColor(severityId);
+  // }
 
   private onDtos(dtos: EsSeveritiesByNsSummaryDto[]) {
     this.exposedSecretReportSummaryDtos = dtos;
     this.computeValues();
-    this.barchartDataNsByNs = PrimeNgChartUtils.getDataForHorizontalBarChartByNamespace(
-      this.exposedSecretReportSummaryDtos as SeveritiesSummary[],
-      this.showDistinctValues,
-    );
-    this.barchartDataNsBySev = PrimeNgChartUtils.getDataForHorizontalBarChartBySeverity(
-      this.exposedSecretReportSummaryDtos as SeveritiesSummary[],
-      this.showDistinctValues,
-    );
-    this.horizontalBarChartOption = PrimeNgChartUtils.getHorizontalBarChartOption();
-  }
-
-  private onDistinctSwitch() {
-    // TODO
   }
 
   private computeValues() {
     const summary = this.exposedSecretReportSummaryDtos.find((x) => x.isTotal);
     if (summary && summary.details) {
       this.esTableSummary = summary.details.map((x) => {
-        return { severityId: x.id!, count: this.showDistinctValues ? (x.distinctCount ?? 0) : (x.totalCount ?? 0) };
+        return { severityId: x.id!, count: this.showDistinctValues() ? (x.distinctCount ?? 0) : (x.totalCount ?? 0) };
       });
       this.severityIds = summary.details.map((x) => x.id!);
     }
@@ -106,5 +114,15 @@ export class HomeExposedSecretReportsComponent {
       .filter((x) => !x.isTotal)
       .filter((x) => x.namespaceName)
       .map((x) => x.namespaceName);
+
+    this.barchartDataNsByNs = PrimeNgChartUtils.getDataForHorizontalBarChartByNamespace(
+      this.exposedSecretReportSummaryDtos as SeveritiesSummary[],
+      this.showDistinctValues(),
+    );
+    this.barchartDataNsBySev = PrimeNgChartUtils.getDataForHorizontalBarChartBySeverity(
+      this.exposedSecretReportSummaryDtos as SeveritiesSummary[],
+      this.showDistinctValues(),
+    );
+    this.horizontalBarChartOption = PrimeNgChartUtils.getHorizontalBarChartOption();
   }
 }

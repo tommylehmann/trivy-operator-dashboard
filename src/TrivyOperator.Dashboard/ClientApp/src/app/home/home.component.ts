@@ -10,7 +10,7 @@ import { HomeConfigAuditReportsComponent } from '../home-config-audit-reports/ho
 import { HomeExposedSecretReportsComponent } from '../home-exposed-secret-reports/home-exposed-secret-reports.component';
 import { HomeVulnerabilityReportsComponent } from '../home-vulnerability-reports/home-vulnerability-reports.component';
 
-import { Button, ButtonModule } from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
@@ -26,7 +26,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     HomeExposedSecretReportsComponent,
     TabsModule,
     ToggleSwitchModule,
-    Button,
+    ButtonModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -71,6 +71,12 @@ export class HomeComponent implements OnInit {
   onRefreshData() {
     if (this.homeVr) {
       this.homeVr.loadData();
+    }
+    if (this.homeCar) {
+      this.homeCar.loadData();
+    }
+    if (this.homeEsr) {
+      this.homeEsr.loadData();
     }
   }
 }

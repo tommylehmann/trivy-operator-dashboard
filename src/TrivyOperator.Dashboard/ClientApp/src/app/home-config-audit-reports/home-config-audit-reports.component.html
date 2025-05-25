@@ -1,7 +1,7 @@
 <div style="height: 78vh" class="row">
-  <div class="grid grid-cols-12 gap-4 flex">
+  <div class="grid grid-cols-12 gap-4">
     <div class="col-span-12 lg:col-span-3 h-full">
-      <h4 class="text-center">Config Audit Reports Statistics</h4>
+      <span class="block text-center font-semibold">Config Audit Reports Statistics</span>
       <div class="flex row">
         <p-table ngClass="w-full" styleClass="p-datatable-sm text-sm" [value]="carSeveritySummaries">
           <ng-template pTemplate="header">
@@ -29,7 +29,7 @@
           <div class="custom-slide">
             <ng-container [ngSwitch]="slide">
               <div *ngSwitchCase="'nsByNs'">
-                <h4 style="text-align: center">Config Audits - Severity by Namespace</h4>
+                <span class="block text-center font-semibold">Config Audits - Severity by Namespace</span>
                 <div *ngIf="barchartDataNsByNs" class="flex justify-center">
                   <p-chart
                     height="60vh"
@@ -42,7 +42,7 @@
                 </div>
               </div>
               <div *ngSwitchCase="'nsBySev'">
-                <h4 style="text-align: center">Config Audits - Namespace by Severity</h4>
+                <span class="block text-center font-semibold">Config Audits - Namespace by Severity</span>
                 <div *ngIf="barchartDataNsBySev" class="flex justify-center">
                   <p-chart
                     height="60vh"
@@ -54,7 +54,7 @@
                 </div>
               </div>
               <div *ngSwitchCase="'kindByNs'">
-                <h4 style="text-align: center">Config Audits - Severity by Kinds</h4>
+                <span class="block text-center font-semibold">Config Audits - Severity by Kinds</span>
                 <div *ngIf="barchartDataKindByNs" class="flex justify-center">
                   <p-chart
                     height="60vh"
@@ -67,7 +67,7 @@
                 </div>
               </div>
               <div *ngSwitchCase="'kindBySev'">
-                <h4 style="text-align: center">Config Audits - Kinds by Severity</h4>
+                <span class="block text-center font-semibold">Config Audits - Kinds by Severity</span>
                 <div *ngIf="barchartDataKindBySev" class="flex justify-center">
                   <p-chart
                     height="60vh"
