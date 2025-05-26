@@ -14,7 +14,7 @@ import { TrivyFilterData, TrivyTableColumn, TrivyTableOptions } from '../trivy-t
 })
 export class RbacAssessmentReportsComponent {
   dataDtos: RbacAssessmentReportDto[] = [];
-  activeNamespaces: string[] | null = [];
+  activeNamespaces?: string[] = [];
 
   mainTableColumns: TrivyTableColumn[] = [];
   mainTableOptions: TrivyTableOptions;

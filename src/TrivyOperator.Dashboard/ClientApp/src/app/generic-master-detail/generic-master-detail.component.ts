@@ -1,4 +1,15 @@
-import { Component, effect, EventEmitter, HostListener, input, Input, Output, signal, ViewChild } from '@angular/core';
+import {
+  Component,
+  effect,
+  EventEmitter,
+  HostListener,
+  input,
+  Input,
+  output,
+  Output,
+  signal,
+  ViewChild,
+} from '@angular/core';
 
 import { SeverityDto } from '../../api/models/severity-dto';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
@@ -25,36 +36,29 @@ export interface IMasterDetail<TDetailDto> {
 })
 export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetailDto>, TDetailDto> {
   severityDtos= input<SeverityDto[]>([]);
-  activeNamespaces = input<string[] | null>([]);
+  activeNamespaces = input<string[] | undefined>([]);
   mainTableColumns = input.required<TrivyTableColumn[]>();
   mainTableOptions = input.required<TrivyTableOptions>();
   @Input() mainTableExpandTableOptions: TrivyExpandTableOptions<TDataDto> = new TrivyExpandTableOptions(false, 0, 0);
   isMainTableLoading = input<boolean>(true);
   detailsTableColumns = input.required<TrivyTableColumn[]>();
   detailsTableOptions = input.required<TrivyTableOptions>();
-  @Output() refreshRequested = new EventEmitter<TrivyFilterData>();
-  @Output() mainTableExpandCallback = new EventEmitter<TDataDto>();
-  @Output() mainTableMultiHeaderActionRequested = new EventEmitter<string>();
-  @Output() detailsTableMultiHeaderActionRequested = new EventEmitter<string>();
-  @Output() mainTableSelectedRowChanged = new EventEmitter<TDataDto | null>();
-  @Input() singleSelectDataDto?: TDataDto;
+  singleSelectDataDto = input<TDataDto | undefined>();
+
+  refreshRequested = output<TrivyFilterData>();
+  mainTableExpandCallback = output<TDataDto>();
+  mainTableMultiHeaderActionRequested = output<string>();
+  detailsTableMultiHeaderActionRequested = output<string>();
+  mainTableSelectedRowChanged = output<TDataDto | null>();
+
 
   @ViewChild('mainTable', { static: true }) mainTable?: TrivyTableComponent<TDataDto>;
 
+  dataDtos = input<TDataDto[]>([]);
   selectedDataDto: TDataDto | null = null;
 
-  private _dataDtos: TDataDto[] | null = [];
+  protected _dataDtos: TDataDto[] = [];
   protected _isMainTableLoading: boolean = this.isMainTableLoading();
-
-  get dataDtos(): TDataDto[] | null {
-    return this._dataDtos;
-  }
-
-  /*@Input() dataDtos: TDataDto[] = [];*/
-  @Input() set dataDtos(dataDtos: TDataDto[]) {
-    this._dataDtos = dataDtos;
-    this.onGetTDataDtos();
-  }
 
   @Input() public mainTableExpandCellOptions: (
     dto: TDataDto,
@@ -73,6 +77,11 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
     effect(() => {
       this._isMainTableLoading = this.isMainTableLoading();
     })
+    effect(() => {
+      this._dataDtos = this.dataDtos();
+      this.onGetTDataDtos();
+    });
+
   }
 
   onGetTDataDtos() {
@@ -110,6 +119,7 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
     this.detailsTableMultiHeaderActionRequested.emit(event);
   }
 
+  // screen size
   screenSize: string = this.getScreenSize();
 
   @HostListener('window:resize', [])

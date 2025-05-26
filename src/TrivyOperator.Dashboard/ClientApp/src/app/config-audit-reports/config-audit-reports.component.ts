@@ -16,7 +16,7 @@ import { SeverityUtils } from '../utils/severity.utils';
 })
 export class ConfigAuditReportsComponent {
   public dataDtos: ConfigAuditReportDto[] = [];
-  public activeNamespaces: string[] | null = [];
+  public activeNamespaces?: string[] = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;

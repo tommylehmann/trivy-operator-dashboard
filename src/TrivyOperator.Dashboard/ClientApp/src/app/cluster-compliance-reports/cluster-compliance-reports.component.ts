@@ -20,7 +20,6 @@ import {
 })
 export class ClusterComplianceReportsComponent {
   public dataDtos: ClusterComplianceReportDto[] = [];
-  public activeNamespaces: string[] | null = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;

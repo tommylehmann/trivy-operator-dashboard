@@ -5,8 +5,8 @@
         #mainTable
         tableHeight="70vh"
         [activeNamespaces]="activeNamespaces()"
-        [dataDtos]="dataDtos!"
-        [singleSelectDataDto]="singleSelectDataDto"
+        [dataDtos]="_dataDtos"
+        [singleSelectDataDto]="singleSelectDataDto()"
         [isLoading]="_isMainTableLoading"
         [trivyExpandTableFunction]="mainTableExpandCellOptions"
         [trivyExpandTableOptions]="mainTableExpandTableOptions"

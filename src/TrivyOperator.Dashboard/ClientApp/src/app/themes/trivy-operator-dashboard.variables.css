@@ -21,10 +21,10 @@
   /* to be added via providePrimeng */
   --p-breadcrumb-padding: 0;
   --p-togglebutton-content-checked-background: var(--p-button-text-primary-color);
-  --p-togglebutton-background: var(--p-surface-400);
-  --p-togglebutton-checked-background: var(--p-surface-400);
-  --p-togglebutton-border-color: var(--p-surface-400);
-  --p-togglebutton-checked-border-color: var(--p-surface-400);
+  --p-togglebutton-background: var(--p-tod-togglebutton-background-border-color);
+  --p-togglebutton-checked-background: var(--p-tod-togglebutton-background-border-color);
+  --p-togglebutton-border-color: var(--p-tod-togglebutton-background-border-color);
+  --p-togglebutton-checked-border-color: var(--p-tod-togglebutton-background-border-color);
   --p-togglebutton-content-checked-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.6);
   --p-togglebutton-transition-duration: .5s;
   --p-togglebutton-border-radius: 4px;
@@ -32,4 +32,5 @@
   --p-togglebutton-padding: .20rem .20rem;
   --p-togglebutton-content-border-radius: 4px;
   --p-togglebutton-content-padding: 0.25rem 0.25rem;
+  --p-border-radius-md: 2px;
 }

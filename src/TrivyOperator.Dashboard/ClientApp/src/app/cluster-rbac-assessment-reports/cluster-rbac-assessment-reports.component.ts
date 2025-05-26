@@ -14,7 +14,6 @@ import { TrivyFilterData, TrivyTableColumn, TrivyTableOptions } from '../trivy-t
 })
 export class ClusterRbacAssessmentReportsComponent {
   public dataDtos: ClusterRbacAssessmentReportDto[] = [];
-  public activeNamespaces: string[] | null = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;

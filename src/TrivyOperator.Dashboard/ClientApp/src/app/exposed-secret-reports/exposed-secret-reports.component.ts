@@ -27,7 +27,7 @@ import { TableModule } from 'primeng/table';
 export class ExposedSecretReportsComponent {
   public dataDtos: ExposedSecretReportImageDto[] = [];
   public selectedVulnerabilityReportDto: ExposedSecretReportImageDto | null = null;
-  public activeNamespaces: string[] | null = [];
+  public activeNamespaces?: string[] = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;

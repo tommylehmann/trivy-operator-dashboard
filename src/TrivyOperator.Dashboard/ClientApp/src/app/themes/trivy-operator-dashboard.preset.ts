@@ -35,6 +35,7 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
           950: '{sky.950}'
         },
         text: { color: '#000000' },
+        'tod-togglebutton-background-border-color': '{surface.100}',
       },
       dark: {
         surface: {
@@ -52,8 +53,9 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
           950: '#171E27'
         },
         text: { color: '#ffffff' },
+        'tod-togglebutton-background-border-color': '{surface.950}',
       },
-      
+
     },
   },
   components: {
@@ -100,6 +102,11 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
       },
     },
     selectbutton: {
+      border: {
+        radius: 'var(--tod-selectbutton-border-radius)',
+      },
+    },
+    splitter: {
       border: {
         radius: 'var(--tod-selectbutton-border-radius)',
       },
