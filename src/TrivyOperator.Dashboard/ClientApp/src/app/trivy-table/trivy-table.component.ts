@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  effect,
+  EventEmitter,
+  input,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
@@ -66,7 +76,7 @@ import { MenuItem } from 'primeng/api';
   encapsulation: ViewEncapsulation.None,
 })
 export class TrivyTableComponent<TData> implements OnInit {
-  @Input() dataDtos?: TData[] | null | undefined;
+  dataDtos = input<TData[] | null | undefined>([]);
   @Input() activeNamespaces?: string[] | null | undefined = [];
 
   @Input() csvStoragekey: string = 'default';
@@ -92,7 +102,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   @Output() rowActionRequested = new EventEmitter<TData>();
   @Output() multiHeaderActionRequested = new EventEmitter<string>();
   tableStateKey: string | undefined = undefined;
-  
+
   selectedDataDtos?: any | null = null;
   @Input() set singleSelectDataDto(value: TData | undefined) {
     if (this.selectedDataDtos == value) {
@@ -100,13 +110,13 @@ export class TrivyTableComponent<TData> implements OnInit {
     }
     this.selectedDataDtos = value;
     if (value) {
-      const index = this.dataDtos?.indexOf(value);
+      const index = this._dataDtos?.indexOf(value);
       if (index) {
         this.trivyTable.scrollToVirtualIndex(index);
       }
       this.selectedRowsChanged.emit([value]);
     }
-    
+
   }
   public filterSeverityOptions: number[] = [];
   public filterSelectedSeverityIds: number[] | null = [];
@@ -122,6 +132,9 @@ export class TrivyTableComponent<TData> implements OnInit {
   anyRowExpanded: boolean = false;
 
   private isSelectionChangedExternally: boolean = false;
+  private windowResizeEventDispatched: boolean = false;
+
+  protected _dataDtos: TData[] = [];
 
   public get trivyTableTotalRecords(): number {
     return this.dataDtos ? this.dataDtos.length : 0;
@@ -151,6 +164,14 @@ export class TrivyTableComponent<TData> implements OnInit {
     badge: undefined,
     url: undefined,
   });
+
+  constructor() {
+    effect(() => {
+      this._dataDtos = this.dataDtos() ?? [];
+      this.newData();
+
+    });
+  }
 
   ngOnInit() {
     const savedCsvFileName = localStorage.getItem(LocalStorageUtils.csvFileNameKeyPrefix + this.csvStoragekey);
@@ -278,6 +299,12 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   onRowExpandCollapse(_event: any) {
     this.anyRowExpanded = JSON.stringify(this.expandedRows) != '{}';
+    // if (!this.windowResizeEventDispatched) {
+    //   setTimeout(() => {
+    //     window.dispatchEvent(new Event('resize'));
+    //   }, 10);
+    //   this.windowResizeEventDispatched = true;
+    // }
   }
 
   onExportToCsv(exportType: string) {
@@ -335,7 +362,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   severityWrapperGetCssColorByName(severityName: string): string {
     return SeverityUtils.getCssColorByName(severityName);
   }
-  
+
   formatUtcToLocal(utcDateString: string): string {
     const date = new Date(utcDateString);
     const year = date.getFullYear();
@@ -368,12 +395,10 @@ export class TrivyTableComponent<TData> implements OnInit {
   }
   multiHeaderActionItems: MenuItem[] = [];
 
-  onRowsChange(event: number) {
-    if (event > 0) {
+  newData() {
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
-      }, 100);
-    }
+      }, 0);
   }
   // #endregion
 

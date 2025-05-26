@@ -1,4 +1,4 @@
-<div class="trivy-table" [ngClass]="getExtraClasses()">
+<div class="trivy-table" [ngClass]="'trivy-half'">
   <p-table
     #trivyTable
     columnResizeMode="expand"
@@ -20,7 +20,7 @@
     [selectionMode]="trivyTableOptions!.tableSelectionMode"
     [stateKey]="tableStateKey"
     [tableStyle]="trivyTableOptions!.tableStyle"
-    [value]="dataDtos!"
+    [value]="_dataDtos"
     [virtualScroll]="true"
     [virtualScrollItemSize]="47"
     [(selection)]="selectedDataDtos"
@@ -28,7 +28,6 @@
     (onRowExpand)="onRowExpandCollapse($event)"
     (onStateSave)="onTableStateSave()"
     (selectionChange)="onSelectionChange($event)"
-    (rowsChange)="onRowsChange($event)"
   >
     <ng-template pTemplate="caption">
       <div>

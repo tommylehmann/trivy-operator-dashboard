@@ -24,7 +24,7 @@
         tableHeight="70vh"
         class="row"
         [activeNamespaces]="activeNamespaces()"
-        [dataDtos]="selectedDataDto?.details"
+        [dataDtos]="selectedDataDto?.details ?? []"
         [trivyTableColumns]="detailsTableColumns()"
         [trivyTableOptions]="detailsTableOptions()"
         (multiHeaderActionRequested)="onDetailsTableMultiHeaderActionRequested($event)"

@@ -21,23 +21,29 @@ $default-height-with-filters: calc(100vh - 130px);
 /* base style */
 .trivy-table {
   height: $default-height;
+  min-height: $default-height;
   display: flex !important;
   flex-direction: column !important;
   flex-grow: 1 !important;
+  align-items: stretch !important;
   /* styles when classB is also present */
   &.trivy-half {
     height: $default-height-half;
+    min-height: $default-height-half;
 
     @media (min-width: 576px) {
       height: $default-height;
+      min-height: $default-height;
     }
   }
 
   &.trivy-with-filters {
     height: $default-height-half;
+    min-height: $default-height-half;
 
     @media (min-width: 576px) {
       height: $default-height-with-filters;
+      min-height: $default-height-with-filters;
     }
   }
 }
