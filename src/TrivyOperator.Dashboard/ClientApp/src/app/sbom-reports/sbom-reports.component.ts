@@ -210,7 +210,7 @@ export class SbomReportsComponent implements OnInit {
       isResetFiltersVisible: true,
       isRefreshVisible: false,
       isRefreshFilterable: false,
-      isFooterVisible: true,
+      isFooterVisible: false,
       tableSelectionMode: 'single',
       tableStyle: { width: '930px' },
       stateKey: 'SBOM Reports - Depends On',

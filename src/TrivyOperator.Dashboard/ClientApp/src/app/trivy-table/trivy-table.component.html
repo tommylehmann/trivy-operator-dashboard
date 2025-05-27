@@ -294,10 +294,10 @@
       </tr>
     </ng-template>
     <ng-template *ngIf="trivyTableOptions!.isFooterVisible" pTemplate="summary">
-      <div>
-        Total
+      <div class="flex flex-wrap tod-content-background tod-content-border-top-light p-1 px-2 gap-4">
+        <span>Total</span>
         <p-tag value="{{ trivyTableTotalRecords }}" [rounded]="true" severity="contrast"/>
-        | Filtered
+        <span>Filtered</span>
         <p-tag value="{{ trivyTableFilteredRecords }}" [rounded]="true" severity="contrast"/>
       </div>
     </ng-template>

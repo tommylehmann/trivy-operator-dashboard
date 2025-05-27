@@ -1,15 +1,14 @@
-<app-trivy-table csvFileName="SBOM Reports"
-                 csvStoragekey="SBOM Reports"
-                 tableHeight="82vh"
-                 [activeNamespaces]="activeNamespaces"
-                 [dataDtos]="dataDtos"
-                 [exportColumns]="exportColumns"
-                 [isLoading]="isTableLoading"
-                 [trivyTableColumns]="trivyTableColumns"
-                 [trivyTableOptions]="trivyTableOptions"
-                 (refreshRequested)="getTableDataDtos()"
-                 (selectedRowsChanged)="onTableSelectedRowChange($event)"
-                 (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)" />
-
-<!--[trivyExpandTableFunction]="dependsOnTableExpandCellOptions"
-[trivyExpandTableOptions]="dependsOnTableExpandTableOptions"-->
+<div class="tod-content-border">
+  <app-trivy-table csvFileName="SBOM Reports"
+                   csvStoragekey="SBOM Reports"
+                   tableHeight="82vh"
+                   [activeNamespaces]="activeNamespaces"
+                   [dataDtos]="dataDtos"
+                   [exportColumns]="exportColumns"
+                   [isLoading]="isTableLoading"
+                   [trivyTableColumns]="trivyTableColumns"
+                   [trivyTableOptions]="trivyTableOptions"
+                   (refreshRequested)="getTableDataDtos()"
+                   (selectedRowsChanged)="onTableSelectedRowChange($event)"
+                   (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)" />
+</div>

@@ -1,4 +1,4 @@
-<p-tabs [(value)]="tabPageActiveIndex" (valueChange)="onTabPageChange($event)">
+<p-tabs [(value)]="tabPageActiveIndex" (valueChange)="onTabPageChange($event)" class="tod-content-border">
   <p-tablist>
     <p-tab value="0" [disabled]="!enabledTrivyReports.includes('vr')">Vulnerability Reports</p-tab>
     <p-tab value="1" [disabled]="!enabledTrivyReports.includes('car')">Config Audit Reports</p-tab>

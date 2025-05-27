@@ -1,12 +1,14 @@
-<app-trivy-table
-  csvFileName="Cluster RBAC Assessment Reports"
-  csvStoragekey="Cluster RBAC Assessment Reports"
-  tableHeight="82vh"
-  [activeNamespaces]="activeNamespaces"
-  [dataDtos]="dataDtos"
-  [exportColumns]="exportColumns"
-  [isLoading]="isLoading"
-  [trivyTableColumns]="trivyTableColumns"
-  [trivyTableOptions]="trivyTableOptions"
-  (refreshRequested)="getTableDataDtos()"
-/>
+<div class="tod-content-border">
+  <app-trivy-table
+    csvFileName="Cluster RBAC Assessment Reports"
+    csvStoragekey="Cluster RBAC Assessment Reports"
+    tableHeight="82vh"
+    [activeNamespaces]="activeNamespaces"
+    [dataDtos]="dataDtos"
+    [exportColumns]="exportColumns"
+    [isLoading]="isLoading"
+    [trivyTableColumns]="trivyTableColumns"
+    [trivyTableOptions]="trivyTableOptions"
+    (refreshRequested)="getTableDataDtos()"
+  />
+</div>

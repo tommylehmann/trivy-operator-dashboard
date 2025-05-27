@@ -10,7 +10,7 @@
 
 @layer tailwind {
   @import "./styles/tailwind.local.css";
-  
+
 }
 
 /* Components fixes*/
@@ -22,7 +22,7 @@
   @import './app/themes/trivy-operator-dashboard.variables.css';
 }
 
-// Others 
+// Others
 .hide-on-small {
   display: none;
 }
@@ -33,13 +33,13 @@
   }
 }
 
- // tests 
+ // tests
 .custom-small-row tr {
-  height: 25px;  
+  height: 25px;
 }
 
 .custom-small-row td {
-  padding: 0px;  
+  padding: 0px;
   padding-left: 4px;
   height: 25px !important;
   line-height: 1em;
@@ -169,3 +169,17 @@ p-card.small-header .p-card-title {
   text-align: right;
 }
 
+.tod-content-border {
+  border: 1px solid var(--p-content-border-color);
+  border-radius: var(--p-content-border-radius);
+}
+
+.tod-content-background {
+  background-color: var(--p-content-background);
+}
+
+.tod-content-border-top-light {
+  border-top-width: 1px;
+  border-style: solid;
+  border-color: var(--p-content-border-color);
+}

@@ -137,7 +137,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   protected _dataDtos: TData[] = [];
 
   public get trivyTableTotalRecords(): number {
-    return this.dataDtos ? this.dataDtos.length : 0;
+    return this.dataDtos()?.length ?? 0;
   }
 
   public get trivyTableSelectedRecords(): number {

@@ -1,4 +1,4 @@
-<div class="grid grid-cols-12 gap-4">
+<div class="grid grid-cols-12 gap-4 items-stretch">
   <div class="col-span-12 md:col-span-5 lg:col-span-4 p-0">
     <div class="grid grid-cols-12 gap-2 mb-2">
       <div class="col-span-4 w-full">
@@ -38,19 +38,21 @@
                   (onClick)="reloadData()" [disabled]="isSingleMode" />
       </div>
     </div>
-    <app-trivy-table tableHeight="30vh"
-                     [dataDtos]="dependsOnBoms"
-                     [isLoading]="isTableLoading"
-                     [trivyTableColumns]="dependsOnTableColumns"
-                     [trivyTableOptions]="dependsOnTableOptions"
-                     [trivyExpandTableFunction]="dependsOnTableExpandCellOptions"
-                     [trivyExpandTableOptions]="dependsOnTableExpandTableOptions"
-                     [singleSelectDataDto]="selectedSbomDetailDto"
-                     (selectedRowsChanged)="onTableSelectedRowChange($event)"
-                     (rowActionRequested)="onRowActionRequested($event)"
-                     (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)" />
+    <div class="tod-content-border">
+      <app-trivy-table tableHeight="30vh"
+                       [dataDtos]="dependsOnBoms"
+                       [isLoading]="isTableLoading"
+                       [trivyTableColumns]="dependsOnTableColumns"
+                       [trivyTableOptions]="dependsOnTableOptions"
+                       [trivyExpandTableFunction]="dependsOnTableExpandCellOptions"
+                       [trivyExpandTableOptions]="dependsOnTableExpandTableOptions"
+                       [singleSelectDataDto]="selectedSbomDetailDto"
+                       (selectedRowsChanged)="onTableSelectedRowChange($event)"
+                       (rowActionRequested)="onRowActionRequested($event)"
+                       (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)" />
+    </div>
   </div>
-  <div class="col-span-12 md:col-span-7 lg:col-span-8 p-0 pl-1">
+  <div class="col-span-12 md:col-span-7 lg:col-span-8 p-0 pl-1 flex flex-col h-full">
     <app-fcose [nodeDataDtos]="nodeDataDtos"
                [selectedNodeId]="selectedSbomDetailBomRef"
                (activeNodeIdChange)="onActiveNodeIdChange($event)"
@@ -58,7 +60,7 @@
                (selectedNodeIdChange)="onNodeIdChange($event)"
                (deletedNodeIdsChange)="onDeletedNodeIds($event)"
                (undeletedNodeIdsChange)="onUndeletedNodeIds($event)" />
-    <div *ngIf="hoveredSbomDetailDto">
+    <div class="mt-auto" *ngIf="hoveredSbomDetailDto">
       <span>
         <b>Name:</b> {{ hoveredSbomDetailDto.name }} -
         <b>Version:</b> {{ this.hoveredSbomDetailDto.version }} -
