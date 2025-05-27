@@ -25,7 +25,7 @@ try {
   console.error('Failed to update tailwindcss-primeui/package.json:', error);
 }
 ```
-
+  
 ```c#
 public interface IInterface1 { }
 public interface IInterface2 { }

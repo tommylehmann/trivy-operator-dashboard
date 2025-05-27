@@ -35,7 +35,7 @@ export class RbacAssessmentReportsDetailedComponent {
       {
         field: 'resourceNamespace',
         header: 'NS',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'namespaces',
         style: 'width: 130px; max-width: 130px;',
@@ -44,7 +44,7 @@ export class RbacAssessmentReportsDetailedComponent {
       {
         field: 'resourceName',
         header: 'Name',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 240px; max-width: 240px; white-space: normal;',
@@ -53,7 +53,7 @@ export class RbacAssessmentReportsDetailedComponent {
       {
         field: 'severityId',
         header: 'Sev',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'severities',
         style: 'width: 90px; max-width: 90px;',
@@ -62,7 +62,7 @@ export class RbacAssessmentReportsDetailedComponent {
       {
         field: 'category',
         header: 'Category',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal;',
@@ -71,7 +71,7 @@ export class RbacAssessmentReportsDetailedComponent {
       {
         field: 'checkId',
         header: 'Id',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 95px; max-width: 95px; white-space: normal;',
@@ -80,7 +80,7 @@ export class RbacAssessmentReportsDetailedComponent {
       {
         field: 'title',
         header: 'Title',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 180px; max-width: 180px; white-space: normal;',
@@ -89,7 +89,7 @@ export class RbacAssessmentReportsDetailedComponent {
       {
         field: 'description',
         header: 'Description',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 360px; max-width: 360px; white-space: normal;',
@@ -98,7 +98,7 @@ export class RbacAssessmentReportsDetailedComponent {
       {
         field: 'remediation',
         header: 'Remediation',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 360px; max-width: 360px; white-space: normal;',
@@ -107,7 +107,7 @@ export class RbacAssessmentReportsDetailedComponent {
       {
         field: 'messages',
         header: 'Messages',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 500px; max-width: 500px; white-space: normal;',
@@ -119,7 +119,7 @@ export class RbacAssessmentReportsDetailedComponent {
       isExportCsvVisible: true,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: true,
       tableSelectionMode: null,
       tableStyle: { width: '2100px' },

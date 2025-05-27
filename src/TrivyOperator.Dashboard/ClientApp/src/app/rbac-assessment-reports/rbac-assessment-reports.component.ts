@@ -37,7 +37,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'resourceNamespace',
         header: 'NS',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'namespaces',
         style: 'width: 130px; max-width: 130px;',
@@ -46,7 +46,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'resourceName',
         header: 'Name',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 265px; max-width: 265px; white-space: normal;',
@@ -55,7 +55,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'criticalCount',
         header: 'C',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -65,7 +65,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'highCount',
         header: 'H',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px;',
@@ -75,7 +75,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'mediumCount',
         header: 'M',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -85,7 +85,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'lowCount',
         header: 'L',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -98,7 +98,7 @@ export class RbacAssessmentReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: true,
       tableSelectionMode: 'single',
       tableStyle: { width: '595px' },
@@ -111,7 +111,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'severityId',
         header: 'Sev',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'severities',
         style: 'width: 90px; max-width: 90px;',
@@ -120,7 +120,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'category',
         header: 'Category',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal;',
@@ -129,7 +129,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'checkId',
         header: 'Id',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 95px; max-width: 95px; white-space: normal;',
@@ -138,7 +138,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'title',
         header: 'Title',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 180px; max-width: 180px; white-space: normal;',
@@ -147,7 +147,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'description',
         header: 'Description',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 360px; max-width: 360px; white-space: normal;',
@@ -156,7 +156,7 @@ export class RbacAssessmentReportsComponent {
       {
         field: 'remediation',
         header: 'Remediation',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 360px; max-width: 360px; white-space: normal;',
@@ -168,7 +168,7 @@ export class RbacAssessmentReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: false,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: false,
       tableSelectionMode: null,
       tableStyle: {},

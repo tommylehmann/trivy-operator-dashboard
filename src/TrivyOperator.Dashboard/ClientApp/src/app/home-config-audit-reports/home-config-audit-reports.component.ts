@@ -73,7 +73,7 @@ export class HomeConfigAuditReportsComponent implements OnInit {
   }
 
   loadData(): void {
-    this.configAuditReportService.getConfigAuditReportSumaryDtos().subscribe({
+    this.configAuditReportService.getConfigAuditReportSummaryDtos().subscribe({
       next: (res) => this.onDtos(res),
       error: (err) => console.error(err),
     });

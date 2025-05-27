@@ -36,7 +36,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'resourceNamespace',
         header: 'Namespace',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'namespaces',
         style: 'width: 130px; max-width: 130px;',
@@ -45,7 +45,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'imageName',
         header: 'Image Name',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 380px; max-width: 380px;',
@@ -54,7 +54,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'imageTag',
         header: 'Image Tag',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 210px; max-width: 210px;',
@@ -63,7 +63,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'imageDigest',
         header: 'Image Digest',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 550px; max-width: 550px;',
@@ -72,7 +72,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'repository',
         header: 'Repository',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 270px; max-width: 270px;',
@@ -81,7 +81,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'hasVulnerabilities',
         header: 'Has VRs',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px;',
@@ -90,7 +90,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'criticalCount',
         header: 'C',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -100,7 +100,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'highCount',
         header: 'H',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px;',
@@ -110,7 +110,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'mediumCount',
         header: 'M',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -120,7 +120,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'lowCount',
         header: 'L',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -130,7 +130,7 @@ export class SbomReportsDetailedComponent {
       {
         field: 'unknownCount',
         header: 'U',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -143,7 +143,7 @@ export class SbomReportsDetailedComponent {
       isExportCsvVisible: true,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: true,
       tableSelectionMode: 'multiple',
       tableStyle: { width: '1920px' },

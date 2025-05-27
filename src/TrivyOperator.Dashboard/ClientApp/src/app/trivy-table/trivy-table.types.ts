@@ -3,7 +3,7 @@ export interface TrivyTableOptions {
   isResetFiltersVisible: boolean;
   isExportCsvVisible: boolean;
   isRefreshVisible: boolean;
-  isRefreshFiltrable: boolean;
+  isRefreshFilterable: boolean;
   isFooterVisible: boolean;
   tableSelectionMode: null | 'single' | 'multiple';
   tableStyle: { [klass: string]: any };
@@ -28,7 +28,7 @@ export interface ExportColumn {
 export interface TrivyTableColumn extends Column {
   isSortable: boolean;
   isSortIconVisible?: boolean;
-  isFiltrable: boolean;
+  isFilterable: boolean;
   style: string;
   multiSelectType: 'none' | 'namespaces' | 'severities';
   renderType:

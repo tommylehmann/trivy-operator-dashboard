@@ -39,7 +39,6 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   activeNamespaces = input<string[] | undefined>([]);
   mainTableColumns = input.required<TrivyTableColumn[]>();
   mainTableOptions = input.required<TrivyTableOptions>();
-  @Input() mainTableExpandTableOptions: TrivyExpandTableOptions<TDataDto> = new TrivyExpandTableOptions(false, 0, 0);
   isMainTableLoading = input<boolean>(true);
   detailsTableColumns = input.required<TrivyTableColumn[]>();
   detailsTableOptions = input.required<TrivyTableOptions>();
@@ -51,6 +50,7 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   detailsTableMultiHeaderActionRequested = output<string>();
   mainTableSelectedRowChanged = output<TDataDto | null>();
 
+  @Input() mainTableExpandTableOptions: TrivyExpandTableOptions<TDataDto> = new TrivyExpandTableOptions(false, 0, 0);
 
   @ViewChild('mainTable', { static: true }) mainTable?: TrivyTableComponent<TDataDto>;
 

@@ -32,7 +32,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'resourceName',
         header: 'Name',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 390px; max-width: 390px; white-space: normal;',
@@ -41,7 +41,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'criticalCount',
         header: 'C',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -51,7 +51,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'highCount',
         header: 'H',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px;',
@@ -61,7 +61,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'mediumCount',
         header: 'M',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -71,7 +71,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'lowCount',
         header: 'L',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -84,7 +84,7 @@ export class ClusterRbacAssessmentReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: true,
       tableSelectionMode: 'single',
       tableStyle: { width: '590px' },
@@ -97,7 +97,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'severityId',
         header: 'Sev',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'severities',
         style: 'width: 90px; max-width: 90px;',
@@ -106,7 +106,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'category',
         header: 'Category',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal;',
@@ -115,7 +115,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'checkId',
         header: 'Id',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 95px; max-width: 95px; white-space: normal;',
@@ -124,7 +124,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'title',
         header: 'Title',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 180px; max-width: 180px; white-space: normal;',
@@ -133,7 +133,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'description',
         header: 'Description',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 360px; max-width: 360px; white-space: normal;',
@@ -142,7 +142,7 @@ export class ClusterRbacAssessmentReportsComponent {
       {
         field: 'remediation',
         header: 'Remediation',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 360px; max-width: 360px; white-space: normal;',
@@ -154,7 +154,7 @@ export class ClusterRbacAssessmentReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: false,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: false,
       tableSelectionMode: null,
       tableStyle: {},

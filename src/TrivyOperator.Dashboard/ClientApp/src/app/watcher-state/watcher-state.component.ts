@@ -26,7 +26,7 @@ export class WatcherStateComponent {
       {
         field: 'kubernetesObjectType',
         header: 'k8s Object',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 200px;',
@@ -35,7 +35,7 @@ export class WatcherStateComponent {
       {
         field: 'namespaceName',
         header: 'NS',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px;',
@@ -44,7 +44,7 @@ export class WatcherStateComponent {
       {
         field: 'status',
         header: 'Status',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px;',
@@ -53,7 +53,7 @@ export class WatcherStateComponent {
       {
         field: 'mitigationMessage',
         header: 'Mitigation',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 330px; max-width: 330px; white-space: normal;',
@@ -62,7 +62,7 @@ export class WatcherStateComponent {
       {
         field: 'lastException',
         header: 'Last Exception',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 330px; max-width: 330px; white-space: normal;',
@@ -71,7 +71,7 @@ export class WatcherStateComponent {
       {
         field: 'lastEventMoment',
         header: 'Last Event',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 155px; max-width: 155px;',
@@ -83,7 +83,7 @@ export class WatcherStateComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: true,
       tableSelectionMode: null,
       tableStyle: { width: '1205px' },

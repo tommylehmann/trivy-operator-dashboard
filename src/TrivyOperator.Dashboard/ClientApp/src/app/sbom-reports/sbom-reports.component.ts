@@ -129,7 +129,7 @@ export class SbomReportsComponent implements OnInit {
       {
         field: 'name',
         header: 'Name',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 290px;',
@@ -138,7 +138,7 @@ export class SbomReportsComponent implements OnInit {
       {
         field: 'version',
         header: 'Version',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px;',
@@ -147,7 +147,7 @@ export class SbomReportsComponent implements OnInit {
       {
         field: 'criticalCount',
         header: 'C',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -157,7 +157,7 @@ export class SbomReportsComponent implements OnInit {
       {
         field: 'highCount',
         header: 'H',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px;',
@@ -167,7 +167,7 @@ export class SbomReportsComponent implements OnInit {
       {
         field: 'mediumCount',
         header: 'M',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -177,7 +177,7 @@ export class SbomReportsComponent implements OnInit {
       {
         field: 'lowCount',
         header: 'L',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -187,7 +187,7 @@ export class SbomReportsComponent implements OnInit {
       {
         field: 'unknownCount',
         header: 'U',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -197,7 +197,7 @@ export class SbomReportsComponent implements OnInit {
       {
         field: 'level',
         header: 'Level',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px;',
@@ -209,7 +209,7 @@ export class SbomReportsComponent implements OnInit {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: false,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: true,
       tableSelectionMode: 'single',
       tableStyle: { width: '930px' },

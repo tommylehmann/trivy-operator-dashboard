@@ -36,7 +36,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'name',
         header: 'Name',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px;white-space: normal;',
@@ -45,7 +45,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'title',
         header: 'Title',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 265px; max-width: 265px; white-space: normal;',
@@ -54,7 +54,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'totalFailCriticalCount',
         header: 'C',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -64,7 +64,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'totalFailHighCount',
         header: 'H',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px;',
@@ -74,7 +74,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'totalFailMediumCount',
         header: 'M',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -84,7 +84,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'totalFailLowCount',
         header: 'L',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -97,7 +97,7 @@ export class ClusterComplianceReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: true,
       tableSelectionMode: 'single',
       tableStyle: { width: '595px' },
@@ -110,7 +110,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'severityId',
         header: 'Sev',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'severities',
         style: 'width: 90px; max-width: 90px;',
@@ -119,7 +119,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'id',
         header: 'Id',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 90px; max-width: 90px; white-space: normal;',
@@ -128,7 +128,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'name',
         header: 'Name',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 320px; max-width: 320px; white-space: normal;',
@@ -137,7 +137,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'description',
         header: 'Description',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'white-space: normal;',
@@ -146,7 +146,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'checks',
         header: 'Checks',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal;',
@@ -155,7 +155,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'commands',
         header: 'Commands',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 150px; max-width: 150px; white-space: normal;',
@@ -164,7 +164,7 @@ export class ClusterComplianceReportsComponent {
       {
         field: 'totalFail',
         header: 'Failed',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal; text-align: right;',
@@ -177,7 +177,7 @@ export class ClusterComplianceReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: false,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: false,
       tableSelectionMode: null,
       tableStyle: {},

@@ -35,7 +35,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'resourceNamespace',
         header: 'NS',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'namespaces',
         style: 'width: 130px; max-width: 130px;',
@@ -44,7 +44,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'resourceName',
         header: 'Name',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 280px; max-width: 280px;',
@@ -53,7 +53,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'resourceKind',
         header: 'Kind',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 110px; max-width: 110px;',
@@ -62,7 +62,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'resourceContainerName',
         header: 'Container',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 170px; max-width: 170px;',
@@ -71,7 +71,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'imageName',
         header: 'Image',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 210px; max-width: 210px;',
@@ -80,7 +80,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'imageTag',
         header: 'Tag',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 115px; max-width: 115px;',
@@ -89,7 +89,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'imageRepository',
         header: 'Repository',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 220px; max-width: 220px;',
@@ -98,7 +98,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'severityId',
         header: 'Sev',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'severities',
         style: 'width: 90px; max-width: 90px;',
@@ -107,7 +107,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'category',
         header: 'Category',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal;',
@@ -116,7 +116,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'ruleId',
         header: 'Id',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 95px; max-width: 95px; white-space: normal;',
@@ -125,7 +125,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'match',
         header: 'Match',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px',
@@ -134,7 +134,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'target',
         header: 'Target',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px',
@@ -143,7 +143,7 @@ export class ExposedSecretReportsDetailedComponent {
       {
         field: 'title',
         header: 'Title',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: false,
         multiSelectType: 'none',
         style: 'min-with: 200px; white-space: normal;',
@@ -156,7 +156,7 @@ export class ExposedSecretReportsDetailedComponent {
       isExportCsvVisible: true,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: true,
       tableSelectionMode: null,
       tableStyle: { width: '2020px' },

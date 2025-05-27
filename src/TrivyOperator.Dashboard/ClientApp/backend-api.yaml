@@ -426,7 +426,7 @@ paths:
     get:
       tags:
         - ConfigAuditReport
-      operationId: GetConfigAuditReportSumaryDtos
+      operationId: GetConfigAuditReportSummaryDtos
       responses:
         '200':
           description: OK
@@ -1128,14 +1128,14 @@ paths:
     get:
       tags:
         - VulnerabilityReports
-      operationId: GetVulnerabilityReportSumaryDto
+      operationId: GetVulnerabilityReportSummaryDto
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VulnerabilityReportSumaryDto'
+                $ref: '#/components/schemas/VulnerabilityReportSummaryDto'
         '400':
           description: Bad Request
           content:
@@ -2992,7 +2992,7 @@ components:
           type: string
           nullable: true
       additionalProperties: false
-    VulnerabilityReportSumaryDto:
+    VulnerabilityReportSummaryDto:
       type: object
       properties:
         severitiesByNsSummaryDtos:

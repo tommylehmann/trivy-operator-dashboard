@@ -54,7 +54,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'resourceNamespace',
         header: 'NS',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'namespaces',
         style: 'width: 130px; max-width: 130px;',
@@ -63,7 +63,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'imageName',
         header: 'Image Name - Tag',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 265px; max-width: 265px; white-space: normal;',
@@ -73,7 +73,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'criticalCount',
         header: 'C',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -83,7 +83,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'highCount',
         header: 'H',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px;',
@@ -93,7 +93,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'mediumCount',
         header: 'M',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -103,7 +103,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'lowCount',
         header: 'L',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -116,7 +116,7 @@ export class ExposedSecretReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
-      isRefreshFiltrable: true,
+      isRefreshFilterable: true,
       isFooterVisible: true,
       tableSelectionMode: 'single',
       tableStyle: {width: '645px'},
@@ -129,7 +129,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'severityId',
         header: 'Sev',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'severities',
         style: 'width: 90px; max-width: 90px;',
@@ -138,7 +138,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'category',
         header: 'Category',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal;',
@@ -147,7 +147,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'ruleId',
         header: 'Id',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 95px; max-width: 95px; white-space: normal;',
@@ -156,7 +156,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'match',
         header: 'Match',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px',
@@ -165,7 +165,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'target',
         header: 'Target',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 130px; max-width: 130px',
@@ -174,7 +174,7 @@ export class ExposedSecretReportsComponent {
       {
         field: 'title',
         header: 'Title',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: false,
         multiSelectType: 'none',
         style: 'min-with: 200px; white-space: normal;',
@@ -186,7 +186,7 @@ export class ExposedSecretReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: false,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: false,
       tableSelectionMode: null,
       tableStyle: {},

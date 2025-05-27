@@ -1,4 +1,4 @@
-<div class="trivy-table" [ngClass]="'trivy-half'">
+<div class="trivy-table" [ngClass]="trivyTableOptions.extraClasses">
   <p-table
     #trivyTable
     columnResizeMode="expand"
@@ -17,9 +17,9 @@
     [reorderableColumns]="true"
     [resizableColumns]="true"
     [scrollable]="true"
-    [selectionMode]="trivyTableOptions!.tableSelectionMode"
+    [selectionMode]="trivyTableOptions.tableSelectionMode"
     [stateKey]="tableStateKey"
-    [tableStyle]="trivyTableOptions!.tableStyle"
+    [tableStyle]="trivyTableOptions.tableStyle"
     [value]="_dataDtos"
     [virtualScroll]="true"
     [virtualScrollItemSize]="47"
@@ -31,14 +31,14 @@
   >
     <ng-template pTemplate="caption">
       <div>
-        <p-button *ngIf="trivyTableOptions!.isRefreshVisible && !trivyTableOptions!.isRefreshFiltrable"
+        <p-button *ngIf="trivyTableOptions!.isRefreshVisible && !trivyTableOptions!.isRefreshFilterable"
                   icon="pi pi-refresh"
                   label="Refresh"
                   raised
                   size="small"
                   text
                   (onClick)="onFilterRefresh($event)" />
-        <p-splitButton *ngIf="trivyTableOptions!.isRefreshVisible && trivyTableOptions!.isRefreshFiltrable"
+        <p-splitButton *ngIf="trivyTableOptions!.isRefreshVisible && trivyTableOptions!.isRefreshFilterable"
                        #refreshSplitButton
                        icon="pi pi-refresh"
                        label="Refresh"
@@ -110,12 +110,12 @@
           <p-sortIcon *ngIf="col.isSortable && (col.isSortIconVisible ?? col.isSortable)"
                       field="{{ col.field }}"
                       class="sm-sortIcon"/>
-          <p-columnFilter *ngIf="col.isFiltrable && col.multiSelectType === 'none'"
+          <p-columnFilter *ngIf="col.isFilterable && col.multiSelectType === 'none'"
                           display="menu"
                           field="{{ col.field }}"
                           type="text"
                           class="sm-filterIcon"/>
-          <p-columnFilter *ngIf="col.isFiltrable && col.multiSelectType === 'namespaces'"
+          <p-columnFilter *ngIf="col.isFilterable && col.multiSelectType === 'namespaces'"
                           display="menu"
                           field="{{ col.field }}"
                           matchMode="in"
@@ -137,7 +137,7 @@
               </ng-template>
             </ng-template>
           </p-columnFilter>
-          <p-columnFilter *ngIf="col.isFiltrable && col.multiSelectType === 'severities'"
+          <p-columnFilter *ngIf="col.isFilterable && col.multiSelectType === 'severities'"
                           display="menu"
                           field="{{ col.field }}"
                           matchMode="in"

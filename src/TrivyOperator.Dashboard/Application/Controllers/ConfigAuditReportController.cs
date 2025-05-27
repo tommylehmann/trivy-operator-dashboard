@@ -41,10 +41,10 @@ public class ConfigAuditReportController(IConfigAuditReportService configAuditRe
     public async Task<IEnumerable<string>> GetActiveNamespaces() =>
         await configAuditReportService.GetActiveNamespaces();
 
-    [HttpGet("summary", Name = "GetConfigAuditReportSumaryDtos")]
+    [HttpGet("summary", Name = "GetConfigAuditReportSummaryDtos")]
     [ProducesResponseType<IEnumerable<ConfigAuditReportSummaryDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    public async Task<IEnumerable<ConfigAuditReportSummaryDto>> GetConfigAuditReportSumaryDtos() =>
+    public async Task<IEnumerable<ConfigAuditReportSummaryDto>> GetConfigAuditReportSummaryDtos() =>
         await configAuditReportService.GetConfigAuditReportSummaryDtos();
 }

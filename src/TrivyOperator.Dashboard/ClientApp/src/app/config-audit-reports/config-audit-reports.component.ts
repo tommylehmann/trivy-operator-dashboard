@@ -39,7 +39,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'resourceNamespace',
         header: 'NS',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'namespaces',
         style: 'width: 130px; max-width: 130px;',
@@ -48,7 +48,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'resourceName',
         header: 'Name',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 265px; max-width: 265px; white-space: normal;',
@@ -57,7 +57,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'resourceKind',
         header: 'Kind',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 100px; max-width: 100px;',
@@ -66,7 +66,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'criticalCount',
         header: 'C',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -76,7 +76,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'highCount',
         header: 'H',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px;',
@@ -86,7 +86,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'mediumCount',
         header: 'M',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -96,7 +96,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'lowCount',
         header: 'L',
-        isFiltrable: false,
+        isFilterable: false,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 50px; max-width: 50px;',
@@ -109,7 +109,7 @@ export class ConfigAuditReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: true,
-      isRefreshFiltrable: true,
+      isRefreshFilterable: true,
       isFooterVisible: true,
       tableSelectionMode: 'single',
       tableStyle: { width: '775px' },
@@ -122,7 +122,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'severityId',
         header: 'Sev',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'severities',
         style: 'width: 90px; max-width: 90px;',
@@ -131,7 +131,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'category',
         header: 'Category',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal;',
@@ -140,7 +140,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'checkId',
         header: 'Id',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 95px; max-width: 95px; white-space: normal;',
@@ -149,7 +149,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'title',
         header: 'Title',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 180px; max-width: 180px; white-space: normal;',
@@ -158,7 +158,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'description',
         header: 'Description',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 360px; max-width: 360px; white-space: normal;',
@@ -167,7 +167,7 @@ export class ConfigAuditReportsComponent {
       {
         field: 'remediation',
         header: 'Remediation',
-        isFiltrable: true,
+        isFilterable: true,
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 360px; max-width: 360px; white-space: normal;',
@@ -179,7 +179,7 @@ export class ConfigAuditReportsComponent {
       isExportCsvVisible: false,
       isResetFiltersVisible: true,
       isRefreshVisible: false,
-      isRefreshFiltrable: false,
+      isRefreshFilterable: false,
       isFooterVisible: false,
       tableSelectionMode: null,
       tableStyle: {},
