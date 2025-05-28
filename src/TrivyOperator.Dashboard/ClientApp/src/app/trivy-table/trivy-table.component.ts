@@ -182,9 +182,9 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.filterSeverityOptions = this.severityDtos.map((x) => x.id);
     this.filterRefreshSeverities = [...this.severityDtos];
 
-    if (this.trivyTableOptions?.multiHeaderAction && this.trivyTableOptions.multiHeaderAction.length > 1) {
-      for (let i = 1; i < this.trivyTableOptions.multiHeaderAction.length; i++) {
-        const actionLabel = this.trivyTableOptions.multiHeaderAction[i];
+    if (this.trivyTableOptions?.multiHeaderActions && this.trivyTableOptions.multiHeaderActions.length > 1) {
+      for (let i = 1; i < this.trivyTableOptions.multiHeaderActions.length; i++) {
+        const actionLabel = this.trivyTableOptions.multiHeaderActions[i].label;
         this.multiHeaderActionItems.push({
           label: actionLabel,
           command: () => { this.onMultiHeaderAction(actionLabel); }

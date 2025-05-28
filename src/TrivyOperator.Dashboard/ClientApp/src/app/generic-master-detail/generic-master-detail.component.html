@@ -1,4 +1,5 @@
-<p-splitter styleClass="mb-8" layout="horizontal" [panelSizes]="[35, 65]" stateStorage="local" stateKey="splitter">
+<p-splitter styleClass="mb-8" [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
+            [panelSizes]="[35, 65]" stateStorage="local" [stateKey]="splitterStorageKey() && screenSize !== 'sm' ? 'splitter.' + splitterStorageKey() : undefined">
   <ng-template #panel>
     <div class="w-full">
       <app-trivy-table

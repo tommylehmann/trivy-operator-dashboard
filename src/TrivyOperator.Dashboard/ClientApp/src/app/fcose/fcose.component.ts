@@ -72,7 +72,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     else {
       if (!this.activeNodeId) {
         this._rootNodeId = nodeDataDtos.find(x => x.isMain)?.id ?? this._defaultRootNodeId;
-        this.initNavMenuItems();
+        
       }
       this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
       this.hoveredNode = undefined;
@@ -84,6 +84,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         this.redrawGraph();
       }
     }
+    this.initNavMenuItems();
   }
   private _nodeDataDtos: NodeDataDto[] = [];
   // #endregion
@@ -895,14 +896,16 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.navItems[this.navItems.length - 1].styleClass = 'breadcrumb-pointer';
     }
     const newDataDetailDto = this.getDataDetailDtoById(nodeId);
-    this.navItems = [
-      ...this.navItems,
-      {
-        id: nodeId,
-        label: newDataDetailDto?.name ?? 'no-name',
-        styleClass: 'breadcrumb-size',
-      },
-    ];
+    if (newDataDetailDto?.name) {
+      this.navItems = [
+        ...this.navItems,
+        {
+          id: nodeId,
+          label: newDataDetailDto?.name ?? 'no-name',
+          styleClass: 'breadcrumb-size',
+        },
+        ];
+    }
     this.activeNodeId = nodeId;
   }
   // #endregion

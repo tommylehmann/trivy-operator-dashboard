@@ -217,7 +217,8 @@ export class SbomReportsComponent implements OnInit {
       dataKey: 'bomRef',
       rowExpansionRender: 'table',
       extraClasses: 'trivy-with-filters',
-      multiHeaderAction: ["Info", "Dive In", "Export CycloneDX JSON", "Export CycloneDX XML", "Go to Vulenrability Report"],
+      multiHeaderActions: [{ label: "Info" }, { label: "Dive In" }, { label: "Export CycloneDX JSON" },
+        { label: "Export CycloneDX XML" }, { label: "Go to Vulenrability Report" }],
     };
   }
 

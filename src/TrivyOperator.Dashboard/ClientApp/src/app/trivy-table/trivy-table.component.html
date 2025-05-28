@@ -77,24 +77,24 @@
                   size="small"
                   text
                   (onClick)="csvExportOp.toggle($event)" />
-        <p-button *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderAction && trivyTableOptions.multiHeaderAction.length == 1"
+        <p-button *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length == 1"
                   icon="pi pi-cog"
-                  [label]="trivyTableOptions.multiHeaderAction[0]"
+                  [label]="trivyTableOptions.multiHeaderActions[0].label"
                   raised
                   size="small"
                   text
                   [disabled]="!dataDtos"
-                  (onClick)="onMultiHeaderAction(trivyTableOptions.multiHeaderAction[0])" />
-        <p-splitButton *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderAction && trivyTableOptions.multiHeaderAction.length > 1"
+                  (onClick)="onMultiHeaderAction(trivyTableOptions.multiHeaderActions[0].label)" />
+        <p-splitButton *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length > 1"
                        icon="pi pi-cog"
-                       [label]="trivyTableOptions.multiHeaderAction[0]"
+                       [label]="trivyTableOptions.multiHeaderActions[0].label"
                        class="text-sm"
                        raised
                        size="small"
                        text
                        [disabled]="!dataDtos"
                        [model]="multiHeaderActionItems"
-                       (onClick)="onMultiHeaderAction(trivyTableOptions.multiHeaderAction[0])">
+                       (onClick)="onMultiHeaderAction(trivyTableOptions.multiHeaderActions[0].label)">
         </p-splitButton>
       </div>
     </ng-template>

@@ -101,6 +101,14 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         },
       },
     },
+    drawer: {
+      header: {
+        padding: '0.5rem 0',
+      },
+      content: {
+        padding: '0 0.5rem',
+      },
+    },
     selectbutton: {
       border: {
         radius: 'var(--tod-selectbutton-border-radius)',

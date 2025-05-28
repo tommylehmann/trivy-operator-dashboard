@@ -152,7 +152,7 @@ export class SbomReportsDetailedComponent {
       dataKey: null,
       rowExpansionRender: null,
       extraClasses: '',
-      multiHeaderAction: ["Export All", "Export Selected"],
+      multiHeaderActions: [{ label: "Export All" }, { label: "Export Selected" }],
     };
     this.exportColumns = TrivyTableUtils.convertFromTableColumnToExportColumn(this.trivyTableColumns);
   }

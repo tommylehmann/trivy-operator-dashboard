@@ -17,6 +17,7 @@
 $default-height: calc(100vh - 90px);
 $default-height-half: calc(50vh - 45px);
 $default-height-with-filters: calc(100vh - 140px);
+$default-breakpoint: 576px;
 
 /* base style */
 .trivy-table {
@@ -31,7 +32,7 @@ $default-height-with-filters: calc(100vh - 140px);
     height: $default-height-half;
     min-height: $default-height-half;
 
-    @media (min-width: 576px) {
+    @media (min-width: $default-breakpoint) {
       height: $default-height;
       min-height: $default-height;
     }
@@ -41,7 +42,7 @@ $default-height-with-filters: calc(100vh - 140px);
     height: $default-height-half;
     min-height: $default-height-half;
 
-    @media (min-width: 576px) {
+    @media (min-width: $default-breakpoint) {
       height: $default-height-with-filters;
       min-height: $default-height-with-filters;
     }

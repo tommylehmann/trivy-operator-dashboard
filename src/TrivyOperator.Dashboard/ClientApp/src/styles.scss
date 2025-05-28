@@ -15,7 +15,7 @@
 
 /* Components fixes*/
 @layer app-layer {
-  a:not([pRipple]):not(.p-tieredmenu-item-link) {
+  a:not([pRipple]):not(p-tieredmenu-item-link) {
     @apply text-blue-400 underline hover:text-blue-500 hover:no-underline;
   }
 
@@ -71,10 +71,12 @@ p-splitbutton.text-sm {
 
 // various tailwind reverts
 
-ul:not(.p-carousel-indicator-list) {
+ul:not(.p-carousel-indicator-list):not(.p-tieredmenu-root-list) {
   list-style-type: disc !important;
   padding-left: 1.25rem;
 }
+
+
 
 markdown p {
   padding-top: 1.25rem;
@@ -183,3 +185,6 @@ p-card.small-header .p-card-title {
   border-style: solid;
   border-color: var(--p-content-border-color);
 }
+
+
+

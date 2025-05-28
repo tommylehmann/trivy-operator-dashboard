@@ -43,6 +43,7 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   detailsTableColumns = input.required<TrivyTableColumn[]>();
   detailsTableOptions = input.required<TrivyTableOptions>();
   singleSelectDataDto = input<TDataDto | undefined>();
+  splitterStorageKey = input<string | undefined>();
 
   refreshRequested = output<TrivyFilterData>();
   mainTableExpandCallback = output<TDataDto>();
@@ -56,6 +57,8 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
 
   dataDtos = input<TDataDto[]>([]);
   selectedDataDto: TDataDto | null = null;
+
+  screenSize: string = this.getScreenSize();
 
   protected _dataDtos: TDataDto[] = [];
   protected _isMainTableLoading: boolean = this.isMainTableLoading();
@@ -120,7 +123,7 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   }
 
   // screen size
-  screenSize: string = this.getScreenSize();
+  
 
   @HostListener('window:resize', [])
   onResize() {
@@ -128,6 +131,12 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   }
 
   getScreenSize(): string {
-    return window.innerWidth < 640 ? 'sm' : 'lg';
+    const cssVarValue = getComputedStyle(document.documentElement)
+      .getPropertyValue('--tod-screen-width-xs')
+      .trim(); // Get and clean the CSS variable value
+
+    const threshold = parseInt(cssVarValue, 10); // Convert it to a number
+
+    return window.innerWidth < threshold ? 'sm' : 'lg';
   }
 }

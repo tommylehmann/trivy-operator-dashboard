@@ -11,7 +11,14 @@ export interface TrivyTableOptions {
   dataKey: string | null;
   rowExpansionRender: null | 'table' | 'messages';
   extraClasses: string;
-  multiHeaderAction?: string[];
+  multiHeaderActions?: MultiHeaderAction[];
+}
+
+export interface MultiHeaderAction {
+  label: string;
+  enabledIfRowSelected?: boolean;
+  enabledIfDataLoaded?: boolean;
+  icon?: string;
 }
 
 export interface Column {

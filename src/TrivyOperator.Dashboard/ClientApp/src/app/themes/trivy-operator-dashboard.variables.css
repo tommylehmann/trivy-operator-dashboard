@@ -33,4 +33,6 @@
   --p-togglebutton-content-border-radius: 4px;
   --p-togglebutton-content-padding: 0.25rem 0.25rem;
   --p-border-radius-md: 2px;
+  /* generic vars */
+  --tod-screen-width-xs: 576px;
 }
