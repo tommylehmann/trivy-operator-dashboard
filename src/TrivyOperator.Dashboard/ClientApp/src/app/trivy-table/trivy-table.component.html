@@ -28,6 +28,8 @@
     (onRowExpand)="onRowExpandCollapse($event)"
     (onStateSave)="onTableStateSave()"
     (selectionChange)="onSelectionChange($event)"
+    (onSort)="onSort()"
+    (onFilter)="onFilter()"
   >
     <ng-template pTemplate="caption">
       <div>
@@ -86,7 +88,7 @@
                   [disabled]="!dataDtos"
                   (onClick)="onMultiHeaderAction(trivyTableOptions.multiHeaderActions[0].label)" />
         <p-splitButton *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length > 1"
-                       icon="pi pi-cog"
+                       [icon]="trivyTableOptions.multiHeaderActions[0].icon ?? 'pi pi-cog'"
                        [label]="trivyTableOptions.multiHeaderActions[0].label"
                        class="text-sm"
                        raised

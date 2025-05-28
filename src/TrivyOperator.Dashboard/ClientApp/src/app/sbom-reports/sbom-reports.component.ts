@@ -217,8 +217,16 @@ export class SbomReportsComponent implements OnInit {
       dataKey: 'bomRef',
       rowExpansionRender: 'table',
       extraClasses: 'trivy-with-filters',
-      multiHeaderActions: [{ label: "Info" }, { label: "Dive In" }, { label: "Export CycloneDX JSON" },
-        { label: "Export CycloneDX XML" }, { label: "Go to Vulenrability Report" }],
+      multiHeaderActions: [
+        { label: "Info",  icon: 'pi pi-info-circle', enabledIfDataLoaded: true, },
+        { label: "Dive In", icon: 'pi pi-arrow-down-right', enabledIfRowSelected: true, },
+        { label: "Export CycloneDX JSON", icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
+        { label: "Export CycloneDX XML" , icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
+        { label: "Go to Vulnerability Report", icon: 'pi pi-shield', enabledIfDataLoaded: true, },
+        { label: "Collapse All", },
+        { label: "Clear Sorting", },
+        { label: "Clear Filters", },
+      ],
     };
   }
 

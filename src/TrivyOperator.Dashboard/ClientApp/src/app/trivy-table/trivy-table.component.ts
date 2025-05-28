@@ -28,7 +28,7 @@ import { LocalStorageUtils } from '../utils/local-storage.utils';
 import { PrimengTableStateUtil } from '../utils/primeng-table-state.util';
 import { SeverityUtils } from '../utils/severity.utils';
 import {
-  ExportColumn,
+  ExportColumn, MultiHeaderAction,
   TrivyExpandTableOptions,
   TrivyFilterData,
   TrivyTableCellCustomOptions,
@@ -103,9 +103,9 @@ export class TrivyTableComponent<TData> implements OnInit {
   @Output() multiHeaderActionRequested = new EventEmitter<string>();
   tableStateKey: string | undefined = undefined;
 
-  selectedDataDtos?: any | null = null;
+  selectedDataDtos?: any;
   @Input() set singleSelectDataDto(value: TData | undefined) {
-    if (this.selectedDataDtos == value) {
+    if (this.selectedDataDtos === value) {
       return;  // avoid (re)selection
     }
     this.selectedDataDtos = value;
@@ -169,7 +169,6 @@ export class TrivyTableComponent<TData> implements OnInit {
     effect(() => {
       this._dataDtos = this.dataDtos() ?? [];
       this.newData();
-
     });
   }
 
@@ -182,19 +181,11 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.filterSeverityOptions = this.severityDtos.map((x) => x.id);
     this.filterRefreshSeverities = [...this.severityDtos];
 
-    if (this.trivyTableOptions?.multiHeaderActions && this.trivyTableOptions.multiHeaderActions.length > 1) {
-      for (let i = 1; i < this.trivyTableOptions.multiHeaderActions.length; i++) {
-        const actionLabel = this.trivyTableOptions.multiHeaderActions[i].label;
-        this.multiHeaderActionItems.push({
-          label: actionLabel,
-          command: () => { this.onMultiHeaderAction(actionLabel); }
-        });
-      }
-    }
+    this.multiHeaderActionInit();
   }
 
   public onTableClearSelected() {
-    this.selectedDataDtos = null;
+    this.selectedDataDtos = undefined;
   }
 
   public isTableRowSelected(): boolean {
@@ -256,6 +247,13 @@ export class TrivyTableComponent<TData> implements OnInit {
       (this.trivyTable.filteredValue ? true : false) ||
       (this.trivyTable.multiSortMeta == null ? false : this.trivyTable.multiSortMeta.length > 0)
     );
+  }
+
+  private isTableFiltered(): boolean {
+    return !!this.trivyTable.filteredValue;
+  }
+  private isTableSorted(): boolean {
+    return this.trivyTable?.multiSortMeta == null ? false : this.trivyTable.multiSortMeta.length > 0;
   }
 
   public onClearSortFilters() {
@@ -390,10 +388,49 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.rowActionRequested.emit(event);
   }
 
+  multiHeaderActionItems: MenuItem[] = [];
+
+  private multiHeaderActionInit() {
+    if (this.trivyTableOptions.multiHeaderActions && (this.trivyTableOptions.multiHeaderActions?.length ?? 0) > 1) {
+      this.multiHeaderActionItems = this.trivyTableOptions.multiHeaderActions.slice(1).map(actionItem => ({
+        label: actionItem.specialAction ?? actionItem.label,
+        command: () => this.onMultiHeaderAction(actionItem.label),
+        icon: actionItem.icon,
+        disabled: this.isMultiHeaderActionDisabled(actionItem),
+      }));
+    }
+    console.log("trivyTable - multiHeaderActionInit baby!")
+  }
+
+  private updateMultiHeaderActionClearSorting() {
+    const menuItem = this.multiHeaderActionItems.find(x => x.label === "Clear Sorting");
+    if (menuItem) {
+      console.log(menuItem);
+      menuItem.disabled = !this.isTableSorted();
+    }
+  }
+
+  isMultiHeaderActionDisabled(actionItem: MultiHeaderAction): boolean {
+    return (this._dataDtos.length ?? 0) === 0;
+  }
+
   onMultiHeaderAction(actionLabel: string) {
     this.multiHeaderActionRequested.emit(actionLabel);
   }
-  multiHeaderActionItems: MenuItem[] = [];
+
+  onSort() {
+    console.log("trivyTable - sort baby!")
+    const x = this.multiHeaderActionItems[0];
+    if (x) {
+      x.disabled = !x.disabled;
+    }
+    this.updateMultiHeaderActionClearSorting();
+  }
+
+  onFilter() {
+    console.log("trivyTable - filter baby!")
+  }
+
 
   newData() {
       setTimeout(() => {
