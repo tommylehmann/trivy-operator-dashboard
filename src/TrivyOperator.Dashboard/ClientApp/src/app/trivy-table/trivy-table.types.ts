@@ -19,7 +19,7 @@ export interface MultiHeaderAction {
   enabledIfRowSelected?: boolean;
   enabledIfDataLoaded?: boolean;
   icon?: string;
-  specialAction?: "Clear Filters" | "Clear Sorting";
+  specialAction?: "Clear Selection" | "Clear Sort/Filters" | "Collapse All";
 }
 
 export interface Column {

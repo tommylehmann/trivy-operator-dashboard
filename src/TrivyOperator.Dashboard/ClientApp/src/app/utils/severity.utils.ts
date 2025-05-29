@@ -88,7 +88,7 @@ export class SeverityUtils {
     maxDisplay = maxDisplay ? maxDisplay : 0;
 
     if (severityIds.length == 0) {
-      return 'Any';
+      return '';
     }
     if (severityIds.length > maxDisplay) {
       return `${severityIds.length} selected`;

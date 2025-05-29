@@ -46,6 +46,8 @@ import { CronPipe } from '../pipes/cron.pipe';
 import { LocalTimePipe } from '../pipes/local-time.pipe';
 
 import { MenuItem } from 'primeng/api';
+import {SeverityNameByIdPipe} from "../pipes/severity-name-by-id.pipe";
+import {SeverityNamesMaxDisplayPipe} from "../pipes/severity-names-max-display.pipe";
 
 @Component({
   selector: 'app-trivy-table',
@@ -70,6 +72,8 @@ import { MenuItem } from 'primeng/api';
     SemaphoreCssStyleByNamePipe,
     CronPipe,
     LocalTimePipe,
+    SeverityNameByIdPipe,
+    SeverityNamesMaxDisplayPipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',
@@ -105,6 +109,8 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   selectedDataDtos?: any;
   @Input() set singleSelectDataDto(value: TData | undefined) {
+    console.log("mama " + (this.trivyTableSelectedRecords === 0));
+    this.updateMultiHeaderActionSelectionChanged();
     if (this.selectedDataDtos === value) {
       return;  // avoid (re)selection
     }
@@ -193,6 +199,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   }
 
   onSelectionChange(event: any): void {
+    this.updateMultiHeaderActionSelectionChanged();
     if (!event) {
       this.selectedRowsChanged.emit([]);
       return;
@@ -235,44 +242,12 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   // there is an NG0100 error from here
 
-  public onOverlayToogle() {
+  public onOverlayToggle() {
     this.overlayVisible = !this.overlayVisible;
   }
 
-  public isTableFilteredOrSorted(): boolean {
-    if (!this.trivyTable || this.isLoading) {
-      return false;
-    }
-    return (
-      (this.trivyTable.filteredValue ? true : false) ||
-      (this.trivyTable.multiSortMeta == null ? false : this.trivyTable.multiSortMeta.length > 0)
-    );
-  }
 
-  private isTableFiltered(): boolean {
-    return !!this.trivyTable.filteredValue;
-  }
-  private isTableSorted(): boolean {
-    return this.trivyTable?.multiSortMeta == null ? false : this.trivyTable.multiSortMeta.length > 0;
-  }
 
-  public onClearSortFilters() {
-    const currentFilters = JSON.parse(JSON.stringify(this.trivyTable.filters));
-    PrimengTableStateUtil.clearFilters(this.trivyTable.filters);
-    this.trivyTable.clear();
-    this.filterSelectedActiveNamespaces = [];
-    this.filterSelectedSeverityIds = [];
-    if (this.trivyTableOptions.stateKey) {
-      const tableState = localStorage.getItem(this.trivyTableOptions.stateKey);
-      if (!tableState) {
-        return;
-      }
-      const tableStateJson = JSON.parse(tableState);
-      PrimengTableStateUtil.clearTableFilters(tableStateJson);
-      PrimengTableStateUtil.clearTableMultiSort(tableStateJson);
-      localStorage.setItem(this.trivyTableOptions.stateKey, JSON.stringify(tableStateJson));
-    }
-  }
 
   onTrivyDetailsTableCallback(dto: TData) {
     this.trivyDetailsTableCallback.emit(dto);
@@ -341,39 +316,6 @@ export class TrivyTableComponent<TData> implements OnInit {
     localStorage.setItem(this.tableStateKey, JSON.stringify(tableState));
   }
 
-  severityWrapperGetNames(severityIds: number[], maxDisplay?: number | undefined): string {
-    return SeverityUtils.getNames(severityIds, maxDisplay);
-  }
-
-  severityWrapperGetName(severityId: number): string {
-    return SeverityUtils.getName(severityId);
-  }
-
-  severityWrapperGetCapitalizedName(severityId: number): string {
-    return SeverityUtils.getCapitalizedName(severityId);
-  }
-
-  severityWrapperGetCssColor(severityId: number): string {
-    return SeverityUtils.getCssColor(severityId);
-  }
-
-  severityWrapperGetCssColorByName(severityName: string): string {
-    return SeverityUtils.getCssColorByName(severityName);
-  }
-
-  formatUtcToLocal(utcDateString: string): string {
-    const date = new Date(utcDateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  }
-
   // #region to be moved appropriately
   private _rowArray: number[] = [];
   getExpandCellRowArray(data: TData): number[] {
@@ -394,43 +336,147 @@ export class TrivyTableComponent<TData> implements OnInit {
     if (this.trivyTableOptions.multiHeaderActions && (this.trivyTableOptions.multiHeaderActions?.length ?? 0) > 1) {
       this.multiHeaderActionItems = this.trivyTableOptions.multiHeaderActions.slice(1).map(actionItem => ({
         label: actionItem.specialAction ?? actionItem.label,
-        command: () => this.onMultiHeaderAction(actionItem.label),
-        icon: actionItem.icon,
+        command: this.multiHeaderActionGetCommand(actionItem),
+        icon: this.multiHeaderActionGetIcon(actionItem),
         disabled: this.isMultiHeaderActionDisabled(actionItem),
       }));
     }
-    console.log("trivyTable - multiHeaderActionInit baby!")
   }
 
-  private updateMultiHeaderActionClearSorting() {
-    const menuItem = this.multiHeaderActionItems.find(x => x.label === "Clear Sorting");
-    if (menuItem) {
-      console.log(menuItem);
-      menuItem.disabled = !this.isTableSorted();
+  protected multiHeaderActionGetCommand(actionItem: MultiHeaderAction): () => void {
+    if (actionItem.specialAction) {
+      switch (actionItem.specialAction) {
+        case "Clear Selection":
+          return () => this.onTableClearSelected();
+        case "Clear Sort/Filters":
+          return () => this.onClearSortFilters();
+        case "Collapse All":
+          return () => this.onTableCollapseAll();
+        default:
+          console.error(actionItem);
+      }
     }
+    return () => this.multiHeaderActionRequested.emit(actionItem.label);
+  }
+
+  private multiHeaderActionGetIcon(actionItem: MultiHeaderAction): string {
+    if (actionItem.specialAction) {
+      switch (actionItem.specialAction) {
+        case "Clear Selection":
+          return 'pi pi-list';
+        case "Clear Sort/Filters":
+          return 'pi pi-filter';
+        case "Collapse All":
+          return 'pi pi-expand';
+        default:
+          console.error(actionItem);
+      }
+    }
+    return actionItem.icon ?? '';
   }
 
   isMultiHeaderActionDisabled(actionItem: MultiHeaderAction): boolean {
-    return (this._dataDtos.length ?? 0) === 0;
+    if (actionItem.enabledIfDataLoaded)
+    {
+      return (this._dataDtos.length ?? 0) === 0;
+    }
+    if (actionItem.enabledIfRowSelected)
+    {
+      return this.trivyTableSelectedRecords === 0;
+    }
+
+    return true;
   }
 
-  onMultiHeaderAction(actionLabel: string) {
-    this.multiHeaderActionRequested.emit(actionLabel);
+  private updateMultiHeaderActionClearSortFilters() {
+    const menuItem = this.multiHeaderActionItems.find(x => x.label === "Clear Sort/Filters");
+    if (menuItem) {
+      menuItem.disabled = !this.isTableFilteredOrSorted();
+    }
   }
+
+  private updateMultiHeaderActionSelectionChanged() {
+    const menuItem = this.multiHeaderActionItems.find(x => x.label === "Clear Selection");
+    if (menuItem) {
+      menuItem.disabled = this.trivyTableSelectedRecords === 0;
+    }
+  }
+
+
 
   onSort() {
-    console.log("trivyTable - sort baby!")
-    const x = this.multiHeaderActionItems[0];
-    if (x) {
-      x.disabled = !x.disabled;
-    }
-    this.updateMultiHeaderActionClearSorting();
+    this.updateMultiHeaderActionClearSortFilters();
   }
 
   onFilter() {
-    console.log("trivyTable - filter baby!")
+    this.updateMultiHeaderActionClearSortFilters();
   }
 
+  public isTableFilteredOrSorted(): boolean {
+    if (!this.trivyTable || this.isLoading) {
+      return false;
+    }
+    return (
+        (!!this.trivyTable.filteredValue) ||
+        (this.trivyTable.multiSortMeta == null ? false : this.trivyTable.multiSortMeta.length > 0)
+    );
+  }
+
+  public onClearSortFilters() {
+    const currentFilters = JSON.parse(JSON.stringify(this.trivyTable.filters));
+    PrimengTableStateUtil.clearFilters(this.trivyTable.filters);
+    this.trivyTable.clear();
+    this.filterSelectedActiveNamespaces = [];
+    this.filterSelectedSeverityIds = [];
+    this.updateMultiHeaderActionClearSortFilters();
+    if (this.trivyTableOptions.stateKey) {
+      const tableState = localStorage.getItem(this.trivyTableOptions.stateKey);
+      if (!tableState) {
+        return;
+      }
+      const tableStateJson = JSON.parse(tableState);
+      PrimengTableStateUtil.clearTableFilters(tableStateJson);
+      PrimengTableStateUtil.clearTableMultiSort(tableStateJson);
+      localStorage.setItem(this.trivyTableOptions.stateKey, JSON.stringify(tableStateJson));
+    }
+  }
+
+  // public onClearFilters() {
+  //   PrimengTableStateUtil.clearFilters(this.trivyTable.filters);
+  //   this.trivyTable.clearFilterValues();
+  //   this.filterSelectedActiveNamespaces = [];
+  //   this.filterSelectedSeverityIds = [];
+  //   this.clearLocalStorageSavedLayout('filter');
+  // }
+  //
+  // public onClearSorting() {
+  //   this.trivyTable.multiSortMeta = [];
+  //   this.trivyTable.sort();
+  //   this.clearLocalStorageSavedLayout('filter');
+  // }
+  //
+  // private isTableFiltered(): boolean {
+  //   return !!this.trivyTable.filteredValue;
+  // }
+  // private isTableSorted(): boolean {
+  //   return this.trivyTable?.multiSortMeta == null ? false : this.trivyTable.multiSortMeta.length > 0;
+  // }
+  // private clearLocalStorageSavedLayout(item: 'sort' | 'filter') {
+  //   if (this.trivyTableOptions.stateKey) {
+  //     const tableState = localStorage.getItem(this.trivyTableOptions.stateKey);
+  //     if (!tableState) {
+  //       return;
+  //     }
+  //     const tableStateJson = JSON.parse(tableState);
+  //     if (item === 'sort') {
+  //       PrimengTableStateUtil.clearTableMultiSort(tableStateJson);
+  //     }
+  //     else {
+  //       PrimengTableStateUtil.clearTableFilters(tableStateJson);
+  //     }
+  //     localStorage.setItem(this.trivyTableOptions.stateKey, JSON.stringify(tableStateJson));
+  //   }
+  // }
 
   newData() {
       setTimeout(() => {

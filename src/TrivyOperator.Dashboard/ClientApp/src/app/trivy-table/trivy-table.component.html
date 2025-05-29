@@ -86,7 +86,7 @@
                   size="small"
                   text
                   [disabled]="!dataDtos"
-                  (onClick)="onMultiHeaderAction(trivyTableOptions.multiHeaderActions[0].label)" />
+                  (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])" />
         <p-splitButton *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length > 1"
                        [icon]="trivyTableOptions.multiHeaderActions[0].icon ?? 'pi pi-cog'"
                        [label]="trivyTableOptions.multiHeaderActions[0].label"
@@ -96,7 +96,7 @@
                        text
                        [disabled]="!dataDtos"
                        [model]="multiHeaderActionItems"
-                       (onClick)="onMultiHeaderAction(trivyTableOptions.multiHeaderActions[0].label)">
+                       (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])">
         </p-splitButton>
       </div>
     </ng-template>
@@ -158,11 +158,11 @@
                              [(ngModel)]="filterSelectedSeverityIds"
                              (onChange)="filter($event.value)">
                 <ng-template let-severityIds pTemplate="selectedItems">
-                  <div>{{ severityWrapperGetNames(severityIds, 2) }}</div>
+                  <div>{{ severityIds |severityNamesMaxDisplay:2 }}</div>
                 </ng-template>
                 <ng-template let-option pTemplate="item">
                   <div class="flex items-center gap-2" [style]="{ 'font-size': '14px' }">
-                    {{ severityWrapperGetCapitalizedName(option) }}
+                    {{ option | severityNameById }}
                   </div>
                 </ng-template>
               </p-multiSelect>
@@ -189,13 +189,14 @@
         <td *ngFor="let col of columns" style="{{ col.style }}">
           <span *ngIf="col.renderType == 'standard'" class="truncate-ellipsis">{{ rowData[col.field] }}</span>
           <span *ngIf="col.renderType == 'date'">{{ rowData[col.field] | date: 'yyyy-MM-dd' }}</span>
-          <span *ngIf="col.renderType == 'dateTime'">{{ formatUtcToLocal(rowData[col.field]) }}</span>
+          <span *ngIf="col.renderType == 'dateTime'">{{ rowData[col.field] | localTime }}</span>
           <div *ngIf="col.renderType == 'imageNameTag'">
             <span>{{ rowData[col.field] }}:{{ rowData[col.extraFields[0]] }}</span>
             <p-tag *ngIf="rowData[col.extraFields[1]]"
                    value="EOSL"
                    [rounded]="true"
-                   [style]="{ 'margin-left': '10px', background: severityWrapperGetCssColor(1) }" />
+                   class="ml-3"
+                   [style]="1 | severityCssStyleById:1 " />
           </div>
           <a *ngIf="col.renderType == 'link'" href="{{ rowData[col.extraFields[0]] }}" target="_blank">
             {{
@@ -204,22 +205,22 @@
           </a>
           <p-tag *ngIf="col.renderType == 'severityBadge'"
                  [rounded]="true"
-                 [style]="{ background: severityWrapperGetCssColor(rowData[col.field]) }"
-                 [value]="severityWrapperGetCapitalizedName(rowData[col.field])" />
+                 [style]="rowData[col.field] | severityCssStyleById:1"
+                 value=" {{ rowData[col.field] | severityNameById }}" />
           <div *ngIf="col.renderType == 'severityMultiTags'" style="display: flex; justify-content: space-between">
             <p-tag [rounded]="true"
-                   [style]="{ background: severityWrapperGetCssColor(0) }"
+                   [style]="0 | severityCssStyleById: rowData[col.field]"
                    [value]="rowData[col.field]" />
             <div *ngFor="let extraField of col.extraFields; let i = index">
               <p-tag [rounded]="true"
-                     [style]="{ background: severityWrapperGetCssColor(i + 1) }"
+                     [style]="i + 1 | severityCssStyleById: rowData[col.extraFields[i]] "
                      [value]="rowData[col.extraFields[i]]" />
             </div>
           </div>
           <p-tag *ngIf="col.renderType == 'eosl' && rowData[col.field]"
                  icon="pi pi-exclamation-circle"
                  [rounded]="true"
-                 [style]="{ background: severityWrapperGetCssColor(1) }"
+                 [style]="1 | severityCssStyleById:1"
                  [value]="'true'" />
           <p-tag *ngIf="col.renderType == 'semaphore'"
                  [rounded]="true"
@@ -274,7 +275,8 @@
                                 (onClick)="onTrivyDetailsTableCallback(rowData)" />
                       <p-tag *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).badge"
                              [rounded]="true"
-                             [style]="{ 'margin-left': '10px', background: severityWrapperGetCssColor(1) }"
+                             class="ml-3"
+                             [style]="1 | severityCssStyleById:1"
                              [value]="trivyExpandTableFunction(rowData, 'row', col, row).badge" />
                       <span *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).localTime">{{ trivyExpandTableFunction(rowData, 'row', col, row).localTime | localTime }}</span>
                       <span *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).cron">{{ trivyExpandTableFunction(rowData, 'row', col, row).cron | cron }}</span>
@@ -305,7 +307,7 @@
     </ng-template>
   </p-table>
 
-  <p-popover #csvExportOp [dismissable]="true" (onHide)="onOverlayToogle()" (onShow)="onOverlayToogle()">
+  <p-popover #csvExportOp [dismissable]="true" (onHide)="onOverlayToggle()" (onShow)="onOverlayToggle()">
     <div style="width: 300px">
       <div class="field">
         <label for="csvFileName" class="text-sm">CSV File Name</label>
@@ -345,8 +347,8 @@
     [dismissable]="true"
     [hideTransitionOptions]="'0.3s ease-out'"
     [showTransitionOptions]="'0.3s ease-in'"
-    (onHide)="onOverlayToogle()"
-    (onShow)="onOverlayToogle()"
+    (onHide)="onOverlayToggle()"
+    (onShow)="onOverlayToggle()"
   >
     <div class="flex-col gap-4 w-60">
       <div class="row w-full tex-xs">

@@ -223,9 +223,9 @@ export class SbomReportsComponent implements OnInit {
         { label: "Export CycloneDX JSON", icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
         { label: "Export CycloneDX XML" , icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
         { label: "Go to Vulnerability Report", icon: 'pi pi-shield', enabledIfDataLoaded: true, },
-        { label: "Collapse All", },
-        { label: "Clear Sorting", },
-        { label: "Clear Filters", },
+        { label: "", specialAction: "Clear Selection", },
+        { label: "", specialAction: "Clear Sort/Filters", },
+        { label: "", specialAction: "Collapse All", },
       ],
     };
   }
