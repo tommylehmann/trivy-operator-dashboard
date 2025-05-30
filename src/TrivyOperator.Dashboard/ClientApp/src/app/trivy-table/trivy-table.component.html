@@ -116,7 +116,8 @@
                           display="menu"
                           field="{{ col.field }}"
                           type="text"
-                          class="sm-filterIcon"/>
+                          class="sm-filterIcon"
+                          [ngClass]="hasActiveFilter(col.field)"/>
           <p-columnFilter *ngIf="col.isFilterable && col.multiSelectType === 'namespaces'"
                           display="menu"
                           field="{{ col.field }}"
@@ -124,7 +125,8 @@
                           [showAddButton]="false"
                           [showMatchModes]="false"
                           [showOperator]="false"
-                          class="sm-filterIcon">
+                          class="sm-filterIcon"
+                          [ngClass]="hasActiveFilter(col.field)">
             <ng-template let-filter="filterCallback" pTemplate="filter">
               <p-multiSelect optionLabel=""
                              placeholder="Any"

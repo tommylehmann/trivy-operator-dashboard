@@ -516,7 +516,22 @@ export class TrivyTableComponent<TData> implements OnInit {
   }
   // #endregion
 
-
+  // temp fix for https://github.com/primefaces/primeng/issues/16576
+  hasActiveFilter (columnKey: string): string {
+    if (!this.trivyTable) {
+      return '';
+    }
+    if (Object.hasOwn(this.trivyTable.filters, columnKey)) {
+      let filter = this.trivyTable.filters[columnKey]
+      if (!Array.isArray(filter)) {
+        filter = [filter]
+      }
+      if (filter[0].value && filter[0].value !== 0) {
+        return 'tod-active-filter'
+      }
+    }
+    return ''
+  }
 }
 
 // clear filters on reset table: https://stackoverflow.com/questions/51395624/reset-filter-value-on-primeng-table

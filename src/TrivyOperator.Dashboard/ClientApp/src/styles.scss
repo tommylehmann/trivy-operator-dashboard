@@ -186,5 +186,16 @@ p-card.small-header .p-card-title {
   border-color: var(--p-content-border-color);
 }
 
+/* temp fix for https://github.com/primefaces/primeng/issues/16576 */
+p-columnfilter.tod-active-filter button
+{
+  background: var(--p-primary-color);
+  color: var(--p-primary-contrast-color);
+  height: 1.25rem;
+  width: 1.25rem;
+}
 
-
+p-columnfilter.tod-active-filter p-button
+{
+  padding-left: .75rem;
+}
