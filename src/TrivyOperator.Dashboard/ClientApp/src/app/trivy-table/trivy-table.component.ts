@@ -109,12 +109,11 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   selectedDataDtos?: any;
   @Input() set singleSelectDataDto(value: TData | undefined) {
-    console.log("mama " + (this.trivyTableSelectedRecords === 0));
-    this.updateMultiHeaderActionSelectionChanged();
     if (this.selectedDataDtos === value) {
       return;  // avoid (re)selection
     }
     this.selectedDataDtos = value;
+    this.updateMultiHeaderActionSelectionChanged();
     if (value) {
       const index = this._dataDtos?.indexOf(value);
       if (index) {
@@ -174,6 +173,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   constructor() {
     effect(() => {
       this._dataDtos = this.dataDtos() ?? [];
+      this.updateMultiHeaderActionOnDataChanged();
       this.newData();
     });
   }
@@ -192,6 +192,7 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   public onTableClearSelected() {
     this.selectedDataDtos = undefined;
+    this.updateMultiHeaderActionSelectionChanged();
   }
 
   public isTableRowSelected(): boolean {
@@ -256,22 +257,24 @@ export class TrivyTableComponent<TData> implements OnInit {
   onTableCollapseAll() {
     this.expandedRows = {};
     this.anyRowExpanded = false;
+    this.updateMultiHeaderActionCollapsed();
     if (this.trivyTableOptions.stateKey) {
       const tableState = localStorage.getItem(this.trivyTableOptions.stateKey);
       if (!tableState) {
         return;
       }
-
       const tableStateJson = JSON.parse(tableState);
       if (tableStateJson.hasOwnProperty('expandedRowKeys')) {
         delete tableStateJson.expandedRowKeys;
       }
       localStorage.setItem(this.trivyTableOptions.stateKey, JSON.stringify(tableStateJson));
     }
+
   }
 
   onRowExpandCollapse(_event: any) {
     this.anyRowExpanded = JSON.stringify(this.expandedRows) != '{}';
+    this.updateMultiHeaderActionCollapsed();
     // if (!this.windowResizeEventDispatched) {
     //   setTimeout(() => {
     //     window.dispatchEvent(new Event('resize'));
@@ -293,10 +296,6 @@ export class TrivyTableComponent<TData> implements OnInit {
     if (this.csvExportOp) {
       this.csvExportOp.hide();
     }
-  }
-
-  getExtraClasses() {
-    return this.trivyTableOptions.extraClasses;
   }
 
   public onTableStateSave() {
@@ -329,8 +328,9 @@ export class TrivyTableComponent<TData> implements OnInit {
   onRowAction(event: TData) {
     this.rowActionRequested.emit(event);
   }
+  // #endregion
 
-  multiHeaderActionItems: MenuItem[] = [];
+  multiHeaderActionItems: (MenuItem & { initialData: MultiHeaderAction })[] = [];
 
   private multiHeaderActionInit() {
     if (this.trivyTableOptions.multiHeaderActions && (this.trivyTableOptions.multiHeaderActions?.length ?? 0) > 1) {
@@ -339,6 +339,7 @@ export class TrivyTableComponent<TData> implements OnInit {
         command: this.multiHeaderActionGetCommand(actionItem),
         icon: this.multiHeaderActionGetIcon(actionItem),
         disabled: this.isMultiHeaderActionDisabled(actionItem),
+        initialData: actionItem,
       }));
     }
   }
@@ -380,28 +381,57 @@ export class TrivyTableComponent<TData> implements OnInit {
     {
       return (this._dataDtos.length ?? 0) === 0;
     }
-    if (actionItem.enabledIfRowSelected)
+    if (actionItem.enabledIfRowSelected || actionItem.specialAction == 'Clear Selection')
     {
       return this.trivyTableSelectedRecords === 0;
+    }
+    if (actionItem.specialAction == 'Clear Sort/Filters')
+    {
+      return !this.isTableFilteredOrSorted();
+    }
+    if (actionItem.specialAction == 'Collapse All') {
+      return !this.anyRowExpanded;
     }
 
     return true;
   }
 
+  private updateMultiHeaderActionOnDataChanged() {
+    this.multiHeaderActionItems
+      .filter(actionItem => actionItem.initialData.enabledIfDataLoaded)
+      .forEach(actionItem => {
+        actionItem.disabled = (this._dataDtos.length ?? 0) === 0;
+      });
+  }
+
   private updateMultiHeaderActionClearSortFilters() {
-    const menuItem = this.multiHeaderActionItems.find(x => x.label === "Clear Sort/Filters");
+    const menuItem = this.multiHeaderActionItems
+      .find(x => x.initialData.specialAction == "Clear Sort/Filters");
     if (menuItem) {
       menuItem.disabled = !this.isTableFilteredOrSorted();
     }
   }
 
   private updateMultiHeaderActionSelectionChanged() {
-    const menuItem = this.multiHeaderActionItems.find(x => x.label === "Clear Selection");
+    this.multiHeaderActionItems
+      .filter(actionItem => actionItem.initialData.enabledIfRowSelected)
+      .forEach(actionItem => {
+        actionItem.disabled = this.trivyTableSelectedRecords === 0;
+      });
+    const menuItem = this.multiHeaderActionItems
+      .find(x => x.initialData.specialAction == "Clear Selection");
     if (menuItem) {
       menuItem.disabled = this.trivyTableSelectedRecords === 0;
     }
   }
 
+  private updateMultiHeaderActionCollapsed() {
+    const menuItem = this.multiHeaderActionItems
+      .find(x => x.initialData.specialAction == "Collapse All");
+    if (menuItem) {
+      menuItem.disabled = !this.anyRowExpanded;
+    }
+  }
 
 
   onSort() {
@@ -439,6 +469,7 @@ export class TrivyTableComponent<TData> implements OnInit {
       PrimengTableStateUtil.clearTableMultiSort(tableStateJson);
       localStorage.setItem(this.trivyTableOptions.stateKey, JSON.stringify(tableStateJson));
     }
+    this.updateMultiHeaderActionClearSortFilters();
   }
 
   // public onClearFilters() {

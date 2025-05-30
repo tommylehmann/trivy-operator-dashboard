@@ -15,6 +15,7 @@
   --p-tag-primary-color: var(--p-primary-contrast-color);
   /*--p-datatable-header-cell-hover-background: var(--p-datatable-header-cell-background);*/
   /* not working via providePrimeng */
+  --p-datatable-header-border-width: 0 0 1px 0;
   --p-datatable-header-cell-padding: .5rem .5rem;
   --p-datatable-header-cell-selected-background: var(--p-datatable-header-cell-background);
   --p-datatable-header-cell-selected-color: var(--p-button-text-primary-color);
@@ -33,6 +34,10 @@
   --p-togglebutton-content-border-radius: 4px;
   --p-togglebutton-content-padding: 0.25rem 0.25rem;
   --p-border-radius-md: 2px;
+  --p-tieredmenu-item-color: var(--p-primary-color);
+  --p-tieredmenu-item-icon-color: var(--p-primary-600);
   /* generic vars */
   --tod-screen-width-xs: 576px;
+  /* just tests */
+
 }
