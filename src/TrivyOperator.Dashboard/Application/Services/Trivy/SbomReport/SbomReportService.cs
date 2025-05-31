@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using System.IO;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -34,9 +33,12 @@ public class SbomReportService(
 
     public Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? namespaceName = null)
     {
+        string? imageDigest = "sha256:38a9f7eb75f7015ae9b4bc5c6fcdd232e4912cd791fd3940dbfd2b1b0cce2230";
         var vrDigests = vrCache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.GroupBy(vr => new
+            .SelectMany(kvp => kvp.Value
+            .Where(vr => string.IsNullOrEmpty(imageDigest) || vr.Report?.Artifact?.Digest == imageDigest)
+            .GroupBy(vr => new
             {
                 ImageDigest = vr.Report?.Artifact?.Digest ?? string.Empty,
                 ResourceNamespace = vr.Metadata.NamespaceProperty
@@ -52,7 +54,9 @@ public class SbomReportService(
             }));
         SbomReportImageDto[] dtos = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.GroupBy(sbom => sbom.Report?.Artifact?.Digest)
+            .SelectMany(kvp => kvp.Value
+            .Where(vr => string.IsNullOrEmpty(imageDigest) || vr.Report?.Artifact?.Digest == imageDigest)
+            .GroupBy(sbom => sbom.Report?.Artifact?.Digest)
                 .Select(group => group.ToSbomReportImageDto()))
             .GroupJoin(
                 vrDigests,

@@ -1,4 +1,4 @@
-import {Component, input, model, OnInit, output} from '@angular/core';
+import { Component, effect, input, model, OnInit, output } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -33,11 +33,37 @@ export class NamespaceImageSelectorComponent implements OnInit {
 
   protected imageDtos?: ImageDto[];
 
+  get selectedImageDto(): ImageDto | undefined {
+    return this._selectedImageDto;
+  }
   set selectedImageDto(value: ImageDto | undefined) {
     this.selectedImageId.update(() => value?.uid);
+    this._selectedImageDto = value;
   }
+  private _selectedImageDto?: ImageDto;
 
   protected isStatic: boolean = false;
+
+  constructor() {
+    effect(() => {
+      const selectedImageId = this.selectedImageId();
+      if (selectedImageId) {
+        console.log("namespaced image selector", selectedImageId);
+        const nodeImageDto = this.dataDtos()?.find(x => x.uid === selectedImageId);
+        if (nodeImageDto) {
+          console.log("namespaced image selector", nodeImageDto);
+          this.selectedNamespace = nodeImageDto.resourceNamespace;
+          const imageDto: ImageDto = {
+            uid: nodeImageDto.uid ?? "",
+            imageNameTag: NamespaceImageSelectorComponent.getImageNameTag(nodeImageDto) ?? "",
+            icon: nodeImageDto.icon,
+          };
+          this.imageDtos = [imageDto];
+          this.selectedImageDto = imageDto;
+        }
+      }
+    });
+  }
 
   ngOnInit() {
     if (this.selectedImageId()) {
@@ -46,10 +72,13 @@ export class NamespaceImageSelectorComponent implements OnInit {
   }
 
   filterImageDtos() {
+    if (this.isStatic) {
+      return;
+    }
     this.imageDtos = this.dataDtos()
       ?.filter((x) => x.resourceNamespace == this.selectedNamespace)
       .map((x) => ({
-        uid: x.uid ?? '', imageNameTag: `${x.imageName}:${x.imageTag}`,
+        uid: x.uid ?? '', imageNameTag: NamespaceImageSelectorComponent.getImageNameTag(x) ?? "",
         icon: x.icon,
       } as ImageDto))
       .sort((a, b) => {
@@ -67,5 +96,12 @@ export class NamespaceImageSelectorComponent implements OnInit {
     this.selectedNamespace = undefined;
     this.imageDtos = undefined;
     this.refreshRequested.emit();
+  }
+
+  private static getImageNameTag(value: NamespacedImageDto) : string | undefined {
+    if (value.imageName && value.imageTag) {
+      return `${value.imageName}:${value.imageTag}`
+    }
+    return undefined;
   }
 }

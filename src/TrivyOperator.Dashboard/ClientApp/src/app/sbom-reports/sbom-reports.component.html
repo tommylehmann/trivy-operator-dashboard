@@ -89,14 +89,16 @@
             </div>
           </div>
         </div>
-        <b class="col-span-12 text-sm">Vulnerabilities</b>
-        <div class="grid grid-cols-12 gap-4 ml-1 mt-1">
-          <div *ngFor="let _ of [].constructor(5); let i = index" class="col-span-3">
-            <div class="flex items-center justify-between">
-              <span class="text-sm">{{ i | severityNameById:true }}</span>
-              <p-tag [rounded]="true"
-                     [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
-                     [value]="sbomReportDetailStatistics[i] ?? -1 | vulnerabilityCount" />
+        <div *ngIf="!isStatic">
+          <b class="col-span-12 text-sm">Vulnerabilities</b>
+          <div class="grid grid-cols-12 gap-4 ml-1 mt-1">
+            <div *ngFor="let _ of [].constructor(5); let i = index" class="col-span-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm">{{ i | severityNameById:true }}</span>
+                <p-tag [rounded]="true"
+                       [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
+                       [value]="sbomReportDetailStatistics[i] ?? -1 | vulnerabilityCount" />
+              </div>
             </div>
           </div>
         </div>
@@ -129,7 +131,7 @@
       </div>
     </div>
     <div class="col-span-12 md:col-span-8 h-full flex flex-col">
-      <div style="height: 180px; min-height: 180px">
+      <div *ngIf="!isStatic" style="height: 180px; min-height: 180px">
         <p-table scrollHeight="flex"
                  sortMode="multiple"
                  styleClass="p-datatable-sm text-sm p-0"

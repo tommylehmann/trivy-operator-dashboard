@@ -8,7 +8,6 @@ import { SbomReportDto } from '../../api/models/sbom-report-dto';
 import { SbomReportDetailDto } from '../../api/models/sbom-report-detail-dto';
 import { SbomReportImageDto } from '../../api/models/sbom-report-image-dto';
 import { SbomReportService } from '../../api/services/sbom-report.service';
-import { SeverityUtils } from '../utils/severity.utils';
 import { NodeDataDto } from '../fcose/fcose.types';
 import { SbomDetailExtendedDto } from './sbom-reports.types'
 import { SbomReportImageResourceDto } from '../../api/models';
@@ -69,25 +68,6 @@ export class SbomReportsComponent implements OnInit {
   fullSbomDataDto: SbomReportDto | null = null;
   isTableLoading: boolean = false;
   // #endregion
-  // #region selectedNamespace property
-  // get selectedNamespace(): string | null {
-  //   return this._selectedNamespace;
-  // }
-  // set selectedNamespace(value: string | null) {
-  //   this._selectedNamespace = value;
-  // }
-  // private _selectedNamespace: string | null = '';
-  // #endregion
-  // #region selectedImageDto property
-  // get selectedImageDto(): ImageDto | null {
-  //   return this._imageDto;
-  // }
-  // set selectedImageDto(value: ImageDto | null) {
-  //   this._imageDto = value;
-  //   this.selectedImageResources = this.dataDtos?.find(x => x.uid && x.uid === value?.uid)?.resources ?? [];
-  //   this.getFullSbomDto(value?.digest ?? undefined, this.selectedNamespace ?? undefined);
-  // }
-  // private _imageDto: ImageDto | null = null;
 
   namespacedImageDtos: NamespacedImageDto[] = [];
   private selectedSbomReportImageDto?: SbomReportImageDto;
@@ -259,7 +239,7 @@ export class SbomReportsComponent implements OnInit {
 
   queryNamespaceName?: string;
   queryDigest?: string;
-  isSingleMode: boolean = false;
+  isStatic: boolean = false;
 
   constructor(private service: SbomReportService, private http: HttpClient, private router: Router, private activatedRoute: ActivatedRoute) {
     this.activatedRoute.queryParamMap.subscribe(params => {
@@ -269,9 +249,10 @@ export class SbomReportsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isSingleMode = !!(this.queryNamespaceName && this.queryDigest);
+    this.isStatic = !!(this.queryNamespaceName && this.queryDigest);
 
-    if (this.isSingleMode) {
+    if (this.isStatic) {
+      this.selectedImageId = crypto.randomUUID();
       this.getFullSbomDto(this.queryDigest, this.queryNamespaceName);
       return;
     }
@@ -306,6 +287,15 @@ export class SbomReportsComponent implements OnInit {
 
   onGetSbomReportDtoByDigestNamespace(fullSbomDataDto: SbomReportDto) {
     this.fullSbomDataDto = fullSbomDataDto;
+    if (this.isStatic) {
+      this.namespacedImageDtos = [{
+        uid: fullSbomDataDto.uid ?? '', resourceNamespace: fullSbomDataDto.resourceNamespace ?? '',
+        imageName: fullSbomDataDto.imageName ?? '', imageTag: fullSbomDataDto.imageTag ?? '',
+      }];
+      this.activeNamespaces = [fullSbomDataDto.resourceNamespace ?? "N/A"];
+      this.selectedImageId = fullSbomDataDto.uid ?? crypto.randomUUID();
+      console.log("mama", this.namespacedImageDtos[0], this.selectedImageId);
+    }
     this.onActiveNodeIdChange(fullSbomDataDto.rootNodeBomRef ?? "");
   }
 
@@ -633,7 +623,7 @@ export class SbomReportsComponent implements OnInit {
   }
 
   goToVr() {
-    if (this.isSingleMode) {
+    if (this.isStatic) {
       return;
     }
     const digest = this.selectedSbomReportImageDto?.imageDigest;
@@ -745,5 +735,4 @@ export class SbomReportsComponent implements OnInit {
     return tree;
   }
   // #endregion
-
 }
