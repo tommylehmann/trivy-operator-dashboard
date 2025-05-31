@@ -345,6 +345,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   }
 
   protected multiHeaderActionGetCommand(actionItem: MultiHeaderAction): () => void {
+    console.log("multiHeaderActionGetCommand: ", actionItem);
     if (actionItem.specialAction) {
       switch (actionItem.specialAction) {
         case "Clear Selection":

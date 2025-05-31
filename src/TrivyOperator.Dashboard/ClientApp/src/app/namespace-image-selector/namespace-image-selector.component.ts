@@ -23,11 +23,12 @@ interface ImageDto {
   styleUrl: './namespace-image-selector.component.scss'
 })
 export class NamespaceImageSelectorComponent implements OnInit {
-  dataDtos = input<NamespacedImageDto[]>([]);
+  dataDtos = input.required<NamespacedImageDto[]>();
+  activeNamespaces = input.required<string[] | undefined>();
   selectedImageId = model<string | undefined>(undefined);
   refreshRequested = output<void>();
 
-  activeNamespaces: string[] = [];
+
   selectedNamespace?: string;
 
   protected imageDtos?: ImageDto[];
@@ -63,7 +64,6 @@ export class NamespaceImageSelectorComponent implements OnInit {
   }
 
   reloadData() {
-    this.activeNamespaces = [];
     this.selectedNamespace = undefined;
     this.imageDtos = undefined;
     this.refreshRequested.emit();

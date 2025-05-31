@@ -86,7 +86,7 @@
                   size="small"
                   text
                   [disabled]="!dataDtos"
-                  (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])" />
+                  (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])()" />
         <p-splitButton *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length > 1"
                        [icon]="trivyTableOptions.multiHeaderActions[0].icon ?? 'pi pi-cog'"
                        [label]="trivyTableOptions.multiHeaderActions[0].label"
@@ -96,7 +96,7 @@
                        text
                        [disabled]="!dataDtos"
                        [model]="multiHeaderActionItems"
-                       (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])">
+                       (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])()">
         </p-splitButton>
       </div>
     </ng-template>

@@ -18,6 +18,8 @@ import { SeverityNameByIdPipe } from '../pipes/severity-name-by-id.pipe';
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
 
 import { FcoseComponent } from '../fcose/fcose.component';
+import { NamespaceImageSelectorComponent } from '../namespace-image-selector/namespace-image-selector.component';
+import { NamespacedImageDto } from '../namespace-image-selector/namespace-image-selector.types';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
 import { TrivyExpandTableOptions, TrivyTableCellCustomOptions, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
 
@@ -36,24 +38,24 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-export interface ImageDto {
-  uid: string;
-  imageNameTag: string;
-  digest: string;
-  hasVr: boolean;
-}
+// export interface ImageDto {
+//   uid: string;
+//   imageNameTag: string;
+//   digest: string;
+//   hasVr: boolean;
+// }
 
-export interface DependsOn {
-  bomRef: string;
-  name: string;
-  version: string;
-}
+// export interface DependsOn {
+//   bomRef: string;
+//   name: string;
+//   version: string;
+// }
 
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
   imports: [CommonModule, FormsModule,
-    FcoseComponent, TrivyTableComponent,
+    FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
     ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, TableModule, TagModule, TreeTableModule,
     FontAwesomeModule,],
@@ -68,32 +70,174 @@ export class SbomReportsComponent implements OnInit {
   isTableLoading: boolean = false;
   // #endregion
   // #region selectedNamespace property
-  get selectedNamespace(): string | null {
-    return this._selectedNamespace;
-  }
-  set selectedNamespace(value: string | null) {
-    this._selectedNamespace = value;
-  }
-  private _selectedNamespace: string | null = '';
+  // get selectedNamespace(): string | null {
+  //   return this._selectedNamespace;
+  // }
+  // set selectedNamespace(value: string | null) {
+  //   this._selectedNamespace = value;
+  // }
+  // private _selectedNamespace: string | null = '';
   // #endregion
   // #region selectedImageDto property
-  get selectedImageDto(): ImageDto | null {
-    return this._imageDto;
+  // get selectedImageDto(): ImageDto | null {
+  //   return this._imageDto;
+  // }
+  // set selectedImageDto(value: ImageDto | null) {
+  //   this._imageDto = value;
+  //   this.selectedImageResources = this.dataDtos?.find(x => x.uid && x.uid === value?.uid)?.resources ?? [];
+  //   this.getFullSbomDto(value?.digest ?? undefined, this.selectedNamespace ?? undefined);
+  // }
+  // private _imageDto: ImageDto | null = null;
+
+  namespacedImageDtos: NamespacedImageDto[] = [];
+  private selectedSbomReportImageDto?: SbomReportImageDto;
+
+  get selectedImageId(): string | undefined {
+    return this._selectedImageId;
   }
-  set selectedImageDto(value: ImageDto | null) {
-    this._imageDto = value;
-    this.selectedImageResources = this.dataDtos?.find(x => x.uid && x.uid === value?.uid)?.resources ?? [];
-    this.getFullSbomDto(value?.digest ?? undefined, this.selectedNamespace ?? undefined);
+  set selectedImageId(value: string | undefined) {
+    this._selectedImageId = value;
+    this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid && x.uid === value);
+    this.selectedImageResources = this.selectedSbomReportImageDto?.resources ?? [];
+    if (this.selectedSbomReportImageDto) {
+      this.getFullSbomDto(
+        this.selectedSbomReportImageDto.imageDigest ?? undefined,
+        this.selectedSbomReportImageDto.resourceNamespace ?? undefined);
+    }
   }
-  private _imageDto: ImageDto | null = null;
+  private _selectedImageId?: string;
+
+  // to be moved !!!!
+  onRefreshRequested() {
+    this.dataDtos = null;
+    this.fullSbomDataDto = null;
+    this.dependsOnBoms = undefined;
+    this.deletedDependsOnBom = [];
+    this.nodeDataDtos = [];
+    this.sbomReportDetailLicensesTreeNodes = [];
+    this.sbomReportDetailPropertiesTreeNodes = [];
+    this.sbomReportDetailStatistics = [];
+
+    this.getTableDataDtos();
+  }
+
+  getNamespacedImageDtos() {
+    this.namespacedImageDtos = this.dataDtos
+      ?.map((x) => ({
+        uid: x.uid ?? '', resourceNamespace: x.resourceNamespace ?? '',
+        imageName: x.imageName ?? '', imageTag: x.imageTag ?? '',
+        icon: x.hasVulnerabilities ? faShieldHalved : undefined,
+      } as NamespacedImageDto)) ?? [];
+  }
   // #endregion
   // #region dependsOnTable data
   selectedSbomDetailDto?: SbomDetailExtendedDto;
   dependsOnBoms?: SbomDetailExtendedDto[];
   deletedDependsOnBom: SbomDetailExtendedDto[] = [];
 
-  dependsOnTableColumns: TrivyTableColumn[] = [];
-  dependsOnTableOptions: TrivyTableOptions;
+  dependsOnTableColumns: TrivyTableColumn[] = [
+    {
+      field: 'name',
+      header: 'Name',
+      isFilterable: true,
+      isSortable: true,
+      multiSelectType: 'none',
+      style: 'white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 290px;',
+      renderType: 'standard',
+    },
+    {
+      field: 'version',
+      header: 'Version',
+      isFilterable: true,
+      isSortable: true,
+      multiSelectType: 'none',
+      style: 'width: 130px; max-width: 130px;',
+      renderType: 'standard',
+    },
+    {
+      field: 'criticalCount',
+      header: 'C',
+      isFilterable: false,
+      isSortable: true,
+      multiSelectType: 'none',
+      style: 'width: 50px; max-width: 50px;',
+      renderType: 'severityValue',
+      extraFields: ['0'],
+    },
+    {
+      field: 'highCount',
+      header: 'H',
+      isFilterable: false,
+      isSortable: true,
+      multiSelectType: 'none',
+      style: 'width: 50px;',
+      renderType: 'severityValue',
+      extraFields: ['1'],
+    },
+    {
+      field: 'mediumCount',
+      header: 'M',
+      isFilterable: false,
+      isSortable: true,
+      multiSelectType: 'none',
+      style: 'width: 50px; max-width: 50px;',
+      renderType: 'severityValue',
+      extraFields: ['2'],
+    },
+    {
+      field: 'lowCount',
+      header: 'L',
+      isFilterable: false,
+      isSortable: true,
+      multiSelectType: 'none',
+      style: 'width: 50px; max-width: 50px;',
+      renderType: 'severityValue',
+      extraFields: ['3'],
+    },
+    {
+      field: 'unknownCount',
+      header: 'U',
+      isFilterable: false,
+      isSortable: true,
+      multiSelectType: 'none',
+      style: 'width: 50px; max-width: 50px;',
+      renderType: 'severityValue',
+      extraFields: ['4'],
+    },
+    {
+      field: 'level',
+      header: 'Level',
+      isFilterable: true,
+      isSortable: true,
+      multiSelectType: 'none',
+      style: 'width: 130px; max-width: 130px;',
+      renderType: 'standard',
+    },
+  ];
+  dependsOnTableOptions: TrivyTableOptions = {
+    isClearSelectionVisible: false,
+    isExportCsvVisible: false,
+    isResetFiltersVisible: true,
+    isRefreshVisible: false,
+    isRefreshFilterable: false,
+    isFooterVisible: false,
+    tableSelectionMode: 'single',
+    tableStyle: { width: '930px' },
+    stateKey: 'SBOM Reports - Depends On',
+    dataKey: 'bomRef',
+    rowExpansionRender: 'table',
+    extraClasses: 'trivy-with-filters',
+    multiHeaderActions: [
+      { label: "Info",  icon: 'pi pi-info-circle', enabledIfDataLoaded: true, },
+      { label: "Dive In", icon: 'pi pi-arrow-down-right', enabledIfRowSelected: true, },
+      { label: "Export CycloneDX JSON", icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
+      { label: "Export CycloneDX XML" , icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
+      { label: "Go to Vulnerability Report", icon: 'pi pi-shield', enabledIfDataLoaded: true, },
+      { label: "", specialAction: "Clear Selection", },
+      { label: "", specialAction: "Clear Sort/Filters", },
+      { label: "", specialAction: "Collapse All", },
+    ],
+  };
   dependsOnTableExpandTableOptions: TrivyExpandTableOptions<SbomDetailExtendedDto> = new TrivyExpandTableOptions(false, 2, 0, this.getPropertiesCount);
   // #endregion
 
@@ -105,7 +249,6 @@ export class SbomReportsComponent implements OnInit {
   sbomReportDetailLicensesTreeNodes: TreeNode[] = [];
   // #endregion
 
-  imageDtos: ImageDto[] | undefined = []; // filtered images by ns
   hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
   nodeDataDtos: NodeDataDto[] = [];
   selectedSbomDetailBomRef?: string;
@@ -123,116 +266,14 @@ export class SbomReportsComponent implements OnInit {
       this.queryNamespaceName = params.get('namespaceName') ?? undefined;
       this.queryDigest = params.get('digest') ?? undefined;
     });
-    this.isSingleMode = this.queryNamespaceName && this.queryDigest ? true : false;
-
-    this.dependsOnTableColumns = [
-      {
-        field: 'name',
-        header: 'Name',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 290px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'version',
-        header: 'Version',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 130px; max-width: 130px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'criticalCount',
-        header: 'C',
-        isFilterable: false,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 50px; max-width: 50px;',
-        renderType: 'severityValue',
-        extraFields: ['0'],
-      },
-      {
-        field: 'highCount',
-        header: 'H',
-        isFilterable: false,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 50px;',
-        renderType: 'severityValue',
-        extraFields: ['1'],
-      },
-      {
-        field: 'mediumCount',
-        header: 'M',
-        isFilterable: false,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 50px; max-width: 50px;',
-        renderType: 'severityValue',
-        extraFields: ['2'],
-      },
-      {
-        field: 'lowCount',
-        header: 'L',
-        isFilterable: false,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 50px; max-width: 50px;',
-        renderType: 'severityValue',
-        extraFields: ['3'],
-      },
-      {
-        field: 'unknownCount',
-        header: 'U',
-        isFilterable: false,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 50px; max-width: 50px;',
-        renderType: 'severityValue',
-        extraFields: ['4'],
-      },
-      {
-        field: 'level',
-        header: 'Level',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 130px; max-width: 130px;',
-        renderType: 'standard',
-      },
-    ];
-    this.dependsOnTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: false,
-      isRefreshFilterable: false,
-      isFooterVisible: false,
-      tableSelectionMode: 'single',
-      tableStyle: { width: '930px' },
-      stateKey: 'SBOM Reports - Depends On',
-      dataKey: 'bomRef',
-      rowExpansionRender: 'table',
-      extraClasses: 'trivy-with-filters',
-      multiHeaderActions: [
-        { label: "Info",  icon: 'pi pi-info-circle', enabledIfDataLoaded: true, },
-        { label: "Dive In", icon: 'pi pi-arrow-down-right', enabledIfRowSelected: true, },
-        { label: "Export CycloneDX JSON", icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
-        { label: "Export CycloneDX XML" , icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
-        { label: "Go to Vulnerability Report", icon: 'pi pi-shield', enabledIfDataLoaded: true, },
-        { label: "", specialAction: "Clear Selection", },
-        { label: "", specialAction: "Clear Sort/Filters", },
-        { label: "", specialAction: "Collapse All", },
-      ],
-    };
   }
 
   ngOnInit() {
+    this.isSingleMode = !!(this.queryNamespaceName && this.queryDigest);
+
     if (this.isSingleMode) {
       this.getFullSbomDto(this.queryDigest, this.queryNamespaceName);
+      return;
     }
     this.getTableDataDtos();
   }
@@ -270,23 +311,24 @@ export class SbomReportsComponent implements OnInit {
 
   onGetDataDtos(dtos: SbomReportImageDto[]) {
     this.dataDtos = dtos;
+    this.getNamespacedImageDtos();
   }
 
-  reloadData() {
-    this.activeNamespaces = undefined;
-    this.imageDtos = undefined;
-    this.selectedNamespace = null;
-    this.dataDtos = null;
-    this.fullSbomDataDto = null;
-    this.dependsOnBoms = undefined;
-    this.deletedDependsOnBom = [];
-    this.nodeDataDtos = [];
-    this.sbomReportDetailLicensesTreeNodes = [];
-    this.sbomReportDetailPropertiesTreeNodes = [];
-    this.sbomReportDetailStatistics = [];
-
-    this.getTableDataDtos();
-  }
+  // reloadData() {
+  //   // this.activeNamespaces = undefined;
+  //   // this.imageDtos = undefined;
+  //   // this.selectedNamespace = null;
+  //   this.dataDtos = null;
+  //   this.fullSbomDataDto = null;
+  //   this.dependsOnBoms = undefined;
+  //   this.deletedDependsOnBom = [];
+  //   this.nodeDataDtos = [];
+  //   this.sbomReportDetailLicensesTreeNodes = [];
+  //   this.sbomReportDetailPropertiesTreeNodes = [];
+  //   this.sbomReportDetailStatistics = [];
+  //
+  //   this.getTableDataDtos();
+  // }
   // #endregion
 
   // #region Get Parent and Children Nodes
@@ -364,23 +406,23 @@ export class SbomReportsComponent implements OnInit {
   }
   // #endregion
 
-  filterImageDtos() {
-    this.imageDtos = this.dataDtos
-      ?.filter((x) => x.resourceNamespace == this.selectedNamespace)
-      .map((x) => ({
-        uid: x.uid ?? '', imageNameTag: `${x.imageName}:${x.imageTag}`,
-        digest: x.imageDigest ?? '', hasVr: x.hasVulnerabilities ?? false
-      }))
-      .sort((a, b) => {
-        if (a.imageNameTag < b.imageNameTag) {
-          return -1;
-        } else if (a.imageNameTag > b.imageNameTag) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-  }
+  // filterImageDtos() {
+  //   this.namespacedImageDtos = this.dataDtos
+  //     ?.filter((x) => x.resourceNamespace == this.selectedNamespace)
+  //     .map((x) => ({
+  //       uid: x.uid ?? '', imageNameTag: `${x.imageName}:${x.imageTag}`,
+  //       icon: x.hasVulnerabilities ? faShieldHalved : undefined,
+  //     } as NamespacedImageDto))
+  //     .sort((a, b) => {
+  //       if (a.imageNameTag < b.imageNameTag) {
+  //         return -1;
+  //       } else if (a.imageNameTag > b.imageNameTag) {
+  //         return 1;
+  //       } else {
+  //         return 0;
+  //       }
+  //     });
+  // }
 
   // #region sanitize property name and value
   public sanitizePropertyName(value: string | null | undefined): string | null | undefined {
@@ -396,9 +438,9 @@ export class SbomReportsComponent implements OnInit {
   // #endregion
 
 
-  severityWrapperGetCssColor(severityId: number): string {
-    return SeverityUtils.getCssColor(severityId);
-  }
+  // severityWrapperGetCssColor(severityId: number): string {
+  //   return SeverityUtils.getCssColor(severityId);
+  // }
 
   onHoveredNodeDtoChange(nodeId: string | undefined) {
     this.hoveredSbomDetailDto = this.getSbomDetailDtoByBomref(nodeId);
@@ -529,7 +571,7 @@ export class SbomReportsComponent implements OnInit {
       case "Export CycloneDX XML":
         this.onExportCycloneDXJSON('xml');
         break;
-      case "Go to Vulenrability Report":
+      case "Go to Vulnerability Report":
         this.goToVr();
         break;
       default:
@@ -545,11 +587,11 @@ export class SbomReportsComponent implements OnInit {
       this.sbomReportDetailLicensesTreeNodes = this.getSbomReportLicenseTreeNodes();
     }
     if (this.sbomReportDetailStatistics.length == 0) {
-      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.criticalCount ?? -1);
-      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.highCount ?? -1);
-      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.mediumCount ?? -1);
-      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.lowCount ?? -1);
-      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedImageDto?.uid)?.unknownCount ?? -1);
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedSbomReportImageDto?.uid)?.criticalCount ?? -1);
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedSbomReportImageDto?.uid)?.highCount ?? -1);
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedSbomReportImageDto?.uid)?.mediumCount ?? -1);
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedSbomReportImageDto?.uid)?.lowCount ?? -1);
+      this.sbomReportDetailStatistics.push(this.dataDtos?.find(x => x.uid === this.selectedSbomReportImageDto?.uid)?.unknownCount ?? -1);
 
       this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.length ?? 0);
       this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.map(item => item.dependsOn)
@@ -562,8 +604,8 @@ export class SbomReportsComponent implements OnInit {
 
   onExportCycloneDXJSON(contentType: 'json' | 'xml') {
     const apiRoot = this.service.rootUrl;
-    const namespaceName = encodeURIComponent(this.selectedNamespace ?? "");
-    const digest = encodeURIComponent(this.selectedImageDto?.digest ?? "");
+    const namespaceName = encodeURIComponent(this.selectedSbomReportImageDto?.resourceNamespace ?? "");
+    const digest = encodeURIComponent(this.selectedSbomReportImageDto?.imageDigest ?? "");
     const fileUrl = `${apiRoot}/api/sbom-reports/cyclonedx?digest=${digest}&namespaceName=${namespaceName}`;
 
     const headers = new HttpHeaders({
@@ -572,13 +614,14 @@ export class SbomReportsComponent implements OnInit {
 
     this.http.get(fileUrl, { headers, responseType: 'text' }).subscribe({
       next: (response: string) => {
+        const imageNameTag = `${this.selectedSbomReportImageDto?.imageName}:${this.selectedSbomReportImageDto?.imageTag}`
         const blob = new Blob([response], { type: contentType === 'json' ? 'application/json' : 'application/xml' });
 
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
 
-        link.download = `sbom_cyclonedx_${this.selectedImageDto?.imageNameTag ?? ""}.${contentType}`;
+        link.download = `sbom_cyclonedx_${imageNameTag}.${contentType}`;
         link.click();
 
         window.URL.revokeObjectURL(url);
@@ -593,9 +636,9 @@ export class SbomReportsComponent implements OnInit {
     if (this.isSingleMode) {
       return;
     }
-    const digest = this._imageDto?.digest;
-    const namespace = this.selectedNamespace;
-    if (digest && namespace && this._imageDto?.hasVr) {
+    const digest = this.selectedSbomReportImageDto?.imageDigest;
+    const namespace = this.selectedSbomReportImageDto?.resourceNamespace ?? "";
+    if (digest && namespace && this.selectedSbomReportImageDto?.hasVulnerabilities) {
       const url = this.router.serializeUrl(
         this.router.createUrlTree(['/vulnerability-reports'], { queryParams: { namespaceName: namespace, digest: digest } })
       );
@@ -609,7 +652,7 @@ export class SbomReportsComponent implements OnInit {
 
   /**
    * Get Properties TreeNodes
-   * First, it creates a Map<> with all ProperyName and {propertyValue, usedBy} - usedBy is the SbomDetail Name
+   * First, it creates a Map<> with all PropertyName and {propertyValue, usedBy} - usedBy is the SbomDetail Name
    * Then, for each one, it creates a Set<> with propertyValue and then counts children
    * the final usedByCount for each propertyName is a unique sum of all usedBy children
   */

@@ -1,43 +1,9 @@
 <div class="grid grid-cols-12 gap-4 items-stretch">
   <div class="col-span-12 md:col-span-5 lg:col-span-4 p-0">
-    <div class="grid grid-cols-12 gap-2 mb-2">
-      <div class="col-span-4 w-full">
-        <p-select placeholder="Select a Namespace"
-                  class="text-sm w-full"
-                  [filter]="true"
-                  [options]="activeNamespaces"
-                  [showClear]="true"
-                  [disabled]="isSingleMode"
-                  [(ngModel)]="selectedNamespace"
-                  (onChange)="filterImageDtos()" />
-      </div>
-      <div class="col-span-8 flex items-center gap-2 justify-center">
-        <div class="p-select-max">
-          <p-select optionLabel="imageNameTag"
-                    placeholder="Select an Image"
-                    class="text-sm w-full"
-                    [filter]="true"
-                    [options]="imageDtos"
-                    [showClear]="true"
-                    [disabled]="isSingleMode"
-                    [(ngModel)]="selectedImageDto">
-            <ng-template let-imageDto pTemplate="imageDtos">
-              <div class="flex items-center gap-2 w-full overflow-hidden">
-                <div class="truncate whitespace-nowrap">{{ imageDto.imageNameTag }}</div>
-                <p-tag *ngIf="imageDto.hasVr" rounded>
-                  <span>
-                    <fa-icon [icon]="faShieldHalved"></fa-icon> VRs
-                  </span>
-                </p-tag>
-              </div>
-            </ng-template>
-          </p-select>
-        </div>
-        <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small"
-                  class="flex-shrink-0"
-                  (onClick)="reloadData()" [disabled]="isSingleMode" />
-      </div>
-    </div>
+    <app-namespace-image-selector [dataDtos]="namespacedImageDtos"
+                                  [activeNamespaces]="activeNamespaces"
+                                  [(selectedImageId)]="selectedImageId"
+                                  (refreshRequested)="onRefreshRequested()" />
     <div class="tod-content-border">
       <app-trivy-table tableHeight="30vh"
                        [dataDtos]="dependsOnBoms"
