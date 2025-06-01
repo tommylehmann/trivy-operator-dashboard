@@ -10,7 +10,6 @@ import { SbomReportImageDto } from '../../api/models/sbom-report-image-dto';
 import { SbomReportService } from '../../api/services/sbom-report.service';
 import { NodeDataDto } from '../fcose/fcose.types';
 import { SbomDetailExtendedDto } from './sbom-reports.types'
-import { SbomReportImageResourceDto } from '../../api/models';
 
 import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
 import { SeverityNameByIdPipe } from '../pipes/severity-name-by-id.pipe';
@@ -36,6 +35,7 @@ import {
   faShieldHalved,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { GetSbomReportImageDtos$Params } from '../../api/fn/sbom-report/get-sbom-report-image-dtos';
 
 // export interface ImageDto {
 //   uid: string;
@@ -63,52 +63,27 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 })
 export class SbomReportsComponent implements OnInit {
   // #region main data - SbomReportDtos, activeNS, fullSbomDataDto, table data
-  dataDtos: SbomReportImageDto[] | null = null;
-  activeNamespaces: string[] | undefined = [];
-  fullSbomDataDto: SbomReportDto | null = null;
+  dataDtos?: SbomReportImageDto[];
+  fullSbomDataDto?: SbomReportDto;
   isTableLoading: boolean = false;
   // #endregion
 
-  namespacedImageDtos: NamespacedImageDto[] = [];
-  private selectedSbomReportImageDto?: SbomReportImageDto;
+  namespacedImageDtos?: NamespacedImageDto[];
+  protected selectedSbomReportImageDto?: SbomReportImageDto;
 
-  get selectedImageId(): string | undefined {
-    return this._selectedImageId;
-  }
   set selectedImageId(value: string | undefined) {
-    this._selectedImageId = value;
+    console.log("sbom - selectedImageId ", value);
     this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid && x.uid === value);
-    this.selectedImageResources = this.selectedSbomReportImageDto?.resources ?? [];
     if (this.selectedSbomReportImageDto) {
+      this.resetAllRelatedData();
       this.getFullSbomDto(
         this.selectedSbomReportImageDto.imageDigest ?? undefined,
         this.selectedSbomReportImageDto.resourceNamespace ?? undefined);
     }
   }
-  private _selectedImageId?: string;
 
   // to be moved !!!!
-  onRefreshRequested() {
-    this.dataDtos = null;
-    this.fullSbomDataDto = null;
-    this.dependsOnBoms = undefined;
-    this.deletedDependsOnBom = [];
-    this.nodeDataDtos = [];
-    this.sbomReportDetailLicensesTreeNodes = [];
-    this.sbomReportDetailPropertiesTreeNodes = [];
-    this.sbomReportDetailStatistics = [];
 
-    this.getTableDataDtos();
-  }
-
-  getNamespacedImageDtos() {
-    this.namespacedImageDtos = this.dataDtos
-      ?.map((x) => ({
-        uid: x.uid ?? '', resourceNamespace: x.resourceNamespace ?? '',
-        imageName: x.imageName ?? '', imageTag: x.imageTag ?? '',
-        icon: x.hasVulnerabilities ? faShieldHalved : undefined,
-      } as NamespacedImageDto)) ?? [];
-  }
   // #endregion
   // #region dependsOnTable data
   selectedSbomDetailDto?: SbomDetailExtendedDto;
@@ -223,7 +198,6 @@ export class SbomReportsComponent implements OnInit {
 
   // #region Full Sbom Report details
   isSbomReportOverviewDialogVisible: boolean = false;
-  selectedImageResources: SbomReportImageResourceDto[] = [];
   sbomReportDetailStatistics: Array<number | undefined> = [];
   sbomReportDetailPropertiesTreeNodes: TreeNode[] = [];
   sbomReportDetailLicensesTreeNodes: TreeNode[] = [];
@@ -251,22 +225,16 @@ export class SbomReportsComponent implements OnInit {
   ngOnInit() {
     this.isStatic = !!(this.queryNamespaceName && this.queryDigest);
 
-    if (this.isStatic) {
-      this.selectedImageId = crypto.randomUUID();
-      this.getFullSbomDto(this.queryDigest, this.queryNamespaceName);
-      return;
-    }
     this.getTableDataDtos();
   }
 
   // #region get data from api
   getTableDataDtos() {
-    this.service.getSbomReportImageDtos().subscribe({
+    const params = this.isStatic
+      ? { digest: this.queryDigest, namespaceName: this.queryNamespaceName } as GetSbomReportImageDtos$Params
+      : undefined;
+    this.service.getSbomReportImageDtos(params).subscribe({
       next: (res) => this.onGetDataDtos(res),
-      error: (err) => console.error(err),
-    });
-    this.service.getSbomReportActiveNamespaces().subscribe({
-      next: (res) => (this.activeNamespaces = res.sort()),
       error: (err) => console.error(err),
     });
   }
@@ -278,24 +246,11 @@ export class SbomReportsComponent implements OnInit {
         error: (err) => console.error(err),
       });
     }
-    this.fullSbomDataDto = null;
-    this.nodeDataDtos = [];
-    this.sbomReportDetailLicensesTreeNodes = [];
-    this.sbomReportDetailPropertiesTreeNodes = [];
-    this.sbomReportDetailStatistics = [];
+    // this.resetAllRelatedData();
   }
 
   onGetSbomReportDtoByDigestNamespace(fullSbomDataDto: SbomReportDto) {
     this.fullSbomDataDto = fullSbomDataDto;
-    if (this.isStatic) {
-      this.namespacedImageDtos = [{
-        uid: fullSbomDataDto.uid ?? '', resourceNamespace: fullSbomDataDto.resourceNamespace ?? '',
-        imageName: fullSbomDataDto.imageName ?? '', imageTag: fullSbomDataDto.imageTag ?? '',
-      }];
-      this.activeNamespaces = [fullSbomDataDto.resourceNamespace ?? "N/A"];
-      this.selectedImageId = fullSbomDataDto.uid ?? crypto.randomUUID();
-      console.log("mama", this.namespacedImageDtos[0], this.selectedImageId);
-    }
     this.onActiveNodeIdChange(fullSbomDataDto.rootNodeBomRef ?? "");
   }
 
@@ -304,21 +259,31 @@ export class SbomReportsComponent implements OnInit {
     this.getNamespacedImageDtos();
   }
 
-  // reloadData() {
-  //   // this.activeNamespaces = undefined;
-  //   // this.imageDtos = undefined;
-  //   // this.selectedNamespace = null;
-  //   this.dataDtos = null;
-  //   this.fullSbomDataDto = null;
-  //   this.dependsOnBoms = undefined;
-  //   this.deletedDependsOnBom = [];
-  //   this.nodeDataDtos = [];
-  //   this.sbomReportDetailLicensesTreeNodes = [];
-  //   this.sbomReportDetailPropertiesTreeNodes = [];
-  //   this.sbomReportDetailStatistics = [];
-  //
-  //   this.getTableDataDtos();
-  // }
+  onRefreshRequested() {
+    this.dataDtos = undefined;
+    this.resetAllRelatedData();
+
+    this.getTableDataDtos();
+  }
+
+  private resetAllRelatedData() {
+    this.fullSbomDataDto = undefined;
+    this.dependsOnBoms = undefined;
+    this.deletedDependsOnBom = [];
+    this.nodeDataDtos = [];
+    this.sbomReportDetailLicensesTreeNodes = [];
+    this.sbomReportDetailPropertiesTreeNodes = [];
+    this.sbomReportDetailStatistics = [];
+  }
+
+  getNamespacedImageDtos() {
+    this.namespacedImageDtos = this.dataDtos
+      ?.map((x) => ({
+        uid: x.uid ?? '', resourceNamespace: x.resourceNamespace ?? '',
+        imageName: x.imageName ?? '', imageTag: x.imageTag ?? '',
+        icon: x.hasVulnerabilities ? faShieldHalved : undefined,
+      } as NamespacedImageDto)) ?? [];
+  }
   // #endregion
 
   // #region Get Parent and Children Nodes
@@ -396,24 +361,6 @@ export class SbomReportsComponent implements OnInit {
   }
   // #endregion
 
-  // filterImageDtos() {
-  //   this.namespacedImageDtos = this.dataDtos
-  //     ?.filter((x) => x.resourceNamespace == this.selectedNamespace)
-  //     .map((x) => ({
-  //       uid: x.uid ?? '', imageNameTag: `${x.imageName}:${x.imageTag}`,
-  //       icon: x.hasVulnerabilities ? faShieldHalved : undefined,
-  //     } as NamespacedImageDto))
-  //     .sort((a, b) => {
-  //       if (a.imageNameTag < b.imageNameTag) {
-  //         return -1;
-  //       } else if (a.imageNameTag > b.imageNameTag) {
-  //         return 1;
-  //       } else {
-  //         return 0;
-  //       }
-  //     });
-  // }
-
   // #region sanitize property name and value
   public sanitizePropertyName(value: string | null | undefined): string | null | undefined {
     return value?.replaceAll(':', ' ')
@@ -426,11 +373,6 @@ export class SbomReportsComponent implements OnInit {
       .replaceAll('sha256:', ' [sha256:] ');
   }
   // #endregion
-
-
-  // severityWrapperGetCssColor(severityId: number): string {
-  //   return SeverityUtils.getCssColor(severityId);
-  // }
 
   onHoveredNodeDtoChange(nodeId: string | undefined) {
     this.hoveredSbomDetailDto = this.getSbomDetailDtoByBomref(nodeId);
@@ -633,10 +575,6 @@ export class SbomReportsComponent implements OnInit {
         this.router.createUrlTree(['/vulnerability-reports'], { queryParams: { namespaceName: namespace, digest: digest } })
       );
       window.open(url, '_blank');
-    //  this.router.navigate(
-    //    ['/vulnerability-reports'],
-    //    { queryParams: { namespaceName: namespace, digest: digest } }
-    //  );
     }
   }
 

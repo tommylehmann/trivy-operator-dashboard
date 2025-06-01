@@ -31,13 +31,12 @@ public class SbomReportService(
         return Task.FromResult(dtos);
     }
 
-    public Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? namespaceName = null)
+    public Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? digest = null, string? namespaceName = null)
     {
-        string? imageDigest = "sha256:38a9f7eb75f7015ae9b4bc5c6fcdd232e4912cd791fd3940dbfd2b1b0cce2230";
         var vrDigests = vrCache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
             .SelectMany(kvp => kvp.Value
-            .Where(vr => string.IsNullOrEmpty(imageDigest) || vr.Report?.Artifact?.Digest == imageDigest)
+            .Where(vr => string.IsNullOrEmpty(digest) || vr.Report?.Artifact?.Digest == digest)
             .GroupBy(vr => new
             {
                 ImageDigest = vr.Report?.Artifact?.Digest ?? string.Empty,
@@ -55,7 +54,7 @@ public class SbomReportService(
         SbomReportImageDto[] dtos = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
             .SelectMany(kvp => kvp.Value
-            .Where(vr => string.IsNullOrEmpty(imageDigest) || vr.Report?.Artifact?.Digest == imageDigest)
+            .Where(vr => string.IsNullOrEmpty(digest) || vr.Report?.Artifact?.Digest == digest)
             .GroupBy(sbom => sbom.Report?.Artifact?.Digest)
                 .Select(group => group.ToSbomReportImageDto()))
             .GroupJoin(

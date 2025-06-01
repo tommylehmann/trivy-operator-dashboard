@@ -885,6 +885,10 @@ paths:
         - SbomReport
       operationId: GetSbomReportImageDtos
       parameters:
+        - name: digest
+          in: query
+          schema:
+            type: string
         - name: namespaceName
           in: query
           schema:

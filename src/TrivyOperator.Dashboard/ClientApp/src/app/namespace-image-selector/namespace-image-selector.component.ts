@@ -23,58 +23,49 @@ interface ImageDto {
   styleUrl: './namespace-image-selector.component.scss'
 })
 export class NamespaceImageSelectorComponent implements OnInit {
-  dataDtos = input.required<NamespacedImageDto[]>();
-  activeNamespaces = input.required<string[] | undefined>();
-  selectedImageId = model<string | undefined>(undefined);
+  dataDtos = model.required<NamespacedImageDto[] | undefined>();
+  disabled = input<boolean>(false);
+  selectedImageId = model<string | undefined>();
   refreshRequested = output<void>();
 
 
   selectedNamespace?: string;
 
+  protected activeNamespaces?: string[];
   protected imageDtos?: ImageDto[];
 
   get selectedImageDto(): ImageDto | undefined {
     return this._selectedImageDto;
   }
+
   set selectedImageDto(value: ImageDto | undefined) {
-    this.selectedImageId.update(() => value?.uid);
+    this.selectedImageId.set(value?.uid);
     this._selectedImageDto = value;
   }
   private _selectedImageDto?: ImageDto;
 
-  protected isStatic: boolean = false;
-
   constructor() {
     effect(() => {
-      const selectedImageId = this.selectedImageId();
-      if (selectedImageId) {
-        console.log("namespaced image selector", selectedImageId);
-        const nodeImageDto = this.dataDtos()?.find(x => x.uid === selectedImageId);
-        if (nodeImageDto) {
-          console.log("namespaced image selector", nodeImageDto);
-          this.selectedNamespace = nodeImageDto.resourceNamespace;
-          const imageDto: ImageDto = {
-            uid: nodeImageDto.uid ?? "",
-            imageNameTag: NamespaceImageSelectorComponent.getImageNameTag(nodeImageDto) ?? "",
-            icon: nodeImageDto.icon,
-          };
-          this.imageDtos = [imageDto];
-          this.selectedImageDto = imageDto;
+      const currentDataDtos = this.dataDtos();
+      if (currentDataDtos && currentDataDtos.length > 0) {
+        this.activeNamespaces = Array
+          .from(new Set(currentDataDtos.map(x => x.resourceNamespace)))
+          ?.sort((x, y) => (x > y ? 1 : -1));
+        // autoselect if only one row
+        if (this.activeNamespaces && this.activeNamespaces.length == 1) {
+          this.selectedNamespace = this.activeNamespaces[0];
+          this.filterImageDtos();
         }
+      } else {
+        this.resetData();
       }
     });
   }
 
   ngOnInit() {
-    if (this.selectedImageId()) {
-      this.isStatic = true;
-    }
   }
 
   filterImageDtos() {
-    if (this.isStatic) {
-      return;
-    }
     this.imageDtos = this.dataDtos()
       ?.filter((x) => x.resourceNamespace == this.selectedNamespace)
       .map((x) => ({
@@ -90,12 +81,22 @@ export class NamespaceImageSelectorComponent implements OnInit {
           return 0;
         }
       });
+    // autoselect if only one row
+    if (this.imageDtos && this.imageDtos.length == 1) {
+      this.selectedImageDto = this.imageDtos[0];
+    }
   }
 
   reloadData() {
+    this.dataDtos.set(undefined);
+    this.resetData();
+    this.refreshRequested.emit();
+  }
+
+  resetData() {
     this.selectedNamespace = undefined;
     this.imageDtos = undefined;
-    this.refreshRequested.emit();
+    this.selectedImageDto = undefined;
   }
 
   private static getImageNameTag(value: NamespacedImageDto) : string | undefined {

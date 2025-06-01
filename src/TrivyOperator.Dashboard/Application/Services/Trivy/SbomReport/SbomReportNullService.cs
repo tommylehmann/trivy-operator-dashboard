@@ -7,7 +7,7 @@ public class SbomReportNullService : ISbomReportService
 {
     public Task<IEnumerable<SbomReportDto>> GetSbomReportDtos(string? namespaceName = null) =>
         Task.FromResult<IEnumerable<SbomReportDto>>([]);
-    public Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? namespaceName = null) =>
+    public Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? digest = null, string? namespaceName = null) =>
         Task.FromResult<IEnumerable<SbomReportImageDto>>([]);
     public Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid) =>
         Task.FromResult<SbomReportDto?>(null);

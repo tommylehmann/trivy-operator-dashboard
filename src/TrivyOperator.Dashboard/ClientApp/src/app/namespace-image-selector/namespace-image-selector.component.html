@@ -3,9 +3,9 @@
     <p-select placeholder="Select a Namespace"
               class="text-sm w-full"
               [filter]="true"
-              [options]="activeNamespaces()"
+              [options]="activeNamespaces"
               [showClear]="true"
-              [disabled]="isStatic"
+              [disabled]="disabled()"
               [(ngModel)]="selectedNamespace"
               (onChange)="filterImageDtos()" />
   </div>
@@ -17,7 +17,7 @@
                 [filter]="true"
                 [options]="imageDtos"
                 [showClear]="true"
-                [disabled]="isStatic"
+                [disabled]="disabled()"
                 [(ngModel)]="selectedImageDto">
         <ng-template let-imageDto pTemplate="imageDtos">
           <div class="flex items-center gap-2 w-full overflow-hidden">
@@ -33,6 +33,6 @@
     </div>
     <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small"
               class="flex-shrink-0"
-              (onClick)="reloadData()" [disabled]="isStatic" />
+              (onClick)="reloadData()" [disabled]="disabled()" />
   </div>
 </div>
