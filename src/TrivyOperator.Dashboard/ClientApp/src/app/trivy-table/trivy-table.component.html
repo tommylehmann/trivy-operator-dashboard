@@ -40,7 +40,7 @@
                   size="small"
                   text
                   (onClick)="onFilterRefresh($event)" />
-        <p-splitButton *ngIf="trivyTableOptions!.isRefreshVisible && trivyTableOptions!.isRefreshFilterable"
+        <p-splitbutton *ngIf="trivyTableOptions!.isRefreshVisible && trivyTableOptions!.isRefreshFilterable"
                        #refreshSplitButton
                        icon="pi pi-refresh"
                        label="Refresh"
@@ -54,15 +54,15 @@
                   label="Clear Selected"
                   size="small"
                   text
-                  [disabled]="!isTableRowSelected()"
+                  [disabled]="isTableRowSelected()"
                   (onClick)="onTableClearSelected()" />
-        <p-button *ngIf="trivyTableOptions!.dataKey"
+        <p-button *ngIf="trivyTableOptions.dataKey && trivyTableOptions.isCollapseAllVisible"
                   icon="pi pi-expand"
                   label="Collapse All"
                   raised
                   size="small"
                   text
-                  [disabled]="!anyRowExpanded"
+                  [disabled]="anyRowExpanded"
                   (onClick)="onTableCollapseAll()" />
         <p-button *ngIf="trivyTableOptions!.isResetFiltersVisible"
                   icon="pi pi-filter"
@@ -80,24 +80,24 @@
                   text
                   (onClick)="csvExportOp.toggle($event)" />
         <p-button *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length == 1"
-                  icon="pi pi-cog"
-                  [label]="trivyTableOptions.multiHeaderActions[0].label"
+                  icon="trivyTableOptions.multiHeaderActions[0].icon"
+                  [label]="trivyTableOptions.multiHeaderActions[0].specialAction ?? trivyTableOptions.multiHeaderActions[0].label"
                   raised
                   size="small"
                   text
-                  [disabled]="!dataDtos"
+                  [disabled]="'false'"
                   (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])()" />
-        <p-splitButton *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length > 1"
+        <p-splitbutton *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length > 1"
                        [icon]="trivyTableOptions.multiHeaderActions[0].icon ?? 'pi pi-cog'"
-                       [label]="trivyTableOptions.multiHeaderActions[0].label"
+                       [label]="trivyTableOptions.multiHeaderActions[0].specialAction ?? trivyTableOptions.multiHeaderActions[0].label"
                        class="text-sm"
                        raised
                        size="small"
                        text
-                       [disabled]="!dataDtos"
+                       [disabled]="'false'"
                        [model]="multiHeaderActionItems"
                        (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])()">
-        </p-splitButton>
+        </p-splitbutton>
       </div>
     </ng-template>
     <ng-template let-columns pTemplate="header">

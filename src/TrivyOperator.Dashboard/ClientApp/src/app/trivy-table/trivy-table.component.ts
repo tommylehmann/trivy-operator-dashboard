@@ -83,7 +83,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   dataDtos = input<TData[] | null | undefined>([]);
   @Input() activeNamespaces?: string[] | null | undefined = [];
 
-  @Input() csvStoragekey: string = 'default';
+  @Input() csvStorageKey: string = 'default';
   @Input() csvFileName: string = 'Default.csv.FileName';
 
   @Input() exportColumns: ExportColumn[] = [];
@@ -179,7 +179,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   }
 
   ngOnInit() {
-    const savedCsvFileName = localStorage.getItem(LocalStorageUtils.csvFileNameKeyPrefix + this.csvStoragekey);
+    const savedCsvFileName = localStorage.getItem(LocalStorageUtils.csvFileNameKeyPrefix + this.csvStorageKey);
     if (savedCsvFileName) {
       this.csvFileName = savedCsvFileName;
     }
@@ -284,7 +284,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   }
 
   onExportToCsv(exportType: string) {
-    localStorage.setItem(LocalStorageUtils.csvFileNameKeyPrefix + this.csvStoragekey, this.csvFileName);
+    localStorage.setItem(LocalStorageUtils.csvFileNameKeyPrefix + this.csvStorageKey, this.csvFileName);
     switch (exportType) {
       case 'all':
         this.trivyTable.exportCSV({ allValues: true });
@@ -345,9 +345,10 @@ export class TrivyTableComponent<TData> implements OnInit {
   }
 
   protected multiHeaderActionGetCommand(actionItem: MultiHeaderAction): () => void {
-    console.log("multiHeaderActionGetCommand: ", actionItem);
     if (actionItem.specialAction) {
       switch (actionItem.specialAction) {
+        case "Go to Detailed \u29C9" :
+          return () => this.multiHeaderActionRequested.emit("goToDetailedPage");
         case "Clear Selection":
           return () => this.onTableClearSelected();
         case "Clear Sort/Filters":
@@ -364,6 +365,8 @@ export class TrivyTableComponent<TData> implements OnInit {
   private multiHeaderActionGetIcon(actionItem: MultiHeaderAction): string {
     if (actionItem.specialAction) {
       switch (actionItem.specialAction) {
+        case "Go to Detailed \u29C9" :
+          return 'pi pi-align-justify';
         case "Clear Selection":
           return 'pi pi-list';
         case "Clear Sort/Filters":
@@ -394,7 +397,7 @@ export class TrivyTableComponent<TData> implements OnInit {
       return !this.anyRowExpanded;
     }
 
-    return true;
+    return false;
   }
 
   private updateMultiHeaderActionOnDataChanged() {

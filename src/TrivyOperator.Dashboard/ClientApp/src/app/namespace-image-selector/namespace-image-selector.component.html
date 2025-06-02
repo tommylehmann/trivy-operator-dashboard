@@ -1,4 +1,4 @@
-<div class="grid grid-cols-12 gap-2 mb-2 items-stretch">
+<div class="grid grid-cols-12 gap-2 items-stretch">
   <div class="col-span-4 flex w-full">
     <p-select placeholder="Select a Namespace"
               class="text-sm w-full"
@@ -10,29 +10,24 @@
               (onChange)="filterImageDtos()" />
   </div>
   <div class="col-span-8 flex items-center gap-2 justify-center">
-    <div class="p-select-max">
-      <p-select optionLabel="imageNameTag"
-                placeholder="Select an Image"
-                class="text-sm w-full"
-                [filter]="true"
-                [options]="imageDtos"
-                [showClear]="true"
-                [disabled]="disabled()"
-                [(ngModel)]="selectedImageDto">
-        <ng-template let-imageDto pTemplate="imageDtos">
-          <div class="flex items-center gap-2 w-full overflow-hidden">
-            <div class="truncate whitespace-nowrap">{{ imageDto.imageNameTag }}</div>
-            <p-tag *ngIf="imageDto.icon" rounded>
-                  <span>
-                    <fa-icon [icon]="imageDto.icon"></fa-icon> VRs
-                  </span>
-            </p-tag>
-          </div>
-        </ng-template>
-      </p-select>
-    </div>
-    <p-button icon="pi pi-refresh" label="" raised [outlined]="true" size="small"
-              class="flex-shrink-0"
-              (onClick)="reloadData()" [disabled]="disabled()" />
+    <p-select optionLabel="imageNameTag"
+              placeholder="Select an Image"
+              class="text-sm w-full"
+              [filter]="true"
+              [options]="imageDtos"
+              [showClear]="true"
+              [disabled]="disabled()"
+              [(ngModel)]="selectedImageDto">
+      <ng-template let-imageDto pTemplate="imageDtos">
+        <div class="flex items-center gap-2 w-full overflow-hidden">
+          <div class="truncate whitespace-nowrap">{{ imageDto.imageNameTag }}</div>
+          <p-tag *ngIf="imageDto.icon" rounded>
+                <span>
+                  <fa-icon [icon]="imageDto.icon"></fa-icon> VRs
+                </span>
+          </p-tag>
+        </div>
+      </ng-template>
+    </p-select>
   </div>
 </div>

@@ -1,5 +1,6 @@
 export interface TrivyTableOptions {
   isClearSelectionVisible: boolean;
+  isCollapseAllVisible?: boolean;
   isResetFiltersVisible: boolean;
   isExportCsvVisible: boolean;
   isRefreshVisible: boolean;
@@ -19,7 +20,7 @@ export interface MultiHeaderAction {
   enabledIfRowSelected?: boolean;
   enabledIfDataLoaded?: boolean;
   icon?: string;
-  specialAction?: "Clear Selection" | "Clear Sort/Filters" | "Collapse All";
+  specialAction?: "Go to Detailed \u29C9" | "Clear Selection" | "Clear Sort/Filters" | "Collapse All";
 }
 
 export interface Column {

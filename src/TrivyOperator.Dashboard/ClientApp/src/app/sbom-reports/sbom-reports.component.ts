@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -26,6 +26,7 @@ import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { PanelModule } from 'primeng/panel';
 import { SelectModule } from 'primeng/select';
+import { SplitterModule } from 'primeng/splitter';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
@@ -37,42 +38,29 @@ import {
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GetSbomReportImageDtos$Params } from '../../api/fn/sbom-report/get-sbom-report-image-dtos';
 
-// export interface ImageDto {
-//   uid: string;
-//   imageNameTag: string;
-//   digest: string;
-//   hasVr: boolean;
-// }
-
-// export interface DependsOn {
-//   bomRef: string;
-//   name: string;
-//   version: string;
-// }
-
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
   imports: [CommonModule, FormsModule,
     FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
-    ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, TableModule, TagModule, TreeTableModule,
+    ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule,
     FontAwesomeModule,],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
 export class SbomReportsComponent implements OnInit {
-  // #region main data - SbomReportDtos, activeNS, fullSbomDataDto, table data
+  // region main data - SbomReportDtos, activeNS, fullSbomDataDto, table data
   dataDtos?: SbomReportImageDto[];
   fullSbomDataDto?: SbomReportDto;
   isTableLoading: boolean = false;
-  // #endregion
+  // endregion
 
+  // region namespaced image selector component
   namespacedImageDtos?: NamespacedImageDto[];
   protected selectedSbomReportImageDto?: SbomReportImageDto;
 
   set selectedImageId(value: string | undefined) {
-    console.log("sbom - selectedImageId ", value);
     this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid && x.uid === value);
     if (this.selectedSbomReportImageDto) {
       this.resetAllRelatedData();
@@ -81,11 +69,8 @@ export class SbomReportsComponent implements OnInit {
         this.selectedSbomReportImageDto.resourceNamespace ?? undefined);
     }
   }
-
-  // to be moved !!!!
-
-  // #endregion
-  // #region dependsOnTable data
+  // endregion
+  // region dependsOnTable data
   selectedSbomDetailDto?: SbomDetailExtendedDto;
   dependsOnBoms?: SbomDetailExtendedDto[];
   deletedDependsOnBom: SbomDetailExtendedDto[] = [];
@@ -172,8 +157,8 @@ export class SbomReportsComponent implements OnInit {
   dependsOnTableOptions: TrivyTableOptions = {
     isClearSelectionVisible: false,
     isExportCsvVisible: false,
-    isResetFiltersVisible: true,
-    isRefreshVisible: false,
+    isResetFiltersVisible: false,
+    isRefreshVisible: true,
     isRefreshFilterable: false,
     isFooterVisible: false,
     tableSelectionMode: 'single',
@@ -183,25 +168,26 @@ export class SbomReportsComponent implements OnInit {
     rowExpansionRender: 'table',
     extraClasses: 'trivy-with-filters',
     multiHeaderActions: [
+      { label: "", icon: 'pi pi-align-justify', specialAction: "Go to Detailed \u29C9" },
       { label: "Info",  icon: 'pi pi-info-circle', enabledIfDataLoaded: true, },
       { label: "Dive In", icon: 'pi pi-arrow-down-right', enabledIfRowSelected: true, },
       { label: "Export CycloneDX JSON", icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
       { label: "Export CycloneDX XML" , icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
-      { label: "Go to Vulnerability Report", icon: 'pi pi-shield', enabledIfDataLoaded: true, },
+      { label: "Go to Vulnerability Report \u29C9", icon: 'pi pi-shield', enabledIfDataLoaded: true, },
       { label: "", specialAction: "Clear Selection", },
       { label: "", specialAction: "Clear Sort/Filters", },
       { label: "", specialAction: "Collapse All", },
     ],
   };
   dependsOnTableExpandTableOptions: TrivyExpandTableOptions<SbomDetailExtendedDto> = new TrivyExpandTableOptions(false, 2, 0, this.getPropertiesCount);
-  // #endregion
+  // endregion
 
-  // #region Full Sbom Report details
+  // region Full Sbom Report details
   isSbomReportOverviewDialogVisible: boolean = false;
   sbomReportDetailStatistics: Array<number | undefined> = [];
   sbomReportDetailPropertiesTreeNodes: TreeNode[] = [];
   sbomReportDetailLicensesTreeNodes: TreeNode[] = [];
-  // #endregion
+  // endregion
 
   hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
   nodeDataDtos: NodeDataDto[] = [];
@@ -214,6 +200,8 @@ export class SbomReportsComponent implements OnInit {
   queryNamespaceName?: string;
   queryDigest?: string;
   isStatic: boolean = false;
+
+  screenSize: string = this.getScreenSize();
 
   constructor(private service: SbomReportService, private http: HttpClient, private router: Router, private activatedRoute: ActivatedRoute) {
     this.activatedRoute.queryParamMap.subscribe(params => {
@@ -261,6 +249,7 @@ export class SbomReportsComponent implements OnInit {
 
   onRefreshRequested() {
     this.dataDtos = undefined;
+    this.namespacedImageDtos = undefined;
     this.resetAllRelatedData();
 
     this.getTableDataDtos();
@@ -488,6 +477,9 @@ export class SbomReportsComponent implements OnInit {
 
   onMultiHeaderActionRequested(event: string) {
     switch (event) {
+      case "goToDetailedPage":
+        this.goToDetailedPage();
+        break;
       case "Info":
         this.onSbomReportOverviewDialogOpen();
         break;
@@ -503,7 +495,7 @@ export class SbomReportsComponent implements OnInit {
       case "Export CycloneDX XML":
         this.onExportCycloneDXJSON('xml');
         break;
-      case "Go to Vulnerability Report":
+      case "Go to Vulnerability Report \u29C9":
         this.goToVr();
         break;
       default:
@@ -564,7 +556,7 @@ export class SbomReportsComponent implements OnInit {
     });
   }
 
-  goToVr() {
+  private goToVr() {
     if (this.isStatic) {
       return;
     }
@@ -576,6 +568,13 @@ export class SbomReportsComponent implements OnInit {
       );
       window.open(url, '_blank');
     }
+  }
+
+  private goToDetailedPage() {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/vulnerability-reports-detailed'])
+    );
+    window.open(url, '_blank');
   }
 
   /**
@@ -672,5 +671,21 @@ export class SbomReportsComponent implements OnInit {
 
     return tree;
   }
-  // #endregion
+  // endregion
+
+  // screen size
+  @HostListener('window:resize', [])
+  onResize() {
+    this.screenSize = this.getScreenSize();
+  }
+
+  getScreenSize(): string {
+    const cssVarValue = getComputedStyle(document.documentElement)
+      .getPropertyValue('--tod-screen-width-xs')
+      .trim(); // Get and clean the CSS variable value
+
+    const threshold = parseInt(cssVarValue, 10); // Convert it to a number
+
+    return window.innerWidth < threshold ? 'sm' : 'lg';
+  }
 }

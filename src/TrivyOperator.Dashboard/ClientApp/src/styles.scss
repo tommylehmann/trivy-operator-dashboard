@@ -186,6 +186,10 @@ p-card.small-header .p-card-title {
   border-color: var(--p-content-border-color);
 }
 
+body > div.p-tieredmenu {
+  @apply text-sm;
+}
+
 /* temp fix for https://github.com/primefaces/primeng/issues/16576 */
 p-columnfilter.tod-active-filter button
 {
@@ -198,4 +202,12 @@ p-columnfilter.tod-active-filter button
 p-columnfilter.tod-active-filter p-button
 {
   padding-left: .75rem;
+}
+
+p-splitter.tod-splitter-no-borders div.p-splitter {
+  border: none !important;
+}
+
+p-splitter.tod-splitter-no-background div.p-splitter {
+  background: unset !important;
 }

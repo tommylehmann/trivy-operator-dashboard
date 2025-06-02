@@ -28,7 +28,6 @@ import {
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DarkModeService } from '../services/dark-mode.service';
 
-
 cytoscape.use(fcose);
 
 @Component({
@@ -72,7 +71,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     else {
       if (!this.activeNodeId) {
         this._rootNodeId = nodeDataDtos.find(x => x.isMain)?.id ?? this._defaultRootNodeId;
-        
+        this.initNavMenuItems();
       }
       this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
       this.hoveredNode = undefined;
@@ -84,7 +83,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         this.redrawGraph();
       }
     }
-    this.initNavMenuItems();
   }
   private _nodeDataDtos: NodeDataDto[] = [];
   // #endregion
@@ -172,7 +170,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private doubleClickDelay = 300;
 
   private darkLightMode: 'Dark' | 'Light' = 'Dark';
-  
+
   faEye = faEye;
   faReply = faReply;
   faShare = faShare;
@@ -204,6 +202,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.inputFilterByNameControl.setValue(this.staticInputFilterByNameValue);
       this.inputFilterByNameControl.disable();
     }
+    this.initNavMenuItems();
   }
 
   ngAfterViewInit() {
@@ -383,7 +382,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
             'background-color': 'Salmon',
           },
         },
-        
+
         {
           selector: '.selectedHighlight',
           style: {
@@ -769,7 +768,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.helpContainer.createComponent(FcoseHelpComponent);
     this.isHelpDialogVisible = true;
   }
-  
+
   // #endregion
 
   private redrawGraph() {
@@ -833,7 +832,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       elements.push({
         data: {
           id: nodeData.id,
-          label: nodeData.name ?? '',
+          label: nodeData.name ? nodeData.name : '\u2003', // so called 'em space' - just a 'long' space,
           parent: parentId,
         },
         classes: `nodeCommon nodePackage ${nodeData.dependsOn?.length ? 'nodeBranch' : 'nodeLeaf'}`,
@@ -857,6 +856,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
    * This method initialize the NavMenu.
    */
   private initNavMenuItems() {
+    console.log("initNavMenuItems");
     this.navItems = [];
     this.navHome = { id: this._rootNodeId, icon: 'pi pi-sitemap' };
   }
@@ -901,7 +901,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         ...this.navItems,
         {
           id: nodeId,
-          label: newDataDetailDto?.name ?? 'no-name',
+          label: newDataDetailDto?.name ? newDataDetailDto?.name : '\u2003', // so called 'em space' - just a 'long' space,
           styleClass: 'breadcrumb-size',
         },
         ];
@@ -919,7 +919,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.onNodesHighlightByName(value);
   }
 
-  // #region delete nodes
+  // region delete nodes
   private deleteNodesAndOrphans(areChildrenIncluded: boolean, mainNodes: NodeSingular[] = []) {
     const isRedo = mainNodes.length > 0;
 
@@ -1000,5 +1000,5 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.currentDeletedNodesIndex++;
     }
   }
-  // #endregion
+  // endregion
 }
