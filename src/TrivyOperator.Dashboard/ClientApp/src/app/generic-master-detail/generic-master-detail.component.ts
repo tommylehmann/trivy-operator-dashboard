@@ -123,8 +123,6 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   }
 
   // screen size
-  
-
   @HostListener('window:resize', [])
   onResize() {
     this.screenSize = this.getScreenSize();

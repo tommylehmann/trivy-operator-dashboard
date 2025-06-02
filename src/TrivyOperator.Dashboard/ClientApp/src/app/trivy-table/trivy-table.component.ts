@@ -116,7 +116,7 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.updateMultiHeaderActionSelectionChanged();
     if (value) {
       const index = this._dataDtos?.indexOf(value);
-      if (index) {
+      if (index && this.trivyTable) {
         this.trivyTable.scrollToVirtualIndex(index);
       }
       this.selectedRowsChanged.emit([value]);
