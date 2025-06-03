@@ -110,6 +110,7 @@ else
 
 //app.UseHttpsRedirection();
 app.UseDefaultFiles();
+app.UseStaticFiles();
 app.MapStaticAssets();
 app.UseRouting();
 app.UseCors();
