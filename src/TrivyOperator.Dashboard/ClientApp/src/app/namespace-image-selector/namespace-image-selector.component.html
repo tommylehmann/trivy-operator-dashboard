@@ -2,6 +2,7 @@
   <div class="col-span-4 flex w-full">
     <p-select placeholder="Select a Namespace"
               class="text-sm w-full"
+
               [filter]="true"
               [options]="activeNamespaces"
               [showClear]="true"
@@ -13,6 +14,7 @@
     <p-select optionLabel="imageNameTag"
               placeholder="Select an Image"
               class="text-sm w-full"
+              appendTo="body"
               [filter]="true"
               [options]="imageDtos"
               [showClear]="true"
