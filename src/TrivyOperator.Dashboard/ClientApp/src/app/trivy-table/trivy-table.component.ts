@@ -20,7 +20,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { Select, SelectModule } from 'primeng/select';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
-import { Table, TableModule, TableRowSelectEvent } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 
 import { SeverityDto } from '../../api/models/severity-dto';
@@ -46,8 +46,8 @@ import { CronPipe } from '../pipes/cron.pipe';
 import { LocalTimePipe } from '../pipes/local-time.pipe';
 
 import { MenuItem } from 'primeng/api';
-import {SeverityNameByIdPipe} from "../pipes/severity-name-by-id.pipe";
-import {SeverityNamesMaxDisplayPipe} from "../pipes/severity-names-max-display.pipe";
+import { SeverityNameByIdPipe } from "../pipes/severity-name-by-id.pipe";
+import { SeverityNamesMaxDisplayPipe } from "../pipes/severity-names-max-display.pipe";
 
 @Component({
   selector: 'app-trivy-table',

@@ -1,4 +1,5 @@
 <div class="gap-4 flex-col">
+  <app-trivy-toolbar>
   <div class="flex items-center">
     <p-button icon="pi pi-search-plus" label="Zoom In" size="small" [text]="true" (onClick)="onZoomIn()" />
     <p-button icon="pi pi-search-minus" label="Zoom Out" size="small" [text]="true" (onClick)="onZoomOut()" />
@@ -61,6 +62,7 @@
               (onClick)="onHelp()">
     </p-button>
   </div>
+  </app-trivy-toolbar>
   <div class="flex items-center col-span-12 p-0">
     <p-breadcrumb class="breadcrumb-no-background breadcrumb-no-overflow pl-2.5"
                   [home]="navHome"

@@ -13,6 +13,8 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 
+import { TrivyToolbarComponent } from '../trivy-toolbar/trivy-toolbar.component';
+
 import { FcoseHelpComponent } from '../fcose-help/fcose-help.component'
 import { DeletedNodes, NodeDataDto } from './fcose.types'
 
@@ -34,6 +36,7 @@ cytoscape.use(fcose);
   selector: 'app-fcose',
   standalone: true,
   imports: [BreadcrumbModule, ButtonModule, DialogModule, InputTextModule, TagModule,
+    TrivyToolbarComponent,
     CommonModule, ReactiveFormsModule, FontAwesomeModule],
   templateUrl: './fcose.component.html',
   styleUrl: './fcose.component.scss',

@@ -1,0 +1,32 @@
+.tod-scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.tod-scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.tod-scroll-btn {
+  z-index: 10;
+  background: var(--p-content-background);
+  opacity: .7;
+
+  transition: background var(--p-togglebutton-transition-duration),
+              color var(--p-togglebutton-transition-duration),
+              border-color var(--p-togglebutton-transition-duration),
+              outline-color var(--p-togglebutton-transition-duration),
+              box-shadow var(--p-togglebutton-transition-duration);
+}
+
+.tod-scroll-btn:hover {
+  z-index: 10;
+  background: var(--p-togglebutton-content-checked-background);
+  opacity: 1;
+
+  transition: background var(--p-togglebutton-transition-duration),
+              color var(--p-togglebutton-transition-duration),
+              border-color var(--p-togglebutton-transition-duration),
+              outline-color var(--p-togglebutton-transition-duration),
+              box-shadow var(--p-togglebutton-transition-duration);
+}
