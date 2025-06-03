@@ -39,6 +39,11 @@ $default-breakpoint: 576px;
   }
 
   &.trivy-with-filters {
+    height: $default-height-with-filters;
+    min-height: $default-height-with-filters;
+  }
+
+  &.trivy-with-filters-half {
     height: $default-height-half;
     min-height: $default-height-half;
 

@@ -25,6 +25,8 @@ Add CreationDate in all CRs and dtos
 
 Github versions - Timed Hosted Service - alert if error
 
+Repair package.lock.json on build
+
 ## Both
 
 Export to CycloneDX - server side, zip file, async (signalr?)

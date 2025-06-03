@@ -166,7 +166,7 @@ export class SbomReportsComponent implements OnInit {
     stateKey: 'SBOM Reports - Depends On',
     dataKey: 'bomRef',
     rowExpansionRender: 'table',
-    extraClasses: 'trivy-with-filters',
+    extraClasses: 'trivy-with-filters-half',
     multiHeaderActions: [
       { label: "", icon: 'pi pi-align-justify', specialAction: "Go to Detailed \u29C9" },
       { label: "Info",  icon: 'pi pi-info-circle', enabledIfDataLoaded: true, },

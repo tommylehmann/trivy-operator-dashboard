@@ -135,10 +135,17 @@ export const routes: Routes = [
     data: { title: 'SBOM Reports Detailed' },
   },
   {
-    path: 'test',
+    path: 'test1',
     loadComponent: () =>
       import('./fcose-help/fcose-help.component').then(
         (m) => m.FcoseHelpComponent),
+    data: { title: 'Test' },
+  },
+  {
+    path: 'test2',
+    loadComponent: () =>
+      import('./vulnerability-reports-compare/vulnerability-reports-compare.component').then(
+        (m) => m.VulnerabilityReportsCompareComponent),
     data: { title: 'Test' },
   },
 ];
