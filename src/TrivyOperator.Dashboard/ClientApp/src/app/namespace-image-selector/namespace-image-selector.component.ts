@@ -49,10 +49,22 @@ export class NamespaceImageSelectorComponent implements OnInit {
         this.activeNamespaces = Array
           .from(new Set(currentDataDtos.map(x => x.resourceNamespace)))
           ?.sort((x, y) => (x > y ? 1 : -1));
+        // try to autoselect is selectedImageId is provided
+        if (this.selectedImageId()) {
+          const selectedNamespaceName = currentDataDtos
+            .find(x => x.resourceNamespace === this.selectedImageId())
+            ?.resourceNamespace;
+          if (selectedNamespaceName) {
+            this.selectedNamespace = selectedNamespaceName;
+            this.filterImageDtos();
+            return;
+          }
+        }
         // autoselect if only one row
         if (this.activeNamespaces && this.activeNamespaces.length == 1) {
           this.selectedNamespace = this.activeNamespaces[0];
           this.filterImageDtos();
+          return;
         }
       } else {
         this.resetData();
@@ -79,9 +91,19 @@ export class NamespaceImageSelectorComponent implements OnInit {
           return 0;
         }
       });
+    // try to autoselect is selectedImageId is provided
+    if (this.selectedImageId()) {
+      const selectedImageDto = this.imageDtos
+        ?.find((x) => x.uid === this.selectedImageId());
+      if (selectedImageDto) {
+        this.selectedImageDto = selectedImageDto;
+        return;
+      }
+    }
     // autoselect if only one row
     if (this.imageDtos && this.imageDtos.length == 1) {
       this.selectedImageDto = this.imageDtos[0];
+      return;
     }
   }
 

@@ -19,6 +19,8 @@ Extend Settings Service (maybe cross tab communication?)
 
 Rearrange BuilderServicesExtensions.cs
 
+Dedicated routes for liveness and readyness
+
 Proper 200, 404 etc codes in controllers and proper error controll
 
 Add CreationDate in all CRs and dtos

@@ -1,5 +1,7 @@
 ﻿using k8s;
 using k8s.Models;
+using System.Security.Cryptography;
+using System.Text;
 using TrivyOperator.Dashboard.Domain.Trivy;
 
 namespace TrivyOperator.Dashboard.Utils;
@@ -39,4 +41,13 @@ public class VarUtils
 
         return excludedSeverityIds;
     }
+
+    public static Guid GetDeterministicGuid(string input)
+    {
+        byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
+        byte[] guidBytes = new byte[16];
+        Array.Copy(hashBytes, guidBytes, 16);
+        return new Guid(guidBytes);
+    }
+
 }

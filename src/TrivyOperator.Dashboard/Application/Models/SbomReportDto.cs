@@ -3,12 +3,13 @@ using System.Security.Cryptography;
 using System.Text;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
 public class SbomReportDto : ISbomReportDto
 {
-    public string Uid { get; set; } = Guid.NewGuid().ToString();
+    public Guid Uid { get; set; } = Guid.NewGuid();
     public DateTime CreationTimestamp { get; set; } = DateTime.MinValue;
     public string ResourceName { get; init; } = string.Empty;
     public string ResourceNamespace { get; init; } = string.Empty;
@@ -24,7 +25,7 @@ public class SbomReportDto : ISbomReportDto
 
 public class SbomReportImageDto : ISbomReportDto
 {
-    public string Uid { get; set; } = Guid.NewGuid().ToString();
+    public Guid Uid { get; set; } = Guid.NewGuid();
     public DateTime CreationTimestamp { get; set; } = DateTime.MinValue;
     public string ResourceNamespace { get; init; } = string.Empty;
     public string ImageName { get; set; } = string.Empty;
@@ -51,6 +52,7 @@ public class SbomReportImageResourceDto
 
 public class SbomReportDetailDto
 {
+    public Guid Id => VarUtils.GetDeterministicGuid($"{BomRef}_{Purl}");
     public string BomRef { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Purl { get; set; } = string.Empty;
@@ -103,7 +105,9 @@ public static partial class SbomReportCrExtensions
 
         SbomReportDto result = new()
         {
-            Uid = sbomReportCr.Metadata.Uid,
+            Uid = Guid.TryParse(sbomReportCr.Metadata.Uid, out var parsedGuid) 
+                ? parsedGuid 
+                : new(),
             CreationTimestamp = sbomReportCr.Metadata.CreationTimestamp ?? DateTime.MinValue,
             ResourceName =
                 sbomReportCr.Metadata.Labels != null &&
@@ -163,7 +167,9 @@ public static partial class SbomReportCrExtensions
         });
         SbomReportImageDto result = new()
         {
-            Uid = Guid.NewGuid().ToString(),
+            Uid = Guid.TryParse(firstSbomReportCr.Metadata.Uid, out var parsedGuid)
+                ? parsedGuid
+                : new(),
             CreationTimestamp = firstSbomReportCr.Metadata.CreationTimestamp ?? DateTime.MinValue,
             ResourceNamespace = firstSbomReportCr.Metadata.NamespaceProperty,
             ImageName = firstSbomReportCr.Report?.Artifact?.Repository ?? string.Empty,
