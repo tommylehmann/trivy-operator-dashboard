@@ -36,7 +36,7 @@ RUN find . -type f -name "*.svg" -exec brotli -k -4 {} \;
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble AS final
 
 COPY --from=build-dotnet /build /opt/trivy.dashboard
-COPY --from=build-node /src/dist/browser /opt/trivy.dashboard/wwwroot
+COPY --from=build-node /src/dist /opt/trivy.dashboard/wwwroot
 
 WORKDIR /opt/trivy.dashboard
 

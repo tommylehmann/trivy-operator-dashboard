@@ -19,12 +19,12 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "progress": false,
             "outputPath": "dist",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "main": "src/main.ts",
             "polyfills": [ "src/polyfills.ts" ],
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [
