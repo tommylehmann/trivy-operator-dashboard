@@ -36,6 +36,7 @@
   --p-border-radius-md: 2px;
   --p-tieredmenu-item-color: var(--p-primary-color);
   --p-tieredmenu-item-icon-color: var(--p-primary-600);
+  --p-dialog-header-padding: .8rem 1.25rem;
   /* generic vars */
   --tod-screen-width-xs: 576px;
   /* just tests */

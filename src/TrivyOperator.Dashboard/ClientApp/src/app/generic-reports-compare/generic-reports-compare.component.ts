@@ -6,7 +6,7 @@ import { TrivyReport, TrivyReportDetail } from '../abstracts/trivy-report'
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
 import { TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
 
-type TrivyReportDetailComparedDto = TrivyReportDetail & {first: boolean; second: boolean};
+type TrivyReportDetailComparedDto = TrivyReportDetail & {first?: boolean; second?: boolean};
 
 @Component({
   selector: 'app-generic-reports-compare',
@@ -29,7 +29,6 @@ export class GenericReportsCompareComponent<
   trivyReportDetailsCompared?: TrivyReportDetailComparedDto[];
 
   private _dataDtos?: TTrivyReportDto[];
-  // private _namespacedImageDtos?: NamespacedImageDto[];
   private _firstSelectedTrivyReportId?: string;
   private _secondSelectedTrivyReportId?: string;
 
@@ -43,20 +42,15 @@ export class GenericReportsCompareComponent<
       this._dataDtos = this.dataDtos();
       this.compareSelectedTrivyReports();
     });
-    // TODO: do i need this?
-    // effect(() => {
-    //   this._namespacedImageDtos = this.namespacedImageDtos();
-    //   // this.compareSelectedTrivyReports();
-    // })
   }
-
-  // ngOnInit() {
-  // }
 
   compareSelectedTrivyReports() {
     if (!this._dataDtos ||
       (!this._firstSelectedTrivyReportId && !this._secondSelectedTrivyReportId)
     ) {
+      if (this.trivyReportDetailsCompared) {
+        this.trivyReportDetailsCompared = undefined;
+      }
       return;
     }
 
@@ -69,17 +63,26 @@ export class GenericReportsCompareComponent<
     this._dataDtos
       ?.find(tr => tr.uid === this._firstSelectedTrivyReportId)
       ?.details?.forEach(detail => {
-      detailSet.set(detail.id ?? '', { ...detail, first: true, second: false });
+      detailSet.set(detail.id ?? '', { ...detail, first: true });
     });
 
     this._dataDtos
       ?.find(tr => tr.uid === this._secondSelectedTrivyReportId)
       ?.details?.forEach(detail => {
       if (detailSet.has(detail.id ?? '')) {
-        detailSet.get(detail.id ?? '')!.second = true; // Mark right if already exists
+        detailSet.get(detail.id ?? '')!.second = true; // mark right if already exists
       } else {
-        detailSet.set(detail.id ?? '', { ...detail, first: false, second: true });
-      }});
+        detailSet.set(detail.id ?? '', { ...detail, second: true });
+      }
+    });
+    detailSet.forEach(item => {
+      if (this._firstSelectedTrivyReportId) {
+        item.first = item.first ?? false;
+      }
+      if (this._secondSelectedTrivyReportId) {
+        item.second = item.second ?? false;
+      }
+    });
 
     this.trivyReportDetailsCompared = Array.from(detailSet.values());
   }

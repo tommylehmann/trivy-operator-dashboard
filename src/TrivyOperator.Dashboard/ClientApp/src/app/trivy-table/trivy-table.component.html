@@ -241,10 +241,10 @@
                     (onClick)="onRowAction(rowData)"
                     severity="contrast" />
           <p-tag *ngIf="col.renderType == 'boolean'"
-                 [icon]="'pi ' + (rowData[col.field] ? 'pi-verified' : 'pi-times-circle')"
+                 [icon]="'pi ' + (rowData[col.field] === undefined ? 'pi-question-circle' : (rowData[col.field] ? 'pi-verified' : 'pi-times-circle'))"
                  [rounded]="true"
                  [style]="rowData[col.field] | booleanCssStyle"
-                 [value]="rowData[col.field].toString() | capitalizeFirst" />
+                 [value]="rowData[col.field]?.toString() ?? 'N/A' | capitalizeFirst" />
         </td>
       </tr>
     </ng-template>

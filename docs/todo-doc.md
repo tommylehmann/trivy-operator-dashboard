@@ -12,6 +12,7 @@ Trivy Table
 Generic
 - replace all functions/methods from htmls with pipes
 - chase all styles and replace with classes
+- change TrivyTableColumn[] to const in trivy-table-definitions
 
 Extend Settings Service (maybe cross tab communication?)
 

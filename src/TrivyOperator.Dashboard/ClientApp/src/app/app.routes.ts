@@ -21,6 +21,13 @@ export const routes: Routes = [
     data: { title: 'Vulnerability Reports Detailed' },
   },
   {
+    path: 'vulnerability-reports-compare',
+    loadComponent: () =>
+      import('./vulnerability-reports-compare/vulnerability-reports-compare.component').then(
+        (m) => m.VulnerabilityReportsCompareComponent),
+    data: { title: 'Test' },
+  },
+  {
     path: 'config-audit-reports',
     loadComponent: () =>
       import('./config-audit-reports/config-audit-reports.component').then(

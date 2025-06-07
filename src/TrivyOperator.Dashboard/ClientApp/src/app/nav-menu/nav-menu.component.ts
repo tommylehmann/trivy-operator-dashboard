@@ -240,6 +240,15 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             },
           },
           {
+            label: 'Vulnerabilities Compare',
+            faIcon: this.faShieldHalved,
+            disabled: !this.enabledTrivyReports.includes('vr'),
+            command: () => {
+              this.router.navigate(['/vulnerability-reports-compare']);
+              this.isDrawerVisible = false;
+            },
+          },
+          {
             label: 'SBOMs',
             faIcon: faDiagramProject,
             disabled: !this.enabledTrivyReports.includes('sr'),

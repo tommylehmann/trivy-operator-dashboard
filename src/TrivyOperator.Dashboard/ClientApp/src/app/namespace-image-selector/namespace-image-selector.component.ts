@@ -52,7 +52,7 @@ export class NamespaceImageSelectorComponent implements OnInit {
         // try to autoselect is selectedImageId is provided
         if (this.selectedImageId()) {
           const selectedNamespaceName = currentDataDtos
-            .find(x => x.resourceNamespace === this.selectedImageId())
+            .find(x => x.uid === this.selectedImageId())
             ?.resourceNamespace;
           if (selectedNamespaceName) {
             this.selectedNamespace = selectedNamespaceName;
