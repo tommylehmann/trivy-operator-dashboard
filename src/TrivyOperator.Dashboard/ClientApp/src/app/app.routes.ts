@@ -151,8 +151,8 @@ export const routes: Routes = [
   {
     path: 'test2',
     loadComponent: () =>
-      import('./vulnerability-reports-compare/vulnerability-reports-compare.component').then(
-        (m) => m.VulnerabilityReportsCompareComponent),
+      import('./sbom-reports-compare/sbom-reports-compare.component').then(
+        (m) => m.SbomReportsCompareComponent),
     data: { title: 'Test' },
   },
 ];

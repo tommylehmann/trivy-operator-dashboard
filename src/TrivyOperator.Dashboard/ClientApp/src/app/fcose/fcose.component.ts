@@ -859,7 +859,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
    * This method initialize the NavMenu.
    */
   private initNavMenuItems() {
-    console.log("initNavMenuItems");
     this.navItems = [];
     this.navHome = { id: this._rootNodeId, icon: 'pi pi-sitemap' };
   }
