@@ -20,12 +20,10 @@ import {
   TrivyTableColumn,
   TrivyTableOptions,
 } from '../trivy-table/trivy-table.types';
+import { TrivyReport, TrivyReportDetail } from '../abstracts/trivy-report';
 
 import { SplitterModule } from 'primeng/splitter';
 
-export interface IMasterDetail<TDetailDto> {
-  details?: Array<TDetailDto> | null;
-}
 
 @Component({
   selector: 'app-generic-master-detail',
@@ -34,7 +32,7 @@ export interface IMasterDetail<TDetailDto> {
   templateUrl: './generic-master-detail.component.html',
   styleUrl: './generic-master-detail.component.scss',
 })
-export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetailDto>, TDetailDto> {
+export class GenericMasterDetailComponent<TTrivyReport extends TrivyReport<TTrivyReportDetail>, TTrivyReportDetail extends TrivyReportDetail> {
   severityDtos= input<SeverityDto[]>([]);
   activeNamespaces = input<string[] | undefined>([]);
   mainTableColumns = input.required<TrivyTableColumn[]>();
@@ -42,29 +40,29 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
   isMainTableLoading = input<boolean>(true);
   detailsTableColumns = input.required<TrivyTableColumn[]>();
   detailsTableOptions = input.required<TrivyTableOptions>();
-  singleSelectDataDto = input<TDataDto | undefined>();
+  singleSelectDataDto = input<TTrivyReport | undefined>();
   splitterStorageKey = input<string | undefined>();
 
   refreshRequested = output<TrivyFilterData>();
-  mainTableExpandCallback = output<TDataDto>();
+  mainTableExpandCallback = output<TTrivyReport>();
   mainTableMultiHeaderActionRequested = output<string>();
   detailsTableMultiHeaderActionRequested = output<string>();
-  mainTableSelectedRowChanged = output<TDataDto | null>();
+  mainTableSelectedRowChanged = output<TTrivyReport | null>();
 
-  @Input() mainTableExpandTableOptions: TrivyExpandTableOptions<TDataDto> = new TrivyExpandTableOptions(false, 0, 0);
+  @Input() mainTableExpandTableOptions: TrivyExpandTableOptions<TTrivyReport> = new TrivyExpandTableOptions(false, 0, 0);
 
-  @ViewChild('mainTable', { static: true }) mainTable?: TrivyTableComponent<TDataDto>;
+  @ViewChild('mainTable', { static: true }) mainTable?: TrivyTableComponent<TTrivyReport>;
 
-  dataDtos = input<TDataDto[]>([]);
-  selectedDataDto: TDataDto | null = null;
+  dataDtos = input<TTrivyReport[]>([]);
+  selectedDataDto: TTrivyReport | null = null;
 
   screenSize: string = this.getScreenSize();
 
-  protected _dataDtos: TDataDto[] = [];
+  protected _dataDtos: TTrivyReport[] = [];
   protected _isMainTableLoading: boolean = this.isMainTableLoading();
 
   @Input() public mainTableExpandCellOptions: (
-    dto: TDataDto,
+    dto: TTrivyReport,
     type: 'header' | 'row',
     column: number,
     row?: number,
@@ -95,7 +93,7 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
     this._isMainTableLoading = false;
   }
 
-  onMainTableSelectionChange(event: TDataDto[]) {
+  onMainTableSelectionChange(event: TTrivyReport[]) {
     if (event == null || event.length == 0) {
       this.selectedDataDto = null;
       this.mainTableSelectedRowChanged.emit(null);
@@ -110,7 +108,7 @@ export class GenericMasterDetailComponent<TDataDto extends IMasterDetail<TDetail
     this.refreshRequested.emit(event);
   }
 
-  onMainTableExpandCallback(event: TDataDto) {
+  onMainTableExpandCallback(event: TTrivyReport) {
     this.mainTableExpandCallback.emit(event);
   }
 
