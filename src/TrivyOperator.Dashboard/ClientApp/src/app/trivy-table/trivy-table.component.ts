@@ -5,7 +5,7 @@ import {
   EventEmitter,
   input,
   Input,
-  OnInit,
+  OnInit, output,
   Output,
   ViewChild,
   ViewEncapsulation,
@@ -20,7 +20,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { Select, SelectModule } from 'primeng/select';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
-import { Table, TableModule } from 'primeng/table';
+import { Table, TableModule, TableRowCollapseEvent, TableRowExpandEvent } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 
 import { SeverityDto } from '../../api/models/severity-dto';
@@ -49,6 +49,9 @@ import { MenuItem } from 'primeng/api';
 import { SeverityNameByIdPipe } from "../pipes/severity-name-by-id.pipe";
 import { SeverityNamesMaxDisplayPipe } from "../pipes/severity-names-max-display.pipe";
 
+// TODO: remove this. only test
+import { TestsPipe } from '../tests/tests.pipe'
+
 @Component({
   selector: 'app-trivy-table',
   standalone: true,
@@ -74,6 +77,8 @@ import { SeverityNamesMaxDisplayPipe } from "../pipes/severity-names-max-display
     LocalTimePipe,
     SeverityNameByIdPipe,
     SeverityNamesMaxDisplayPipe,
+
+    TestsPipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',
@@ -534,8 +539,22 @@ export class TrivyTableComponent<TData> implements OnInit {
         return 'tod-active-filter'
       }
     }
-    return ''
+    return '';
   }
+
+
+  // TODO: new, for tests, 2 pcs
+  onRowExpand(event: TableRowExpandEvent) {
+    console.log('onRowExpand', event.data);
+    this.rowExpandData.emit(event.data);
+    this.onRowExpandCollapse(event);
+  }
+
+  onRowCollapse(event: TableRowCollapseEvent) {
+    this.onRowExpandCollapse(event);
+  }
+
+  rowExpandData = output<TData>();
 }
 
 // clear filters on reset table: https://stackoverflow.com/questions/51395624/reset-filter-value-on-primeng-table

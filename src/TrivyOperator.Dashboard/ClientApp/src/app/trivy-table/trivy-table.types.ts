@@ -10,7 +10,7 @@ export interface TrivyTableOptions {
   tableStyle: { [klass: string]: any };
   stateKey: string | null;
   dataKey: string | null;
-  rowExpansionRender: null | 'table' | 'messages';
+  rowExpansionRender: null | 'table' | 'messages' | 'test';
   extraClasses: string;
   multiHeaderActions?: MultiHeaderAction[];
 }

@@ -155,4 +155,11 @@ export const routes: Routes = [
         (m) => m.SbomReportsCompareComponent),
     data: { title: 'Test' },
   },
+  {
+    path: 'test3',
+    loadComponent: () =>
+      import('./tests/tests.component').then(
+        (m) => m.TestsComponent),
+    data: { title: 'Test' },
+  },
 ];

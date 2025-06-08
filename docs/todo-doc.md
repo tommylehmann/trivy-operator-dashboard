@@ -13,6 +13,7 @@ Generic
 - replace all functions/methods from htmls with pipes
 - chase all styles and replace with classes
 - change TrivyTableColumn[] to const in trivy-table-definitions
+- change where aplicable to lazy loading of components in pages (ie vr compare in vr, home pages). maybe deferred load?
 
 Extend Settings Service (maybe cross tab communication?)
 

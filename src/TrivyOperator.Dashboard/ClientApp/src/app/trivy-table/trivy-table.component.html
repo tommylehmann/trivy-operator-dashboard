@@ -24,8 +24,8 @@
     [virtualScroll]="true"
     [virtualScrollItemSize]="47"
     [(selection)]="selectedDataDtos"
-    (onRowCollapse)="onRowExpandCollapse($event)"
-    (onRowExpand)="onRowExpandCollapse($event)"
+    (onRowCollapse)="onRowCollapse($event)"
+    (onRowExpand)="onRowExpand($event)"
     (onStateSave)="onTableStateSave()"
     (selectionChange)="onSelectionChange($event)"
     (onSort)="onSort()"
@@ -295,6 +295,9 @@
           </div>
           <div *ngIf="trivyTableOptions!.rowExpansionRender == 'messages'" class="pl-4 whitespace-normal">
             <li *ngFor="let mess of rowData.messages">{{ mess }}</li>
+          </div>
+          <div *ngIf="trivyTableOptions.rowExpansionRender == 'test'" class="pl-4">
+            <span>{{ 'Test' | tests }}</span>
           </div>
         </td>
       </tr>
