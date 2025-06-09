@@ -2,33 +2,34 @@
             [panelSizes]="[35, 65]" stateStorage="local" [stateKey]="splitterStorageKey() && screenSize !== 'sm' ? 'splitter.' + splitterStorageKey() : undefined">
   <ng-template #panel>
     <div class="w-full">
-      <app-trivy-table
-        #mainTable
-        tableHeight="70vh"
-        [activeNamespaces]="activeNamespaces()"
-        [dataDtos]="_dataDtos"
-        [singleSelectDataDto]="singleSelectDataDto()"
-        [isLoading]="_isMainTableLoading"
-        [trivyExpandTableFunction]="mainTableExpandCellOptions"
-        [trivyExpandTableOptions]="mainTableExpandTableOptions"
-        [trivyTableColumns]="mainTableColumns()"
-        [trivyTableOptions]="mainTableOptions()"
-        (refreshRequested)="onRefreshRequested($event)"
-        (selectedRowsChanged)="onMainTableSelectionChange($event)"
-        (trivyDetailsTableCallback)="onMainTableExpandCallback($event)"
-        (multiHeaderActionRequested)="onMainTableMultiHeaderActionRequested($event)" />
+      <app-trivy-table #mainTable
+                       tableHeight="70vh"
+                       [activeNamespaces]="activeNamespaces()"
+                       [dataDtos]="_dataDtos"
+                       [singleSelectDataDto]="singleSelectDataDto()"
+                       [isLoading]="_isMainTableLoading"
+                       [trivyExpandTableFunction]="mainTableExpandCellOptions"
+                       [trivyExpandTableOptions]="mainTableExpandTableOptions"
+                       [trivyTableColumns]="mainTableColumns()"
+                       [trivyTableOptions]="mainTableOptions()"
+                       (refreshRequested)="onRefreshRequested($event)"
+                       (selectedRowsChanged)="onMainTableSelectionChange($event)"
+                       (trivyDetailsTableCallback)="onMainTableExpandCallback($event)"
+                       (multiHeaderActionRequested)="onMainTableMultiHeaderActionRequested($event)"
+
+                       [rowExpandData]="mainTableRowExpandResponse()"
+                       (rowExpandDataChange)="onMainTableRowExpandChange($event)"/>
     </div>
   </ng-template>
   <ng-template #panel>
     <div class="w-full">
-      <app-trivy-table
-        tableHeight="70vh"
-        class="row"
-        [activeNamespaces]="activeNamespaces()"
-        [dataDtos]="selectedDataDto?.details ?? []"
-        [trivyTableColumns]="detailsTableColumns()"
-        [trivyTableOptions]="detailsTableOptions()"
-        (multiHeaderActionRequested)="onDetailsTableMultiHeaderActionRequested($event)"
+      <app-trivy-table tableHeight="70vh"
+                       class="row"
+                       [activeNamespaces]="activeNamespaces()"
+                       [dataDtos]="selectedDataDto?.details ?? []"
+                       [trivyTableColumns]="detailsTableColumns()"
+                       [trivyTableOptions]="detailsTableOptions()"
+                       (multiHeaderActionRequested)="onDetailsTableMultiHeaderActionRequested($event)"
       />
     </div>
   </ng-template>

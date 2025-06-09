@@ -18,6 +18,7 @@ import {
   TrivyFilterData,
   TrivyTableCellCustomOptions,
   TrivyTableColumn,
+  TrivyTableExpandRowData,
   TrivyTableOptions,
 } from '../trivy-table/trivy-table.types';
 import { TrivyReport, TrivyReportDetail } from '../abstracts/trivy-report';
@@ -37,6 +38,7 @@ export class GenericMasterDetailComponent<TTrivyReport extends TrivyReport<TTriv
   activeNamespaces = input<string[] | undefined>([]);
   mainTableColumns = input.required<TrivyTableColumn[]>();
   mainTableOptions = input.required<TrivyTableOptions>();
+  mainTableRowExpandResponse = input<TrivyTableExpandRowData<TTrivyReport>>();
   isMainTableLoading = input<boolean>(true);
   detailsTableColumns = input.required<TrivyTableColumn[]>();
   detailsTableOptions = input.required<TrivyTableOptions>();
@@ -44,6 +46,7 @@ export class GenericMasterDetailComponent<TTrivyReport extends TrivyReport<TTriv
   splitterStorageKey = input<string | undefined>();
 
   refreshRequested = output<TrivyFilterData>();
+  mainTableRowExpandChange = output<TTrivyReport>();
   mainTableExpandCallback = output<TTrivyReport>();
   mainTableMultiHeaderActionRequested = output<string>();
   detailsTableMultiHeaderActionRequested = output<string>();
@@ -118,6 +121,10 @@ export class GenericMasterDetailComponent<TTrivyReport extends TrivyReport<TTriv
 
   onDetailsTableMultiHeaderActionRequested(event: string) {
     this.detailsTableMultiHeaderActionRequested.emit(event);
+  }
+
+  onMainTableRowExpandChange(event: TTrivyReport) {
+    this.mainTableRowExpandChange.emit(event);
   }
 
   // screen size
