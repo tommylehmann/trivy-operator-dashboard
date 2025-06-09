@@ -14,13 +14,14 @@
                          [isLoading]="isTableLoading"
                          [trivyTableColumns]="dependsOnTableColumns"
                          [trivyTableOptions]="dependsOnTableOptions"
-                         [trivyExpandTableFunction]="dependsOnTableExpandCellOptions"
-                         [trivyExpandTableOptions]="dependsOnTableExpandTableOptions"
                          [singleSelectDataDto]="selectedSbomDetailDto"
                          (selectedRowsChanged)="onTableSelectedRowChange($event)"
                          (refreshRequested)="onRefreshRequested()"
                          (rowActionRequested)="onRowActionRequested($event)"
-                         (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)" />
+                         (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)"
+
+                         [rowExpandData]="rowExpandResponse"
+                         (rowExpandDataChange)="onRowExpandChange($event)" />
       </div>
     </div>
   </ng-template>

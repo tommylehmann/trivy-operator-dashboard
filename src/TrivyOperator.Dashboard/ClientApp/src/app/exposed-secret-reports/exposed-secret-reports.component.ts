@@ -6,10 +6,8 @@ import { ExposedSecretReportImageDto } from '../../api/models/exposed-secret-rep
 import { ExposedSecretReportService } from '../../api/services/exposed-secret-report.service';
 import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
 import {
-  TrivyExpandTableOptions,
   TrivyFilterData,
-  TrivyTableCellCustomOptions,
-  TrivyTableColumn,
+  TrivyTableColumn, TrivyTableExpandRowData,
   TrivyTableOptions,
 } from '../trivy-table/trivy-table.types';
 import { SeverityUtils } from '../utils/severity.utils';
@@ -26,13 +24,11 @@ import { TableModule } from 'primeng/table';
 })
 export class ExposedSecretReportsComponent {
   public dataDtos: ExposedSecretReportImageDto[] = [];
-  public selectedVulnerabilityReportDto: ExposedSecretReportImageDto | null = null;
   public activeNamespaces?: string[] = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;
-  public mainTableExpandTableOptions: TrivyExpandTableOptions<ExposedSecretReportImageDto>;
-  public mainTableExpandCallbackDto: ExposedSecretReportImageDto | null = null;
+  public mainTableExpandCallbackDto?: ExposedSecretReportImageDto;
   public isMainTableLoading: boolean = true;
 
   public detailsTableColumns: TrivyTableColumn[] = [];
@@ -122,7 +118,7 @@ export class ExposedSecretReportsComponent {
       tableStyle: {width: '645px'},
       stateKey: 'Exposed Secret Reports - Main',
       dataKey: 'uid',
-      rowExpansionRender: 'tableOld',
+      rowExpansionRender: 'table',
       extraClasses: 'trivy-half',
     };
     this.detailsTableColumns = [
@@ -195,7 +191,6 @@ export class ExposedSecretReportsComponent {
       rowExpansionRender: null,
       extraClasses: 'trivy-half',
     };
-    this.mainTableExpandTableOptions = new TrivyExpandTableOptions(false, 2, 2);
   }
 
   onGetDataDtos(vrDtos: ExposedSecretReportImageDto[]) {
@@ -226,65 +221,53 @@ export class ExposedSecretReportsComponent {
     });
   }
 
-  mainTableExpandCellOptions(
-    dto: ExposedSecretReportImageDto,
-    type: 'header' | 'row',
-    colIndex: number,
-    rowIndex?: number,
-  ): TrivyTableCellCustomOptions {
-    rowIndex ?? 0;
-    let celValue: string = '';
-    let celStyle: string = '';
-    let celBadge: string | undefined;
-    let celButtonLink: string | undefined;
-    let celUrl: string | undefined;
-
-    switch (colIndex) {
-      case 0:
-        celStyle = 'width: 70px; min-width: 70px; height: 50px';
-        switch (rowIndex) {
-          case 0:
-            celValue = 'Repository';
-            break;
-          case 1:
-            celValue = 'Used By';
-            break;
-        }
-        break;
-      case 1:
-        celStyle = 'white-space: normal; display: flex; align-items: center; height: 50px;';
-        switch (rowIndex) {
-          case 0:
-            celValue = dto.imageRepository!;
-            break;
-          case 1:
-            const resourceNames: string[] = dto!.resources!.map((x) => x.name!);
-            let narrowedResourceNames: string;
-            let narrowedResourceNamesLink: string | null = null;
-            if (resourceNames.length > 2) {
-              narrowedResourceNames = resourceNames[0] + ', ' + resourceNames[1];
-              narrowedResourceNamesLink = ' [+' + (resourceNames.length - 2) + ']';
-            } else {
-              narrowedResourceNames = resourceNames.join(', ');
-              narrowedResourceNamesLink = '[...]';
-            }
-            celValue = narrowedResourceNames;
-            celButtonLink = narrowedResourceNamesLink;
-            break;
-        }
-        break;
-    }
-
-    return {
-      value: celValue,
-      style: celStyle,
-      badge: celBadge,
-      buttonLink: celButtonLink,
-      url: celUrl,
-    };
-  }
-
   getPanelHeaderText() {
     return `Image Usage for ${this.mainTableExpandCallbackDto?.imageName}:${this.mainTableExpandCallbackDto?.imageTag} in namespace ${this.mainTableExpandCallbackDto?.resourceNamespace}`;
+  }
+
+  rowExpandResponse?: TrivyTableExpandRowData<ExposedSecretReportImageDto>;
+  onRowExpandChange(dto: ExposedSecretReportImageDto) {
+    this.rowExpandResponse = {
+      rowKey: dto,
+      colStyles: [
+        { 'width': '70px', 'min-width': '70px', 'height': '50px' },
+        { 'white-space': 'normal', 'display': 'flex', 'align-items': 'center', 'height': '50px' }
+      ],
+      details: [
+        // [
+        //   { label: 'Image Digest' },
+        //   { label: dto.imageDigest ?? '' },
+        // ],
+        [
+          { label: 'Repository' },
+          { label: dto.imageRepository ?? ''},
+        ],
+        // [
+        //   { label: 'Update Moment' },
+        //   { label: '', localTime: dto.updateTimestamp },
+        // ],
+        [
+          { label: 'Used By' },
+          this.getNarrowedResourceNamesHelper(dto),
+        ],
+      ]
+    }
+  }
+
+  getNarrowedResourceNamesHelper(dto: ExposedSecretReportImageDto): {label: string; buttonLink: string} {
+    const resourceNames: string[] = dto.resources?.map((x) => x.name ?? 'unknown') ?? [];
+    let narrowedResourceNames: string = '';
+    let narrowedResourceNamesLink: string | undefined = undefined;
+    if (resourceNames.length > 2) {
+      narrowedResourceNames = resourceNames[0] + ', ' + resourceNames[1];
+      narrowedResourceNamesLink = ' [+' + (resourceNames.length - 2) + ']';
+    } else {
+      narrowedResourceNames = resourceNames.join(', ');
+      narrowedResourceNamesLink = '[...]';
+    }
+    return {
+      label: narrowedResourceNames,
+      buttonLink: narrowedResourceNamesLink,
+    }
   }
 }

@@ -315,20 +315,29 @@
                     <td *ngFor="let cell of row; let colIndex = index"
                         [ngStyle]="rowExpandData.colStyles[colIndex]" [ngClass]="cell.class">
 
-                      <span>{{ cell.label }}</span>
+                      <span *ngIf="cell.label" class="pr-1">
+                        {{ cell.label }}
+                      </span>
                       <p-button *ngIf="cell.buttonLink"
+                                class="pr-1"
                                 label="{{ cell.buttonLink }}"
                                 size="small"
                                 [text]="true"
                                 (onClick)="onTrivyDetailsTableCallback(rowData)" />
                       <p-tag *ngIf="cell.badge"
+                             class="pr-1"
                              [rounded]="true"
                              class="ml-3"
                              [style]="1 | severityCssStyleById:1"
                              [value]="cell.badge" />
-                      <span *ngIf="cell.localTime">{{ cell.localTime | localTime }}</span>
-                      <span *ngIf="cell.cron">{{ cell.cron | cron }}</span>
+                      <span *ngIf="cell.localTime"  class="pr-1">
+                        {{ cell.localTime | localTime }}
+                      </span>
+                      <span *ngIf="cell.cron" class="pr-1">
+                        {{ cell.cron | cron }}
+                      </span>
                       <a *ngIf="cell.url"
+                         class="pr-1"
                          href="{{ cell.url.link }}"
                          target="_blank">
                          {{ cell.url.text }}

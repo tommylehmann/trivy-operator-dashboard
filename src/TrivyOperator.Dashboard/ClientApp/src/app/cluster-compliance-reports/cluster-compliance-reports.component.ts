@@ -4,10 +4,8 @@ import { ClusterComplianceReportDto } from '../../api/models/cluster-compliance-
 import { ClusterComplianceReportService } from '../../api/services/cluster-compliance-report.service';
 import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
 import {
-  TrivyExpandTableOptions,
   TrivyFilterData,
-  TrivyTableCellCustomOptions,
-  TrivyTableColumn,
+  TrivyTableColumn, TrivyTableExpandRowData,
   TrivyTableOptions,
 } from '../trivy-table/trivy-table.types';
 
@@ -23,7 +21,7 @@ export class ClusterComplianceReportsComponent {
 
   public mainTableColumns: TrivyTableColumn[] = [];
   public mainTableOptions: TrivyTableOptions;
-  public mainTableExpandTableOptions: TrivyExpandTableOptions<ClusterComplianceReportDto>;
+  public mainTableExpandCallbackDto?: ClusterComplianceReportDto;
   public isMainTableLoading: boolean = true;
 
   public detailsTableColumns: TrivyTableColumn[] = [];
@@ -103,7 +101,7 @@ export class ClusterComplianceReportsComponent {
       tableStyle: { width: '595px' },
       stateKey: 'Cluster Compliance Reports - Main',
       dataKey: 'uid',
-      rowExpansionRender: 'tableOld',
+      rowExpansionRender: 'table',
       extraClasses: 'trivy-half',
     };
     this.detailsTableColumns = [
@@ -186,7 +184,6 @@ export class ClusterComplianceReportsComponent {
       rowExpansionRender: null,
       extraClasses: 'trivy-half',
     };
-    this.mainTableExpandTableOptions = new TrivyExpandTableOptions(false, 2, 8);
   }
 
   onGetDataDtos(dtos: ClusterComplianceReportDto[]) {
@@ -197,106 +194,75 @@ export class ClusterComplianceReportsComponent {
     this.getDataDtos();
   }
 
-  mainTableExpandCellOptions(
-    dto: ClusterComplianceReportDto,
-    type: 'header' | 'row',
-    colIndex: number,
-    rowIndex?: number,
-  ): TrivyTableCellCustomOptions {
-    rowIndex ?? 0;
-    let celValue: string = '';
-    let celStyle: string = '';
-    let celBadge: string | undefined;
-    let celButtonLink: string | undefined;
-    let celUrl: string | undefined;
-    let celCron: string | undefined;
-    let celLocalTime: string | undefined;
-
-    switch (colIndex) {
-      case 0:
-        celStyle = 'width: 70px; min-width: 70px; height: 50px';
-        switch (rowIndex) {
-          case 0:
-            celValue = 'Description';
-            break;
-          case 1:
-            celValue = 'Platform';
-            break;
-          case 2:
-            celValue = 'Type';
-            break;
-          case 3:
-            celValue = 'Version';
-            break;
-          case 4:
-            celValue = 'Report Type';
-            break;
-          case 5:
-            celValue = 'Checks'
-            break;
-          case 6:
-            celValue = 'Cron';
-            break;
-          case 7:
-            celValue = 'Updated';
-            break;
-          case 8:
-            celValue = 'Related Resources';
-            break;
-        }
-        break;
-      case 1:
-        celStyle = 'white-space: normal; display: flex; align-items: center; height: 50px;';
-        switch (rowIndex) {
-          case 0:
-            celValue = dto.description ?? '';
-            break;
-          case 1:
-            celValue = dto.platform ?? '';
-            break;
-          case 2:
-            celValue = dto.type ?? '';
-            break;
-          case 3:
-            celValue = dto.version ?? '';
-            break;
-          case 4:
-            celValue = dto.reportType ?? '';
-            break;
-          case 5:
-            celValue = `${dto.totalFailCount ?? 0} failed vs ${dto.totalPassCount ?? 0} passed`;
-            break;
-          case 6:
-            celValue = '';
-            celCron = dto.cron ?? undefined;
-            break;
-          case 7:
-            celValue = '';
-            celLocalTime = dto.updateTimestamp ?? undefined;
-            break;
-          case 8:
-            celValue = dto.relatedResources ? dto.relatedResources[0] : '';
-            celUrl = dto.relatedResources ? dto.relatedResources[0] : '';
-            break;
-        }
-        break;
-    }
-
-    return {
-      value: celValue,
-      style: celStyle,
-      badge: celBadge,
-      buttonLink: celButtonLink,
-      url: celUrl,
-      cron: celCron,
-      localTime: celLocalTime,
-    };
-  }
-
   private getDataDtos() {
     this.dataDtoService.getClusterComplianceReportDtos().subscribe({
       next: (res) => this.onGetDataDtos(res),
       error: (err) => console.error(err),
     });
+  }
+
+  rowExpandResponse?: TrivyTableExpandRowData<ClusterComplianceReportDto>;
+  onRowExpandChange(dto: ClusterComplianceReportDto) {
+    this.rowExpandResponse = {
+      rowKey: dto,
+      colStyles: [
+        { 'width': '70px', 'min-width': '70px', 'height': '50px' },
+        { 'white-space': 'normal', 'display': 'flex', 'align-items': 'center', 'height': '50px' }
+      ],
+      details: [
+        [
+          { label: 'Description' },
+          { label: dto.description ?? '' },
+        ],
+        [
+          { label: 'Platform' },
+          { label: dto.platform ?? ''},
+        ],
+        [
+          { label: 'Type' },
+          { label: dto.type ?? ''},
+        ],
+        [
+          { label: 'Version' },
+          { label: dto.version ?? ''},
+        ],
+        [
+          { label: 'Report Type' },
+          { label: dto.reportType ?? ''},
+        ],
+        [
+          { label: 'Checks' },
+          { label: `${dto.totalFailCount ?? 0} failed vs ${dto.totalPassCount ?? 0} passed`},
+        ],
+        [
+          { label: 'Cron' },
+          { label: '', cron: dto.cron ?? undefined},
+        ],
+        [
+          { label: 'Updated' },
+          { label: '', localTime: dto.updateTimestamp ?? undefined },
+        ],
+        [
+          { label: 'Related Resources' },
+          {
+            label: 'on',
+            url: {
+              text: this.getHostname(dto.relatedResources?.[0] ?? '') ?? 'link',
+              link: dto.relatedResources?.[0] ?? '',
+            }
+          },
+        ],
+      ]
+    }
+  }
+
+  getHostname(urlString: string): string | undefined {
+    try {
+      const url = new URL(urlString);
+      return url.hostname;
+    } catch (error) {
+      console.error("Invalid URL:", error);
+      return undefined;
+    }
   }
 }

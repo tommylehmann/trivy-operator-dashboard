@@ -19,7 +19,11 @@ import { FcoseComponent } from '../fcose/fcose.component';
 import { NamespaceImageSelectorComponent } from '../namespace-image-selector/namespace-image-selector.component';
 import { NamespacedImageDto } from '../namespace-image-selector/namespace-image-selector.types';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { TrivyExpandTableOptions, TrivyTableCellCustomOptions, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import {
+  TrivyTableColumn,
+  TrivyTableExpandRowData,
+  TrivyTableOptions,
+} from '../trivy-table/trivy-table.types';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -37,6 +41,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GetSbomReportImageDtos$Params } from '../../api/fn/sbom-report/get-sbom-report-image-dtos';
+import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
 
 @Component({
   selector: 'app-sbom-reports',
@@ -45,7 +50,7 @@ import { GetSbomReportImageDtos$Params } from '../../api/fn/sbom-report/get-sbom
     FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
     ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule,
-    FontAwesomeModule,],
+    FontAwesomeModule, GenericMasterDetailComponent],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
@@ -165,7 +170,7 @@ export class SbomReportsComponent implements OnInit {
     tableStyle: { width: '930px' },
     stateKey: 'SBOM Reports - Depends On',
     dataKey: 'bomRef',
-    rowExpansionRender: 'tableOld',
+    rowExpansionRender: 'table',
     extraClasses: 'trivy-with-filters-half',
     multiHeaderActions: [
       { label: "", icon: 'pi pi-align-justify', specialAction: "Go to Detailed \u29C9" },
@@ -179,7 +184,6 @@ export class SbomReportsComponent implements OnInit {
       { label: "", specialAction: "Collapse All", },
     ],
   };
-  dependsOnTableExpandTableOptions: TrivyExpandTableOptions<SbomDetailExtendedDto> = new TrivyExpandTableOptions(false, 2, 0, this.getPropertiesCount);
   // endregion
 
   // region Full Sbom Report details
@@ -428,45 +432,6 @@ export class SbomReportsComponent implements OnInit {
     this.dependsOnBoms = [...(this.dependsOnBoms || []), ...undeletedSboms];
   }
 
-  // # region table expand row
-  getPropertiesCount(data: SbomDetailExtendedDto): number {
-    return data.properties?.length ?? 0;
-  }
-
-  dependsOnTableExpandCellOptions(
-    dto: SbomDetailExtendedDto,
-    type: 'header' | 'row',
-    colIndex: number,
-    rowIndex?: number,
-  ): TrivyTableCellCustomOptions {
-    rowIndex ?? 0;
-    let celValue: string = '';
-    let celStyle: string = '';
-    let celBadge: string | undefined;
-    let celButtonLink: string | undefined;
-    let celUrl: string | undefined;
-
-    switch (colIndex) {
-      case 0:
-        celStyle = 'width: 70px; min-width: 70px; height: 50px';
-        celValue = dto.properties?.[rowIndex ?? 0]?.[0] ?? "";
-        break;
-      case 1:
-        celStyle = 'white-space: normal; display: flex; align-items: center; height: 50px;';
-        celValue = dto.properties?.[rowIndex ?? 0]?.[1] ?? "";
-        break;
-    }
-
-    return {
-      value: celValue,
-      style: celStyle,
-      badge: celBadge,
-      buttonLink: celButtonLink,
-      url: celUrl,
-    };
-  }
-  // #endregion
-
   // #region to be moved from here
   onRowActionRequested(event: SbomDetailExtendedDto) {
     const bomRefId = event.bomRef ?? undefined;
@@ -572,7 +537,7 @@ export class SbomReportsComponent implements OnInit {
 
   private goToDetailedPage() {
     const url = this.router.serializeUrl(
-      this.router.createUrlTree(['/vulnerability-reports-detailed'])
+      this.router.createUrlTree(['/sbom-reports-detailed'])
     );
     window.open(url, '_blank');
   }
@@ -672,6 +637,23 @@ export class SbomReportsComponent implements OnInit {
     return tree;
   }
   // endregion
+
+  rowExpandResponse?: TrivyTableExpandRowData<SbomDetailExtendedDto>;
+  onRowExpandChange(dto: SbomDetailExtendedDto) {
+    this.rowExpandResponse = {
+      rowKey: dto,
+      colStyles: [
+        { 'width': '70px', 'min-width': '70px', 'height': '50px' },
+        { 'white-space': 'normal', 'display': 'flex', 'align-items': 'center', 'height': '50px' }
+      ],
+      details: dto.properties?.map(x => {
+        return [
+          { label: x[0] ?? ''},
+          { label: x[1] ?? ''},
+        ]
+      }) ?? []
+    }
+  }
 
   // screen size
   @HostListener('window:resize', [])

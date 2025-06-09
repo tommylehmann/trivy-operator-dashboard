@@ -18,7 +18,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Popover, PopoverModule } from 'primeng/popover';
-import { Select, SelectModule } from 'primeng/select';
+import { Select } from 'primeng/select';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
 import { Table, TableModule, TableRowCollapseEvent, TableRowExpandEvent } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -52,7 +52,6 @@ import { SeverityNamesMaxDisplayPipe } from "../pipes/severity-names-max-display
 
 // TODO: row expansion test
 import { ReactiveMap } from '../abstracts/reactive-map'
-import { TestsPipe } from '../tests/tests.pipe'
 
 @Component({
   selector: 'app-trivy-table',
@@ -79,8 +78,6 @@ import { TestsPipe } from '../tests/tests.pipe'
     LocalTimePipe,
     SeverityNameByIdPipe,
     SeverityNamesMaxDisplayPipe,
-
-    TestsPipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',
