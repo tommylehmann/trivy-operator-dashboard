@@ -10,5 +10,8 @@
     [trivyTableColumns]="trivyTableColumns"
     [trivyTableOptions]="trivyTableOptions"
     (refreshRequested)="getTableDataDtos()"
+
+    [rowExpandData]="rowExpandResponse"
+    (rowExpandDataChange)="onRowExpandChange($event)"
   />
 </div>

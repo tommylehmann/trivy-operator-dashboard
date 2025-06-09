@@ -5,10 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class TestsPipe implements PipeTransform {
-  transform(data: string): string {
+  transform(data?: string | null): string {
     if (!data) {
-      return data;
+      return '';
     }
-    return new Date().toISOString();
+    return `${data} - ${new Date().toISOString()}`;
   }
 }

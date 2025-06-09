@@ -297,7 +297,7 @@
             <li *ngFor="let mess of rowData.messages">{{ mess }}</li>
           </div>
           <div *ngIf="trivyTableOptions.rowExpansionRender == 'test'" class="pl-4">
-            <span>{{ 'Test' | tests }}</span>
+            <span>{{ rowExpandMap.getAsync(rowData) | async | tests }}</span>
           </div>
         </td>
       </tr>

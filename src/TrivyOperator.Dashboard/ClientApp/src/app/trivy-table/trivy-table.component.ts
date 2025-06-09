@@ -49,7 +49,8 @@ import { MenuItem } from 'primeng/api';
 import { SeverityNameByIdPipe } from "../pipes/severity-name-by-id.pipe";
 import { SeverityNamesMaxDisplayPipe } from "../pipes/severity-names-max-display.pipe";
 
-// TODO: remove this. only test
+// TODO: row expansion test
+import { ReactiveMap } from '../abstracts/reactive-map'
 import { TestsPipe } from '../tests/tests.pipe'
 
 @Component({
@@ -180,6 +181,12 @@ export class TrivyTableComponent<TData> implements OnInit {
       this._dataDtos = this.dataDtos() ?? [];
       this.updateMultiHeaderActionOnDataChanged();
       this.newData();
+    });
+    effect(() => {
+      const rowExpandDataResponse = this.rowExpandData();
+      if (rowExpandDataResponse) {
+        this.rowExpandMap.set(rowExpandDataResponse.rowKey, rowExpandDataResponse.info);
+      }
     });
   }
 
@@ -543,10 +550,10 @@ export class TrivyTableComponent<TData> implements OnInit {
   }
 
 
-  // TODO: new, for tests, 2 pcs
+  // TODO: new, for expand row tests
   onRowExpand(event: TableRowExpandEvent) {
     console.log('onRowExpand', event.data);
-    this.rowExpandData.emit(event.data);
+    this.rowExpandDataChange.emit(event.data);
     this.onRowExpandCollapse(event);
   }
 
@@ -554,7 +561,10 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.onRowExpandCollapse(event);
   }
 
-  rowExpandData = output<TData>();
+  rowExpandDataChange = output<TData>();
+  rowExpandData = input<{rowKey: TData, info: string}>();
+
+  protected rowExpandMap: ReactiveMap<TData, string> = new ReactiveMap<TData, string>();
 }
 
 // clear filters on reset table: https://stackoverflow.com/questions/51395624/reset-filter-value-on-primeng-table

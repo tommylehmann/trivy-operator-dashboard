@@ -152,4 +152,11 @@ export class TestsComponent {
   onGetActiveNamespaces(activeNamespaces: string[]) {
     this.activeNamespaces = activeNamespaces.sort((x, y) => (x > y ? 1 : -1));
   }
+
+  // TODO: row expand tests
+  rowExpandResponse?: {rowKey: RbacAssessmentReportDenormalizedDto, info: string};
+  onRowExpandChange(event: RbacAssessmentReportDenormalizedDto) {
+    console.log("onRowExpandChange", event.uid);
+    this.rowExpandResponse = {rowKey: event, info: event.uid ?? ''};
+  }
 }
