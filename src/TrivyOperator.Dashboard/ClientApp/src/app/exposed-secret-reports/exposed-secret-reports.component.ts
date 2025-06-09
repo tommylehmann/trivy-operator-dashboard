@@ -122,7 +122,7 @@ export class ExposedSecretReportsComponent {
       tableStyle: {width: '645px'},
       stateKey: 'Exposed Secret Reports - Main',
       dataKey: 'uid',
-      rowExpansionRender: 'table',
+      rowExpansionRender: 'tableOld',
       extraClasses: 'trivy-half',
     };
     this.detailsTableColumns = [

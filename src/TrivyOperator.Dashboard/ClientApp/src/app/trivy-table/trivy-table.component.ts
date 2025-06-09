@@ -34,6 +34,7 @@ import {
   TrivyTableCellCustomOptions,
   TrivyTableColumn,
   TrivyTableOptions,
+  TrivyTableExpandRowData,
 } from './trivy-table.types';
 
 import { CellRowArrayPipe } from '../pipes/cell-row-array.pipe';
@@ -185,7 +186,7 @@ export class TrivyTableComponent<TData> implements OnInit {
     effect(() => {
       const rowExpandDataResponse = this.rowExpandData();
       if (rowExpandDataResponse) {
-        this.rowExpandMap.set(rowExpandDataResponse.rowKey, rowExpandDataResponse.info);
+        this.rowExpandMap.set(rowExpandDataResponse.rowKey, rowExpandDataResponse);
       }
     });
   }
@@ -552,8 +553,9 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   // TODO: new, for expand row tests
   onRowExpand(event: TableRowExpandEvent) {
-    console.log('onRowExpand', event.data);
-    this.rowExpandDataChange.emit(event.data);
+    if (!this.rowExpandMap.hasKey(event.data)) {
+      this.rowExpandDataChange.emit(event.data);
+    }
     this.onRowExpandCollapse(event);
   }
 
@@ -562,9 +564,9 @@ export class TrivyTableComponent<TData> implements OnInit {
   }
 
   rowExpandDataChange = output<TData>();
-  rowExpandData = input<{rowKey: TData, info: string}>();
+  rowExpandData = input<TrivyTableExpandRowData<TData>>();
 
-  protected rowExpandMap: ReactiveMap<TData, string> = new ReactiveMap<TData, string>();
+  protected rowExpandMap = new ReactiveMap<TData, TrivyTableExpandRowData<TData>>();
 }
 
 // clear filters on reset table: https://stackoverflow.com/questions/51395624/reset-filter-value-on-primeng-table

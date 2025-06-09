@@ -251,7 +251,7 @@
     <ng-template *ngIf="trivyTableOptions!.rowExpansionRender" let-rowData pTemplate="expandedrow">
       <tr>
         <td [attr.colspan]="trivyTableColumns.length + 1">
-          <div *ngIf="trivyTableOptions!.rowExpansionRender == 'table'" class="pl-4">
+          <div *ngIf="trivyTableOptions!.rowExpansionRender == 'tableOld'" class="pl-4">
             <p-table styleClass="text-sm p-datatable-sm" [value]="[{}]">
               <ng-template *ngIf="trivyExpandTableOptions.isHeaderVisible" pTemplate="header">
                 <tr>
@@ -296,12 +296,62 @@
           <div *ngIf="trivyTableOptions!.rowExpansionRender == 'messages'" class="pl-4 whitespace-normal">
             <li *ngFor="let mess of rowData.messages">{{ mess }}</li>
           </div>
-          <div *ngIf="trivyTableOptions.rowExpansionRender == 'test'" class="pl-4">
-            <span>{{ rowExpandMap.getAsync(rowData) | async | tests }}</span>
+
+
+          <div *ngIf="trivyTableOptions.rowExpansionRender == 'table'" class="pl-4">
+            <ng-container *ngIf="rowExpandMap.getAsync(rowData) | async as rowExpandData">
+              <p-table [value]="[{}]">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th *ngFor="let col of rowExpandData.headerDef; let colIndex = index"
+                        [ngStyle]="rowExpandData.colStyles[colIndex]" [ngClass]="col.class">
+                      {{ col.label }}
+                    </th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body">
+                  <tr *ngFor="let row of rowExpandData.details">
+                    <td *ngFor="let cell of row; let colIndex = index"
+                        [ngStyle]="rowExpandData.colStyles[colIndex]" [ngClass]="cell.class">
+
+                      <span>{{ cell.label }}</span>
+                      <p-button *ngIf="cell.buttonLink"
+                                label="{{ cell.buttonLink }}"
+                                size="small"
+                                [text]="true"
+                                (onClick)="onTrivyDetailsTableCallback(rowData)" />
+                      <p-tag *ngIf="cell.badge"
+                             [rounded]="true"
+                             class="ml-3"
+                             [style]="1 | severityCssStyleById:1"
+                             [value]="cell.badge" />
+                      <span *ngIf="cell.localTime">{{ cell.localTime | localTime }}</span>
+                      <span *ngIf="cell.cron">{{ cell.cron | cron }}</span>
+                      <a *ngIf="cell.url"
+                         href="{{ cell.url.link }}"
+                         target="_blank">
+                         {{ cell.url.text }}
+                      </a>
+
+<!--                      <ng-container [ngSwitch]="cell.type">-->
+<!--                        <span *ngSwitchCase="'text'">{{ cell.label }}</span>-->
+<!--                        <p-checkbox *ngSwitchCase="'boolean'" [binary]="true" [(ngModel)]="cell.label"></p-checkbox>-->
+<!--                        <p-tag *ngSwitchCase="'tag'" [value]="cell.label"></p-tag>-->
+<!--                      </ng-container>-->
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </ng-container>
           </div>
         </td>
       </tr>
     </ng-template>
+
+
+
+
     <ng-template *ngIf="trivyTableOptions!.isFooterVisible" pTemplate="summary">
       <div class="flex flex-wrap tod-content-background tod-content-border-top-light p-1 px-2 gap-4">
         <span>Total</span>

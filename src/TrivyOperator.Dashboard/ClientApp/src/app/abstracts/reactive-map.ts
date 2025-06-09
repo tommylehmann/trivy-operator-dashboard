@@ -16,4 +16,8 @@ export class ReactiveMap<TKey, TValue> {
       timeout(30000) // if the key is not found for 30 seconds, it throws an error.
     );
   }
+
+  hasKey(key: TKey): boolean {
+    return this.subject.value.has(key);
+  }
 }

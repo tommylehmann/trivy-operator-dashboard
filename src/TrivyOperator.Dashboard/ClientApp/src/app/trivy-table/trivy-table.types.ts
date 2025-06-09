@@ -10,7 +10,7 @@ export interface TrivyTableOptions {
   tableStyle: { [klass: string]: any };
   stateKey: string | null;
   dataKey: string | null;
-  rowExpansionRender: null | 'table' | 'messages' | 'test';
+  rowExpansionRender: null | 'tableOld' | 'messages' | 'table';
   extraClasses: string;
   multiHeaderActions?: MultiHeaderAction[];
 }
@@ -118,4 +118,25 @@ export interface TrivyTableCellCustomOptions {
   url: string | undefined;
   cron?: string;
   localTime?: string;
+}
+
+export interface TrivyTableExpandRowData<TData> {
+  rowKey: TData;
+  colStyles: { [klass: string]: any }[];
+  headerDef?: {
+    label: string,
+    class?: string
+  }[];
+  details: {
+    label: string,
+    class?: string,
+    buttonLink?: string,
+    badge?: string,
+    localTime?: string,
+    cron?: string,
+    url?: {
+      text: string,
+      link: string,
+    }
+  }[][];
 }

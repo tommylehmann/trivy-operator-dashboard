@@ -103,7 +103,7 @@ export class ClusterComplianceReportsComponent {
       tableStyle: { width: '595px' },
       stateKey: 'Cluster Compliance Reports - Main',
       dataKey: 'uid',
-      rowExpansionRender: 'table',
+      rowExpansionRender: 'tableOld',
       extraClasses: 'trivy-half',
     };
     this.detailsTableColumns = [

@@ -5,7 +5,12 @@ import { SeverityDto } from '../../api/models/severity-dto';
 import { RbacAssessmentReportService } from '../../api/services/rbac-assessment-report.service';
 
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { ExportColumn, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import {
+  ExportColumn,
+  TrivyTableColumn,
+  TrivyTableExpandRowData,
+  TrivyTableOptions,
+} from '../trivy-table/trivy-table.types';
 import { TrivyTableUtils } from '../utils/trivy-table.utils';
 
 
@@ -126,7 +131,7 @@ export class TestsComponent {
       tableStyle: { width: '2100px' },
       stateKey: 'RBAC Assessment Reports Detailed',
       dataKey: 'uid',
-      rowExpansionRender: 'test',
+      rowExpansionRender: 'table',
       extraClasses: '',
     };
     this.exportColumns = TrivyTableUtils.convertFromTableColumnToExportColumn(this.trivyTableColumns);
@@ -154,9 +159,36 @@ export class TestsComponent {
   }
 
   // TODO: row expand tests
-  rowExpandResponse?: {rowKey: RbacAssessmentReportDenormalizedDto, info: string};
+  rowExpandResponse?: TrivyTableExpandRowData<RbacAssessmentReportDenormalizedDto>;
   onRowExpandChange(event: RbacAssessmentReportDenormalizedDto) {
-    console.log("onRowExpandChange", event.uid);
-    this.rowExpandResponse = {rowKey: event, info: event.uid ?? ''};
+    setTimeout(() => {this.rowExpandResponse = {
+      rowKey: event,
+      colStyles: [
+        { 'width' : '100px'},
+        { 'width' : '500px'},
+      ],
+      // headerDef: [
+      //   {label: "header 1"},
+      //   {label: "header 2"},
+      // ],
+      details: [
+        [
+          {
+            label: 'label01',
+          },
+          {
+            label: 'label02',
+          },
+        ],
+        [
+          {
+            label: 'label11',
+          },
+          {
+            label: 'label12',
+          }
+        ]
+      ]};}, 2000)
+
   }
 }
