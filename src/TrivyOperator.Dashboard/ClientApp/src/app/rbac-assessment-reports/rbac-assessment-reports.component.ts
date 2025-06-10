@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { RbacAssessmentReportDto } from '../../api/models/rbac-assessment-report-dto';
 import { RbacAssessmentReportService } from '../../api/services/rbac-assessment-report.service';
 import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
-import { TrivyFilterData, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import { TrivyFilterData, TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-rbac-assessment-reports',
@@ -17,11 +17,9 @@ export class RbacAssessmentReportsComponent {
   activeNamespaces?: string[] = [];
 
   mainTableColumns: TrivyTableColumn[] = [];
-  mainTableOptions: TrivyTableOptions;
   isMainTableLoading: boolean = true;
 
   detailsTableColumns: TrivyTableColumn[] = [];
-  detailsTableOptions: TrivyTableOptions;
 
   constructor(private dataDtoService: RbacAssessmentReportService) {
     dataDtoService.getRbacAssessmentReportDtos().subscribe({
@@ -93,20 +91,6 @@ export class RbacAssessmentReportsComponent {
         extraFields: ['3'],
       },
     ];
-    this.mainTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: 'single',
-      tableStyle: { width: '595px' },
-      stateKey: 'RBAC Assessment Reports - Main',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: 'trivy-half',
-    };
     this.detailsTableColumns = [
       {
         field: 'severityId',
@@ -163,20 +147,6 @@ export class RbacAssessmentReportsComponent {
         renderType: 'standard',
       },
     ];
-    this.detailsTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: false,
-      isRefreshFilterable: false,
-      isFooterVisible: false,
-      tableSelectionMode: null,
-      tableStyle: {},
-      stateKey: 'RBAC Assessment Reports - Details',
-      dataKey: 'uid',
-      rowExpansionRender: 'messages',
-      extraClasses: 'trivy-half',
-    };
   }
 
   onGetDataDtos(dtos: RbacAssessmentReportDto[]) {

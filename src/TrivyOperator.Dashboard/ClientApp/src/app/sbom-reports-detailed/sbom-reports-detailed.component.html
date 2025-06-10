@@ -1,14 +1,22 @@
 <div class="tod-content-border">
   <app-trivy-table csvFileName="SBOM Reports"
                    csvStorageKey="SBOM Reports"
-                   tableHeight="82vh"
                    [activeNamespaces]="activeNamespaces"
                    [dataDtos]="dataDtos"
-                   [exportColumns]="exportColumns"
                    [isLoading]="isTableLoading"
                    [trivyTableColumns]="trivyTableColumns"
-                   [trivyTableOptions]="trivyTableOptions"
                    (refreshRequested)="getTableDataDtos()"
                    (selectedRowsChanged)="onTableSelectedRowChange($event)"
-                   (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)" />
+                   (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)"
+
+                   [isClearSelectionVisible]="true"
+                   [isExportCsvVisible]="true"
+                   [isResetFiltersVisible]="true"
+                   [isRefreshVisible]="true"
+                   [isFooterVisible]="true"
+                   [selectionMode]="'multiple'"
+                   [style]="{ width: '1920px' }"
+                   [stateKey]="'SBOM Reports - Detailed'"
+                   [multiHeaderActions]="[{ label: 'Export All' }, { label: 'Export Selected' }]"
+  />
 </div>

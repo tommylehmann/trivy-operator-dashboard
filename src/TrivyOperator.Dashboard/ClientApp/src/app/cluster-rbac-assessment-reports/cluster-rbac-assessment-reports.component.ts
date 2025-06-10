@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { ClusterRbacAssessmentReportDto } from '../../api/models/cluster-rbac-assessment-report-dto';
 import { ClusterRbacAssessmentReportService } from '../../api/services/cluster-rbac-assessment-report.service';
 import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
-import { TrivyFilterData, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import { TrivyFilterData, TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-cluster-rbac-assessment-reports',
@@ -16,12 +16,9 @@ export class ClusterRbacAssessmentReportsComponent {
   public dataDtos: ClusterRbacAssessmentReportDto[] = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
-  public mainTableOptions: TrivyTableOptions;
-  public mainTableExpandCallbackDto: ClusterRbacAssessmentReportDto | null = null;
   public isMainTableLoading: boolean = true;
 
   public detailsTableColumns: TrivyTableColumn[] = [];
-  public detailsTableOptions: TrivyTableOptions;
 
   constructor(private dataDtoService: ClusterRbacAssessmentReportService) {
     dataDtoService.getClusterRbacAssessmentReportDtos().subscribe({
@@ -79,20 +76,6 @@ export class ClusterRbacAssessmentReportsComponent {
         extraFields: ['3'],
       },
     ];
-    this.mainTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: 'single',
-      tableStyle: { width: '590px' },
-      stateKey: 'Cluster RBAC Assessment Reports - Main',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: 'trivy-half',
-    };
     this.detailsTableColumns = [
       {
         field: 'severityId',
@@ -149,20 +132,6 @@ export class ClusterRbacAssessmentReportsComponent {
         renderType: 'standard',
       },
     ];
-    this.detailsTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: false,
-      isRefreshFilterable: false,
-      isFooterVisible: false,
-      tableSelectionMode: null,
-      tableStyle: {},
-      stateKey: 'Cluster RBAC Assessment Reports - Details',
-      dataKey: 'uid',
-      rowExpansionRender: 'messages',
-      extraClasses: 'trivy-half',
-    };
   }
 
   onGetDataDtos(dtos: ClusterRbacAssessmentReportDto[]) {

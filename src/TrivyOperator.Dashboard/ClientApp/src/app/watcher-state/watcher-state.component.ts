@@ -4,7 +4,7 @@ import { WatcherStateInfoDto } from '../../api/models/watcher-state-info-dto';
 import { WatcherStateInfoService } from '../../api/services/watcher-state-info.service';
 
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import { TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-watcher-state',
@@ -18,7 +18,6 @@ export class WatcherStateComponent {
   public isLoading: boolean = false;
 
   public trivyTableColumns: TrivyTableColumn[] = [];
-  public trivyTableOptions: TrivyTableOptions;
 
   constructor(private watcherStateInfoService: WatcherStateInfoService) {
     this.getTableDataDtos();
@@ -78,20 +77,6 @@ export class WatcherStateComponent {
         renderType: 'dateTime',
       }
     ];
-    this.trivyTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: null,
-      tableStyle: { width: '1205px' },
-      stateKey: 'Watcher States',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: '',
-    };
   }
 
   public getTableDataDtos() {

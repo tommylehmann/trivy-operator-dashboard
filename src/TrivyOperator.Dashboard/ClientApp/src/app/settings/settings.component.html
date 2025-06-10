@@ -75,9 +75,9 @@
   </div>
   <div class="col-span-12 md:col-span-6">
     <p-panel header="CSV File Names" class="h-full">
-      <div *ngFor="let file of csvFileNames" class="field">
+      <div *ngFor="let file of csvFileNames" class="field pb-1">
         <label for="{{ file.dataKey }}" class="text-sm">{{ file.description }}</label>
-        <input id="{{ file.dataKey }}" pInputText class="text-sm w-full" [(ngModel)]="file.savedCsvName" />
+        <input id="{{ file.dataKey }}" pInputText class="text-sm w-full" pSize="small" [(ngModel)]="file.savedCsvName" />
       </div>
       <div *ngIf="csvFileNames.length == 0">
         <p class="italic text-muted-color text-sm">No data: no CSV files saved...</p>

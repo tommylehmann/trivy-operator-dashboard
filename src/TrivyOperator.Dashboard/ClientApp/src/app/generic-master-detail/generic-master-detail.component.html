@@ -3,33 +3,58 @@
   <ng-template #panel>
     <div class="w-full">
       <app-trivy-table #mainTable
-                       tableHeight="70vh"
                        [activeNamespaces]="activeNamespaces()"
                        [dataDtos]="_dataDtos"
                        [singleSelectDataDto]="singleSelectDataDto()"
                        [isLoading]="_isMainTableLoading"
-                       [trivyExpandTableFunction]="mainTableExpandCellOptions"
-                       [trivyExpandTableOptions]="mainTableExpandTableOptions"
                        [trivyTableColumns]="mainTableColumns()"
-                       [trivyTableOptions]="mainTableOptions()"
                        (refreshRequested)="onRefreshRequested($event)"
                        (selectedRowsChanged)="onMainTableSelectionChange($event)"
                        (trivyDetailsTableCallback)="onMainTableExpandCallback($event)"
                        (multiHeaderActionRequested)="onMainTableMultiHeaderActionRequested($event)"
 
                        [rowExpandData]="mainTableRowExpandResponse()"
-                       (rowExpandDataChange)="onMainTableRowExpandChange($event)"/>
+                       (rowExpandDataChange)="onMainTableRowExpandChange($event)"
+
+                       [isClearSelectionVisible]="mainTableIsClearSelectionVisible()"
+                       [isCollapseAllVisible]="mainTableIsCollapseAllVisible()"
+                       [isResetFiltersVisible]="mainTableIsResetFiltersVisible()"
+                       [isExportCsvVisible]="mainTableIsExportCsvVisible()"
+                       [isRefreshVisible]="mainTableIsRefreshVisible()"
+                       [isRefreshFilterable]="mainTableIsRefreshFilterable()"
+                       [isFooterVisible]="mainTableIsFooterVisible()"
+                       [selectionMode]="mainTableSelectionMode()"
+                       [style]="mainTableStyle()"
+                       [stateKey]="mainTableStateKey()"
+                       [dataKey]="mainTableDataKey()"
+                       [rowExpansionRender]="mainTableRowExpansionRender()"
+                       [extraClasses]="mainTableExtraClasses()"
+                       [multiHeaderActions]="mainTableMultiHeaderActions()"
+      />
     </div>
   </ng-template>
   <ng-template #panel>
     <div class="w-full">
-      <app-trivy-table tableHeight="70vh"
-                       class="row"
+      <app-trivy-table class="row"
                        [activeNamespaces]="activeNamespaces()"
                        [dataDtos]="selectedDataDto?.details ?? []"
                        [trivyTableColumns]="detailsTableColumns()"
-                       [trivyTableOptions]="detailsTableOptions()"
                        (multiHeaderActionRequested)="onDetailsTableMultiHeaderActionRequested($event)"
+
+                       [isClearSelectionVisible]="detailsIsClearSelectionVisible()"
+                       [isCollapseAllVisible]="detailsIsCollapseAllVisible()"
+                       [isResetFiltersVisible]="detailsIsResetFiltersVisible()"
+                       [isExportCsvVisible]="detailsIsExportCsvVisible()"
+                       [isRefreshVisible]="detailsIsRefreshVisible()"
+                       [isRefreshFilterable]="detailsIsRefreshFilterable()"
+                       [isFooterVisible]="detailsIsFooterVisible()"
+                       [selectionMode]="detailsSelectionMode()"
+                       [style]="detailsStyle()"
+                       [stateKey]="detailsStateKey()"
+                       [dataKey]="detailsDataKey()"
+                       [rowExpansionRender]="detailsRowExpansionRender()"
+                       [extraClasses]="detailsExtraClasses()"
+                       [multiHeaderActions]="detailsMultiHeaderActions()"
       />
     </div>
   </ng-template>

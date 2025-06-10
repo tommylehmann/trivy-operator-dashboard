@@ -19,11 +19,7 @@ import { FcoseComponent } from '../fcose/fcose.component';
 import { NamespaceImageSelectorComponent } from '../namespace-image-selector/namespace-image-selector.component';
 import { NamespacedImageDto } from '../namespace-image-selector/namespace-image-selector.types';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import {
-  TrivyTableColumn,
-  TrivyTableExpandRowData,
-  TrivyTableOptions,
-} from '../trivy-table/trivy-table.types';
+import { TrivyTableColumn, TrivyTableExpandRowData } from '../trivy-table/trivy-table.types';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -41,7 +37,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GetSbomReportImageDtos$Params } from '../../api/fn/sbom-report/get-sbom-report-image-dtos';
-import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
 
 @Component({
   selector: 'app-sbom-reports',
@@ -50,7 +45,7 @@ import { GenericMasterDetailComponent } from '../generic-master-detail/generic-m
     FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
     ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule,
-    FontAwesomeModule, GenericMasterDetailComponent],
+    FontAwesomeModule ],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
@@ -159,31 +154,6 @@ export class SbomReportsComponent implements OnInit {
       renderType: 'standard',
     },
   ];
-  dependsOnTableOptions: TrivyTableOptions = {
-    isClearSelectionVisible: false,
-    isExportCsvVisible: false,
-    isResetFiltersVisible: false,
-    isRefreshVisible: true,
-    isRefreshFilterable: false,
-    isFooterVisible: false,
-    tableSelectionMode: 'single',
-    tableStyle: { width: '930px' },
-    stateKey: 'SBOM Reports - Depends On',
-    dataKey: 'bomRef',
-    rowExpansionRender: 'table',
-    extraClasses: 'trivy-with-filters-half',
-    multiHeaderActions: [
-      { label: "", icon: 'pi pi-align-justify', specialAction: "Go to Detailed \u29C9" },
-      { label: "Info",  icon: 'pi pi-info-circle', enabledIfDataLoaded: true, },
-      { label: "Dive In", icon: 'pi pi-arrow-down-right', enabledIfRowSelected: true, },
-      { label: "Export CycloneDX JSON", icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
-      { label: "Export CycloneDX XML" , icon: 'pi pi-file-export', enabledIfDataLoaded: true, },
-      { label: "Go to Vulnerability Report \u29C9", icon: 'pi pi-shield', enabledIfDataLoaded: true, },
-      { label: "", specialAction: "Clear Selection", },
-      { label: "", specialAction: "Clear Sort/Filters", },
-      { label: "", specialAction: "Collapse All", },
-    ],
-  };
   // endregion
 
   // region Full Sbom Report details

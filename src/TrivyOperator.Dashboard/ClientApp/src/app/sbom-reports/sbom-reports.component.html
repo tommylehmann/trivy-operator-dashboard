@@ -9,11 +9,9 @@
                                       [(selectedImageId)]="selectedImageId" />
       </div>
       <div class="tod-content-border">
-        <app-trivy-table tableHeight="30vh"
-                         [dataDtos]="dependsOnBoms"
+        <app-trivy-table [dataDtos]="dependsOnBoms"
                          [isLoading]="isTableLoading"
                          [trivyTableColumns]="dependsOnTableColumns"
-                         [trivyTableOptions]="dependsOnTableOptions"
                          [singleSelectDataDto]="selectedSbomDetailDto"
                          (selectedRowsChanged)="onTableSelectedRowChange($event)"
                          (refreshRequested)="onRefreshRequested()"
@@ -21,7 +19,28 @@
                          (multiHeaderActionRequested)="onMultiHeaderActionRequested($event)"
 
                          [rowExpandData]="rowExpandResponse"
-                         (rowExpandDataChange)="onRowExpandChange($event)" />
+                         (rowExpandDataChange)="onRowExpandChange($event)"
+
+                         [isRefreshVisible]="true"
+                         [selectionMode]="'single'"
+                         [style]="{ width: '930px' }"
+                         [stateKey]="'SBOM Reports - Depends On'"
+                         [dataKey]="'bomRef'"
+                         [rowExpansionRender]="'table'"
+                         [extraClasses]="'trivy-with-filters-half'"
+                         [multiHeaderActions]="[
+                           { label: '', icon: 'pi pi-align-justify', specialAction: 'Go to Detailed ⧉' },
+                           { label: 'Info', icon: 'pi pi-info-circle', enabledIfDataLoaded: true },
+                           { label: 'Dive In', icon: 'pi pi-arrow-down-right', enabledIfRowSelected: true },
+                           { label: 'Export CycloneDX JSON', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
+                           { label: 'Export CycloneDX XML', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
+                           { label: 'Go to Vulnerability Report ⧉', icon: 'pi pi-shield', enabledIfDataLoaded: true },
+                           { label: '', specialAction: 'Clear Selection' },
+                           { label: '', specialAction: 'Clear Sort/Filters' },
+                           { label: '', specialAction: 'Collapse All' }
+                         ]"
+
+        />
       </div>
     </div>
   </ng-template>

@@ -6,8 +6,7 @@ import { ClusterComplianceReportService } from '../../api/services/cluster-compl
 
 import { ClusterComplianceReportDenormalizedDto } from '../../api/models';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { ExportColumn, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
-import { TrivyTableUtils } from '../utils/trivy-table.utils';
+import { TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-cluster-compliance-reports-detailed',
@@ -23,10 +22,7 @@ export class ClusterComplianceReportsDetailedComponent {
 
   public csvFileName: string = 'Cluster.Compliance.Reports';
 
-  public exportColumns: ExportColumn[];
-
   public trivyTableColumns: TrivyTableColumn[];
-  public trivyTableOptions: TrivyTableOptions;
 
   constructor(private dataDtoService: ClusterComplianceReportService) {
     this.getTableDataDtos();
@@ -205,21 +201,6 @@ export class ClusterComplianceReportsDetailedComponent {
         renderType: 'standard',
       },
     ];
-    this.trivyTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: true,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: null,
-      tableStyle: { width: '3040px' },
-      stateKey: 'Cluster Compliance Reports Detailed',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: '',
-    };
-    this.exportColumns = TrivyTableUtils.convertFromTableColumnToExportColumn(this.trivyTableColumns);
   }
 
   getTableDataDtos() {

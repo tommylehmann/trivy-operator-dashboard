@@ -5,15 +5,7 @@ import { SeverityDto } from '../../api/models/severity-dto';
 import { RbacAssessmentReportService } from '../../api/services/rbac-assessment-report.service';
 
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import {
-  ExportColumn,
-  TrivyTableColumn,
-  TrivyTableExpandRowData,
-  TrivyTableOptions,
-} from '../trivy-table/trivy-table.types';
-import { TrivyTableUtils } from '../utils/trivy-table.utils';
-
-
+import { TrivyTableColumn, TrivyTableExpandRowData } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-tests',
@@ -29,10 +21,7 @@ export class TestsComponent {
 
   public csvFileName: string = 'Rbac.Assessment.Reports';
 
-  public exportColumns: ExportColumn[];
-
   public trivyTableColumns: TrivyTableColumn[];
-  public trivyTableOptions: TrivyTableOptions;
 
   constructor(private dataDtoService: RbacAssessmentReportService) {
     this.getTableDataDtos();
@@ -120,21 +109,6 @@ export class TestsComponent {
         renderType: 'multiline',
       },
     ];
-    this.trivyTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: true,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: null,
-      tableStyle: { width: '2100px' },
-      stateKey: 'RBAC Assessment Reports Detailed',
-      dataKey: 'uid',
-      rowExpansionRender: 'table',
-      extraClasses: '',
-    };
-    this.exportColumns = TrivyTableUtils.convertFromTableColumnToExportColumn(this.trivyTableColumns);
   }
 
   public getTableDataDtos() {

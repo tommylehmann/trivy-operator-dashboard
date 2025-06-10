@@ -5,8 +5,7 @@ import { SeverityDto } from '../../api/models/severity-dto';
 import { ExposedSecretReportService } from '../../api/services/exposed-secret-report.service';
 
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { ExportColumn, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
-import { TrivyTableUtils } from '../utils/trivy-table.utils';
+import { TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-exposed-secret-reports-detailed',
@@ -23,10 +22,7 @@ export class ExposedSecretReportsDetailedComponent {
 
   public csvFileName: string = 'Config.Audit.Reports';
 
-  public exportColumns: ExportColumn[];
-
   public trivyTableColumns: TrivyTableColumn[];
-  public trivyTableOptions: TrivyTableOptions;
 
   constructor(private dataDtoService: ExposedSecretReportService) {
     this.getTableDataDtos();
@@ -150,21 +146,6 @@ export class ExposedSecretReportsDetailedComponent {
         renderType: 'standard',
       },
     ];
-    this.exportColumns = TrivyTableUtils.convertFromTableColumnToExportColumn(this.trivyTableColumns);
-    this.trivyTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: true,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: null,
-      tableStyle: { width: '2020px' },
-      stateKey: 'Exposed Secret Reports Detailed',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: '',
-    };
   }
 
   public getTableDataDtos() {

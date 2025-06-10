@@ -5,8 +5,7 @@ import { SeverityDto } from '../../api/models/severity-dto';
 import { ConfigAuditReportService } from '../../api/services/config-audit-report.service';
 
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { ExportColumn, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
-import { TrivyTableUtils } from '../utils/trivy-table.utils';
+import { TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-config-audit-reports-detailed',
@@ -23,10 +22,7 @@ export class ConfigAuditReportsDetailedComponent {
 
   public csvFileName: string = 'Config.Audit.Reports';
 
-  public exportColumns: ExportColumn[];
-
   public trivyTableColumns: TrivyTableColumn[];
-  public trivyTableOptions: TrivyTableOptions;
 
   constructor(private dataDtoService: ConfigAuditReportService) {
     this.getTableDataDtos();
@@ -123,21 +119,6 @@ export class ConfigAuditReportsDetailedComponent {
         renderType: 'multiline',
       },
     ];
-    this.trivyTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: true,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: null,
-      tableStyle: { width: '2200px' },
-      stateKey: 'Config Audit Reports Detailed',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: '',
-    };
-    this.exportColumns = TrivyTableUtils.convertFromTableColumnToExportColumn(this.trivyTableColumns);
   }
 
   public getTableDataDtos() {

@@ -7,10 +7,24 @@
                                 [(selectedImageId)]="secondSelectedTrivyReportId" />
 </div>
 <div class="tod-content-border">
-  <app-trivy-table tableHeight="70vh"
-                   class="row"
+  <app-trivy-table class="row"
                    [activeNamespaces]="[]"
                    [dataDtos]="trivyReportDetailsCompared"
                    [trivyTableColumns]="comparedTableColumns()"
-                   [trivyTableOptions]="compareTableOptions()" />
+
+                   [isClearSelectionVisible]="compareIsClearSelectionVisible()"
+                   [isCollapseAllVisible]="compareIsCollapseAllVisible()"
+                   [isResetFiltersVisible]="compareIsResetFiltersVisible()"
+                   [isExportCsvVisible]="compareIsExportCsvVisible()"
+                   [isRefreshVisible]="compareIsRefreshVisible()"
+                   [isRefreshFilterable]="compareIsRefreshFilterable()"
+                   [isFooterVisible]="compareIsFooterVisible()"
+                   [selectionMode]="compareSelectionMode()"
+                   [style]="compareStyle()"
+                   [stateKey]="compareStateKey()"
+                   [dataKey]="compareDataKey()"
+                   [rowExpansionRender]="compareRowExpansionRender()"
+                   [extraClasses]="compareExtraClasses()"
+                   [multiHeaderActions]="compareMultiHeaderActions()"
+                    />
 </div>

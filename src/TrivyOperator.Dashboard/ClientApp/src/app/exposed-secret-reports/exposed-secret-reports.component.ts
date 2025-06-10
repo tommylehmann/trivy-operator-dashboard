@@ -5,11 +5,7 @@ import { GetExposedSecretReportImageDtos$Params } from '../../api/fn/exposed-sec
 import { ExposedSecretReportImageDto } from '../../api/models/exposed-secret-report-image-dto';
 import { ExposedSecretReportService } from '../../api/services/exposed-secret-report.service';
 import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
-import {
-  TrivyFilterData,
-  TrivyTableColumn, TrivyTableExpandRowData,
-  TrivyTableOptions,
-} from '../trivy-table/trivy-table.types';
+import { TrivyFilterData, TrivyTableColumn, TrivyTableExpandRowData } from '../trivy-table/trivy-table.types';
 import { SeverityUtils } from '../utils/severity.utils';
 
 import { DialogModule } from 'primeng/dialog';
@@ -27,12 +23,10 @@ export class ExposedSecretReportsComponent {
   public activeNamespaces?: string[] = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
-  public mainTableOptions: TrivyTableOptions;
   public mainTableExpandCallbackDto?: ExposedSecretReportImageDto;
   public isMainTableLoading: boolean = true;
 
   public detailsTableColumns: TrivyTableColumn[] = [];
-  public detailsTableOptions: TrivyTableOptions;
 
   public isImageUsageDialogVisible: boolean = false;
 
@@ -107,20 +101,6 @@ export class ExposedSecretReportsComponent {
         extraFields: ['3'],
       },
     ];
-    this.mainTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: true,
-      isFooterVisible: true,
-      tableSelectionMode: 'single',
-      tableStyle: {width: '645px'},
-      stateKey: 'Exposed Secret Reports - Main',
-      dataKey: 'uid',
-      rowExpansionRender: 'table',
-      extraClasses: 'trivy-half',
-    };
     this.detailsTableColumns = [
       {
         field: 'severityId',
@@ -177,20 +157,6 @@ export class ExposedSecretReportsComponent {
         renderType: 'standard',
       },
     ];
-    this.detailsTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: false,
-      isRefreshFilterable: false,
-      isFooterVisible: false,
-      tableSelectionMode: null,
-      tableStyle: {},
-      stateKey: 'Exposed Secret Reports - Details',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: 'trivy-half',
-    };
   }
 
   onGetDataDtos(vrDtos: ExposedSecretReportImageDto[]) {

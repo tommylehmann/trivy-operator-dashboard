@@ -1,13 +1,26 @@
 <app-generic-master-detail
   [dataDtos]="dataDtos"
   [detailsTableColumns]="detailsTableColumns"
-  [detailsTableOptions]="detailsTableOptions"
   [isMainTableLoading]="isMainTableLoading"
   [mainTableColumns]="mainTableColumns"
-  [mainTableOptions]="mainTableOptions"
   [splitterStorageKey]="'Cluster Compliance Reports'"
   (refreshRequested)="onRefreshRequested($event)"
 
   [mainTableRowExpandResponse]="rowExpandResponse"
   (mainTableRowExpandChange)="onRowExpandChange($event)"
+
+  [mainTableIsResetFiltersVisible]="true"
+  [mainTableIsRefreshVisible]="true"
+  [mainTableIsFooterVisible]="true"
+  [mainTableSelectionMode]="'single'"
+  [mainTableStyle]="{ width: '595px' }"
+  [mainTableStateKey]="'Cluster Compliance Reports - Main'"
+  [mainTableDataKey]="'uid'"
+  [mainTableRowExpansionRender]="'table'"
+  [mainTableExtraClasses]="'trivy-half'"
+
+  [detailsIsResetFiltersVisible]="true"
+  [detailsStateKey]="'Cluster Compliance Reports - Details'"
+  [detailsExtraClasses]="'trivy-half'"
+
 />

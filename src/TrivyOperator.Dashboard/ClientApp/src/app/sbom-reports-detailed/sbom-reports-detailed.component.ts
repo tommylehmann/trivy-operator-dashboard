@@ -5,11 +5,9 @@ import { SbomReportService } from '../../api/services';
 import { SbomReportImageDto } from '../../api/models';
 
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component'
-import { ExportColumn, TrivyExpandTableOptions, TrivyTableCellCustomOptions, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
-import { TrivyTableUtils } from '../utils/trivy-table.utils';
+import { TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 import { MessageService } from 'primeng/api';
-
 
 @Component({
   selector: 'app-sbom-reports-detailed',
@@ -25,9 +23,6 @@ export class SbomReportsDetailedComponent {
   isTableLoading: boolean = false;
 
   trivyTableColumns: TrivyTableColumn[] = [];
-  trivyTableOptions: TrivyTableOptions;
-  //dependsOnTableExpandTableOptions: TrivyExpandTableOptions<SbomReportImageDto> = new TrivyExpandTableOptions(false, 2, 0, this.getPropertiesCount);
-  public exportColumns: ExportColumn[];
 
   constructor(private service: SbomReportService, private http: HttpClient, private messageService: MessageService) {
     this.getTableDataDtos();
@@ -138,23 +133,6 @@ export class SbomReportsDetailedComponent {
         extraFields: ['4'],
       },
     ];
-    this.trivyTableOptions = {
-      isClearSelectionVisible: true,
-      isExportCsvVisible: true,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: 'multiple',
-      tableStyle: { width: '1920px' },
-      stateKey: 'SBOM Reports - Detailed',
-      //dataKey: 'uid',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: '',
-      multiHeaderActions: [{ label: "Export All" }, { label: "Export Selected" }],
-    };
-    this.exportColumns = TrivyTableUtils.convertFromTableColumnToExportColumn(this.trivyTableColumns);
   }
 
   getTableDataDtos() {

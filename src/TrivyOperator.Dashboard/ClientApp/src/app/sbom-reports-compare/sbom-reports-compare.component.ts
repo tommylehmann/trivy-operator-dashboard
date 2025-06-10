@@ -6,7 +6,7 @@ import { SbomReportService } from '../../api/services/sbom-report.service';
 import { GenericReportsCompareComponent } from '../generic-reports-compare/generic-reports-compare.component';
 import { NamespacedImageDto } from '../namespace-image-selector/namespace-image-selector.types';
 
-import { TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import { TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-sbom-reports-compare',
@@ -66,20 +66,6 @@ export class SbomReportsCompareComponent implements OnInit {
       renderType: 'standard',
     },
   ];
-  compareTableOptions: TrivyTableOptions = {
-    isClearSelectionVisible: false,
-    isExportCsvVisible: false,
-    isResetFiltersVisible: true,
-    isRefreshVisible: false,
-    isRefreshFilterable: false,
-    isFooterVisible: false,
-    tableSelectionMode: null,
-    tableStyle: {},
-    stateKey: 'SBOM Reports - Compared',
-    dataKey: null,
-    rowExpansionRender: null,
-    extraClasses: 'trivy-with-filters',
-  };
 
   constructor(private service: SbomReportService) {
     effect(() => {

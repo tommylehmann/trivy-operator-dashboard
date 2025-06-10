@@ -3,11 +3,7 @@ import { Component } from '@angular/core';
 import { ClusterComplianceReportDto } from '../../api/models/cluster-compliance-report-dto';
 import { ClusterComplianceReportService } from '../../api/services/cluster-compliance-report.service';
 import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
-import {
-  TrivyFilterData,
-  TrivyTableColumn, TrivyTableExpandRowData,
-  TrivyTableOptions,
-} from '../trivy-table/trivy-table.types';
+import { TrivyFilterData, TrivyTableColumn, TrivyTableExpandRowData } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-cluster-compliance-reports',
@@ -20,12 +16,9 @@ export class ClusterComplianceReportsComponent {
   public dataDtos: ClusterComplianceReportDto[] = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
-  public mainTableOptions: TrivyTableOptions;
-  public mainTableExpandCallbackDto?: ClusterComplianceReportDto;
   public isMainTableLoading: boolean = true;
 
   public detailsTableColumns: TrivyTableColumn[] = [];
-  public detailsTableOptions: TrivyTableOptions;
 
   constructor(private dataDtoService: ClusterComplianceReportService) {
     this.getDataDtos();
@@ -90,20 +83,6 @@ export class ClusterComplianceReportsComponent {
         extraFields: ['3'],
       },
     ];
-    this.mainTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: 'single',
-      tableStyle: { width: '595px' },
-      stateKey: 'Cluster Compliance Reports - Main',
-      dataKey: 'uid',
-      rowExpansionRender: 'table',
-      extraClasses: 'trivy-half',
-    };
     this.detailsTableColumns = [
       {
         field: 'severityId',
@@ -170,20 +149,6 @@ export class ClusterComplianceReportsComponent {
         extraFields: ['-1'],
       },
     ];
-    this.detailsTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: false,
-      isRefreshFilterable: false,
-      isFooterVisible: false,
-      tableSelectionMode: null,
-      tableStyle: {},
-      stateKey: 'Cluster Compliance Reports - Details',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: 'trivy-half',
-    };
   }
 
   onGetDataDtos(dtos: ClusterComplianceReportDto[]) {

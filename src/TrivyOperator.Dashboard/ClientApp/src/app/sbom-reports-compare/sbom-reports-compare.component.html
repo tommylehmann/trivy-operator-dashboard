@@ -1,5 +1,10 @@
 <app-generic-reports-compare [dataDtos]="dataDtos()"
                              [comparedTableColumns]="comparedTableColumns"
-                             [compareTableOptions]="compareTableOptions"
                              [namespacedImageDtos]="namespacedImageDtos"
-                             [firstSelectedTrivyReportId]="firstSelectedSbomReportId()" />
+                             [firstSelectedTrivyReportId]="firstSelectedSbomReportId()"
+
+                             [compareIsResetFiltersVisible]="true"
+                             [compareStateKey]="'SBOM Reports - Compared'"
+                             [compareExtraClasses]="'trivy-with-filters'"
+
+/>

@@ -1,25 +1,19 @@
 import {
   Component,
   effect,
-  EventEmitter,
   HostListener,
   input,
-  Input,
   output,
-  Output,
-  signal,
   ViewChild,
 } from '@angular/core';
 
 import { SeverityDto } from '../../api/models/severity-dto';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
 import {
-  TrivyExpandTableOptions,
+  MultiHeaderAction,
   TrivyFilterData,
-  TrivyTableCellCustomOptions,
   TrivyTableColumn,
   TrivyTableExpandRowData,
-  TrivyTableOptions,
 } from '../trivy-table/trivy-table.types';
 import { TrivyReport, TrivyReportDetail } from '../abstracts/trivy-report';
 
@@ -37,22 +31,53 @@ export class GenericMasterDetailComponent<TTrivyReport extends TrivyReport<TTriv
   severityDtos= input<SeverityDto[]>([]);
   activeNamespaces = input<string[] | undefined>([]);
   mainTableColumns = input.required<TrivyTableColumn[]>();
-  mainTableOptions = input.required<TrivyTableOptions>();
   mainTableRowExpandResponse = input<TrivyTableExpandRowData<TTrivyReport>>();
   isMainTableLoading = input<boolean>(true);
   detailsTableColumns = input.required<TrivyTableColumn[]>();
-  detailsTableOptions = input.required<TrivyTableOptions>();
   singleSelectDataDto = input<TTrivyReport | undefined>();
   splitterStorageKey = input<string | undefined>();
 
   refreshRequested = output<TrivyFilterData>();
+
   mainTableRowExpandChange = output<TTrivyReport>();
   mainTableExpandCallback = output<TTrivyReport>();
   mainTableMultiHeaderActionRequested = output<string>();
-  detailsTableMultiHeaderActionRequested = output<string>();
   mainTableSelectedRowChanged = output<TTrivyReport | null>();
 
-  @Input() mainTableExpandTableOptions: TrivyExpandTableOptions<TTrivyReport> = new TrivyExpandTableOptions(false, 0, 0);
+  mainTableIsClearSelectionVisible = input<boolean | undefined>(false);
+  mainTableIsCollapseAllVisible = input<boolean | undefined>(false);
+  mainTableIsResetFiltersVisible = input<boolean | undefined>(false);
+  mainTableIsExportCsvVisible = input<boolean | undefined>(false);
+  mainTableIsRefreshVisible = input<boolean | undefined>(false);
+  mainTableIsRefreshFilterable = input<boolean | undefined>(false);
+  mainTableIsFooterVisible = input<boolean | undefined>(false);
+  mainTableSelectionMode = input<'single' | 'multiple' | undefined>(undefined);
+  mainTableStyle = input<{ [klass: string]: any } | undefined>({});
+  mainTableStateKey = input<string | undefined>(undefined);
+  mainTableDataKey = input<string | undefined>(undefined);
+  mainTableRowExpansionRender = input<'messages' | 'table' | undefined>(undefined);
+  mainTableExtraClasses = input<string | undefined>(undefined);
+  mainTableMultiHeaderActions = input<MultiHeaderAction[]>([]);
+
+
+  detailsIsClearSelectionVisible = input<boolean | undefined>(false);
+  detailsIsCollapseAllVisible = input<boolean | undefined>(false);
+  detailsIsResetFiltersVisible = input<boolean | undefined>(false);
+  detailsIsExportCsvVisible = input<boolean | undefined>(false);
+  detailsIsRefreshVisible = input<boolean | undefined>(false);
+  detailsIsRefreshFilterable = input<boolean | undefined>(false);
+  detailsIsFooterVisible = input<boolean | undefined>(false);
+  detailsSelectionMode = input<'single' | 'multiple' | undefined>(undefined);
+  detailsStyle = input<{ [klass: string]: any } | undefined>({});
+  detailsStateKey = input<string | undefined>(undefined);
+  detailsDataKey = input<string | undefined>(undefined);
+  detailsRowExpansionRender = input<'messages' | 'table' | undefined>(undefined);
+  detailsExtraClasses = input<string | undefined>(undefined);
+  detailsMultiHeaderActions = input<MultiHeaderAction[]>([]);
+
+
+  detailsTableMultiHeaderActionRequested = output<string>();
+
 
   @ViewChild('mainTable', { static: true }) mainTable?: TrivyTableComponent<TTrivyReport>;
 
@@ -63,19 +88,6 @@ export class GenericMasterDetailComponent<TTrivyReport extends TrivyReport<TTriv
 
   protected _dataDtos: TTrivyReport[] = [];
   protected _isMainTableLoading: boolean = this.isMainTableLoading();
-
-  @Input() public mainTableExpandCellOptions: (
-    dto: TTrivyReport,
-    type: 'header' | 'row',
-    column: number,
-    row?: number,
-  ) => TrivyTableCellCustomOptions = (_dto, _type, _column, _row) => ({
-    value: '',
-    style: '',
-    buttonLink: undefined,
-    badge: undefined,
-    url: undefined,
-  });
 
   constructor() {
     effect(() => {

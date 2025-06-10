@@ -4,7 +4,7 @@ import { NamespaceImageSelectorComponent } from '../namespace-image-selector/nam
 import { NamespacedImageDto } from '../namespace-image-selector/namespace-image-selector.types';
 import { TrivyReport, TrivyReportDetail } from '../abstracts/trivy-report'
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import { MultiHeaderAction, TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 type TrivyReportDetailComparedDto = TrivyReportDetail & {first?: boolean; second?: boolean};
 
@@ -20,13 +20,28 @@ export class GenericReportsCompareComponent<
 
   dataDtos = input.required<TTrivyReportDto[] | undefined>();
   comparedTableColumns = input.required<TrivyTableColumn[]>();
-  compareTableOptions = input.required<TrivyTableOptions>();
   namespacedImageDtos = input.required<NamespacedImageDto[] | undefined>();
 
   firstSelectedTrivyReportId = model<string | undefined>();
   secondSelectedTrivyReportId = model<string | undefined>();
 
   trivyReportDetailsCompared?: TrivyReportDetailComparedDto[];
+
+  compareIsClearSelectionVisible = input<boolean | undefined>(false);
+  compareIsCollapseAllVisible = input<boolean | undefined>(false);
+  compareIsResetFiltersVisible = input<boolean | undefined>(false);
+  compareIsExportCsvVisible = input<boolean | undefined>(false);
+  compareIsRefreshVisible = input<boolean | undefined>(false);
+  compareIsRefreshFilterable = input<boolean | undefined>(false);
+  compareIsFooterVisible = input<boolean | undefined>(false);
+  compareSelectionMode = input<'single' | 'multiple' | undefined>(undefined);
+  compareStyle = input<{ [klass: string]: any } | undefined>({});
+  compareStateKey = input<string | undefined>(undefined);
+  compareDataKey = input<string | undefined>(undefined);
+  compareRowExpansionRender = input<'messages' | 'table' | undefined>(undefined);
+  compareExtraClasses = input<string | undefined>(undefined);
+  compareMultiHeaderActions = input<MultiHeaderAction[]>([]);
+
 
   private _dataDtos?: TTrivyReportDto[];
   private _firstSelectedTrivyReportId?: string;

@@ -4,7 +4,7 @@ import { GetConfigAuditReportDtos$Params } from '../../api/fn/config-audit-repor
 import { ConfigAuditReportDto } from '../../api/models/config-audit-report-dto';
 import { ConfigAuditReportService } from '../../api/services/config-audit-report.service';
 import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
-import { TrivyFilterData, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
+import { TrivyFilterData, TrivyTableColumn } from '../trivy-table/trivy-table.types';
 import { SeverityUtils } from '../utils/severity.utils';
 
 @Component({
@@ -19,12 +19,9 @@ export class ConfigAuditReportsComponent {
   public activeNamespaces?: string[] = [];
 
   public mainTableColumns: TrivyTableColumn[] = [];
-  public mainTableOptions: TrivyTableOptions;
-  public mainTableExpandCallbackDto: ConfigAuditReportDto | null = null;
   public isMainTableLoading: boolean = true;
 
   public detailsTableColumns: TrivyTableColumn[] = [];
-  public detailsTableOptions: TrivyTableOptions;
 
   constructor(private dataDtoService: ConfigAuditReportService) {
     dataDtoService.getConfigAuditReportDtos().subscribe({
@@ -104,20 +101,6 @@ export class ConfigAuditReportsComponent {
         extraFields: ['3'],
       },
     ];
-    this.mainTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: true,
-      isFooterVisible: true,
-      tableSelectionMode: 'single',
-      tableStyle: { width: '775px' },
-      stateKey: 'Config Audit Reports - Main',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: 'trivy-half',
-    };
     this.detailsTableColumns = [
       {
         field: 'severityId',
@@ -174,20 +157,6 @@ export class ConfigAuditReportsComponent {
         renderType: 'standard',
       },
     ];
-    this.detailsTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: false,
-      isResetFiltersVisible: true,
-      isRefreshVisible: false,
-      isRefreshFilterable: false,
-      isFooterVisible: false,
-      tableSelectionMode: null,
-      tableStyle: {},
-      stateKey: 'Config Audit Reports - Details',
-      dataKey: 'uid',
-      rowExpansionRender: 'messages',
-      extraClasses: 'trivy-half',
-    };
   }
 
   onGetDataDtos(dtos: ConfigAuditReportDto[]) {

@@ -2,16 +2,20 @@
   <app-trivy-table
     csvFileName="RBAC Assessment Reports"
     csvStorageKey="RBAC Assessment Reports"
-    tableHeight="82vh"
     [activeNamespaces]="activeNamespaces"
     [dataDtos]="dataDtos"
-    [exportColumns]="exportColumns"
     [isLoading]="isLoading"
     [trivyTableColumns]="trivyTableColumns"
-    [trivyTableOptions]="trivyTableOptions"
     (refreshRequested)="getTableDataDtos()"
 
     [rowExpandData]="rowExpandResponse"
     (rowExpandDataChange)="onRowExpandChange($event)"
+
+    [isExportCsvVisible]="true"
+    [isResetFiltersVisible]="true"
+    [isRefreshVisible]="true"
+    [isFooterVisible]="true"
+    [style]="{ width: '2100px' }"
+    [stateKey]="'RBAC Assessment Reports Detailed'"
   />
 </div>

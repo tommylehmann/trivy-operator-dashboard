@@ -5,8 +5,7 @@ import { SeverityDto } from '../../api/models/severity-dto';
 import { ClusterRbacAssessmentReportService } from '../../api/services/cluster-rbac-assessment-report.service';
 
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { ExportColumn, TrivyTableColumn, TrivyTableOptions } from '../trivy-table/trivy-table.types';
-import { TrivyTableUtils } from '../utils/trivy-table.utils';
+import { TrivyTableColumn } from '../trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-cluster-rbac-assessment-reports-detailed',
@@ -23,10 +22,7 @@ export class ClusterRbacAssessmentReportsDetailedComponent {
 
   public csvFileName: string = 'Cluster.Rbac.Assessment.Reports';
 
-  public exportColumns: ExportColumn[];
-
   public trivyTableColumns: TrivyTableColumn[];
-  public trivyTableOptions: TrivyTableOptions;
 
   constructor(private dataDtoService: ClusterRbacAssessmentReportService) {
     this.getTableDataDtos();
@@ -105,21 +101,6 @@ export class ClusterRbacAssessmentReportsDetailedComponent {
         renderType: 'multiline',
       },
     ];
-    this.trivyTableOptions = {
-      isClearSelectionVisible: false,
-      isExportCsvVisible: true,
-      isResetFiltersVisible: true,
-      isRefreshVisible: true,
-      isRefreshFilterable: false,
-      isFooterVisible: true,
-      tableSelectionMode: null,
-      tableStyle: { width: '1970px' },
-      stateKey: 'Cluster RBAC Assessment Reports Detailed',
-      dataKey: null,
-      rowExpansionRender: null,
-      extraClasses: '',
-    };
-    this.exportColumns = TrivyTableUtils.convertFromTableColumnToExportColumn(this.trivyTableColumns);
   }
 
   public getTableDataDtos() {

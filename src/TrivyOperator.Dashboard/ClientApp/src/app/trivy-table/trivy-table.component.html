@@ -1,25 +1,25 @@
-<div class="trivy-table" [ngClass]="trivyTableOptions.extraClasses">
+<div class="trivy-table" [ngClass]="extraClasses()">
   <p-table
     #trivyTable
     columnResizeMode="expand"
-    dataKey="{{ trivyTableOptions.dataKey }}"
+    dataKey="{{ dataKey() }}"
     scrollHeight="flex"
     sortMode="multiple"
     stateStorage="local"
     styleClass=""
     class="p-datatable-xs"
     [autoLayout]="true"
-    [columns]="trivyTableColumns"
+    [columns]="trivyTableColumns()"
     [expandedRowKeys]="expandedRows"
-    [exportFilename]="csvFileName"
-    [loading]="isLoading"
+    [exportFilename]="_csvFileName"
+    [loading]="isLoading()"
     [ngStyle]="{ 'flex-grow': '1', display: 'flex', 'flex-direction': 'column' }"
     [reorderableColumns]="true"
     [resizableColumns]="true"
     [scrollable]="true"
-    [selectionMode]="trivyTableOptions.tableSelectionMode"
+    [selectionMode]="selectionMode()"
     [stateKey]="tableStateKey"
-    [tableStyle]="trivyTableOptions.tableStyle"
+    [tableStyle]="style()"
     [value]="_dataDtos"
     [virtualScroll]="true"
     [virtualScrollItemSize]="47"
@@ -33,14 +33,14 @@
   >
     <ng-template pTemplate="caption">
       <div>
-        <p-button *ngIf="trivyTableOptions!.isRefreshVisible && !trivyTableOptions!.isRefreshFilterable"
+        <p-button *ngIf="isRefreshVisible() && !isRefreshFilterable()"
                   icon="pi pi-refresh"
                   label="Refresh"
                   raised
                   size="small"
                   text
                   (onClick)="onFilterRefresh($event)" />
-        <p-splitbutton *ngIf="trivyTableOptions!.isRefreshVisible && trivyTableOptions!.isRefreshFilterable"
+        <p-splitbutton *ngIf="isRefreshVisible() && isRefreshFilterable()"
                        #refreshSplitButton
                        icon="pi pi-refresh"
                        label="Refresh"
@@ -49,14 +49,14 @@
                        text
                        (onClick)="onFilterRefresh($event)"
                        (onDropdownClick)="onFilterDropdownClick($event)" />
-        <p-button *ngIf="trivyTableOptions!.isClearSelectionVisible"
+        <p-button *ngIf="isClearSelectionVisible()"
                   icon="pi pi-list"
                   label="Clear Selected"
                   size="small"
                   text
                   [disabled]="isTableRowSelected()"
                   (onClick)="onTableClearSelected()" />
-        <p-button *ngIf="trivyTableOptions.dataKey && trivyTableOptions.isCollapseAllVisible"
+        <p-button *ngIf="dataKey() && isCollapseAllVisible()"
                   icon="pi pi-expand"
                   label="Collapse All"
                   raised
@@ -64,7 +64,7 @@
                   text
                   [disabled]="anyRowExpanded"
                   (onClick)="onTableCollapseAll()" />
-        <p-button *ngIf="trivyTableOptions!.isResetFiltersVisible"
+        <p-button *ngIf="isResetFiltersVisible()"
                   icon="pi pi-filter"
                   label="Clear Sort/Filters"
                   raised
@@ -72,37 +72,37 @@
                   text
                   [disabled]="!isTableFilteredOrSorted()"
                   (onClick)="onClearSortFilters()" />
-        <p-button *ngIf="trivyTableOptions!.isExportCsvVisible"
+        <p-button *ngIf="isExportCsvVisible()"
                   icon="pi pi-file-excel"
                   label="Export to CSV"
                   raised
                   size="small"
                   text
                   (onClick)="csvExportOp.toggle($event)" />
-        <p-button *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length == 1"
-                  icon="trivyTableOptions.multiHeaderActions[0].icon"
-                  [label]="trivyTableOptions.multiHeaderActions[0].specialAction ?? trivyTableOptions.multiHeaderActions[0].label"
+        <p-button *ngIf="multiHeaderActions() && multiHeaderActions().length == 1"
+                  icon="multiHeaderActions()[0].icon"
+                  [label]="multiHeaderActions()[0].specialAction ?? multiHeaderActions()[0].label"
                   raised
                   size="small"
                   text
                   [disabled]="'false'"
-                  (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])()" />
-        <p-splitbutton *ngIf="trivyTableOptions && trivyTableOptions.multiHeaderActions && trivyTableOptions.multiHeaderActions.length > 1"
-                       [icon]="trivyTableOptions.multiHeaderActions[0].icon ?? 'pi pi-cog'"
-                       [label]="trivyTableOptions.multiHeaderActions[0].specialAction ?? trivyTableOptions.multiHeaderActions[0].label"
+                  (onClick)="multiHeaderActionGetCommand(multiHeaderActions()[0])" />
+        <p-splitbutton *ngIf="multiHeaderActions() && multiHeaderActions().length > 1"
+                       [icon]="multiHeaderActions()[0].icon ?? 'pi pi-cog'"
+                       [label]="multiHeaderActions()[0].specialAction ?? multiHeaderActions()[0].label"
                        class="text-sm"
                        raised
                        size="small"
                        text
                        [disabled]="'false'"
                        [model]="multiHeaderActionItems"
-                       (onClick)="multiHeaderActionGetCommand(trivyTableOptions.multiHeaderActions[0])()">
+                       (onClick)="multiHeaderActionGetCommand(multiHeaderActions()[0])">
         </p-splitbutton>
       </div>
     </ng-template>
     <ng-template let-columns pTemplate="header">
       <tr>
-        <th *ngIf="trivyTableOptions!.rowExpansionRender" style="width: 50px"></th>
+        <th *ngIf="rowExpansionRender()" style="width: 50px"></th>
         <th *ngFor="let col of columns"
             pReorderableColumn
             pResizableColumn
@@ -131,7 +131,7 @@
               <p-multiSelect optionLabel=""
                              placeholder="Any"
                              styleClass="text-sm"
-                             [options]="activeNamespaces!"
+                             [options]="activeNamespaces()"
                              [style]="{ width: '300px' }"
                              [(ngModel)]="filterSelectedActiveNamespaces"
                              (onChange)="filter($event.value)">
@@ -173,195 +173,143 @@
         </th>
       </tr>
     </ng-template>
-    <ng-template let-columns="columns" let-expanded="expanded" let-rowData let-rowIndex="rowIndex" pTemplate="body">
+    <ng-template let-columns="columns" let-expanded="expanded"
+                 let-rowData let-rowIndex="rowIndex" pTemplate="body">
       <tr style="height: 47px" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex">
-        <td *ngIf="trivyTableOptions!.dataKey" style="max-width: 50px">
-          <p-button
-            pRipple
-            size="small"
-            styleClass="p-0"
-            type="button"
-            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-            [plain]="true"
-            [pRowToggler]="rowData"
-            [rounded]="true"
-            [text]="true"
-          />
+        <td *ngIf="dataKey()" style="max-width: 50px">
+          <p-button size="small"
+                    styleClass="p-0"
+                    type="button"
+                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                    [plain]="true"
+                    [pRowToggler]="rowData"
+                    [rounded]="true"
+                    [text]="true" />
         </td>
         <td *ngFor="let col of columns" style="{{ col.style }}">
-          <span *ngIf="col.renderType == 'standard'" class="truncate-ellipsis">{{ rowData[col.field] }}</span>
-          <span *ngIf="col.renderType == 'date'">{{ rowData[col.field] | date: 'yyyy-MM-dd' }}</span>
-          <span *ngIf="col.renderType == 'dateTime'">{{ rowData[col.field] | localTime }}</span>
-          <div *ngIf="col.renderType == 'imageNameTag'">
-            <span>{{ rowData[col.field] }}:{{ rowData[col.extraFields[0]] }}</span>
-            <p-tag *ngIf="rowData[col.extraFields[1]]"
-                   value="EOSL"
-                   [rounded]="true"
-                   class="ml-3"
-                   [style]="1 | severityCssStyleById:1 " />
-          </div>
-          <a *ngIf="col.renderType == 'link'" href="{{ rowData[col.extraFields[0]] }}" target="_blank">
-            {{
-            rowData[col.field]
-            }}
-          </a>
-          <p-tag *ngIf="col.renderType == 'severityBadge'"
-                 [rounded]="true"
-                 [style]="rowData[col.field] | severityCssStyleById:1"
-                 value=" {{ rowData[col.field] | severityNameById }}" />
-          <div *ngIf="col.renderType == 'severityMultiTags'" style="display: flex; justify-content: space-between">
-            <p-tag [rounded]="true"
-                   [style]="0 | severityCssStyleById: rowData[col.field]"
-                   [value]="rowData[col.field]" />
-            <div *ngFor="let extraField of col.extraFields; let i = index">
-              <p-tag [rounded]="true"
-                     [style]="i + 1 | severityCssStyleById: rowData[col.extraFields[i]] "
-                     [value]="rowData[col.extraFields[i]]" />
+          <ng-container [ngSwitch]="col.renderType">
+            <span *ngSwitchCase="'standard'" class="truncate-ellipsis">{{ rowData[col.field] }}</span>
+            <span *ngSwitchCase="'date'">{{ rowData[col.field] | date: 'yyyy-MM-dd' }}</span>
+            <span *ngSwitchCase="'dateTime'">{{ rowData[col.field] | localTime }}</span>
+            <div *ngSwitchCase="'imageNameTag'">
+              <span>{{ rowData[col.field] }}:{{ rowData[col.extraFields[0]] }}</span>
+              <p-tag *ngIf="rowData[col.extraFields[1]]"
+                     value="EOSL"
+                     [rounded]="true"
+                     class="ml-3"
+                     [style]="1 | severityCssStyleById:1 " />
             </div>
-          </div>
-          <p-tag *ngIf="col.renderType == 'eosl' && rowData[col.field]"
-                 icon="pi pi-exclamation-circle"
-                 [rounded]="true"
-                 [style]="1 | severityCssStyleById:1"
-                 [value]="'true'" />
-          <p-tag *ngIf="col.renderType == 'semaphore'"
-                 [rounded]="true"
-                 [style]="rowData[col.field] | semaphoreCssStyleByName"
-                 [value]="rowData[col.field]" />
-          <p-tag *ngIf="col.renderType == 'severityValue'"
-                 [rounded]="true"
-                 [style]="col.extraFields[0] ?? '' | severityCssStyleById:(rowData[col.field] ?? -1)"
-                 [value]="rowData[col.field] | vulnerabilityCount" />
-          <span *ngIf="col.renderType == 'multiline'" [innerHTML]="rowData[col.field].join('<br>')"></span>
-          <p-button *ngIf="col.renderType == 'action'"
-                    [label]="col.extraFields[0]"
-                    size="small"
-                    text
-                    raised
-                    (onClick)="onRowAction(rowData)"
-                    severity="contrast" />
-          <p-tag *ngIf="col.renderType == 'boolean'"
-                 [icon]="'pi ' + (rowData[col.field] === undefined ? 'pi-question-circle' : (rowData[col.field] ? 'pi-verified' : 'pi-times-circle'))"
-                 [rounded]="true"
-                 [style]="rowData[col.field] | booleanCssStyle"
-                 [value]="rowData[col.field]?.toString() ?? 'N/A' | capitalizeFirst" />
+            <a *ngSwitchCase="'link'" href="{{ rowData[col.extraFields[0]] }}" target="_blank">
+              {{
+              rowData[col.field]
+              }}
+            </a>
+            <p-tag *ngSwitchCase="'severityBadge'"
+                   [rounded]="true"
+                   [style]="rowData[col.field] | severityCssStyleById:1"
+                   value=" {{ rowData[col.field] | severityNameById }}" />
+            <div *ngSwitchCase="'severityMultiTags'" style="display: flex; justify-content: space-between">
+              <p-tag [rounded]="true"
+                     [style]="0 | severityCssStyleById: rowData[col.field]"
+                     [value]="rowData[col.field]" />
+              <div *ngFor="let extraField of col.extraFields; let i = index">
+                <p-tag [rounded]="true"
+                       [style]="i + 1 | severityCssStyleById: rowData[col.extraFields[i]] "
+                       [value]="rowData[col.extraFields[i]]" />
+              </div>
+            </div>
+            <p-tag *ngSwitchCase="'eosl' && rowData[col.field]"
+                   icon="pi pi-exclamation-circle"
+                   [rounded]="true"
+                   [style]="1 | severityCssStyleById:1"
+                   [value]="'true'" />
+            <p-tag *ngSwitchCase="'semaphore'"
+                   [rounded]="true"
+                   [style]="rowData[col.field] | semaphoreCssStyleByName"
+                   [value]="rowData[col.field]" />
+            <p-tag *ngSwitchCase="'severityValue'"
+                   [rounded]="true"
+                   [style]="col.extraFields[0] ?? '' | severityCssStyleById:(rowData[col.field] ?? -1)"
+                   [value]="rowData[col.field] | vulnerabilityCount" />
+            <span *ngSwitchCase="'multiline'" [innerHTML]="rowData[col.field].join('<br>')"></span>
+            <p-button *ngSwitchCase="'action'"
+                      [label]="col.extraFields[0]"
+                      size="small"
+                      text
+                      raised
+                      (onClick)="onRowAction(rowData)"
+                      severity="contrast" />
+            <p-tag *ngSwitchCase="'boolean'"
+                   [icon]="'pi ' + (rowData[col.field] === undefined ? 'pi-question-circle' : (rowData[col.field] ? 'pi-verified' : 'pi-times-circle'))"
+                   [rounded]="true"
+                   [style]="rowData[col.field] | booleanCssStyle"
+                   [value]="rowData[col.field]?.toString() ?? 'N/A' | capitalizeFirst" />
+          </ng-container>
         </td>
       </tr>
+
     </ng-template>
-    <ng-template *ngIf="trivyTableOptions!.rowExpansionRender" let-rowData pTemplate="expandedrow">
+    <ng-template *ngIf="rowExpansionRender()" let-rowData pTemplate="expandedrow">
       <tr>
-        <td [attr.colspan]="trivyTableColumns.length + 1">
-          <div *ngIf="trivyTableOptions!.rowExpansionRender == 'tableOld'" class="pl-4">
-            <p-table styleClass="text-sm p-datatable-sm" [value]="[{}]">
-              <ng-template *ngIf="trivyExpandTableOptions.isHeaderVisible" pTemplate="header">
-                <tr>
-                  <th
-                    *ngFor="let col of trivyExpandTableOptions.columnsArray"
-                    style="{{ trivyExpandTableFunction(rowData, 'row', col).style }}"
-                  >
-                    {{ trivyExpandTableFunction(rowData, 'header', col).value }}
-                  </th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body">
-                <!--<tr *ngFor="let row of getExpandCellRowArray(rowData)">-->
-                <tr *ngFor="let row of rowData | cellRowArray:trivyExpandTableOptions">
-                  <td *ngFor="let col of trivyExpandTableOptions.columnsArray"
-                      style="{{ trivyExpandTableFunction(rowData, 'row', col, row).style }}">
-                    <div *ngIf="!trivyExpandTableFunction(rowData, 'row', col, row).url">
-                      <span>{{ trivyExpandTableFunction(rowData, 'row', col, row).value }}</span>
-                      <p-button *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).buttonLink"
-                                label="{{ trivyExpandTableFunction(rowData, 'row', col, row).buttonLink }}"
-                                size="small"
-                                [text]="true"
-                                (onClick)="onTrivyDetailsTableCallback(rowData)" />
-                      <p-tag *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).badge"
-                             [rounded]="true"
-                             class="ml-3"
-                             [style]="1 | severityCssStyleById:1"
-                             [value]="trivyExpandTableFunction(rowData, 'row', col, row).badge" />
-                      <span *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).localTime">{{ trivyExpandTableFunction(rowData, 'row', col, row).localTime | localTime }}</span>
-                      <span *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).cron">{{ trivyExpandTableFunction(rowData, 'row', col, row).cron | cron }}</span>
-                    </div>
-                    <a *ngIf="trivyExpandTableFunction(rowData, 'row', col, row).url"
-                       href="{{ trivyExpandTableFunction(rowData, 'row', col, row).url }}"
-                       target="_blank">
-                      {{ trivyExpandTableFunction(rowData, 'row', col, row).value }}
-                    </a>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-          <div *ngIf="trivyTableOptions!.rowExpansionRender == 'messages'" class="pl-4 whitespace-normal">
-            <li *ngFor="let mess of rowData.messages">{{ mess }}</li>
-          </div>
+        <td [attr.colspan]="trivyTableColumns().length + 1">
+          <ng-container [ngSwitch]="rowExpansionRender()">
+            <div *ngSwitchCase="'messages'" class="pl-4 whitespace-normal">
+              <li *ngFor="let mess of rowData.messages">{{ mess }}</li>
+            </div>
+            <div *ngSwitchCase="'table'" class="pl-4">
+              <ng-container *ngIf="rowExpandMap.getAsync(rowData) | async as rowExpandData">
+                <p-table [value]="[{}]">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th *ngFor="let col of rowExpandData.headerDef; let colIndex = index"
+                          [ngStyle]="rowExpandData.colStyles[colIndex]" [ngClass]="col.class">
+                        {{ col.label }}
+                      </th>
+                    </tr>
+                  </ng-template>
 
+                  <ng-template pTemplate="body">
+                    <tr *ngFor="let row of rowExpandData.details">
+                      <td *ngFor="let cell of row; let colIndex = index"
+                          [ngStyle]="rowExpandData.colStyles[colIndex]" [ngClass]="cell.class">
 
-          <div *ngIf="trivyTableOptions.rowExpansionRender == 'table'" class="pl-4">
-            <ng-container *ngIf="rowExpandMap.getAsync(rowData) | async as rowExpandData">
-              <p-table [value]="[{}]">
-                <ng-template pTemplate="header">
-                  <tr>
-                    <th *ngFor="let col of rowExpandData.headerDef; let colIndex = index"
-                        [ngStyle]="rowExpandData.colStyles[colIndex]" [ngClass]="col.class">
-                      {{ col.label }}
-                    </th>
-                  </tr>
-                </ng-template>
-
-                <ng-template pTemplate="body">
-                  <tr *ngFor="let row of rowExpandData.details">
-                    <td *ngFor="let cell of row; let colIndex = index"
-                        [ngStyle]="rowExpandData.colStyles[colIndex]" [ngClass]="cell.class">
-
-                      <span *ngIf="cell.label" class="pr-1">
-                        {{ cell.label }}
-                      </span>
-                      <p-button *ngIf="cell.buttonLink"
-                                class="pr-1"
-                                label="{{ cell.buttonLink }}"
-                                size="small"
-                                [text]="true"
-                                (onClick)="onTrivyDetailsTableCallback(rowData)" />
-                      <p-tag *ngIf="cell.badge"
-                             class="pr-1"
-                             [rounded]="true"
-                             class="ml-3"
-                             [style]="1 | severityCssStyleById:1"
-                             [value]="cell.badge" />
-                      <span *ngIf="cell.localTime"  class="pr-1">
-                        {{ cell.localTime | localTime }}
-                      </span>
-                      <span *ngIf="cell.cron" class="pr-1">
-                        {{ cell.cron | cron }}
-                      </span>
-                      <a *ngIf="cell.url"
-                         class="pr-1"
-                         href="{{ cell.url.link }}"
-                         target="_blank">
-                         {{ cell.url.text }}
-                      </a>
-
-<!--                      <ng-container [ngSwitch]="cell.type">-->
-<!--                        <span *ngSwitchCase="'text'">{{ cell.label }}</span>-->
-<!--                        <p-checkbox *ngSwitchCase="'boolean'" [binary]="true" [(ngModel)]="cell.label"></p-checkbox>-->
-<!--                        <p-tag *ngSwitchCase="'tag'" [value]="cell.label"></p-tag>-->
-<!--                      </ng-container>-->
-                    </td>
-                  </tr>
-                </ng-template>
-              </p-table>
-            </ng-container>
-          </div>
+                        <span *ngIf="cell.label" class="pr-1">
+                          {{ cell.label }}
+                        </span>
+                        <p-button *ngIf="cell.buttonLink"
+                                  class="pr-1"
+                                  label="{{ cell.buttonLink }}"
+                                  size="small"
+                                  [text]="true"
+                                  (onClick)="onTrivyDetailsTableCallback(rowData)" />
+                        <p-tag *ngIf="cell.badge"
+                               class="pr-1"
+                               [rounded]="true"
+                               [style]="1 | severityCssStyleById:1"
+                               [value]="cell.badge" />
+                        <span *ngIf="cell.localTime"  class="pr-1">
+                          {{ cell.localTime | localTime }}
+                        </span>
+                        <span *ngIf="cell.cron" class="pr-1">
+                          {{ cell.cron | cron }}
+                        </span>
+                        <a *ngIf="cell.url"
+                           class="pr-1"
+                           href="{{ cell.url.link }}"
+                           target="_blank">
+                           {{ cell.url.text }}
+                        </a>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </ng-container>
+            </div>
+          </ng-container>
         </td>
       </tr>
     </ng-template>
-
-
-
-
-    <ng-template *ngIf="trivyTableOptions!.isFooterVisible" pTemplate="summary">
+    <ng-template *ngIf="isFooterVisible()" pTemplate="summary">
       <div class="flex flex-wrap tod-content-background tod-content-border-top-light p-1 px-2 gap-4">
         <span>Total</span>
         <p-tag value="{{ trivyTableTotalRecords }}" [rounded]="true" severity="contrast"/>
@@ -375,7 +323,7 @@
     <div style="width: 300px">
       <div class="field">
         <label for="csvFileName" class="text-sm">CSV File Name</label>
-        <input id="csvFileName" pInputText class="text-sm w-full" [(ngModel)]="csvFileName" />
+        <input id="csvFileName" pInputText class="text-sm w-full" [(ngModel)]="_csvFileName" />
       </div>
       <div class="grid grid-cols-12 gap-4">
         <div class="col-span-6">
@@ -421,7 +369,7 @@
           placeholder="Select a Namespace"
           styleClass="w-full text-sm"
           [checkmark]="true"
-          [options]="activeNamespaces!"
+          [options]="activeNamespaces()"
           [showClear]="true"
           [(ngModel)]="filterRefreshActiveNamespace"
         />
