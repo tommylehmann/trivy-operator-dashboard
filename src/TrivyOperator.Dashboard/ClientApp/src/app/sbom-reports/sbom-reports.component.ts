@@ -163,7 +163,7 @@ export class SbomReportsComponent implements OnInit {
   sbomReportDetailLicensesTreeNodes: TreeNode[] = [];
   // endregion
 
-  hoveredSbomDetailDto: SbomReportDetailDto | undefined = undefined;
+  hoveredSbomDetailDto?: SbomReportDetailDto;
   nodeDataDtos: NodeDataDto[] = [];
   selectedSbomDetailBomRef?: string;
 

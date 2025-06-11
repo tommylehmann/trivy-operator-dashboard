@@ -114,9 +114,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   inputFilterByNameControl = new FormControl("");
   private inputFilterByNameValue: string = "";
 
-  clickTimeout?: ReturnType<typeof setTimeout>;
-  private doubleClickDelay = 300;
-
   private darkLightMode: 'Dark' | 'Light' = 'Dark';
 
   faEye = faEye;
@@ -482,7 +479,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     });
 
     this.cy.on('dbltap', 'node', (event) => {
-      //clearTimeout(this.clickTimeout);
       this.diveInNode(event.target as NodeSingular);
     });
 
