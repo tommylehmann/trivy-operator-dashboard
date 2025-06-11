@@ -178,13 +178,14 @@
       <tr style="height: 47px" [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex">
         <td *ngIf="dataKey()" style="max-width: 50px">
           <p-button size="small"
-                    styleClass="p-0"
-                    type="button"
+                    styleClass="p-0 tod-text-primary-color"
+
                     [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-                    [plain]="true"
                     [pRowToggler]="rowData"
                     [rounded]="true"
-                    [text]="true" />
+                    [raised]="true"
+                    [text]="true"
+                    severity="info"/>
         </td>
         <td *ngFor="let col of columns" style="{{ col.style }}">
           <ng-container [ngSwitch]="col.renderType">
@@ -214,8 +215,8 @@
                      [value]="rowData[col.field]" />
               <div *ngFor="let extraField of col.extraFields; let i = index">
                 <p-tag [rounded]="true"
-                       [style]="i + 1 | severityCssStyleById: rowData[col.extraFields[i]] "
-                       [value]="rowData[col.extraFields[i]]" />
+                       [style]="i + 1 | severityCssStyleById: rowData[extraField]"
+                       [value]="rowData[extraField]" />
               </div>
             </div>
             <p-tag *ngSwitchCase="'eosl' && rowData[col.field]"
@@ -257,7 +258,7 @@
               <li *ngFor="let mess of rowData.messages">{{ mess }}</li>
             </div>
             <div *ngSwitchCase="'table'" class="pl-4">
-              <ng-container *ngIf="rowExpandMap.getAsync(rowData) | async as rowExpandData">
+              <ng-container *ngIf="_rowExpandMap.getAsync(rowData) | async as rowExpandData">
                 <p-table [value]="[{}]">
                   <ng-template pTemplate="header">
                     <tr>

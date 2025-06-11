@@ -1,67 +1,67 @@
 <div class="gap-4 flex-col">
   <app-trivy-toolbar>
-  <div class="flex items-center">
-    <p-button icon="pi pi-search-plus" label="Zoom In" size="small" [text]="true" (onClick)="onZoomIn()" />
-    <p-button icon="pi pi-search-minus" label="Zoom Out" size="small" [text]="true" (onClick)="onZoomOut()" />
-    <p-button icon="pi pi-arrows-alt" label="Fit" size="small" [text]="true" (onClick)="onZoomFit()" />
-    <input type="search"
-           pInputText
-           [formControl]="inputFilterByNameControl"
-           placeholder="Highlight by name..."
-           style="width: 200px; font-size: 12px" />
-    <p-button *ngIf="!isStatic"
-              label="Hide Node"
-              size="small"
-              class="hidden-sm"
-              [text]="true"
-              [disabled]="graphSelectedNodes.length == 0"
-              (onClick)="onDeleteNode()">
-      <fa-icon [icon]="faSquare" class="mr-2"></fa-icon>
-    </p-button>
-    <p-button *ngIf="!isStatic"
-              label="Hide Subtree"
-              size="small"
-              class="hidden-sm"
-              [text]="true"
-              [disabled]="isStatic || graphSelectedNodes.length == 0"
-              (onClick)="onDeleteNodeAndChildren()">
-      <fa-icon [icon]="faClone" class="mr-2"></fa-icon>
-    </p-button>
-    <p-button *ngIf="!isStatic"
-              label="Undo"
-              size="small"
-              class="hidden-sm"
-              [text]="true"
-              [disabled]="isStatic || currentDeletedNodesIndex == -1 || deletedNodes.length == 0"
-              (onClick)="onUndo()">
-      <fa-icon [icon]="faReply" class="mr-2"></fa-icon>
-    </p-button>
-    <p-button *ngIf="!isStatic"
-              label="Redo"
-              size="small"
-              class="hidden-sm"
-              [text]="true"
-              [disabled]="isStatic || currentDeletedNodesIndex >= deletedNodes.length - 1"
-              (onClick)="onRedo()">
-      <fa-icon [icon]="faShare" class="mr-2"></fa-icon>
-    </p-button>
-    <p-button *ngIf="!isStatic"
-              label="Show All"
-              size="small"
-              class="hidden-sm"
-              [text]="true"
-              [disabled]="deletedNodes.length == 0 || this.currentDeletedNodesIndex == -1"
-              (onClick)="onShowAll()">
-      <fa-icon [icon]="faEye" class="mr-2"></fa-icon>
-    </p-button>
-    <p-button *ngIf="!isStatic"
-              icon="pi pi-question-circle"
-              size="small"
-              class="hidden-sm"
-              [text]="true"
-              (onClick)="onHelp()">
-    </p-button>
-  </div>
+    <div class="flex items-center">
+      <p-button icon="pi pi-search-plus" label="Zoom In" size="small" [text]="true" (onClick)="onZoomIn()" />
+      <p-button icon="pi pi-search-minus" label="Zoom Out" size="small" [text]="true" (onClick)="onZoomOut()" />
+      <p-button icon="pi pi-arrows-alt" label="Fit" size="small" [text]="true" (onClick)="onZoomFit()" />
+      <input type="search"
+             pInputText
+             [formControl]="inputFilterByNameControl"
+             placeholder="Highlight by name..."
+             style="width: 200px; font-size: 12px" />
+      <p-button *ngIf="!isStatic()"
+                label="Hide Node"
+                size="small"
+                class="hidden-sm"
+                [text]="true"
+                [disabled]="graphSelectedNodes.length == 0"
+                (onClick)="onDeleteNode()">
+        <fa-icon [icon]="faSquare" class="mr-2"></fa-icon>
+      </p-button>
+      <p-button *ngIf="!isStatic()"
+                label="Hide Subtree"
+                size="small"
+                class="hidden-sm"
+                [text]="true"
+                [disabled]="isStatic() || graphSelectedNodes.length == 0"
+                (onClick)="onDeleteNodeAndChildren()">
+        <fa-icon [icon]="faClone" class="mr-2"></fa-icon>
+      </p-button>
+      <p-button *ngIf="!isStatic()"
+                label="Undo"
+                size="small"
+                class="hidden-sm"
+                [text]="true"
+                [disabled]="isStatic() || currentDeletedNodesIndex == -1 || deletedNodes.length == 0"
+                (onClick)="onUndo()">
+        <fa-icon [icon]="faReply" class="mr-2"></fa-icon>
+      </p-button>
+      <p-button *ngIf="!isStatic()"
+                label="Redo"
+                size="small"
+                class="hidden-sm"
+                [text]="true"
+                [disabled]="isStatic() || currentDeletedNodesIndex >= deletedNodes.length - 1"
+                (onClick)="onRedo()">
+        <fa-icon [icon]="faShare" class="mr-2"></fa-icon>
+      </p-button>
+      <p-button *ngIf="!isStatic()"
+                label="Show All"
+                size="small"
+                class="hidden-sm"
+                [text]="true"
+                [disabled]="deletedNodes.length == 0 || this.currentDeletedNodesIndex == -1"
+                (onClick)="onShowAll()">
+        <fa-icon [icon]="faEye" class="mr-2"></fa-icon>
+      </p-button>
+      <p-button *ngIf="!isStatic()"
+                icon="pi pi-question-circle"
+                size="small"
+                class="hidden-sm"
+                [text]="true"
+                (onClick)="onHelp()">
+      </p-button>
+    </div>
   </app-trivy-toolbar>
   <div class="flex items-center col-span-12 p-0">
     <p-breadcrumb class="breadcrumb-no-background breadcrumb-no-overflow pl-2.5"
@@ -70,7 +70,7 @@
                   (onItemClick)="onNavItemClick($event)"/>
   </div>
   <div class="col-span-12">
-    <div #graphContainer [ngClass]="fcoseClasses" class="graph-container"></div>
+    <div #graphContainer [ngClass]="fcoseClasses()" class="graph-container"></div>
   </div>
 </div>
 

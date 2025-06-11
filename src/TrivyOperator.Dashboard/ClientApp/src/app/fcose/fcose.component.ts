@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef, input } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+  input,
+  output, effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -15,7 +24,6 @@ import { TagModule } from 'primeng/tag';
 
 import { TrivyToolbarComponent } from '../trivy-toolbar/trivy-toolbar.component';
 
-import { FcoseHelpComponent } from '../fcose-help/fcose-help.component'
 import { DeletedNodes, NodeDataDto } from './fcose.types'
 
 import {
@@ -46,50 +54,13 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   @ViewChild('helpContainer', { read: ViewContainerRef }) helpContainer!: ViewContainerRef;
 
   // #region activeNodeId
-  activeNodeId: string | undefined = undefined;
-  @Output() activeNodeIdChange = new EventEmitter<string>();
+  activeNodeId?: string;
+  activeNodeIdChange = output<string>();
   private readonly _defaultRootNodeId: string = '00000000-0000-0000-0000-000000000000';
   private _rootNodeId: string = this._defaultRootNodeId;
   // #endregion
   // #region main nodeDataDtos
-  get nodeDataDtos(): NodeDataDto[] {
-    return this._nodeDataDtos;
-  }
-  @Input() set nodeDataDtos(nodeDataDtos: NodeDataDto[]) {
-    this.isLayoutRedraw = true;
-    this._nodeDataDtos = nodeDataDtos;
-    if (nodeDataDtos.length == 0) {
-      this._rootNodeId = this._defaultRootNodeId;
-      this.navHome = undefined;
-      this.navItems = [];
-      this.activeNodeId = undefined;
-      this.hoveredNode = undefined;
-      this.highlightedHoverNode = undefined;
-      this.graphSelectedNodes = [];
-      this.deletedNodes = [];
-      this.currentDeletedNodesIndex = -1;
-      this.cy?.elements()?.remove();
-      this.isLayoutRedraw = false;
-    }
-    else {
-      if (!this.activeNodeId) {
-        this._rootNodeId = nodeDataDtos.find(x => x.isMain)?.id ?? this._defaultRootNodeId;
-        this.initNavMenuItems();
-      }
-      this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
-      this.hoveredNode = undefined;
-      this.highlightedHoverNode = undefined;
-      this.graphSelectedNodes = [];
-      this.deletedNodes = [];
-      this.currentDeletedNodesIndex = -1;
-      if (this.cy) {
-        this.redrawGraph();
-      }
-    }
-  }
-  private _nodeDataDtos: NodeDataDto[] = [];
-  // #endregion
-  // #region hoveredNode
+  nodeDataDtos = input<NodeDataDto[]>([]);
   private get hoveredNode(): NodeSingular | undefined {
     return this._hoveredNode;
   }
@@ -101,49 +72,23 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.hoveredNodeIdChange.emit(node?.id());
   }
   private _hoveredNode?: NodeSingular;
-  @Output() hoveredNodeIdChange = new EventEmitter<string>();
-  private highlightedHoverNode: NodeSingular | undefined;
+  hoveredNodeIdChange = output<string | undefined>();
+  private highlightedHoverNode?: NodeSingular;
   // #endregion
   // #region selectedNode - outside world communication for selected node (red)
-  @Input() set selectedNodeId(nodeId: string | undefined) {
-    // only for the graph, to select the "master" mode
-    this._selectedNodeId = nodeId;
-    if (this.isLayoutRedraw) {
-      return;
-    }
-
-    if (this.graphSelectedNodes.length > 1) {
-      return;
-    }
-    if (nodeId) {
-      const node = this.cy?.$(`#${nodeId}`);
-      if (node && this.graphSelectedNodes.length == 1 && this.graphSelectedNodes[0] == node) {
-        return
-      }
-      if (node) {
-        this.graphSelectedNodes[0]?.unselect();
-        node.select();
-      }
-    }
-    else {
-      if (this.graphSelectedNodes.length == 1) {
-        this.graphSelectedNodes[0].unselect();
-      }
-    }
-  }
-  @Output() selectedNodeIdChange = new EventEmitter<string | undefined>();
-  private _selectedNodeId?: string;
+  selectedNodeId = input<string | undefined>(undefined);
+  selectedNodeIdChange = output<string | undefined>();
   graphSelectedNodes: NodeSingular[] = [];
   // #endregion
   // #region "Deleted" Nodes
   deletedNodes: DeletedNodes[] = [];
   currentDeletedNodesIndex: number = -1;
 
-  @Output() deletedNodeIdsChange = new EventEmitter<string[]>();
-  @Output() undeletedNodeIdsChange = new EventEmitter<string[]>();
+  deletedNodeIdsChange = output<string[]>();
+  undeletedNodeIdsChange = output<string[]>();
   // #endregion
   navItems: MenuItem[] = [];
-  navHome: MenuItem | undefined = undefined;
+  navHome?: MenuItem;
   private cy!: cytoscape.Core;
   private fcoseLayoutOptions: FcoseLayoutOptions = {
     name: 'fcose',
@@ -180,15 +125,75 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   faClone = faClone;
   faSquare = faSquare;
 
-  @Input() isStatic: boolean = false;
-  @Input() staticSelectedNodeId?: string;
-  @Input() staticHighlightedNodeId?: string;
-  @Input() staticInputFilterByNameValue: string = "";
+  isStatic = input<boolean>(false);
+  staticSelectedNodeId = input<string | undefined>(undefined);
+  staticHighlightedNodeId = input<string | undefined>(undefined);
+  staticInputFilterByNameValue = input<string>("");
 
-  @Input() fcoseClasses: string = "fcose fcose-half";
+  fcoseClasses = input<string>("fcose fcose-half");
 
   isHelpDialogVisible: boolean = false;
-  constructor(private darkModeService: DarkModeService) { }
+
+  constructor(private darkModeService: DarkModeService) {
+    effect(() => {
+      const nodeDataDtos = this.nodeDataDtos();
+      this.isLayoutRedraw = true;
+      if (nodeDataDtos.length == 0) {
+        this._rootNodeId = this._defaultRootNodeId;
+        this.navHome = undefined;
+        this.navItems = [];
+        this.activeNodeId = undefined;
+        this.hoveredNode = undefined;
+        this.highlightedHoverNode = undefined;
+        this.graphSelectedNodes = [];
+        this.deletedNodes = [];
+        this.currentDeletedNodesIndex = -1;
+        this.cy?.elements()?.remove();
+        this.isLayoutRedraw = false;
+      }
+      else {
+        if (!this.activeNodeId) {
+          this._rootNodeId = nodeDataDtos.find(x => x.isMain)?.id ?? this._defaultRootNodeId;
+          this.initNavMenuItems();
+        }
+        this.activeNodeId = nodeDataDtos.find(x => x.isMain)?.id;
+        this.hoveredNode = undefined;
+        this.highlightedHoverNode = undefined;
+        this.graphSelectedNodes = [];
+        this.deletedNodes = [];
+        this.currentDeletedNodesIndex = -1;
+        if (this.cy) {
+          this.redrawGraph();
+        }
+      }
+    });
+    effect(() => {
+      // only for the graph, to select the "master" mode
+      const nodeId = this.selectedNodeId();
+      if (this.isLayoutRedraw) {
+        return;
+      }
+
+      if (this.graphSelectedNodes.length > 1) {
+        return;
+      }
+      if (nodeId) {
+        const node = this.cy?.$(`#${nodeId}`);
+        if (node && this.graphSelectedNodes.length == 1 && this.graphSelectedNodes[0] == node) {
+          return
+        }
+        if (node) {
+          this.graphSelectedNodes[0]?.unselect();
+          node.select();
+        }
+      }
+      else {
+        if (this.graphSelectedNodes.length == 1) {
+          this.graphSelectedNodes[0].unselect();
+        }
+      }
+    })
+  }
 
   ngOnInit() {
     this.darkModeService.isDarkMode$.subscribe((isDarkMode) => {
@@ -201,8 +206,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.inputFilterByNameControl.valueChanges.pipe(debounceTime(500)).subscribe((value) => {
       this.onInputChange(value ?? "");
     });
-    if (this.isStatic) {
-      this.inputFilterByNameControl.setValue(this.staticInputFilterByNameValue);
+    if (this.isStatic()) {
+      this.inputFilterByNameControl.setValue(this.staticInputFilterByNameValue());
       this.inputFilterByNameControl.disable();
     }
     this.initNavMenuItems();
@@ -462,7 +467,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   }
 
   private setupCyEvents() {
-    if (this.isStatic) {
+    if (this.isStatic()) {
       return;
     }
     this.cy.on('mouseover', 'node', (event) => {
@@ -476,34 +481,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.unhighlightHoveredNode(event.target as NodeSingular);
     });
 
-    //this.cy.on('tap', 'node', (event: cytoscape.EventObject) => {
-    //  if (event.originalEvent.detail === 1) {
-    //    this.clickTimeout = setTimeout(() => {
-    //      this.onSelectNode(this.graphSelectedNodes[0])
-    //    }, this.doubleClickDelay);
-    //  }
-    //});
-
     this.cy.on('dbltap', 'node', (event) => {
-      clearTimeout(this.clickTimeout);
+      //clearTimeout(this.clickTimeout);
       this.diveInNode(event.target as NodeSingular);
     });
-
-    //if (this.graphContainer) {
-    //  this.graphContainer.nativeElement.setAttribute('tabindex', '0');
-    //  this.graphContainer.nativeElement.addEventListener('keydown', (event: KeyboardEvent) => {
-    //    if ((event.key === 'Delete' || event.key === 'Del') && event.shiftKey) {
-    //      //this.deleteNodesChildrenAndOrphans();
-    //      this.deleteNodesAndOrphans(true);
-    //      return;
-    //    }
-    //    if (event.key === 'Delete' || event.key === 'Del') {
-    //      this.deleteNodesAndOrphans(false);
-    //      return;
-    //    }
-    //  },
-    //  { capture: true });
-    //}
 
     this.cy.on('select', 'node', (event) => {
       this.highlightSelectedNode(event.target as NodeSingular);
@@ -793,13 +774,12 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         if (this.inputFilterByNameValue) {
           this.onNodesHighlightByName(this.inputFilterByNameValue);
         }
-        const node = this.cy.$(`#${this._selectedNodeId}`);
+        const node = this.cy.$(`#${this.selectedNodeId()}`);
         if (node) {
           node.select();
         }
-        if (this.isStatic) {
+        if (this.isStatic()) {
           let node = this.cy.$(`#${this.staticSelectedNodeId}`);
-          const x = this.cy.nodes();
           if (node) {
             this.highlightSelectedNode(node);
           }
@@ -816,7 +796,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private getElements(): ElementDefinition[] {
     const elements: ElementDefinition[] = [];
     const groupMap = new Map<string, number>();
-    this.nodeDataDtos
+    this.nodeDataDtos()
       .filter(x => x.groupName)
       .forEach((x) => {
         const currentCount = (groupMap.get(x.groupName ?? "") || 0) + 1;
@@ -830,7 +810,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       }
     });
 
-    this.nodeDataDtos.forEach(nodeData => {
+    this.nodeDataDtos().forEach(nodeData => {
       const parentId = (groupMap.get(nodeData.groupName ?? "") || 0) > 1 ? nodeData.groupName : undefined;
       elements.push({
         data: {
@@ -913,7 +893,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   // #endregion
 
   getDataDetailDtoById(id: string | undefined | null): NodeDataDto | undefined {
-    return this.nodeDataDtos.find((x) => x.id == id);
+    return this.nodeDataDtos().find((x) => x.id == id);
   }
 
   onInputChange(value: string) {
@@ -985,7 +965,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     const x = this.cy.nodes(".parentNode")
       .filter(x => x.children().length === 0 && !x.hasClass("deleted"));
       x.forEach(x => {
-        this.nodeDataDtos.filter(y => y.groupName == x.id()).forEach(y => {
+        this.nodeDataDtos().filter(y => y.groupName == x.id()).forEach(y => {
           this.cy.nodes(`#${y.id}`).move({ parent: x.id() });
         });
       });

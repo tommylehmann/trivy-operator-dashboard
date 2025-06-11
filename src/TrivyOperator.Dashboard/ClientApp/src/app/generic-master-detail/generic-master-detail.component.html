@@ -10,7 +10,7 @@
                        [trivyTableColumns]="mainTableColumns()"
                        (refreshRequested)="onRefreshRequested($event)"
                        (selectedRowsChanged)="onMainTableSelectionChange($event)"
-                       (trivyDetailsTableCallback)="onMainTableExpandCallback($event)"
+                       (rowExpandActionCallback)="onMainTableExpandCallback($event)"
                        (multiHeaderActionRequested)="onMainTableMultiHeaderActionRequested($event)"
 
                        [rowExpandData]="mainTableRowExpandResponse()"

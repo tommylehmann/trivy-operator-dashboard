@@ -211,3 +211,7 @@ p-splitter.tod-splitter-no-borders div.p-splitter {
 p-splitter.tod-splitter-no-background div.p-splitter {
   background: unset !important;
 }
+
+.tod-text-primary-color {
+  color: var(--p-primary-text-color)
+}
