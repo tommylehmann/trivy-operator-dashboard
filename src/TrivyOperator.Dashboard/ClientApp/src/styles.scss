@@ -18,7 +18,7 @@
   a:not([pRipple]):not(p-tieredmenu-item-link) {
     @apply text-blue-400 underline hover:text-blue-500 hover:no-underline;
   }
-
+  @import './../node_modules/material-icons/iconfont/material-icons.css';
   @import './app/themes/trivy-operator-dashboard.variables.css';
 }
 

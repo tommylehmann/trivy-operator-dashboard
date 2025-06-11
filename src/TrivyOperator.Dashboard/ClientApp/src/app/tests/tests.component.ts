@@ -7,9 +7,11 @@ import { RbacAssessmentReportService } from '../../api/services/rbac-assessment-
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
 import { TrivyTableColumn, TrivyTableExpandRowData } from '../trivy-table/trivy-table.types';
 
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-tests',
-  imports: [TrivyTableComponent],
+  imports: [TrivyTableComponent, MatIconModule],
   templateUrl: './tests.component.html',
   styleUrl: './tests.component.scss'
 })
