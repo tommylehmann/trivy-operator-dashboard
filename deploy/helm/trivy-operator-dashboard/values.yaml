@@ -98,12 +98,16 @@ resources: {}
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /healthz/live
     port: http
+  initialDelaySeconds: 30
+  periodSeconds: 30
 readinessProbe:
   httpGet:
-    path: /
+    path: /healthz/ready
     port: http
+  initialDelaySeconds: 30
+  periodSeconds: 30
 
 nodeSelector: {}
 

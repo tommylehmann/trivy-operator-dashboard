@@ -1,15 +1,23 @@
 ﻿using k8s;
 using k8s.Models;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using System.Reflection;
+using TrivyOperator.Dashboard.Application.HealthChecks;
 using TrivyOperator.Dashboard.Application.Services.Alerts;
 using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.AppVersions;
+using TrivyOperator.Dashboard.Application.Services.AppVersions.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.BackendSettings;
 using TrivyOperator.Dashboard.Application.Services.BackendSettings.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.CacheRefreshers;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.AppVersions;
-using TrivyOperator.Dashboard.Application.Services.AppVersions.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers;
+using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Namespaces;
 using TrivyOperator.Dashboard.Application.Services.Namespaces.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
@@ -29,8 +37,10 @@ using TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Trivy.VulnerabilityReport;
 using TrivyOperator.Dashboard.Application.Services.Trivy.VulnerabilityReport.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.Watchers;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.WatcherStateAlertRefreshers;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates.Abstractions;
 using TrivyOperator.Dashboard.Domain.Services;
@@ -47,17 +57,8 @@ using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Clients;
-using TrivyOperator.Dashboard.Infrastructure.Services;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using System.Reflection;
 using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
-using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
-using TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators;
-using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
-using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers;
-using TrivyOperator.Dashboard.Application.Services.WatcherStateAlertRefreshers;
+using TrivyOperator.Dashboard.Infrastructure.Services;
 
 namespace TrivyOperator.Dashboard.Application.Services.BuilderServicesExtensions;
 
@@ -374,6 +375,10 @@ public static class BuilderServicesExtensions
         }
         services.AddSingleton<IConcurrentCache<long, GitHubRelease>, ConcurrentCache<long, GitHubRelease>>();
         services.AddScoped<IAppVersionService, AppVersionService>();
+
+        services.AddHealthChecks()
+            .AddCheck<watchersLivenessHealthCheck>("watchers-liveness")
+            .AddCheck<WatchersReadinessHealthCheck>("watchers-readiness");
     }
 
     public static void AddUiCommons(this IServiceCollection services) =>

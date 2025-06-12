@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.HttpOverrides;
+﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Serilog;
@@ -123,6 +124,14 @@ if (!app.Environment.IsProduction())
 
 app.MapControllers();
 app.MapHub<AlertsHub>("/alerts-hub");
+app.MapHealthChecks("/healthz/live", new HealthCheckOptions
+{
+    Predicate = check => check.Name == "watchers-liveness"
+});
+app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Name == "watchers-readiness"
+});
 app.MapFallbackToFile("index.html");
 
 await app.RunAsync().ConfigureAwait(false);
