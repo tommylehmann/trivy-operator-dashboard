@@ -169,8 +169,6 @@ export class SbomReportsComponent implements OnInit {
 
   private readonly _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
 
-  faShieldHalved = faShieldHalved;
-
   queryNamespaceName?: string;
   queryDigest?: string;
   isStatic: boolean = false;

@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-
 import { Subscription } from 'rxjs';
 
 import { AlertDto } from '../../api/models/alert-dto';
 import { AlertsService } from '../services/alerts.service';
+import { DarkModeService } from '../services/dark-mode.service';
 import { MainAppInitService } from '../services/main-app-init.service';
 import { RouterEventEmitterService } from '../services/router-event-emitter.service';
 
@@ -13,34 +14,10 @@ import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { DrawerModule } from 'primeng/drawer';
 import { MenubarModule } from 'primeng/menubar';
+import { MenuItem } from 'primeng/api';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-
-import { MenuItem } from 'primeng/api';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
-
-import {
-  faClipboardList,
-  faGears,
-  faHouse,
-  faKey,
-  faServer,
-  faShieldHalved,
-  faUserShield,
-  faDiagramProject,
-  faFolderOpen,
-  faDharmachakra,
-  IconDefinition,
-} from '@fortawesome/free-solid-svg-icons';
-import { DarkModeService } from '../services/dark-mode.service';
-
-
-interface TrivyMenuItem extends MenuItem {
-  faIcon?: IconDefinition;
-}
 
 @Component({
   selector: 'app-nav-menu',
@@ -54,28 +31,18 @@ interface TrivyMenuItem extends MenuItem {
     TagModule,
     BadgeModule,
     ToastModule,
-    FontAwesomeModule,
+    MatIconModule,
   ],
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.scss'],
 })
 export class NavMenuComponent implements OnInit, OnDestroy {
-  items: TrivyMenuItem[] = [];
+  items: MenuItem[] = [];
   alertsCount: number = 0;
   alerts: AlertDto[] = [];
   enabledTrivyReports: string[] = ['crar', 'car', 'esr', 'vr'];
   activePage: string = "";
   isDrawerVisible = false;
-  faHouse = faHouse;
-  faShieldHalved = faShieldHalved;
-  faClipboardList = faClipboardList;
-  faUserShield = faUserShield;
-  faKey = faKey;
-  faGears = faGears;
-  faServer = faServer;
-  faDiagramProject = faDiagramProject;
-  faFolderOpen = faFolderOpen;
-  faDharmachakra = faDharmachakra;
   private alertSubscription!: Subscription;
 
   constructor(
@@ -88,10 +55,6 @@ export class NavMenuComponent implements OnInit, OnDestroy {
     this.routerEventEmitterService.title$.subscribe((title) => { this.activePage = title; });
     this.darkModeService.isDarkMode$.subscribe((isDarkMode) => { this.isDarkMode = isDarkMode; });
   }
-
-  //get isDarkMode(): boolean {
-  //  return this.mainAppInitService.isDarkMode;
-  //}
 
   isDarkMode: boolean = false;
 
@@ -133,7 +96,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
     this.items = [
       {
         label: 'Home',
-        faIcon: faHouse,
+        icon: 'home',
         command: () => {
           this.router.navigate(['/']);
           this.isDrawerVisible = false;
@@ -141,12 +104,12 @@ export class NavMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Namespaced',
-        faIcon: faFolderOpen,
+        icon: 'folder_copy',
         expanded: true,
         items: [
           {
             label: 'Vulnerabilities',
-            faIcon: this.faShieldHalved,
+            icon: 'security',
             disabled: !this.enabledTrivyReports.includes('vr'),
             command: () => {
               this.router.navigate(['/vulnerability-reports']);
@@ -155,7 +118,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'SBOMs',
-            faIcon: faDiagramProject,
+            icon: 'account_tree',
             disabled: !this.enabledTrivyReports.includes('sr'),
             command: () => {
               this.router.navigate(['/sbom-reports']);
@@ -164,7 +127,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Config Audits',
-            faIcon: faClipboardList,
+            icon: 'assignment',
             disabled: !this.enabledTrivyReports.includes('car'),
             command: () => {
               this.router.navigate(['/config-audit-reports']);
@@ -173,7 +136,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Exposed Secrets',
-            faIcon: faKey,
+            icon: 'key_off',
             disabled: !this.enabledTrivyReports.includes('esr'),
             command: () => {
               this.router.navigate(['/exposed-secret-reports']);
@@ -182,7 +145,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'RBAC Assessments',
-            faIcon: this.faUserShield,
+            icon: 'admin_panel_settings',
             disabled: !this.enabledTrivyReports.includes('rar'),
             command: () => {
               this.router.navigate(['/rbac-assessment-reports']);
@@ -193,12 +156,12 @@ export class NavMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Cluster Level',
-        faIcon: faDharmachakra,
+        icon: 'hive',
         expanded: true,
         items: [
           {
             label: 'Vulnerabilities',
-            faIcon: this.faShieldHalved,
+            icon: 'security',
             disabled: !this.enabledTrivyReports.includes('cvr'),
             command: () => {
               this.router.navigate(['/cluster-vulnerability-reports']);
@@ -207,7 +170,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'RBAC Assessments',
-            faIcon: faUserShield,
+            icon: 'admin_panel_settings',
             disabled: !this.enabledTrivyReports.includes('crar'),
             command: () => {
               this.router.navigate(['/cluster-rbac-assessment-reports']);
@@ -216,7 +179,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Compliance',
-            faIcon: faServer,
+            icon: 'storage',
             disabled: !this.enabledTrivyReports.includes('ccr'),
             command: () => {
               this.router.navigate(['/cluster-compliance-reports']);
@@ -227,12 +190,12 @@ export class NavMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Namespaced - Detailed',
-        faIcon: faFolderOpen,
+        icon: 'folder_copy',
         expanded: false,
         items: [
           {
             label: 'Vulnerabilities',
-            faIcon: this.faShieldHalved,
+            icon: 'security',
             disabled: !this.enabledTrivyReports.includes('vr'),
             command: () => {
               this.router.navigate(['/vulnerability-reports-detailed']);
@@ -241,7 +204,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Vulnerabilities Compare',
-            faIcon: this.faShieldHalved,
+            icon: 'security',
             disabled: !this.enabledTrivyReports.includes('vr'),
             command: () => {
               this.router.navigate(['/vulnerability-reports-compare']);
@@ -250,7 +213,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'SBOMs',
-            faIcon: faDiagramProject,
+            icon: 'account_tree',
             disabled: !this.enabledTrivyReports.includes('sr'),
             command: () => {
               this.router.navigate(['/sbom-reports-detailed']);
@@ -259,7 +222,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Config Audits',
-            faIcon: faClipboardList,
+            icon: 'assignment',
             disabled: !this.enabledTrivyReports.includes('car'),
             command: () => {
               this.router.navigate(['/config-audit-reports-detailed']);
@@ -268,7 +231,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Exposed Secrets',
-            faIcon: faKey,
+            icon: 'key_off',
             disabled: !this.enabledTrivyReports.includes('esr'),
             command: () => {
               this.router.navigate(['/exposed-secret-reports-detailed']);
@@ -277,7 +240,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'RBAC Assessments',
-            faIcon: this.faUserShield,
+            icon: 'admin_panel_settings',
             disabled: !this.enabledTrivyReports.includes('rar'),
             command: () => {
               this.router.navigate(['/rbac-assessment-reports-detailed']);
@@ -288,12 +251,12 @@ export class NavMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Cluster Level - Detailed',
-        faIcon: faDharmachakra,
+        icon: 'hive',
         expanded: false,
         items: [
           {
             label: 'Vulnerabilities',
-            faIcon: this.faShieldHalved,
+            icon: 'security',
             disabled: !this.enabledTrivyReports.includes('cvr'),
             command: () => {
               this.router.navigate(['/cluster-vulnerability-reports-detailed']);
@@ -302,7 +265,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'RBAC Assessments',
-            faIcon: faUserShield,
+            icon: 'admin_panel_settings',
             disabled: !this.enabledTrivyReports.includes('crar'),
             command: () => {
               this.router.navigate(['/cluster-rbac-assessment-reports-detailed']);
@@ -311,7 +274,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Compliance',
-            faIcon: faServer,
+            icon: 'storage',
             disabled: !this.enabledTrivyReports.includes('ccr'),
             command: () => {
               this.router.navigate(['/cluster-compliance-reports-detailed']);
@@ -322,11 +285,12 @@ export class NavMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'System',
-        faIcon: faGears,
+        icon: 'settings',
         expanded: true,
         items: [
           {
             label: 'Watcher States',
+            icon: 'visibility',
             command: () => {
               this.router.navigate(['/watcher-states']);
               this.isDrawerVisible = false;
@@ -334,6 +298,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Settings',
+            icon: 'settings_applications',
             command: () => {
               this.router.navigate(['/settings']);
               this.isDrawerVisible = false;
@@ -341,6 +306,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'About',
+            icon: 'chat_info',
             command: () => {
               this.router.navigate(['/about']);
               this.isDrawerVisible = false;

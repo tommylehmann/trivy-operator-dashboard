@@ -27,7 +27,7 @@
   <p-panelMenu styleClass="w-full" [model]="items" [multiple]="true">
     <ng-template let-item #item>
       <a pRipple class="flex items-center cursor-pointer text-color px-4 py-2">
-        <fa-icon *ngIf="item.faIcon" icon="" [icon]="item.faIcon"></fa-icon>
+        <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
         <span class="ml-2">{{ item.label }}</span>
         <!--<p-badge *ngIf="item.badge" [ngClass]="{ 'ml-auto': !root, 'ml-2': root }" [value]="item.badge" />-->
       </a>
