@@ -4,11 +4,13 @@
       <p-button icon="pi pi-search-plus" label="Zoom In" size="small" [text]="true" (onClick)="onZoomIn()" />
       <p-button icon="pi pi-search-minus" label="Zoom Out" size="small" [text]="true" (onClick)="onZoomOut()" />
       <p-button icon="pi pi-arrows-alt" label="Fit" size="small" [text]="true" (onClick)="onZoomFit()" />
+      <div class="h-4 w-px tod-separator mx-1"></div>
       <input type="search"
              pInputText
              [formControl]="inputFilterByNameControl"
              placeholder="Highlight by name..."
              style="width: 200px; font-size: 12px" />
+      <div class="h-4 w-px tod-separator mx-1"></div>
       <p-button *ngIf="!isStatic()"
                 label="Hide Node"
                 size="small"
@@ -16,7 +18,7 @@
                 [text]="true"
                 [disabled]="graphSelectedNodes.length == 0"
                 (onClick)="onDeleteNode()">
-        <fa-icon [icon]="faSquare" class="mr-2"></fa-icon>
+        <mat-icon class="text-sm">commit</mat-icon>
       </p-button>
       <p-button *ngIf="!isStatic()"
                 label="Hide Subtree"
@@ -25,7 +27,7 @@
                 [text]="true"
                 [disabled]="isStatic() || graphSelectedNodes.length == 0"
                 (onClick)="onDeleteNodeAndChildren()">
-        <fa-icon [icon]="faClone" class="mr-2"></fa-icon>
+        <mat-icon class="text-sm">graph_2</mat-icon>
       </p-button>
       <p-button *ngIf="!isStatic()"
                 label="Undo"
@@ -34,7 +36,7 @@
                 [text]="true"
                 [disabled]="isStatic() || currentDeletedNodesIndex == -1 || deletedNodes.length == 0"
                 (onClick)="onUndo()">
-        <fa-icon [icon]="faReply" class="mr-2"></fa-icon>
+        <mat-icon class="text-sm">undo</mat-icon>
       </p-button>
       <p-button *ngIf="!isStatic()"
                 label="Redo"
@@ -43,7 +45,7 @@
                 [text]="true"
                 [disabled]="isStatic() || currentDeletedNodesIndex >= deletedNodes.length - 1"
                 (onClick)="onRedo()">
-        <fa-icon [icon]="faShare" class="mr-2"></fa-icon>
+        <mat-icon class="text-sm">redo</mat-icon>
       </p-button>
       <p-button *ngIf="!isStatic()"
                 label="Show All"
@@ -52,8 +54,9 @@
                 [text]="true"
                 [disabled]="deletedNodes.length == 0 || this.currentDeletedNodesIndex == -1"
                 (onClick)="onShowAll()">
-        <fa-icon [icon]="faEye" class="mr-2"></fa-icon>
+        <mat-icon class="text-sm">visibility</mat-icon>
       </p-button>
+      <div class="h-4 w-px tod-separator mx-1"></div>
       <p-button *ngIf="!isStatic()"
                 icon="pi pi-question-circle"
                 size="small"

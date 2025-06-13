@@ -104,7 +104,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Namespaced',
-        icon: 'folder_copy',
+        icon: 'dynamic_feed',
         expanded: true,
         items: [
           {
@@ -118,7 +118,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'SBOMs',
-            icon: 'account_tree',
+            icon: 'graph_3',
             disabled: !this.enabledTrivyReports.includes('sr'),
             command: () => {
               this.router.navigate(['/sbom-reports']);
@@ -156,7 +156,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Cluster Level',
-        icon: 'hive',
+        icon: 'storage',
         expanded: true,
         items: [
           {
@@ -179,7 +179,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Compliance',
-            icon: 'storage',
+            icon: 'policy',
             disabled: !this.enabledTrivyReports.includes('ccr'),
             command: () => {
               this.router.navigate(['/cluster-compliance-reports']);
@@ -190,7 +190,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Namespaced - Detailed',
-        icon: 'folder_copy',
+        icon: 'dynamic_feed',
         expanded: false,
         items: [
           {
@@ -213,7 +213,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'SBOMs',
-            icon: 'account_tree',
+            icon: 'graph_3',
             disabled: !this.enabledTrivyReports.includes('sr'),
             command: () => {
               this.router.navigate(['/sbom-reports-detailed']);
@@ -251,7 +251,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Cluster Level - Detailed',
-        icon: 'hive',
+        icon: 'storage',
         expanded: false,
         items: [
           {
@@ -274,7 +274,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
           {
             label: 'Compliance',
-            icon: 'storage',
+            icon: 'policy',
             disabled: !this.enabledTrivyReports.includes('ccr'),
             command: () => {
               this.router.navigate(['/cluster-compliance-reports-detailed']);
@@ -290,7 +290,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         items: [
           {
             label: 'Watcher States',
-            icon: 'visibility',
+            icon: 'mystery',
             command: () => {
               this.router.navigate(['/watcher-states']);
               this.isDrawerVisible = false;

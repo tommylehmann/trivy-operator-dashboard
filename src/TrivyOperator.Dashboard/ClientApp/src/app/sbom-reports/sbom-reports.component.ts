@@ -32,10 +32,6 @@ import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNode } from 'primeng/api';
 
-import {
-  faShieldHalved,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GetSbomReportImageDtos$Params } from '../../api/fn/sbom-report/get-sbom-report-image-dtos';
 
 @Component({
@@ -44,8 +40,7 @@ import { GetSbomReportImageDtos$Params } from '../../api/fn/sbom-report/get-sbom
   imports: [CommonModule, FormsModule,
     FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
-    ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule,
-    FontAwesomeModule ],
+    ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
@@ -242,7 +237,7 @@ export class SbomReportsComponent implements OnInit {
       ?.map((x) => ({
         uid: x.uid ?? '', resourceNamespace: x.resourceNamespace ?? '',
         imageName: x.imageName ?? '', imageTag: x.imageTag ?? '',
-        icon: x.hasVulnerabilities ? faShieldHalved : undefined,
+        icon: x.hasVulnerabilities ? 'security' : undefined,
       } as NamespacedImageDto)) ?? [];
   }
   // #endregion

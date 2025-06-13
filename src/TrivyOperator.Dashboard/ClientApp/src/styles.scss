@@ -6,7 +6,9 @@
 
 @import '../node_modules/primeicons/primeicons.css';
 @plugin "tailwindcss-primeui";
-@layer tailwind, primeng, app-layer;
+@layer mat-icons, tailwind, primeng, app-layer;
+
+  @import './../node_modules/material-symbols/index' layer(base);
 
 @layer tailwind {
   @import "./styles/tailwind.local.css";
@@ -18,7 +20,6 @@
   a:not([pRipple]):not(p-tieredmenu-item-link) {
     @apply text-blue-400 underline hover:text-blue-500 hover:no-underline;
   }
-  @import './../node_modules/material-icons/iconfont/material-icons.css';
   @import './app/themes/trivy-operator-dashboard.variables.css';
 }
 
@@ -214,4 +215,24 @@ p-splitter.tod-splitter-no-background div.p-splitter {
 
 .tod-text-primary-color {
   color: var(--p-primary-text-color)
+}
+
+mat-icon.text-sm {
+  font-size: 1.25rem;
+  height: unset;
+  width: unset;
+}
+
+mat-icon.text-xs {
+  font-size: 1rem;
+  height: unset;
+  width: unset;
+}
+
+p-tag:has(> mat-icon) {
+  gap: unset;
+}
+
+.tod-separator {
+  background: var(--p-button-text-primary-color);
 }

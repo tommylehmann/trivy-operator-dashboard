@@ -1,24 +1,23 @@
 import { Component, effect, input, model, OnInit, output } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 import { NamespacedImageDto } from './namespace-image-selector.types';
 
 interface ImageDto {
   uid: string;
   imageNameTag: string;
-  icon?: IconDefinition;
+  icon?: string;
 }
 
 @Component({
   selector: 'app-namespace-image-selector',
-  imports: [FormsModule, ButtonModule, SelectModule, TagModule, FontAwesomeModule, NgIf],
+  imports: [FormsModule, ButtonModule, SelectModule, TagModule, NgIf, MatIconModule],
   templateUrl: './namespace-image-selector.component.html',
   styleUrl: './namespace-image-selector.component.scss'
 })

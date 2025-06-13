@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { debounceTime } from 'rxjs/operators';
 
 import cytoscape, { EdgeSingular, ElementDefinition, NodeSingular } from 'cytoscape';
@@ -26,16 +27,16 @@ import { TrivyToolbarComponent } from '../trivy-toolbar/trivy-toolbar.component'
 
 import { DeletedNodes, NodeDataDto } from './fcose.types'
 
-import {
-  faReply,
-  faShare,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  faEye,
-  faSquare,
-  faClone,
-} from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+// import {
+//   faReply,
+//   faShare,
+// } from '@fortawesome/free-solid-svg-icons';
+// import {
+//   faEye,
+//   faSquare,
+//   faClone,
+// } from '@fortawesome/free-regular-svg-icons';
+// import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DarkModeService } from '../services/dark-mode.service';
 
 cytoscape.use(fcose);
@@ -45,7 +46,7 @@ cytoscape.use(fcose);
   standalone: true,
   imports: [BreadcrumbModule, ButtonModule, DialogModule, InputTextModule, TagModule,
     TrivyToolbarComponent,
-    CommonModule, ReactiveFormsModule, FontAwesomeModule],
+    CommonModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './fcose.component.html',
   styleUrl: './fcose.component.scss',
 })
@@ -116,11 +117,11 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   private darkLightMode: 'Dark' | 'Light' = 'Dark';
 
-  faEye = faEye;
-  faReply = faReply;
-  faShare = faShare;
-  faClone = faClone;
-  faSquare = faSquare;
+  // faEye = faEye;
+  // faReply = faReply;
+  // faShare = faShare;
+  // faClone = faClone;
+  // faSquare = faSquare;
 
   isStatic = input<boolean>(false);
   staticSelectedNodeId = input<string | undefined>(undefined);

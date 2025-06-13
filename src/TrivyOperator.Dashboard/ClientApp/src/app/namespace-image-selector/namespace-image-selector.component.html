@@ -20,12 +20,10 @@
               [disabled]="disabled()"
               [(ngModel)]="selectedImageDto">
       <ng-template let-imageDto pTemplate="imageDtos">
-        <div class="flex items-center gap-2 w-full overflow-hidden">
+        <div class="flex items-center gap-2 w-full overflow-hidden text-sm">
           <div class="truncate whitespace-nowrap">{{ imageDto.imageNameTag }}</div>
-          <p-tag *ngIf="imageDto.icon" rounded>
-                <span>
-                  <fa-icon [icon]="imageDto.icon"></fa-icon> VRs
-                </span>
+          <p-tag *ngIf="imageDto.icon" rounded class="ml-auto">
+            <mat-icon class="text-xs">{{ imageDto.icon }}</mat-icon>
           </p-tag>
         </div>
       </ng-template>
