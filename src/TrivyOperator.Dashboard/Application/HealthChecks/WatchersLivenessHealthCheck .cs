@@ -8,7 +8,7 @@ namespace TrivyOperator.Dashboard.Application.HealthChecks;
 
 public class WatchersLivenessHealthCheck(
     IConcurrentCache<string, WatcherStateInfo> cache,
-    IOptions<WatchersOptions> options
+    IOptions<WatchersOptions> options,
     ILogger<WatchersLivenessHealthCheck> logger) : IHealthCheck
 {
     private readonly int timeFrameInSeconds = (int)((options.Value.WatchTimeoutInSeconds * 1.1) + 120);
