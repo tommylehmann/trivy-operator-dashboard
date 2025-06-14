@@ -88,7 +88,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=${{ env.SEMVERTAG }}
+            type=raw,value=${{ steps.gitversion.outputs.MajorMinorPatch }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -99,10 +101,11 @@ jobs:
           file: build/dockerfile
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.gitversion.outputs.MajorMinorPatch }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SEMVERTAG }}
-          # ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
+          # tags: |
+          #   ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.gitversion.outputs.MajorMinorPatch }}
+          #   ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SEMVERTAG }}
+          #   ${{ steps.meta.outputs.tags }}
           # tags: ${{ env.REGISTRY }}/raoulx24/trivydashboard:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

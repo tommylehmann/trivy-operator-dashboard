@@ -157,6 +157,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                             item.Metadata.Name,
                             item.Metadata.ResourceVersion);
                         await EnqueueWatcherEvent(watcherKey, type.ToWatcherEvent(), cancellationToken, item);
+                        retryCount = 0;
                     }
 
                     logger.LogDebug(

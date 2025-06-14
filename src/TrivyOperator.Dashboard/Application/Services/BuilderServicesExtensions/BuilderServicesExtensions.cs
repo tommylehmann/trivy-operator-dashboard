@@ -377,7 +377,7 @@ public static class BuilderServicesExtensions
         services.AddScoped<IAppVersionService, AppVersionService>();
 
         services.AddHealthChecks()
-            .AddCheck<watchersLivenessHealthCheck>("watchers-liveness")
+            .AddCheck<WatchersLivenessHealthCheck>("watchers-liveness")
             .AddCheck<WatchersReadinessHealthCheck>("watchers-readiness");
     }
 
