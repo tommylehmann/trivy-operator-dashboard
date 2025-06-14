@@ -129,6 +129,19 @@ p-card.h-full > .p-card.p-component {
   @apply h-full;
 }
 
+p-card.h-full > .p-card.p-component > .p-card-body {
+  @apply h-full;
+}
+
+p-card.h-full > .p-card.p-component > .p-card-body > .p-card-content {
+  @apply h-full;
+}
+
+p-card.tod-panel-mt-auto .p-card-content {
+  @apply flex flex-col;
+}
+
+
 p-card.p-card-bold-subtitle .p-card-subtitle {
   @apply font-bold;
 }

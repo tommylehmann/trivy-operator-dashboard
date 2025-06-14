@@ -2,7 +2,8 @@
   <p-panel header="Trivy Operator Dashboard" [toggleable]="true">
     <div class="grid grid-cols-12 gap-4">
       <div class="col-span-12 grid grid-cols-12 gap-4">
-        <div class="col-span-12 xl:col-span-6 flex items-start gap-4">
+        <div class="col-span-12 xl:col-span-6 flex flex-col sm:flex-row items-start gap-4">
+
           <div class="w-[300px] flex-none">
             <img src="assets/logo.blurred.png" alt="Trivy Operator Dashboard Logo"
                  class="w-full" height="512" width="512"/>
@@ -79,8 +80,8 @@
   <p class="text-lg font-semibold pb-2">Acknowledging the Building Blocks Behind the App</p>
   <div class="grid grid-cols-12 gap-4 items-stretch">
     <div *ngFor="let credit of credits" class="col-span-3 md:col-span-2 xl:col-span-1 items-stretch">
-      <p-card class="h-full small-header flex flex-col" header="{{ credit.name }}">
-        <div class="flex-col text-left pb-4">
+      <p-card class="h-full small-header tod-panel-mt-auto" header="{{ credit.name }}">
+        <div class="text-left pb-4">
           <div class="mt-2"><a href="{{ credit.homeUrl }}" target="_blank">Home</a></div>
           <div class="mt-2"><a href="{{ credit.gitUrl }}" target="_blank">Git</a></div>
           <div class="mt-2"><a href="{{ credit.docsUrl }}" target="_blank">Docs</a></div>
