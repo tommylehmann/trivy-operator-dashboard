@@ -25,6 +25,7 @@ export class AboutComponent {
   currentVersion?: AppVersion;
   latestVersion?: string;
   newVersionAvailable: boolean = false;
+  experimentalVersion: boolean = false;
 
   credits: AboutCredits[] = [
     {
@@ -81,7 +82,7 @@ export class AboutComponent {
   }
 
   private onCurrentVersion(data: AppVersion) {
-    this.currentVersion = data;
+    this.currentVersion = {fileVersion: '1.6.0', informationalVersion: '1.6.0'};
     this.checkNewVersionAvailable();
   }
 
@@ -104,5 +105,6 @@ export class AboutComponent {
     const parsedLastVersion = this.parseVersion(this.releaseNotes[0].tagName ?? "0.0");
 
     this.newVersionAvailable = parsedLastVersion - parsedCurrentVersion > 0;
+    this.experimentalVersion = parsedLastVersion - parsedCurrentVersion < 0;
   }
 }

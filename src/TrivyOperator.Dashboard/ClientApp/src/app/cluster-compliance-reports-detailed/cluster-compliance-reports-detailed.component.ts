@@ -198,7 +198,8 @@ export class ClusterComplianceReportsDetailedComponent {
         isSortable: true,
         multiSelectType: 'none',
         style: 'width: 140px; max-width: 140px; white-space: normal; text-align: right;',
-        renderType: 'standard',
+        renderType: 'severityValue',
+        extraFields: ['-1'],
       },
     ];
   }
