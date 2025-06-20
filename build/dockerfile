@@ -33,7 +33,7 @@ RUN find . -type f -name "*.css" -exec brotli -k -4 {} \;
 RUN find . -type f -name "*.html" -exec brotli -k -4 {} \;
 RUN find . -type f -name "*.svg" -exec brotli -k -4 {} \;
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble AS final
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled AS final
 
 COPY --from=build-dotnet /build /opt/trivy.dashboard
 COPY --from=build-node /src/dist/browser /opt/trivy.dashboard/wwwroot
