@@ -36,6 +36,7 @@ export class NamespaceImageSelectorComponent implements OnInit {
   }
 
   set selectedImageDto(value: ImageDto | undefined) {
+    console.log("mama", value);
     this.selectedImageId.set(value?.uid);
     this._selectedImageDto = value;
   }
@@ -90,6 +91,11 @@ export class NamespaceImageSelectorComponent implements OnInit {
           return 0;
         }
       });
+    // if cleared ns select
+    if (this.imageDtos?.length == 0) {
+      this.selectedImageDto = undefined;
+      return;
+    }
     // try to autoselect is selectedImageId is provided
     if (this.selectedImageId()) {
       const selectedImageDto = this.imageDtos
