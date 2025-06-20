@@ -27,16 +27,6 @@ import { TrivyToolbarComponent } from '../trivy-toolbar/trivy-toolbar.component'
 
 import { DeletedNodes, NodeDataDto } from './fcose.types'
 
-// import {
-//   faReply,
-//   faShare,
-// } from '@fortawesome/free-solid-svg-icons';
-// import {
-//   faEye,
-//   faSquare,
-//   faClone,
-// } from '@fortawesome/free-regular-svg-icons';
-// import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DarkModeService } from '../services/dark-mode.service';
 
 cytoscape.use(fcose);
@@ -116,12 +106,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private inputFilterByNameValue: string = "";
 
   private darkLightMode: 'Dark' | 'Light' = 'Dark';
-
-  // faEye = faEye;
-  // faReply = faReply;
-  // faShare = faShare;
-  // faClone = faClone;
-  // faSquare = faSquare;
 
   isStatic = input<boolean>(false);
   staticSelectedNodeId = input<string | undefined>(undefined);
@@ -768,19 +752,20 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.updateNavMenuItems(this.activeNodeId ?? "");
       setTimeout(() => {
         this.cy.elements().removeClass('hidden');
-        if (this.inputFilterByNameValue) {
-          this.onNodesHighlightByName(this.inputFilterByNameValue);
-        }
+        
         const node = this.cy.$(`#${this.selectedNodeId()}`);
         if (node) {
           node.select();
         }
+        if (this.inputFilterByNameValue) {
+          this.onNodesHighlightByName(this.inputFilterByNameValue);
+        }
         if (this.isStatic()) {
-          let node = this.cy.$(`#${this.staticSelectedNodeId}`);
+          let node = this.cy.$(`#${this.staticSelectedNodeId()}`);
           if (node) {
             this.highlightSelectedNode(node);
           }
-          node = this.cy.$(`#${this.staticHighlightedNodeId}`);
+          node = this.cy.$(`#${this.staticHighlightedNodeId()}`);
           if (node) {
             this.highlightHoveredNode(node);
           }

@@ -54,7 +54,7 @@
                   label="Clear Selected"
                   size="small"
                   text
-                  [disabled]="isTableRowSelected()"
+                  [disabled]="!isTableRowsSelected"
                   (onClick)="onTableClearSelected()" />
         <p-button *ngIf="dataKey() && isCollapseAllVisible()"
                   icon="pi pi-expand"
@@ -86,7 +86,7 @@
                   size="small"
                   text
                   [disabled]="'false'"
-                  (onClick)="multiHeaderActionGetCommand(multiHeaderActions()[0])" />
+                  (onClick)="multiHeaderActionGetCommand(multiHeaderActions()[0])()" />
         <p-splitbutton *ngIf="multiHeaderActions() && multiHeaderActions().length > 1"
                        [icon]="multiHeaderActions()[0].icon ?? 'pi pi-cog'"
                        [label]="multiHeaderActions()[0].specialAction ?? multiHeaderActions()[0].label"
@@ -96,7 +96,7 @@
                        text
                        [disabled]="'false'"
                        [model]="multiHeaderActionItems"
-                       (onClick)="multiHeaderActionGetCommand(multiHeaderActions()[0])">
+                       (onClick)="multiHeaderActionGetCommand(multiHeaderActions()[0])()">
         </p-splitbutton>
       </div>
     </ng-template>
@@ -153,6 +153,7 @@
               <p-multiSelect optionLabel="name"
                              placeholder="Any"
                              styleClass="text-sm"
+                             [style]="{ width: '200px' }"
                              [filter]="false"
                              [options]="filterSeverityOptions"
                              [showHeader]="false"

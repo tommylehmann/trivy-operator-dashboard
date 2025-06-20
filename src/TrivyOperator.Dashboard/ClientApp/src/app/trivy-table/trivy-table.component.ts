@@ -114,6 +114,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   multiHeaderActionItems: (MenuItem & { initialData: MultiHeaderAction })[] = [];
 
   selectedDataDtos?: any;
+  isTableRowsSelected = false;
   singleSelectDataDto = input<TData | undefined>();
 
   tableStateKey?: string;
@@ -185,14 +186,14 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   public onTableClearSelected() {
     this.selectedDataDtos = undefined;
+    this.isTableRowsSelected = false;
     this.updateMultiHeaderActionSelectionChanged();
   }
 
-  public isTableRowSelected(): boolean {
-    return this.selectedDataDtos ? this.selectedDataDtos.length > 0 : false;
-  }
+  
 
   onSelectionChange(event: any): void {
+    this.isTableRowsSelected = this.selectedDataDtos ? this.selectedDataDtos.length > 0 : false;
     this.updateMultiHeaderActionSelectionChanged();
     if (!event) {
       this.selectedRowsChanged.emit([]);
@@ -313,7 +314,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   protected multiHeaderActionGetCommand(actionItem: MultiHeaderAction): () => void {
     if (actionItem.specialAction) {
       switch (actionItem.specialAction) {
-        case "Go to Detailed \u29C9" :
+        case "Go to Detailed ⧉":
           return () => this.multiHeaderActionRequested.emit("goToDetailedPage");
         case "Clear Selection":
           return () => this.onTableClearSelected();

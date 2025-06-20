@@ -82,7 +82,7 @@ export class AboutComponent {
   }
 
   private onCurrentVersion(data: AppVersion) {
-    this.currentVersion = {fileVersion: '1.6.0', informationalVersion: '1.6.0'};
+    this.currentVersion = data;
     this.checkNewVersionAvailable();
   }
 

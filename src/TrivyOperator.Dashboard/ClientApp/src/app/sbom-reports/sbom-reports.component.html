@@ -56,30 +56,30 @@
                  class="px-2"/>
       <div class="mt-auto pb-1 pl-2" *ngIf="hoveredSbomDetailDto">
         <span>
-          <b>Name:</b> {{ hoveredSbomDetailDto.name ?? '' }} -
-          <b>Version:</b> {{ hoveredSbomDetailDto.version }} -
-          <b>Dependencies:</b> {{ hoveredSbomDetailDto.dependsOn?.length ?? 0 }}
+          <b>Name:</b> {{ hoveredSbomDetailDto?.name ?? '' }} -
+          <b>Version:</b> {{ hoveredSbomDetailDto?.version }} -
+          <b>Dependencies:</b> {{ hoveredSbomDetailDto?.dependsOn?.length ?? 0 }}
         </span>
         <p-tag class="ml-2"
                [rounded]="true"
-               [style]="0 | severityCssStyleById:(hoveredSbomDetailDto.criticalCount ?? -1)"
-               [value]="hoveredSbomDetailDto.criticalCount ?? -1 | vulnerabilityCount" />
+               [style]="0 | severityCssStyleById:(hoveredSbomDetailDto?.criticalCount ?? -1)"
+               [value]="hoveredSbomDetailDto?.criticalCount ?? -1 | vulnerabilityCount" />
         <p-tag class="ml-2"
                [rounded]="true"
-               [style]="1 | severityCssStyleById:(hoveredSbomDetailDto.highCount ?? -1)"
-               [value]="hoveredSbomDetailDto.highCount ?? -1 | vulnerabilityCount" />
+               [style]="1 | severityCssStyleById:(hoveredSbomDetailDto?.highCount ?? -1)"
+               [value]="hoveredSbomDetailDto?.highCount ?? -1 | vulnerabilityCount" />
         <p-tag class="ml-2"
                [rounded]="true"
-               [style]="2 | severityCssStyleById:(hoveredSbomDetailDto.mediumCount ?? -1)"
-               [value]="hoveredSbomDetailDto.mediumCount ?? -1 | vulnerabilityCount" />
+               [style]="2 | severityCssStyleById:(hoveredSbomDetailDto?.mediumCount ?? -1)"
+               [value]="hoveredSbomDetailDto?.mediumCount ?? -1 | vulnerabilityCount" />
         <p-tag class="ml-2"
                [rounded]="true"
-               [style]="3 | severityCssStyleById:(hoveredSbomDetailDto.lowCount ?? -1)"
-               [value]="hoveredSbomDetailDto.lowCount ?? -1 | vulnerabilityCount" />
+               [style]="3 | severityCssStyleById:(hoveredSbomDetailDto?.lowCount ?? -1)"
+               [value]="hoveredSbomDetailDto?.lowCount ?? -1 | vulnerabilityCount" />
         <p-tag class="ml-2"
                [rounded]="true"
-               [style]="4 | severityCssStyleById:(hoveredSbomDetailDto.unknownCount ?? -1)"
-               [value]="hoveredSbomDetailDto.unknownCount ?? -1 | vulnerabilityCount" />
+               [style]="4 | severityCssStyleById:(hoveredSbomDetailDto?.unknownCount ?? -1)"
+               [value]="hoveredSbomDetailDto?.unknownCount ?? -1 | vulnerabilityCount" />
       </div>
     </div>
   </ng-template>
