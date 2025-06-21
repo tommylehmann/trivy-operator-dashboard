@@ -220,11 +220,13 @@
                        [value]="rowData[extraField]" />
               </div>
             </div>
-            <p-tag *ngSwitchCase="'eosl' && rowData[col.field]"
-                   icon="pi pi-exclamation-circle"
-                   [rounded]="true"
-                   [style]="1 | severityCssStyleById:1"
-                   [value]="'true'" />
+            <div *ngSwitchCase="'eosl'">
+              <p-tag *ngIf="rowData[col.field]"
+                     icon="pi pi-exclamation-circle"
+                     [rounded]="true"
+                     [style]="1 | severityCssStyleById:1"
+                     [value]="'true'" />
+            </div>
             <p-tag *ngSwitchCase="'semaphore'"
                    [rounded]="true"
                    [style]="rowData[col.field] | semaphoreCssStyleByName"
