@@ -143,7 +143,7 @@
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-            <tr [ttRow]="rowNode">
+            <tr [ttRow]="rowNode" style="height: 49px">
               <td>
                 <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
                 {{ rowData.name }}
@@ -161,10 +161,11 @@
         <p-table scrollHeight="flex"
                  sortMode="multiple"
                  styleClass="p-datatable-sm text-sm p-0"
+                 [virtualScrollItemSize]="49"
                  [scrollable]="true"
                  [value]="selectedSbomReportImageDto?.resources ?? []">
           <ng-template pTemplate="header">
-            <tr>
+            <tr style="height: 49px">
               <th pSortableColumn="name" style="width: 55%">
                 Resource Name
                 <p-sortIcon field="name" />
@@ -180,7 +181,7 @@
             </tr>
           </ng-template>
           <ng-template let-resource pTemplate="body">
-            <tr>
+            <tr style="height: 49px">
               <td style="width: 55%">
                 {{ resource.name }}
               </td>
@@ -209,7 +210,7 @@
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-            <tr [ttRow]="rowNode">
+            <tr [ttRow]="rowNode" style="height: 49px">
               <td>
                 <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
                 {{ rowData.name }}
