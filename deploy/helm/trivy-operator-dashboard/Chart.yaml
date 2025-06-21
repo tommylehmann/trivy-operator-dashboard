@@ -4,6 +4,6 @@ description: A Helm chart for Trivy Operator Dashboard
 
 type: application
 
-version: "1.4"
+version: "1.6"
 
-appVersion: "1.4"
+appVersion: "1.6"

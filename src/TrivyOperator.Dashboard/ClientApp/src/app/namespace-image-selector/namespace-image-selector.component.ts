@@ -36,7 +36,6 @@ export class NamespaceImageSelectorComponent implements OnInit {
   }
 
   set selectedImageDto(value: ImageDto | undefined) {
-    console.log("mama", value);
     this.selectedImageId.set(value?.uid);
     this._selectedImageDto = value;
   }

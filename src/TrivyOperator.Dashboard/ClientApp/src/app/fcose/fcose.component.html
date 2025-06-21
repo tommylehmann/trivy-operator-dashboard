@@ -67,7 +67,8 @@
     </div>
   </app-trivy-toolbar>
   <div class="flex items-center col-span-12 p-0">
-    <p-breadcrumb class="breadcrumb-no-background breadcrumb-no-overflow pl-2.5"
+    <p-breadcrumb *ngIf="!isStatic()"
+                  class="breadcrumb-no-background breadcrumb-no-overflow pl-2.5"
                   [home]="navHome"
                   [model]="navItems"
                   (onItemClick)="onNavItemClick($event)"/>
