@@ -53,6 +53,15 @@
     "Properties": {
       "Application": "TrivyOperator.Dashboard",
       "Audience": "System"
-    }
+    },
+    "Using": [ "Serilog.Expressions" ],
+    "Filter": [
+      {
+        "Name": "ByExcluding",
+        "Args": {
+          "expression": "RequestPath like '/health%' and StatusCode >= 100 and StatusCode < 400"
+        }
+      }
+    ]
   }
 }
