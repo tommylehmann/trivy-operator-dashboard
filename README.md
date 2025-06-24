@@ -26,6 +26,7 @@ The application exposes the following reports:
 - Cluster Compliance Reports
 - Cluster Vulnerability Report
 - RBAC Assessment Report
+- SBOM Reports
 
 All of them consist of dashboards (for view at a glance), browse and inspect findings (with table filters, sorts),
 export data.
@@ -36,9 +37,9 @@ This app is fully operational, with new features currently in development.
 
 ## Why we did it. The Story Behind Trivy Operator Dashboard
 
-A few months ago, at the start of summer, two friends convened on a terrace. One voiced concerns about the
+At the start of summer of '24, two friends convened on a terrace. One voiced concerns about the
 labor-intensive process of manually parsing vulnerabilities. As they discussed the challenges, a pivotal question
-arose: "Should we do it? Why not?" This moment marked the beginning of this journey to streamline and automate the
+arose: "Should *we* do it? Why not?" This moment marked the beginning of this journey to streamline and automate the
 process. What we had in mind:
 
 1. **Security is Imperative:** In our professional life, our dedication to security led us to create Trivy Operator
@@ -66,7 +67,7 @@ While we recognize the potential value these features could bring, our current a
 on perfecting the core functionality of the dashboard. However, we remain open to the possibility of expanding its
 capabilities if the app gains significant traction and user demand increases.
 
-For now, our priority is to deliver the rest of the provided features by Trivy (such as SBOMs and so on), to have a
+For now, our priority is to deliver the rest of the provided features by Trivy, to have a
 robust and reliable dashboard that meets
 immediate needs and serves the community effectively.
 
@@ -88,9 +89,9 @@ Tested under:
 
 | App name       | Version(s)              |
 |----------------|-------------------------|
-| Kubernetes     | 1.28 - 1.30; Linux; x64 |
-| Trivy Operator | 0.22                    |
-| Windows        | 10, 11; x64, arm64      |
+| Kubernetes     | 1.30 - 1.32; Linux; x64 |
+| Trivy Operator | 0.23                    |
+| Windows        | 11; x64, arm64          |
 
 Browsers: tested mainly using Edge. Also tested on Chrome, Firefox and Opera.
 

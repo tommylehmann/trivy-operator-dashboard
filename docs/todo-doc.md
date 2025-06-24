@@ -33,3 +33,7 @@ Export to CycloneDX - server side, zip file, async (signalr?)
 
 Advertise latest version
 https://api.github.com/repos/raoulx24/trivy-operator-dashboard/releases/latest
+
+## Misc
+
+Rearrange doc. Maybe wiki?

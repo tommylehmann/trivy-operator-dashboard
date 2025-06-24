@@ -418,10 +418,13 @@ export class SbomReportsComponent implements OnInit {
         }
         break;
       case "Export CycloneDX JSON":
-        this.onExportCycloneDXJSON('json');
+        this.exportSbom('cyclonedx','json');
         break;
       case "Export CycloneDX XML":
-        this.onExportCycloneDXJSON('xml');
+        this.exportSbom('cyclonedx','xml');
+        break;
+      case "Export SPDX":
+        this.exportSbom('spdx','json');
         break;
       case "Go to Vulnerability Report \u29C9":
         this.goToVr();
@@ -454,32 +457,32 @@ export class SbomReportsComponent implements OnInit {
     this.isSbomReportOverviewDialogVisible = true;
   }
 
-  onExportCycloneDXJSON(contentType: 'json' | 'xml') {
+  exportSbom(fileFormat: 'cyclonedx' | 'spdx', contentType: 'json' | 'xml') {
     const apiRoot = this.service.rootUrl;
     const namespaceName = encodeURIComponent(this.selectedSbomReportImageDto?.resourceNamespace ?? "");
     const digest = encodeURIComponent(this.selectedSbomReportImageDto?.imageDigest ?? "");
-    const fileUrl = `${apiRoot}/api/sbom-reports/cyclonedx?digest=${digest}&namespaceName=${namespaceName}`;
+    const fileUrl = `${apiRoot}/api/sbom-reports/${fileFormat}?digest=${digest}&namespaceName=${namespaceName}`;
 
     const headers = new HttpHeaders({
-      'Accept': contentType === 'json' ? 'application/json' : 'application/xml'
+      'Accept': contentType === 'json' || fileFormat === 'spdx' ? 'application/json' : 'application/xml'
     });
 
     this.http.get(fileUrl, { headers, responseType: 'text' }).subscribe({
       next: (response: string) => {
         const imageNameTag = `${this.selectedSbomReportImageDto?.imageName}:${this.selectedSbomReportImageDto?.imageTag}`
-        const blob = new Blob([response], { type: contentType === 'json' ? 'application/json' : 'application/xml' });
+        const blob = new Blob([response], { type: contentType === 'json' || fileFormat === 'spdx' ? 'application/json' : 'application/xml' });
 
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
 
-        link.download = `sbom_cyclonedx_${imageNameTag}.${contentType}`;
+        link.download = `sbom_${fileFormat}_${imageNameTag}.${contentType}`;
         link.click();
 
         window.URL.revokeObjectURL(url);
       },
       error: (err) => {
-        console.error(`Error fetching the file as ${contentType.toUpperCase()}:`, err);
+        console.error(`Error fetching the file as ${contentType}:`, err);
       }
     });
   }
