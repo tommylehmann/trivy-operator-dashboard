@@ -43,7 +43,7 @@ In all tables you can find various action buttons **(3)**, most of the columns c
 
 If **(8)** is a Split Button, then the popup can be used to filter the data directly from the server. This can be useful, as an example, if you're a developer and want to view only severities that are Critical, High and Medium from a specific namespace.
 
-Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button **(9)**
+Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button **(9)**, which provides access to various Trivy Report–specific actions.
 
 ![](imgs/vr-filter.png)
 <br>*Server-side filter*
@@ -54,6 +54,15 @@ In this mode, all data is denormalized in a single large table, with all info fr
 
 ![](imgs/vr-detailed.png)
 <br>*Details page*
+
+### Compare
+
+If needed, two Trivy Reports can be compared to quickly identify differences. The comparison is performed by displaying report details side by side and using compound keys for existence-based comparison. For example, in Vulnerability Reports, the comparison key includes both the CVE and the associated Resource.
+
+![](imgs/vr-compare.png)
+<br>*Vulnerability Reports Compare page*
+
+> **Note:** Currently, only Vulnerability Report comparison is available. Additional comparison features may be introduced in future releases based on demand. For instance, while SBOM comparison functionality exists, it is not currently activated, as its current form does not provide sufficient business value. Improvements are planned for a future release.
 
 ## SBOM Reports
 
@@ -69,10 +78,10 @@ The table includes **Image selection** **(3)**, **Refresh** button **(4)**, **Mu
 
 **Multi action** button contains many useful actions. Specific to SBOM:
 - **Info** will display an in-depth information page. See *Info page* below
-- **Dive In** will change the current root element in table and in graph
+- **Dive In** will change the current root element in table and in graph (with redraw)
 - **Export to CycloneDX** (XML or JSON) and **Export to SPDX** (JSON)
 
-SBOMs can be exported in CycloneDX format on both the Inspect/Browse and Detailed pages, while SPDX format is available only on the Inspect/Browse page and it is experimental.
+SBOMs can be exported in CycloneDX format (XML and JSON) on both the Inspect/Browse and Detailed pages. SPDX format (JSON) is available only on the Inspect/Browse page and is currently experimental.
 
 ### Info Page
 
@@ -80,7 +89,7 @@ It has 4 sections:
 - SBOM and Vulnerabilities **(1)**
 - Image usage info **(2)**
 - License usage per component **(3)**
-- A property pivot displayed as a tree structure, showing each Name, its corresponding Values, and the BomRefs associated with those values **(4)**
+- A property pivot displayed as a tree structure, showing each Property Name, its corresponding Values, and the BomRefs associated with those values **(4)**
 
 ![](imgs/sbom-info.png)
 <br>*SBOM Info Page*
@@ -88,11 +97,13 @@ It has 4 sections:
 ### Graph
 
 It consists in 3 sections:
+![](imgs/sbom-graph-toolbar.png)
+<br>*SBOM Graph*
 1. Toolbar. Here, various actions can be performed over the graph:
     - **Zoom In**, **Zoom Out** and **Fit** - These actions are self-explanatory
     - search for nodes by a string in their name
     - "edit" part of the graph. More info a bit down, in *Interaction with Graph* 
-2. Navigation - Displayed when a **Dive In** action is performed on the graph. A **Dive in** action is drawing only the part of the graph that contains the descendants (direct or indirect) of the selected node that becomes the new root
+2. Navigation - History of **Dive In** actions performed on the graph. A **Dive in** action is drawing only the part of the graph that contains the descendants (direct or indirect) of the selected node that becomes the new root
 3. The graph. A synthetic graph is as follows:
 
 ![](imgs/sbom-graph.png)
@@ -130,7 +141,7 @@ It consists in 3 sections:
 
 ## Others
 
-### Watcher States
+### Watcher Status
 
 The backend uses Kubernetes Watchers to get the changes in real-time. Their states (running, errors) can be seen here with remediation solutions.
 
@@ -159,6 +170,9 @@ The page provides essential information about the app, including version details
 **Release Notes** document recent updates, including improvements and bug fixes.
 
 **Credits** lists the technologies and frameworks that support the app.
+
+![](imgs/about.png)
+<br>*About Page*
 
 ### Dark/Light Mode
 
