@@ -25,6 +25,8 @@ Add CreationDate in all CRs and dtos
 
 Github versions - Timed Hosted Service - alert if error
 
+IEnumerable all the way
+
 ## Both
 
 Export to CycloneDX - server side, zip file, async (signalr?)
