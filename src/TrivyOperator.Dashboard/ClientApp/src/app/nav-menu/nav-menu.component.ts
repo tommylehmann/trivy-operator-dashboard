@@ -289,10 +289,10 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         expanded: true,
         items: [
           {
-            label: 'Watcher States',
+            label: 'Watcher Status',
             icon: 'mystery',
             command: () => {
-              this.router.navigate(['/watcher-states']);
+              this.router.navigate(['/watcher-status']);
               this.isDrawerVisible = false;
             },
           },

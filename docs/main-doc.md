@@ -97,6 +97,7 @@ It has 4 sections:
 ### Graph
 
 It consists in 3 sections:
+
 ![](imgs/sbom-graph-toolbar.png)
 <br>*SBOM Graph*
 1. Toolbar. Here, various actions can be performed over the graph:
@@ -141,12 +142,12 @@ It consists in 3 sections:
 
 ## Others
 
-### Watcher Status
+### Watchers Status
 
 The backend uses Kubernetes Watchers to get the changes in real-time. Their states (running, errors) can be seen here with remediation solutions.
 
-![](imgs/watcher-states.png)
-<br>*Watcher States*
+![](imgs/watcher-status.png)
+<br>*Watcher Status*
 
 > **Note:** If any watcher is in an error state, an alert will be triggered, and a Notification Bell appears in the top menu bar.
 

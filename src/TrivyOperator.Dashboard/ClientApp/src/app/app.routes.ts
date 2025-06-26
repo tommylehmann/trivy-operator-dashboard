@@ -113,10 +113,10 @@ export const routes: Routes = [
     data: { title: 'RBAC Assessment Reports Detailed' },
   },
   {
-    path: 'watcher-states',
+    path: 'watcher-status',
     loadComponent: () => import('./watcher-state/watcher-state.component').then(
       (m) => m.WatcherStateComponent),
-    data: { title: 'Watcher State' },
+    data: { title: 'Watcher Status' },
   },
   {
     path: 'settings',
