@@ -22,6 +22,7 @@ public class StaticNamespaceWatcher(
             {
                 KubernetesObject = kubernetesNamespace,
                 WatcherEventType = WatcherEventType.Added,
+                IsStatic = true,
             };
 
             await backgroundQueue.QueueBackgroundWorkItemAsync(watcherEvent, cancellationToken);

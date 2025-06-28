@@ -27,33 +27,31 @@ The **Distinct values** **(5)** groups identical values in order to provide a cl
 
 ### Inspect mode (Browse)
 
-This page groups reports to simplify inspection. The layout is a classic master **(1)** - details **(2)** one.
+The layout is a classic master **(1)** - details **(2)** one. This page groups reports to simplify inspection, if needed. Between the two tables, there is a splitter, that allows fast changing of their ratio/size.
 
 In the case of Vulnerability Reports, the master table **(1)** contains the images and the detail table **(2)** the related vulnerabilities. Identical images are grouped to avoid duplication, and their usage by Replicasets, Statefulsets, Jobs etc. can be seen by accessing **(6)**.
 
 ![](imgs/vr-dark.png)
 <br>*Inspect (browse) page*
 
-In all tables you can find various action buttons **(3)**, most of the columns can be filtered and sorted **(4)**. Depending on the case, some tables support row expansion **(5)**, if more info can be displayed **(6)** (and *Image usage in namespace*)
-
- Between the two tables, there is a splitter, that allows fast changing of their ratio/size **(7)**.
+In all tables you can find various action buttons **(3)**, most of the columns can be filtered and sorted **(4)**. Depending on the case, some tables support row expansion **(5)**, if more info can be displayed **(6)** (and **(7)** - *Image usage in namespace*, where applicable)
 
 ![](imgs/vr-image-usage.png)
 <br>*Image usage in namespace*
 
 If **(8)** is a Split Button, then the popup can be used to filter the data directly from the server. This can be useful, as an example, if you're a developer and want to view only severities that are Critical, High and Medium from a specific namespace.
 
-Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button **(9)**, which provides access to various Trivy Report–specific actions.
-
 ![](imgs/vr-filter.png)
 <br>*Server-side filter*
+
+Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button **(9)**, which provides access to various Trivy Report–specific actions.
 
 ### Detailed
 
 In this mode, all data is denormalized in a single large table, with all info from Reports. Filtering, sorting and CSV export are available.
 
 ![](imgs/vr-detailed.png)
-<br>*Details page*
+<br>*Detailed page*
 
 ### Compare
 
@@ -71,17 +69,17 @@ Unlike other reports, SBOM Reports are not well-suited for a simple master-detai
 ![](imgs/sbom.png)
 <br>*SBOM page*
 
-The table includes **Image selection** **(3)**, **Refresh** button **(4)**, **Multi action** button **(5)** and the list of BomRefs - for any of them, properties can be visualized **(6)**.
+The table includes **Image selection** **(3)**, **Refresh** button **(4)**, **Multi action** button **(5)** and the list of BomRefs - for any of them, properties can be visualized **(6)**. Whenever possible, info from related Vulenrability Report is provided also here.
 
 ![](imgs/sbom-img-selection.png)
-<br>*Image Selection* - The shield icon next to the image name indicates that a Vulnerability Report is also available
+<br>*Image Selection **(3)*** - The shield icon next to the image name indicates that a Vulnerability Report is also available
 
 **Multi action** button contains many useful actions. Specific to SBOM:
 - **Info** will display an in-depth information page. See *Info page* below
 - **Dive In** will change the current root element in table and in graph (with redraw)
 - **Export to CycloneDX** (XML or JSON) and **Export to SPDX** (JSON)
 
-SBOMs can be exported in CycloneDX format (XML and JSON) on both the Inspect/Browse and Detailed pages. SPDX format (JSON) is available only on the Inspect/Browse page and is currently experimental.
+SBOMs can be exported in CycloneDX format (XML and JSON) on both the Inspect/Browse and Detailed/Denormalized pages (bulk export). SPDX format (JSON) is available only on the Inspect/Browse page and is currently experimental.
 
 ### Info Page
 
@@ -125,9 +123,9 @@ It consists in 3 sections:
 
 #### Color Intensity
 
-- **Darker (red or blue)** - Parent of selected/hovered nodes
-- **Lighter (red or blue)** - Child of selected/hovered nodes
-- **Gradient (red or blue)** - Selected/hovered nodes. These nodes are also emphasized using a strong contrasting border
+- **Darker (red or blue)** - Parent of selected/hovered node
+- **Lighter (red or blue)** - Child of selected/hovered node
+- **Gradient (red or blue)** - Selected/hovered node. These nodes are also emphasized using a strong contrasting border
 - **Haloed (red or blue)** - Circular reference. Those nodes also depend on selected/hovered node
 - **Dimmed** - Unhighlighted Nodes. Their names do not include the searched term
 

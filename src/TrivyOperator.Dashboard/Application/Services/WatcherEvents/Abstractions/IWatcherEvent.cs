@@ -9,4 +9,5 @@ public interface IWatcherEvent<TKubernetesObject>
     TKubernetesObject? KubernetesObject { get; init; }
     string WatcherKey { get; init; }
     Exception? Exception { get; init; }
+    bool IsStatic { get; init; }
 }

@@ -15,6 +15,10 @@ public class WatcherState<TKubernetesObject>(
 {
     public Task ProcessKubernetesEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
+        if (watcherEvent.IsStatic)
+        {
+            return Task.CompletedTask;
+        }
         switch (watcherEvent.WatcherEventType)
         {
             case WatcherEventType.Added:
