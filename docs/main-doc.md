@@ -27,24 +27,24 @@ The **Distinct values** **(5)** groups identical values in order to provide a cl
 
 ### Inspect mode (Browse)
 
-The layout is a classic master **(1)** - details **(2)** one. This page groups reports to simplify inspection, if needed. Between the two tables, there is a splitter, that allows fast changing of their ratio/size.
+The layout is a classic master **(1)** - details **(2)** one. This page groups reports to simplify inspection, if needed. Between the two tables, there is a splitter **(3)**, that allows fast changing of their ratio/size.
 
-In the case of Vulnerability Reports, the master table **(1)** contains the images and the detail table **(2)** the related vulnerabilities. Identical images are grouped to avoid duplication, and their usage by Replicasets, Statefulsets, Jobs etc. can be seen by accessing **(6)**.
+As an example, in the case of Vulnerability Reports, the master table **(1)** contains the images and the detail table **(2)** the related vulnerabilities. 
 
 ![](imgs/vr-dark.png)
 <br>*Inspect (browse) page*
 
-In all tables you can find various action buttons **(3)**, most of the columns can be filtered and sorted **(4)**. Depending on the case, some tables support row expansion **(5)**, if more info can be displayed **(6)** (and **(7)** - *Image usage in namespace*, where applicable)
-
-![](imgs/vr-image-usage.png)
-<br>*Image usage in namespace*
-
-If **(8)** is a Split Button, then the popup can be used to filter the data directly from the server. This can be useful, as an example, if you're a developer and want to view only severities that are Critical, High and Medium from a specific namespace.
+In all tables you can find various action buttons **(4)**, most of the columns can be filtered and sorted **(5)**.  If **(6)** is a Split Button, then the popup can be used to filter the data directly from the server. This can be useful, as an example, if you're a developer and want to view only severities that are Critical, High and Medium from a specific namespace.
 
 ![](imgs/vr-filter.png)
 <br>*Server-side filter*
 
-Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button **(9)**, which provides access to various Trivy Report–specific actions.
+Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button, which provides access to various Trivy Report–specific actions. As an example, in the case of Vulnerability Reports, as specific actions, we have Go to Detailed, Go to SBOM (related one) and Compare Vulnerabilities.
+
+Depending on the case, some tables support row expansion **(7)**, if more info can be displayed **(8)**. In the case of Vulnerability Reports, identical images are grouped to avoid duplication, and their usage by Replicasets, Statefulsets, Jobs etc. can be seen by accessing **(9)**.
+
+![](imgs/vr-image-usage.png)
+<br>*Image usage in namespace*
 
 ### Detailed
 
@@ -69,7 +69,7 @@ Unlike other reports, SBOM Reports are not well-suited for a simple master-detai
 ![](imgs/sbom.png)
 <br>*SBOM page*
 
-The table includes **Image selection** **(3)**, **Refresh** button **(4)**, **Multi action** button **(5)** and the list of BomRefs - for any of them, properties can be visualized **(6)**. Whenever possible, info from related Vulenrability Report is provided also here.
+The table includes **Image selection** **(3)**, **Refresh** button **(4)**, **Multi action** button **(5)** and the list of BomRefs - for any of them, properties can be visualized **(6)**. Whenever possible, info from related Vulnerability Report is provided also here.
 
 ![](imgs/sbom-img-selection.png)
 <br>*Image Selection **(3)*** - The shield icon next to the image name indicates that a Vulnerability Report is also available
@@ -84,17 +84,17 @@ SBOMs can be exported in CycloneDX format (XML and JSON) on both the Inspect/Bro
 ### Info Page
 
 It has 4 sections:
-- SBOM and Vulnerabilities **(1)**
-- Image usage info **(2)**
-- License usage per component **(3)**
-- A property pivot displayed as a tree structure, showing each Property Name, its corresponding Values, and the BomRefs associated with those values **(4)**
+- SBOM and Vulnerabilities
+- Image usage info
+- License usage per component
+- A property pivot displayed as a tree structure, showing each Property Name, its corresponding Values, and the BomRefs associated with those values
 
 ![](imgs/sbom-info.png)
 <br>*SBOM Info Page*
 
 ### Graph
 
-It consists in 3 sections:
+It consists of 3 sections:
 
 ![](imgs/sbom-graph-toolbar.png)
 <br>*SBOM Graph*
@@ -151,7 +151,7 @@ The backend uses Kubernetes Watchers to get the changes in real-time. Their stat
 
 ### Settings
 
-It consists in four main sections:
+It consists of four main sections:
 - Table States - all tables from the app persist their states (column order and size, sorts, filters etc.). Here you can clear the saved state as needed.
 - CSV File Names - all file names used for exports to CSV are persisted. If you wish to change their defaults, here it is the place to do it
 - Trivy Reports States - here sections related to a Trivy Report can be (in)activated in the frontend (i.e. there is no need to use Config Audit Reports). Also, if inactivated in the backend, it will also be reflected here.
