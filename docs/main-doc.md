@@ -29,8 +29,6 @@ The **Distinct values** **(5)** groups identical values in order to provide a cl
 
 The layout is a classic master **(1)** - details **(2)** one. This page groups reports to simplify inspection, if needed. Between the two tables, there is a splitter **(3)**, that allows fast changing of their ratio/size.
 
-As an example, in the case of Vulnerability Reports, the master table **(1)** contains the images and the detail table **(2)** the related vulnerabilities. 
-
 ![](imgs/vr-dark.png)
 <br>*Inspect (browse) page*
 
@@ -40,6 +38,8 @@ In all tables you can find various action buttons **(4)**, most of the columns c
 <br>*Server-side filter*
 
 Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button, which provides access to various Trivy Report–specific actions. As an example, in the case of Vulnerability Reports, as specific actions, we have Go to Detailed, Go to SBOM (related one) and Compare Vulnerabilities.
+
+> **Note:** A '⧉' icon next to a menu item indicates that the action will open in a new browser tab.
 
 Depending on the case, some tables support row expansion **(7)**, if more info can be displayed **(8)**. In the case of Vulnerability Reports, identical images are grouped to avoid duplication, and their usage by Replicasets, Statefulsets, Jobs etc. can be seen by accessing **(9)**.
 
@@ -79,15 +79,15 @@ The table includes **Image selection** **(3)**, **Refresh** button **(4)**, **Mu
 - **Dive In** will change the current root element in table and in graph (with redraw)
 - **Export to CycloneDX** (XML or JSON) and **Export to SPDX** (JSON)
 
-SBOMs can be exported in CycloneDX format (XML and JSON) on both the Inspect/Browse and Detailed/Denormalized pages (bulk export). SPDX format (JSON) is available only on the Inspect/Browse page and is currently experimental.
+> **Note:** SBOMs can be exported in CycloneDX format (XML and JSON) on both the Inspect/Browse and Detailed/Denormalized pages (bulk export). SPDX format (JSON) is available only on the Inspect/Browse page and is currently experimental.
 
 ### Info Page
 
 It has 4 sections:
-- SBOM and Vulnerabilities
+- SBOM and Vulnerabilities (if available)
 - Image usage info
 - License usage per component
-- A property pivot displayed as a tree structure, showing each Property Name, its corresponding Values, and the BomRefs associated with those values
+- A BomRef property pivot displayed as a tree structure, showing each Property Name, its corresponding Values, and the BomRefs associated with those values
 
 ![](imgs/sbom-info.png)
 <br>*SBOM Info Page*
