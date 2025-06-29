@@ -177,34 +177,32 @@ public class SbomReportService(
             Guid fileNameGuid = Guid.NewGuid();
             string zipFileName = Path.Combine(fileExportOptions.Value.TempFolder, $"{fileNameGuid}_sbom.zip");
 
-            using (var zipFileStream = new FileStream(zipFileName, FileMode.Create))
-            using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Create))
+            await using var zipFileStream = new FileStream(zipFileName, FileMode.Create);
+            using var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Create);
+            foreach (SbomReportExportDto exportSbom in exportSboms)
             {
-                foreach (SbomReportExportDto exportSbom in exportSboms)
-                {
-                    CycloneDxBom? cycloneDxBom = await GetCycloneDxBomByDigestNamespace(exportSbom.Digest, exportSbom.NamespaceName);
+                CycloneDxBom? cycloneDxBom = await GetCycloneDxBomByDigestNamespace(exportSbom.Digest, exportSbom.NamespaceName);
 
-                    if (cycloneDxBom == null)
-                    {
-                        logger.LogWarning("CycloneDxBom not found for {Digest} in {NamespaceName}",
-                            exportSbom.Digest, exportSbom.NamespaceName);
-                        continue;
-                    }
-                    string imageName = cycloneDxBom.Metadata?.Component?.Name ?? string.Empty;
-                    string imageVersion = cycloneDxBom.Metadata?.Component?.Version ?? string.Empty;
-                    string fileExtension = fileType.ToLower() == "json" ? "json" : "xml";
-                    string fileName = InvalidFileNameCharsRegex.Replace(
-                        $"{exportSbom.NamespaceName}_{imageName}_{imageVersion}_{exportSbom.Digest}.${fileExtension}", "_");
-                    using var stream = archive.CreateEntry(fileName).Open();
-                    if (fileType == "json")
-                    {
-                        JsonSerializer.Serialize(stream, cycloneDxBom);
-                    }
-                    else
-                    {
-                        var serializer = new System.Xml.Serialization.XmlSerializer(cycloneDxBom.GetType());
-                        serializer.Serialize(stream, cycloneDxBom);
-                    }
+                if (cycloneDxBom == null)
+                {
+                    logger.LogWarning("CycloneDxBom not found for {Digest} in {NamespaceName}",
+                        exportSbom.Digest, exportSbom.NamespaceName);
+                    continue;
+                }
+                string imageName = cycloneDxBom.Metadata?.Component?.Name ?? string.Empty;
+                string imageVersion = cycloneDxBom.Metadata?.Component?.Version ?? string.Empty;
+                string fileExtension = fileType.ToLower() == "json" ? "json" : "xml";
+                string fileName = InvalidFileNameCharsRegex.Replace(
+                    $"{exportSbom.NamespaceName}_{imageName}_{imageVersion}_{exportSbom.Digest}.${fileExtension}", "_");
+                using var stream = archive.CreateEntry(fileName).Open();
+                if (fileType == "json")
+                {
+                    JsonSerializer.Serialize(stream, cycloneDxBom);
+                }
+                else
+                {
+                    var serializer = new System.Xml.Serialization.XmlSerializer(cycloneDxBom.GetType());
+                    serializer.Serialize(stream, cycloneDxBom);
                 }
             }
 

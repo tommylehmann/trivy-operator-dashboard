@@ -14,7 +14,7 @@ public class AlertsService(
     public async Task AddAlert(string emitter, Alert alert, CancellationToken cancellationToken)
     {
         cache.TryGetValue(emitter, out IList<Alert>? alerts);
-        if (alerts != null && alerts.Where(x => x.EmitterKey == alert.EmitterKey).Any())
+        if (alerts != null && alerts.Any(x => x.EmitterKey == alert.EmitterKey))
         {
             return;
         }
@@ -59,7 +59,7 @@ public class AlertsService(
         IEnumerable<AlertDto> result = cache.Where(kvp => kvp.Value.Any())
             .SelectMany(kvp => kvp.Value.Select(alert => alert.ToAlertDto(kvp.Key)));
 
-        return Task.FromResult<IList<AlertDto>>([.. result]);
+        return Task.FromResult<IList<AlertDto>>([.. result,]);
     }
 
     private static void RemoveAlertByKey(IList<Alert> alerts, string key)

@@ -13,7 +13,7 @@ public class GitHubClient(HttpClient httpClient, ILogger<GitHubClient> logger) :
             httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Trivy.Operator.Dashboard/1.4");
             HttpResponseMessage response = await httpClient.GetAsync($"{baseRepoUrl.TrimEnd('/')}/releases/latest", cancellationToken);
             response.EnsureSuccessStatusCode();
-            string content = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<GitHubRelease>(content);
         }
         catch (Exception ex)
@@ -29,7 +29,7 @@ public class GitHubClient(HttpClient httpClient, ILogger<GitHubClient> logger) :
             httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Trivy.Operator.Dashboard/1.4");
             HttpResponseMessage response = await httpClient.GetAsync($"{baseRepoUrl.TrimEnd('/')}/releases", cancellationToken);
             response.EnsureSuccessStatusCode();
-            string content = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync(cancellationToken);
             return JsonSerializer.Deserialize<GitHubRelease[]>(content);
         }
         catch (Exception ex)

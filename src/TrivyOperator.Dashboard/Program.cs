@@ -126,11 +126,11 @@ app.MapControllers();
 app.MapHub<AlertsHub>("/alerts-hub");
 app.MapHealthChecks("/healthz/live", new HealthCheckOptions
 {
-    Predicate = check => check.Name == "watchers-liveness"
+    Predicate = check => check.Name == "watchers-liveness",
 });
 app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
 {
-    Predicate = check => check.Name == "watchers-readiness"
+    Predicate = check => check.Name == "watchers-readiness",
 });
 app.MapFallbackToFile("index.html");
 

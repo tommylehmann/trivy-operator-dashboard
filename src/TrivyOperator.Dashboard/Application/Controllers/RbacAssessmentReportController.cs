@@ -7,7 +7,7 @@ namespace TrivyOperator.Dashboard.Application.Controllers;
 
 [ApiController]
 [Route("api/rbac-assessment-reports")]
-public class RbacAssessmentReportController(IRbacAssessmentReportService RbacAssessmentReportService) : ControllerBase
+public class RbacAssessmentReportController(IRbacAssessmentReportService rbacAssessmentReportService) : ControllerBase
 {
     [HttpGet(Name = "GetRbacAssessmentReportDtos")]
     [ProducesResponseType<IEnumerable<RbacAssessmentReportDto>>(StatusCodes.Status200OK)]
@@ -22,9 +22,9 @@ public class RbacAssessmentReportController(IRbacAssessmentReportService RbacAss
             return BadRequest();
         }
 
-        IEnumerable<RbacAssessmentReportDto> RbacAssessmentReportImageDtos =
-            await RbacAssessmentReportService.GetRbacAssessmentReportDtos(namespaceName, excludedSeverityIds);
-        return Ok(RbacAssessmentReportImageDtos);
+        IEnumerable<RbacAssessmentReportDto> rbacAssessmentReportImageDtos =
+            await rbacAssessmentReportService.GetRbacAssessmentReportDtos(namespaceName, excludedSeverityIds);
+        return Ok(rbacAssessmentReportImageDtos);
     }
 
     [HttpGet("denormalized", Name = "GetRbacAssessmentReportDenormalizedDtos")]
@@ -32,12 +32,12 @@ public class RbacAssessmentReportController(IRbacAssessmentReportService RbacAss
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
     public async Task<IEnumerable<RbacAssessmentReportDenormalizedDto>> GetDenormalized() =>
-        await RbacAssessmentReportService.GetRbacAssessmentReportDenormalizedDtos();
+        await rbacAssessmentReportService.GetRbacAssessmentReportDenormalizedDtos();
 
     [HttpGet("active-namespaces", Name = "GetRbacAssessmentReportActiveNamespaces")]
     [ProducesResponseType<IEnumerable<string>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
     public async Task<IEnumerable<string>> GetActiveNamespaces() =>
-        await RbacAssessmentReportService.GetActiveNamespaces();
+        await rbacAssessmentReportService.GetActiveNamespaces();
 }

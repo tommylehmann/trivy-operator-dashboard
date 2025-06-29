@@ -22,9 +22,9 @@ public class ExposedSecretReportController(IExposedSecretReportService exposedSe
             return BadRequest();
         }
 
-        IEnumerable<ExposedSecretReportDto> ExposedSecretReportImageDtos =
+        IEnumerable<ExposedSecretReportDto> exposedSecretReportImageDtos =
             await exposedSecretReportService.GetExposedSecretReportDtos(namespaceName, excludedSeverityIds);
-        return Ok(ExposedSecretReportImageDtos);
+        return Ok(exposedSecretReportImageDtos);
     }
 
     [HttpGet("denormalized", Name = "GetExposedSecretReportDenormalizedDtos")]

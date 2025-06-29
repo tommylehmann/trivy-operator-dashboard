@@ -19,7 +19,7 @@ public class NamespaceCacheRefresher(
         if (watcherEvent.KubernetesObject == null)
         {
             logger.LogWarning("ProcessAddEvent - KubernetesObject is null for {watcherKey} - {kubernetesObjectType}. Ignoring",
-                watcherEvent.WatcherKey, typeof(V1Namespace).Name);
+                watcherEvent.WatcherKey, nameof(V1Namespace));
             return;
         }
 
@@ -35,7 +35,7 @@ public class NamespaceCacheRefresher(
         if (watcherEvent.KubernetesObject == null)
         {
             logger.LogWarning("ProcessDeleteEvent - KubernetesObject is null for {watcherKey} - {kubernetesObjectType}. Ignoring",
-                watcherEvent.WatcherKey, typeof(V1Namespace).Name);
+                watcherEvent.WatcherKey, nameof(V1Namespace));
             return;
         }
 

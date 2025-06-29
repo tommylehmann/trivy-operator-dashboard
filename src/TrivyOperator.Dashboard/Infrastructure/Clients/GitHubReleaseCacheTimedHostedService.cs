@@ -74,10 +74,10 @@ public class GitHubReleaseCacheTimedHostedService(
                 logger.LogWarning("Failed to fetch releases from GitHub.");
                 return;
             }
-            GitHubRelease? latestReslease = await gitHubClient.GetLatestRelease(options.Value.BaseTrivyDashboardRepoUrl, cancellationToken);
-            if (latestReslease != null)
+            GitHubRelease? latestRelease = await gitHubClient.GetLatestRelease(options.Value.BaseTrivyDashboardRepoUrl, cancellationToken);
+            if (latestRelease != null)
             {
-                var release = releases.FirstOrDefault(x => x.Id == latestReslease.Id);
+                var release = releases.FirstOrDefault(x => x.Id == latestRelease.Id);
                 if (release != null)
                 {
                     release.IsLatest = true;
