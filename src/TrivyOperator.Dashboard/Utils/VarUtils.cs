@@ -6,7 +6,7 @@ using TrivyOperator.Dashboard.Domain.Trivy;
 
 namespace TrivyOperator.Dashboard.Utils;
 
-public class VarUtils
+public static class VarUtils
 {
     public const string DefaultCacheRefreshKey = "generic.Key";
 
@@ -16,26 +16,28 @@ public class VarUtils
     public static List<int>? GetExcludedSeverityIdsFromStringList(string? excludedSeverities)
     {
         List<int> excludedSeverityIds = [];
-        List<int> knownSeverityIds = [.. (int[])Enum.GetValues(typeof(TrivySeverity))];
+        List<int> knownSeverityIds = [.. (int[])Enum.GetValues(typeof(TrivySeverity)),];
 
-        if (!string.IsNullOrWhiteSpace(excludedSeverities))
+        if (string.IsNullOrWhiteSpace(excludedSeverities))
         {
-            string[] excludedStringSeverities = excludedSeverities.Split(',');
-            foreach (string excludedSeverity in excludedStringSeverities)
-            {
-                if (int.TryParse(excludedSeverity, out int vulnerabilityId))
-                {
-                    if (!knownSeverityIds.Contains(vulnerabilityId))
-                    {
-                        return null;
-                    }
+            return excludedSeverityIds;
+        }
 
-                    excludedSeverityIds.Add(vulnerabilityId);
-                }
-                else
+        string[] excludedStringSeverities = excludedSeverities.Split(',');
+        foreach (string excludedSeverity in excludedStringSeverities)
+        {
+            if (int.TryParse(excludedSeverity, out int vulnerabilityId))
+            {
+                if (!knownSeverityIds.Contains(vulnerabilityId))
                 {
                     return null;
                 }
+
+                excludedSeverityIds.Add(vulnerabilityId);
+            }
+            else
+            {
+                return null;
             }
         }
 

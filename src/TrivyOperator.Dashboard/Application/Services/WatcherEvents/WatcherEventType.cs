@@ -26,7 +26,7 @@ public static class WatchEventTypeExtensions
             WatchEventType.Deleted => WatcherEventType.Deleted,
             WatchEventType.Error => WatcherEventType.Error,
             WatchEventType.Bookmark => WatcherEventType.Bookmark,
-            _ => WatcherEventType.Unknown // Handle Bookmark or any unexpected values
+            _ => WatcherEventType.Unknown, // Handle Bookmark or any unexpected values
         };
     }
 }

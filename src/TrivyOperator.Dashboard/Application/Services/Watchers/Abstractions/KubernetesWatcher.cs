@@ -66,7 +66,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
         await EnqueueWatcherEvent(watcherKey, WatcherEventType.Flushed, cancellationToken);
         if (Watchers.TryGetValue(watcherKey, out TaskWithCts taskWithCts))
         {
-            taskWithCts.Cts.Cancel();
+            await taskWithCts.Cts.CancelAsync();
             try
             {
                 await taskWithCts.Task;
@@ -193,17 +193,19 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
 
             }
 
-            if (!isBenignError)
+            if (isBenignError)
             {
-                TimeSpan waitTimeSpan = retryDurationCalculator.GetNextRetryDuration(++retryCount);
-
-                logger.LogDebug(
-                    "Watcher for {kubernetesObjectType} and key {watcherKey} is wating for {retryCount} (ss:ms)",
-                    typeof(TKubernetesObject).Name,
-                    watcherKey,
-                    waitTimeSpan.ToString(@"ss\:fff"));
-                await Task.Delay(waitTimeSpan, cancellationToken);
+                continue;
             }
+
+            TimeSpan waitTimeSpan = retryDurationCalculator.GetNextRetryDuration(++retryCount);
+
+            logger.LogDebug(
+                "Watcher for {kubernetesObjectType} and key {watcherKey} is wating for {retryCount} (ss:ms)",
+                typeof(TKubernetesObject).Name,
+                watcherKey,
+                waitTimeSpan.ToString(@"ss\:fff"));
+            await Task.Delay(waitTimeSpan, cancellationToken);
         }
     }
 

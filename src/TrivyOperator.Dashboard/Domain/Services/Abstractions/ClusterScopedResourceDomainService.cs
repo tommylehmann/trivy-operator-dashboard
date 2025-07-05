@@ -15,12 +15,8 @@ public abstract class
 {
     public override async Task<IList<TKubernetesObject>> GetResources(CancellationToken? cancellationToken = null)
     {
-        try
-        {
-            TKubernetesObjectList kubernetesObjectList = await GetResourceList(cancellationToken: cancellationToken);
-            return kubernetesObjectList.Items;
-        }
-        catch { throw; }
+        TKubernetesObjectList kubernetesObjectList = await GetResourceList(cancellationToken: cancellationToken);
+        return kubernetesObjectList.Items;
     }
 
     public abstract Task<TKubernetesObjectList> GetResourceList(

@@ -12,7 +12,7 @@ public class ConcurrentCache<TKey, TValue> : IConcurrentCache<TKey, TValue> wher
     {
         metricsService.CreateObservableGauge(
             $"{metricsService.AppName}.cache.size",
-            () => GetCacheMeasurements(),
+            GetCacheMeasurements,
             unit: "items",
             description: "Tracks the size of the caches."
         );
@@ -55,7 +55,7 @@ public class ConcurrentCache<TKey, TValue> : IConcurrentCache<TKey, TValue> wher
     {
         List<Measurement<long>> measurements =
         [
-            new Measurement<long>(
+            new(
                 dictionary.Count,
                 new KeyValuePair<string, object?>("value_kind", "generic"),
                 new KeyValuePair<string, object?>("value_type", typeof(TValue).Name)),

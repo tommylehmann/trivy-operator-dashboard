@@ -4,9 +4,9 @@ namespace TrivyOperator.Dashboard.Domain.Trivy.ClusterComplianceReport;
 
 public class ClusterComplianceReportCrd : CustomResourceDefinition
 {
-    public override string Version { get; } = "v1alpha1";
-    public override string Group { get; } = "aquasecurity.github.io";
-    public override string PluralName { get; } = "clustercompliancereports";
-    public override string Kind { get; } = "CResource";
+    public override string Version => "v1alpha1";
+    public override string Group => "aquasecurity.github.io";
+    public override string PluralName => "clustercompliancereports";
+    public override string Kind => "CResource";
     public override string? Namespace { get; init; } = null;
 }

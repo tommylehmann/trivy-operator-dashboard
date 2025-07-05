@@ -15,7 +15,7 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
     public async Task<IEnumerable<SbomReportDto>> Get([FromQuery] string? namespaceName) =>
         await sbomReportService.GetSbomReportDtos(namespaceName);
 
-    [HttpGet("{uid}", Name = "GetSbomReportDtoByUid")]
+    [HttpGet("{uid:guid}", Name = "GetSbomReportDtoByUid")]
     [ProducesResponseType<SbomReportDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
@@ -85,7 +85,7 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
             return BadRequest("Failed to create zip file");
         }
 
-        var stream = new FileStream(zipFilename, FileMode.Open, FileAccess.Read);
+        FileStream stream = new(zipFilename, FileMode.Open, FileAccess.Read);
 
         HttpContext.Response.OnCompleted(() =>
         {

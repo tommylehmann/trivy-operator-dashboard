@@ -5,7 +5,7 @@ using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
 
 namespace TrivyOperator.Dashboard.Domain.Trivy.ClusterComplianceReport;
 
-public class ClusterComplianceReportCr : CustomResource, IKubernetesObject<V1ObjectMeta>
+public class ClusterComplianceReportCr : CustomResource
 {
     [JsonPropertyName("spec")]
     public Spec Spec { get; init; } = new();

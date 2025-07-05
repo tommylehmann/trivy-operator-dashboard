@@ -5,7 +5,7 @@ using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
 
 namespace TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 
-public class SbomReportCr : CustomResource, IKubernetesObject<V1ObjectMeta>
+public class SbomReportCr : CustomResource
 {
     [JsonPropertyName("report")]
     public Report? Report { get; init; }

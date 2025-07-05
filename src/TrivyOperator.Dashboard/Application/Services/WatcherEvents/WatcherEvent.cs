@@ -10,5 +10,5 @@ public class WatcherEvent<TKubernetesObject> : IWatcherEvent<TKubernetesObject>
     public TKubernetesObject? KubernetesObject { get; init; }
     public string WatcherKey { get; init; } = string.Empty;
     public Exception? Exception { get; init; } = null;
-    public bool IsStatic { get; init; } = false;
+    public bool IsStatic { get; init; }
 }

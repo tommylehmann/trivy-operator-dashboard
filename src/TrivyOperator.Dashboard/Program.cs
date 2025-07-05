@@ -145,16 +145,18 @@ static IConfiguration CreateConfiguration()
     IConfiguration configuration = configurationBuilder.Build();
 
     string? tempFolder = configuration.GetSection("FileExport")["TempFolder"];
-    if (string.IsNullOrEmpty(tempFolder))
+    if (!string.IsNullOrEmpty(tempFolder))
     {
-        var inMemorySettings = new Dictionary<string, string?>
-        {
-            { "FileExport:TempFolder", Path.GetTempPath() }
-        };
-
-        configurationBuilder.AddInMemoryCollection(inMemorySettings);
-        configuration = configurationBuilder.Build();
+        return configuration;
     }
+
+    Dictionary<string, string?> inMemorySettings = new()
+    {
+        { "FileExport:TempFolder", Path.GetTempPath() },
+    };
+
+    configurationBuilder.AddInMemoryCollection(inMemorySettings);
+    configuration = configurationBuilder.Build();
 
     return configuration;
 }

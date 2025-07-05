@@ -66,5 +66,4 @@ public class NamespaceCacheRefresher(
             await Task.WhenAll(tasks);
         }
     }
-    // TODO: new for ns cleanup
 }

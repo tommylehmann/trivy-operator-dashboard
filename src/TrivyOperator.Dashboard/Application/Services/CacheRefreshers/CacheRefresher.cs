@@ -14,7 +14,6 @@ public class CacheRefresher<TKubernetesObject>(
     : IKubernetesEventProcessor<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
 {
-    protected Task? CacheRefreshTask;
     protected IListConcurrentCache<TKubernetesObject> cache = cache;
 
     public async Task ProcessKubernetesEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
@@ -76,7 +75,7 @@ public class CacheRefresher<TKubernetesObject>(
         }
         else // first time, the cache is really empty
         {
-            cache.TryAdd(watcherEvent.WatcherKey, [watcherEvent.KubernetesObject]);
+            cache.TryAdd(watcherEvent.WatcherKey, [watcherEvent.KubernetesObject, ]);
         }
     }
 
@@ -95,14 +94,16 @@ public class CacheRefresher<TKubernetesObject>(
             watcherEvent.WatcherKey,
             watcherEvent.KubernetesObject.Metadata.Name);
 
-        if (cache.TryGetValue(watcherEvent.WatcherKey, out IList<TKubernetesObject>? kubernetesObjects))
+        if (!cache.TryGetValue(watcherEvent.WatcherKey, out IList<TKubernetesObject>? kubernetesObjects))
         {
-            IList<TKubernetesObject> existingKubernetesObjects =
-                kubernetesObjects.Where(x => x.Name() == watcherEvent.KubernetesObject.Name()).ToList() ?? [];
-            foreach (TKubernetesObject existingKubernetesObject in existingKubernetesObjects)
-            {
-                kubernetesObjects.Remove(existingKubernetesObject);
-            }
+            return Task.CompletedTask;
+        }
+
+        IList<TKubernetesObject> existingKubernetesObjects =
+            kubernetesObjects.Where(x => x.Name() == watcherEvent.KubernetesObject.Name()).ToList();
+        foreach (TKubernetesObject existingKubernetesObject in existingKubernetesObjects)
+        {
+            kubernetesObjects.Remove(existingKubernetesObject);
         }
         return Task.CompletedTask;
     }

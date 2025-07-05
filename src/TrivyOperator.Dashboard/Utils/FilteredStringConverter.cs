@@ -10,7 +10,7 @@ public class FilteredStringConverter(string filterOut, string filterWith) : Json
 
     public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
     {
-        string? filtered = value?.Replace(filterOut, filterWith);
+        string filtered = value.Replace(filterOut, filterWith);
         writer.WriteStringValue(filtered);
     }
 }

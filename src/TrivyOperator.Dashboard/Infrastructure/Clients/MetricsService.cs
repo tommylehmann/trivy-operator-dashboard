@@ -6,14 +6,14 @@ namespace TrivyOperator.Dashboard.Infrastructure.Clients;
 public class MetricsService : IMetricsService
 {
     private readonly Meter _meter;
-    public string AppName { get; private set; }
+    public string AppName { get; }
 
-    public Counter<long> WatcherProcessedMessagesCounter { get; private set; }
+    public Counter<long> WatcherProcessedMessagesCounter { get; }
 
     public MetricsService(string appName)
     {
         _meter = new Meter($"{appName}.metrics");
-        this.AppName = appName;
+        AppName = appName;
 
         WatcherProcessedMessagesCounter = _meter.CreateCounter<long>(
             name: $"{appName}.watcher.processed_messages.count",

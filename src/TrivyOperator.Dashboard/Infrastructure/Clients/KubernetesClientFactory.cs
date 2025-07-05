@@ -18,7 +18,7 @@ public class KubernetesClientFactory : IKubernetesClientFactory
 
     public KubernetesClientFactory(IOptions<KubernetesOptions> options, ILogger<KubernetesClientFactory> logger)
     {
-        string? kubeConfigFileName = options.Value.KubeConfigFileName;
+        string kubeConfigFileName = options.Value.KubeConfigFileName;
         if (!string.IsNullOrWhiteSpace(kubeConfigFileName))
         {
             try
@@ -51,14 +51,16 @@ public class KubernetesClientFactory : IKubernetesClientFactory
             }
         }
 
-        if (kubernetesClient is null) // kubeConfigFileName is not IsNullOrWhiteSpace OR something bad happened
+        if (kubernetesClient is not null) // kubeConfigFileName is not IsNullOrWhiteSpace OR something bad happened
         {
-            KubernetesClientConfiguration? defaultConfig = KubernetesClientConfiguration.IsInCluster()
-                ? KubernetesClientConfiguration.InClusterConfig()
-                : KubernetesClientConfiguration.BuildConfigFromConfigFile();
-            defaultConfig.AddJsonOptions(ConfigureJsonSerializerOptions);
-            kubernetesClient = new Kubernetes(defaultConfig);
+            return;
         }
+
+        KubernetesClientConfiguration? defaultConfig = KubernetesClientConfiguration.IsInCluster()
+            ? KubernetesClientConfiguration.InClusterConfig()
+            : KubernetesClientConfiguration.BuildConfigFromConfigFile();
+        defaultConfig.AddJsonOptions(ConfigureJsonSerializerOptions);
+        kubernetesClient = new Kubernetes(defaultConfig);
     }
 
     public Kubernetes GetClient() => kubernetesClient;

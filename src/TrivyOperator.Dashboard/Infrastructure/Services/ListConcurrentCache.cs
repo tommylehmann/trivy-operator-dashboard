@@ -10,16 +10,14 @@ public class ListConcurrentCache<TValue>(IMetricsService metricsService)
     protected override IEnumerable<Measurement<long>> GetCacheMeasurements()
     {
         List<Measurement<long>> measurements = [];
-        
-        foreach (var key in Keys)
-        {
-            measurements.Add(new Measurement<long>(
-                this[key].Count,
-                new KeyValuePair<string, object?>("value_kind", "list"),
-                new KeyValuePair<string, object?>("value_type", typeof(TValue).Name),
-                new KeyValuePair<string, object?>("key_name", key == VarUtils.DefaultCacheRefreshKey ? null : key))
-            );
-        }
+        measurements.AddRange(Keys
+            .Select(key => 
+                new Measurement<long>(this[key].Count,
+                    new KeyValuePair<string, object?>("value_kind", "list"),
+                    new KeyValuePair<string, object?>("value_type", typeof(TValue).Name), 
+                    new KeyValuePair<string, object?>("key_name", key == VarUtils.DefaultCacheRefreshKey ? null : key)
+                    )));
+
         return measurements;
     }
 }

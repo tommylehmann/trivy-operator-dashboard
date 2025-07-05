@@ -42,7 +42,7 @@ public class GitHubReleaseCacheTimedHostedService(
 
         try
         {
-            stoppingCts!.Cancel();
+            await stoppingCts!.CancelAsync();
         }
         finally
         {
@@ -77,14 +77,14 @@ public class GitHubReleaseCacheTimedHostedService(
             GitHubRelease? latestRelease = await gitHubClient.GetLatestRelease(options.Value.BaseTrivyDashboardRepoUrl, cancellationToken);
             if (latestRelease != null)
             {
-                var release = releases.FirstOrDefault(x => x.Id == latestRelease.Id);
+                GitHubRelease? release = releases.FirstOrDefault(x => x.Id == latestRelease.Id);
                 if (release != null)
                 {
                     release.IsLatest = true;
                 }
             }
             cache.Clear();
-            foreach (var release in releases)
+            foreach (GitHubRelease release in releases)
             {
                 cache.TryAdd(release.Id, release);
             }
@@ -104,15 +104,17 @@ public class GitHubReleaseCacheTimedHostedService(
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposed)
+        if (disposed)
         {
-            if (disposing)
-            {
-                timer?.Dispose();
-                stoppingCts?.Cancel();
-            }
-
-            disposed = true;
+            return;
         }
+
+        if (disposing)
+        {
+            timer?.Dispose();
+            stoppingCts?.Cancel();
+        }
+
+        disposed = true;
     }
 }

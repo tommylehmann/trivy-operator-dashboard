@@ -26,13 +26,13 @@ public class WatcherState<TKubernetesObject>(
             case WatcherEventType.Modified:
             case WatcherEventType.Bookmark:
             case WatcherEventType.WatcherConnected:
-                ProcessGreenEvent(watcherEvent, cancellationToken);
+                ProcessGreenEvent(watcherEvent);
                 break;
             case WatcherEventType.Flushed:
-                ProcessDeleteEvent(watcherEvent, cancellationToken);
+                ProcessDeleteEvent(watcherEvent);
                 break;
             case WatcherEventType.Error:
-                ProcessRedEvent(watcherEvent, cancellationToken);
+                ProcessRedEvent(watcherEvent);
                 break;
             case WatcherEventType.Initialized:
                 break;
@@ -47,7 +47,7 @@ public class WatcherState<TKubernetesObject>(
         return Task.CompletedTask;
     }
 
-    private void ProcessGreenEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
+    private void ProcessGreenEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
     {
         WatcherStateInfo watcherStateInfo = new()
         {
@@ -61,7 +61,7 @@ public class WatcherState<TKubernetesObject>(
         cache[GetCacheKey(watcherEvent)] = watcherStateInfo;
     }
 
-    private void ProcessRedEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
+    private void ProcessRedEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
     {
         WatcherStateInfo watcherStateInfo = new()
         {
@@ -75,7 +75,7 @@ public class WatcherState<TKubernetesObject>(
         cache[GetCacheKey(watcherEvent)] = watcherStateInfo;
     }
 
-    private void ProcessDeleteEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
+    private void ProcessDeleteEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
     {
         cache.TryRemove(GetCacheKey(watcherEvent), out _);
     }

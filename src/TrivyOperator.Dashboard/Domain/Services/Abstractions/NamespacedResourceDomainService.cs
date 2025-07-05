@@ -17,11 +17,11 @@ public abstract class NamespacedResourceDomainService<TKubernetesObject, TKubern
     {
         IEnumerable<V1Namespace> v1Namespaces = await namespaceDomainService.GetResources(cancellationToken);
         List<TKubernetesObject> trivyReports = [];
-        foreach (V1Namespace? v1Namespace in v1Namespaces ?? [])
+        foreach (V1Namespace v1Namespace in v1Namespaces)
         {
             IList<TKubernetesObject> trivyReportsInNamespace =
                 await GetResources(v1Namespace.Name(), cancellationToken);
-            if (cancellationToken is { IsCancellationRequested: true })
+            if (cancellationToken is { IsCancellationRequested: true, })
             {
                 return [];
             }

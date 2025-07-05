@@ -49,7 +49,7 @@ public class WatcherStateCacheTimedHostedService(
 
         try
         {
-            stoppingCts!.Cancel();
+            await stoppingCts!.CancelAsync();
         }
         finally
         {
@@ -102,15 +102,17 @@ public class WatcherStateCacheTimedHostedService(
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposed)
+        if (disposed)
         {
-            if (disposing)
-            {
-                timer?.Dispose();
-                stoppingCts?.Cancel();
-            }
-
-            disposed = true;
+            return;
         }
+
+        if (disposing)
+        {
+            timer?.Dispose();
+            stoppingCts?.Cancel();
+        }
+
+        disposed = true;
     }
 }

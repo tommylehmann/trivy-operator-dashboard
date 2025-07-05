@@ -1,7 +1,6 @@
 ﻿using k8s;
 using k8s.Autorest;
 using k8s.Models;
-using System.Net;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 

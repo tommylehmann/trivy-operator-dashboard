@@ -2,7 +2,7 @@
 
 namespace TrivyOperator.Dashboard.Application.HealthChecks;
 
-public class WatchersReadinessHealthCheck() : IHealthCheck
+public class WatchersReadinessHealthCheck : IHealthCheck
 {
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {

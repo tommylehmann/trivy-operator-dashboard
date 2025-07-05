@@ -12,7 +12,7 @@ public class StaticNamespaceDomainService(
 {
     public Task<IList<V1Namespace>> GetResources(CancellationToken? cancellationToken = null)
     {
-        string? configKubernetesNamespaces = kubernetesOptions.Value.NamespaceList;
+        string configKubernetesNamespaces = kubernetesOptions.Value.NamespaceList;
 
         if (string.IsNullOrWhiteSpace(configKubernetesNamespaces))
         {
@@ -40,7 +40,7 @@ public class StaticNamespaceDomainService(
         {
             ApiVersion = "v1",
             Kind = "NamespaceList",
-            Metadata = new V1ListMeta { ResourceVersion = "1" },
+            Metadata = new V1ListMeta { ResourceVersion = "1", },
             Items = GetResources().Result,
         });
     // failed attempt to implement this method. will not work for a "kubernetes watch" scenario.
@@ -68,6 +68,6 @@ public class StaticNamespaceDomainService(
     //}
     private static V1Namespace CreateNamespace(string namespaceName) => new()
     {
-        ApiVersion = "v1", Kind = "Namespace", Metadata = new V1ObjectMeta { Name = namespaceName },
+        ApiVersion = "v1", Kind = "Namespace", Metadata = new V1ObjectMeta { Name = namespaceName, },
     };
 }
