@@ -30,6 +30,19 @@ public class NamespaceCacheRefresher(
         }
     }
 
+    protected override void ProcessModifiedEvent(
+        IWatcherEvent<V1Namespace> watcherEvent,
+        CancellationToken cancellationToken)
+    {
+        if (watcherEvent.KubernetesObject == null)
+        {
+            logger.LogWarning("ProcessModifiedEvent - KubernetesObject is null for {watcherKey} - {kubernetesObjectType}. Ignoring",
+                watcherEvent.WatcherKey, nameof(V1Namespace));
+            return;
+        }
+        base.ProcessAddEvent(watcherEvent, cancellationToken);
+    }
+
     protected override async Task ProcessDeleteEvent(IWatcherEvent<V1Namespace> watcherEvent, CancellationToken cancellationToken)
     {
         if (watcherEvent.KubernetesObject == null)
