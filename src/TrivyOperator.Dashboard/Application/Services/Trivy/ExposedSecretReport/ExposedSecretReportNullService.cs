@@ -9,8 +9,8 @@ public class ExposedSecretReportNullService : IExposedSecretReportService
         string? namespaceName = null,
         IEnumerable<int>? excludedSeverities = null) => Task.FromResult<IEnumerable<ExposedSecretReportDto>>([]);
 
-    public Task<IList<ExposedSecretReportDenormalizedDto>> GetExposedSecretDenormalizedDtos(
-        string? namespaceName = null) => Task.FromResult<IList<ExposedSecretReportDenormalizedDto>>([]);
+    public Task<IEnumerable<ExposedSecretReportDenormalizedDto>> GetExposedSecretDenormalizedDtos(
+        string? namespaceName = null) => Task.FromResult<IEnumerable<ExposedSecretReportDenormalizedDto>>([]);
 
     public Task<IEnumerable<string>> GetActiveNamespaces() => Task.FromResult<IEnumerable<string>>([]);
 

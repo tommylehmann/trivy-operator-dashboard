@@ -5,7 +5,7 @@ namespace TrivyOperator.Dashboard.Application.Services.Trivy.ExposedSecretReport
 public interface IExposedSecretReportService
 {
     Task<IEnumerable<string>> GetActiveNamespaces();
-    Task<IList<ExposedSecretReportDenormalizedDto>> GetExposedSecretDenormalizedDtos(string? namespaceName = null);
+    Task<IEnumerable<ExposedSecretReportDenormalizedDto>> GetExposedSecretDenormalizedDtos(string? namespaceName = null);
 
     Task<IEnumerable<ExposedSecretReportDto>> GetExposedSecretReportDtos(
         string? namespaceName = null,

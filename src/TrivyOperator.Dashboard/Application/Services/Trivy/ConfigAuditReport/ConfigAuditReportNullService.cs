@@ -9,8 +9,8 @@ public class ConfigAuditReportNullService : IConfigAuditReportService
         string? namespaceName = null,
         IEnumerable<int>? excludedSeverities = null) => Task.FromResult<IEnumerable<ConfigAuditReportDto>>([]);
 
-    public Task<IList<ConfigAuditReportDenormalizedDto>> GetConfigAuditReportDenormalizedDtos(
-        string? namespaceName = null) => Task.FromResult<IList<ConfigAuditReportDenormalizedDto>>([]);
+    public Task<IEnumerable<ConfigAuditReportDenormalizedDto>> GetConfigAuditReportDenormalizedDtos(
+        string? namespaceName = null) => Task.FromResult<IEnumerable<ConfigAuditReportDenormalizedDto>>([]);
 
     public Task<IEnumerable<string>> GetActiveNamespaces() => Task.FromResult<IEnumerable<string>>([]);
 

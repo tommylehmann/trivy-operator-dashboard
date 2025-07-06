@@ -97,7 +97,7 @@ export class HomeExposedSecretReportsComponent implements OnInit {
   // }
 
   private onDtos(dtos: EsSeveritiesByNsSummaryDto[]) {
-    this.exposedSecretReportSummaryDtos = dtos;
+    this.exposedSecretReportSummaryDtos = dtos.sort((a, b) => a.namespaceName! > b.namespaceName! ? 1 : -1);
     this.computeValues();
   }
 

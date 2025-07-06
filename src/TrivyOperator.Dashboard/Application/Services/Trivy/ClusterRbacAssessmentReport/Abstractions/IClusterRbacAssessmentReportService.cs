@@ -4,7 +4,7 @@ namespace TrivyOperator.Dashboard.Application.Services.Trivy.ClusterRbacAssessme
 
 public interface IClusterRbacAssessmentReportService
 {
-    Task<IList<ClusterRbacAssessmentReportDenormalizedDto>> GetClusterRbacAssessmentReportDenormalizedDtos();
-    Task<IList<ClusterRbacAssessmentReportDto>> GetClusterRbacAssessmentReportDtos();
-    public Task<IList<ClusterRbacAssessmentReportSummaryDto>> GetClusterRbacAssessmentReportSummaryDtos();
+    Task<IEnumerable<ClusterRbacAssessmentReportDenormalizedDto>> GetClusterRbacAssessmentReportDenormalizedDtos();
+    Task<IEnumerable<ClusterRbacAssessmentReportDto>> GetClusterRbacAssessmentReportDtos();
+    Task<IEnumerable<ClusterRbacAssessmentReportSummaryDto>> GetClusterRbacAssessmentReportSummaryDtos();
 }

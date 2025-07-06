@@ -1,5 +1,6 @@
 ﻿using k8s;
 using k8s.Models;
+using System.Collections.Concurrent;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
@@ -9,12 +10,12 @@ using TrivyOperator.Dashboard.Utils;
 namespace TrivyOperator.Dashboard.Application.Services.CacheRefreshers;
 
 public class CacheRefresher<TKubernetesObject>(
-    IListConcurrentCache<TKubernetesObject> cache,
+    IConcurrentDictionaryCache<TKubernetesObject> cache,
     ILogger<CacheRefresher<TKubernetesObject>> logger)
     : IKubernetesEventProcessor<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
 {
-    protected IListConcurrentCache<TKubernetesObject> cache = cache;
+    protected IConcurrentDictionaryCache<TKubernetesObject> cache = cache;
 
     public async Task ProcessKubernetesEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
@@ -62,20 +63,15 @@ public class CacheRefresher<TKubernetesObject>(
             watcherEvent.WatcherKey,
             watcherEvent.KubernetesObject.Metadata.Name);
 
-        if (cache.TryGetValue(watcherEvent.WatcherKey, out IList<TKubernetesObject>? kubernetesObjects))
+        if (cache.TryGetValue(watcherEvent.WatcherKey, out ConcurrentDictionary<string, TKubernetesObject>? kubernetesObjectsCache))
         {
-            IList<TKubernetesObject> existingKubernetesObjects =
-                kubernetesObjects.Where(x => x.Name() == watcherEvent.KubernetesObject.Name()).ToList() ?? [];
-            foreach (TKubernetesObject existingKubernetesObject in existingKubernetesObjects)
-            {
-                kubernetesObjects.Remove(existingKubernetesObject);
-            }
-
-            kubernetesObjects.Add(watcherEvent.KubernetesObject);
+            kubernetesObjectsCache[watcherEvent.KubernetesObject.Uid()] = watcherEvent.KubernetesObject;
         }
         else // first time, the cache is really empty
         {
-            cache.TryAdd(watcherEvent.WatcherKey, [watcherEvent.KubernetesObject, ]);
+            cache.TryAdd(watcherEvent.WatcherKey, new ConcurrentDictionary<string, TKubernetesObject> { 
+                [watcherEvent.KubernetesObject.Uid()] = watcherEvent.KubernetesObject 
+            });
         }
     }
 
@@ -94,17 +90,13 @@ public class CacheRefresher<TKubernetesObject>(
             watcherEvent.WatcherKey,
             watcherEvent.KubernetesObject.Metadata.Name);
 
-        if (!cache.TryGetValue(watcherEvent.WatcherKey, out IList<TKubernetesObject>? kubernetesObjects))
+        if (!cache.TryGetValue(watcherEvent.WatcherKey, out ConcurrentDictionary<string, TKubernetesObject>? kubernetesObjectsCache))
         {
             return Task.CompletedTask;
         }
 
-        IList<TKubernetesObject> existingKubernetesObjects =
-            kubernetesObjects.Where(x => x.Name() == watcherEvent.KubernetesObject.Name()).ToList();
-        foreach (TKubernetesObject existingKubernetesObject in existingKubernetesObjects)
-        {
-            kubernetesObjects.Remove(existingKubernetesObject);
-        }
+        kubernetesObjectsCache.TryRemove(watcherEvent.KubernetesObject.Uid(), out _);
+
         return Task.CompletedTask;
     }
 

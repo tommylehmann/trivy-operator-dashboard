@@ -84,7 +84,7 @@ export class HomeConfigAuditReportsComponent implements OnInit {
   }
 
   private onDtos(dtos: ConfigAuditReportSummaryDto[]) {
-    this.configAuditReportSummaryDtos = dtos;
+    this.configAuditReportSummaryDtos = dtos.sort((a, b) => a.namespaceName! > b.namespaceName! ? 1 : -1);
 
     this.getArraysFromDtos();
     this.computeCarSeveritySummaries();

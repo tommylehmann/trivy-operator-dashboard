@@ -5,12 +5,12 @@ namespace TrivyOperator.Dashboard.Application.Services.Trivy.ClusterRbacAssessme
 
 public class ClusterRbacAssessmentReportNullService : IClusterRbacAssessmentReportService
 {
-    public Task<IList<ClusterRbacAssessmentReportDto>> GetClusterRbacAssessmentReportDtos() =>
-        Task.FromResult<IList<ClusterRbacAssessmentReportDto>>([]);
+    public Task<IEnumerable<ClusterRbacAssessmentReportDto>> GetClusterRbacAssessmentReportDtos() =>
+        Task.FromResult<IEnumerable<ClusterRbacAssessmentReportDto>>([]);
 
-    public Task<IList<ClusterRbacAssessmentReportDenormalizedDto>> GetClusterRbacAssessmentReportDenormalizedDtos() =>
-        Task.FromResult<IList<ClusterRbacAssessmentReportDenormalizedDto>>([]);
+    public Task<IEnumerable<ClusterRbacAssessmentReportDenormalizedDto>> GetClusterRbacAssessmentReportDenormalizedDtos() =>
+        Task.FromResult<IEnumerable<ClusterRbacAssessmentReportDenormalizedDto>>([]);
 
-    public Task<IList<ClusterRbacAssessmentReportSummaryDto>> GetClusterRbacAssessmentReportSummaryDtos() =>
-        Task.FromResult<IList<ClusterRbacAssessmentReportSummaryDto>>([]);
+    public Task<IEnumerable<ClusterRbacAssessmentReportSummaryDto>> GetClusterRbacAssessmentReportSummaryDtos() =>
+        Task.FromResult<IEnumerable<ClusterRbacAssessmentReportSummaryDto>>([]);
 }

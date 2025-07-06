@@ -68,7 +68,7 @@ public static class BuilderServicesExtensions
         this IServiceCollection services, IConfiguration kubernetesConfiguration)
     {
         services
-            .AddSingleton<IListConcurrentCache<V1Namespace>, ListConcurrentCache<V1Namespace>>();
+            .AddSingleton<IConcurrentDictionaryCache<V1Namespace>, ConcurrentDictionaryCache<V1Namespace>>();
         services.AddSingleton<IKubernetesBackgroundQueue<V1Namespace>, KubernetesBackgroundQueue<V1Namespace>>();
         if (string.IsNullOrWhiteSpace(kubernetesConfiguration.GetValue<string>("NamespaceList")))
         {
@@ -112,8 +112,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<IListConcurrentCache<ClusterRbacAssessmentReportCr>,
-                ListConcurrentCache<ClusterRbacAssessmentReportCr>>();
+            .AddSingleton<IConcurrentDictionaryCache<ClusterRbacAssessmentReportCr>,
+                ConcurrentDictionaryCache<ClusterRbacAssessmentReportCr>>();
         services
             .AddSingleton<IKubernetesBackgroundQueue<ClusterRbacAssessmentReportCr>,
                 KubernetesBackgroundQueue<ClusterRbacAssessmentReportCr>>();
@@ -142,8 +142,8 @@ public static class BuilderServicesExtensions
             return;
         }
 
-        services.AddSingleton<IListConcurrentCache<ConfigAuditReportCr>,
-            ListConcurrentCache<ConfigAuditReportCr>>();
+        services.AddSingleton<IConcurrentDictionaryCache<ConfigAuditReportCr>,
+            ConcurrentDictionaryCache<ConfigAuditReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<ConfigAuditReportCr>, KubernetesBackgroundQueue<ConfigAuditReportCr>>();
         services.AddSingleton<INamespacedWatcher<ConfigAuditReportCr>,
             NamespacedWatcher<CustomResourceList<ConfigAuditReportCr>, ConfigAuditReportCr,
@@ -171,8 +171,8 @@ public static class BuilderServicesExtensions
         }
 
         services.AddSingleton<
-            IListConcurrentCache<ExposedSecretReportCr>,
-            ListConcurrentCache<ExposedSecretReportCr>>();
+            IConcurrentDictionaryCache<ExposedSecretReportCr>,
+            ConcurrentDictionaryCache<ExposedSecretReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<ExposedSecretReportCr>, KubernetesBackgroundQueue<ExposedSecretReportCr>>();
         services.AddSingleton<INamespacedWatcher<ExposedSecretReportCr>,
             NamespacedWatcher<CustomResourceList<ExposedSecretReportCr>, ExposedSecretReportCr,
@@ -200,8 +200,8 @@ public static class BuilderServicesExtensions
         }
 
         services.AddSingleton<
-            IListConcurrentCache<VulnerabilityReportCr>,
-            ListConcurrentCache<VulnerabilityReportCr>>();
+            IConcurrentDictionaryCache<VulnerabilityReportCr>,
+            ConcurrentDictionaryCache<VulnerabilityReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<VulnerabilityReportCr>, KubernetesBackgroundQueue<VulnerabilityReportCr>>();
         services.AddSingleton<INamespacedWatcher<VulnerabilityReportCr>,
             NamespacedWatcher<CustomResourceList<VulnerabilityReportCr>, VulnerabilityReportCr,
@@ -230,8 +230,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<IListConcurrentCache<ClusterComplianceReportCr>,
-                ListConcurrentCache<ClusterComplianceReportCr>>();
+            .AddSingleton<IConcurrentDictionaryCache<ClusterComplianceReportCr>,
+                ConcurrentDictionaryCache<ClusterComplianceReportCr>>();
         services
             .AddSingleton<IKubernetesBackgroundQueue<ClusterComplianceReportCr>, KubernetesBackgroundQueue<ClusterComplianceReportCr>>();
         services.AddSingleton<IClusterScopedWatcher<ClusterComplianceReportCr>, ClusterScopedWatcher<
@@ -261,8 +261,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<IListConcurrentCache<ClusterVulnerabilityReportCr>,
-                ListConcurrentCache<ClusterVulnerabilityReportCr>>();
+            .AddSingleton<IConcurrentDictionaryCache<ClusterVulnerabilityReportCr>,
+                ConcurrentDictionaryCache<ClusterVulnerabilityReportCr>>();
         services
             .AddSingleton<IKubernetesBackgroundQueue<ClusterVulnerabilityReportCr>,
                 KubernetesBackgroundQueue<ClusterVulnerabilityReportCr>>();
@@ -293,8 +293,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<IListConcurrentCache<RbacAssessmentReportCr>,
-                ListConcurrentCache<RbacAssessmentReportCr>>();
+            .AddSingleton<IConcurrentDictionaryCache<RbacAssessmentReportCr>,
+                ConcurrentDictionaryCache<RbacAssessmentReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<RbacAssessmentReportCr>, KubernetesBackgroundQueue<RbacAssessmentReportCr>>();
         services.AddSingleton<INamespacedWatcher<RbacAssessmentReportCr>,
             NamespacedWatcher<CustomResourceList<RbacAssessmentReportCr>, RbacAssessmentReportCr,
@@ -323,8 +323,8 @@ public static class BuilderServicesExtensions
         }
 
         services
-            .AddSingleton<IListConcurrentCache<SbomReportCr>,
-                ListConcurrentCache<SbomReportCr>>();
+            .AddSingleton<IConcurrentDictionaryCache<SbomReportCr>,
+                ConcurrentDictionaryCache<SbomReportCr>>();
         services.AddSingleton<IKubernetesBackgroundQueue<SbomReportCr>, KubernetesBackgroundQueue<SbomReportCr>>();
         services.AddSingleton<INamespacedWatcher<SbomReportCr>, SbomReportWatcher>();
         
@@ -350,7 +350,7 @@ public static class BuilderServicesExtensions
     public static void AddAlertsServices(this IServiceCollection services)
     {
         services.AddSignalR();
-        services.AddSingleton<IListConcurrentCache<Alert>, ListConcurrentCache<Alert>>();
+        services.AddSingleton<IConcurrentCache<string, Alert>, ConcurrentCache<string, Alert>>();
         services.AddTransient<IAlertsService, AlertsService>();
     }
 

@@ -8,9 +8,9 @@ public class RbacAssessmentReportNullService : IRbacAssessmentReportService
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult<IEnumerable<string>>([]);
 
-    public Task<IList<RbacAssessmentReportDenormalizedDto>> GetRbacAssessmentReportDenormalizedDtos(
+    public Task<IEnumerable<RbacAssessmentReportDenormalizedDto>> GetRbacAssessmentReportDenormalizedDtos(
         string? namespaceName = null) =>
-        Task.FromResult<IList<RbacAssessmentReportDenormalizedDto>>([]);
+        Task.FromResult<IEnumerable<RbacAssessmentReportDenormalizedDto>>([]);
 
     public Task<IEnumerable<RbacAssessmentReportDto>> GetRbacAssessmentReportDtos(
         string? namespaceName = null,

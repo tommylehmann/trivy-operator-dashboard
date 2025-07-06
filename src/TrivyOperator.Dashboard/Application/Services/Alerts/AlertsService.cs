@@ -7,28 +7,13 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 namespace TrivyOperator.Dashboard.Application.Services.Alerts;
 
 public class AlertsService(
-    IListConcurrentCache<Alert> cache,
+    IConcurrentCache<string, Alert> cache,
     IHubContext<AlertsHub> alertsHubContext,
     ILogger<AlertsService> logger) : IAlertsService
 {
     public async Task AddAlert(string emitter, Alert alert, CancellationToken cancellationToken)
     {
-        cache.TryGetValue(emitter, out IList<Alert>? alerts);
-        if (alerts != null && alerts.Any(x => x.EmitterKey == alert.EmitterKey))
-        {
-            return;
-        }
-
-        if (alerts == null)
-        {
-            alerts = [];
-            alerts.Add(alert);
-            cache.TryAdd(emitter, alerts);
-        }
-        else
-        {
-            alerts.Add(alert);
-        }
+        cache[GetCacheKey(emitter, alert.EmitterKey)] = alert;
 
         await alertsHubContext.Clients.All.SendAsync("ReceiveAddedAlert", alert.ToAlertDto(emitter), cancellationToken);
 
@@ -40,36 +25,22 @@ public class AlertsService(
 
     public async Task RemoveAlert(string emitter, Alert alert, CancellationToken cancellationToken)
     {
-        cache.TryGetValue(emitter, out IList<Alert>? alerts);
-        if (alerts != null)
-        {
-            if (alerts.FirstOrDefault(x => x.EmitterKey == alert.EmitterKey) is not null)
-            {
-                RemoveAlertByKey(alerts, alert.EmitterKey);
-            }
-        }
+        cache.TryRemove(GetCacheKey(emitter, alert.EmitterKey), out _);
 
         await alertsHubContext.Clients.All.SendAsync("ReceiveRemovedAlert", alert.ToAlertDto(emitter), cancellationToken);
 
-        logger.LogDebug($"Removed alert for {emitter} and {alert.EmitterKey}.");
+        logger.LogDebug("Removed alert for {alertEmitter} and {emitterKey}.", emitter, alert.EmitterKey);
     }
 
-    public Task<IList<AlertDto>> GetAlertDtos()
+    public Task<IEnumerable<AlertDto>> GetAlertDtos()
     {
-        IEnumerable<AlertDto> result = cache.Where(kvp => kvp.Value.Any())
-            .SelectMany(kvp => kvp.Value.Select(alert => alert.ToAlertDto(kvp.Key)));
+        AlertDto[] result = [.. cache.Select(kvp => kvp.Value.ToAlertDto(kvp.Key.Split('|')[0]))];
 
-        return Task.FromResult<IList<AlertDto>>([.. result,]);
+        return Task.FromResult<IEnumerable<AlertDto>>(result);
     }
 
-    private static void RemoveAlertByKey(IList<Alert> alerts, string key)
+    private static string GetCacheKey(string emitter, string emmiterKey)
     {
-        for (int i = alerts.Count - 1; i >= 0; i--)
-        {
-            if (alerts[i].EmitterKey == key)
-            {
-                alerts.RemoveAt(i);
-            }
-        }
+        return $"{emitter}|{emmiterKey}";
     }
 }

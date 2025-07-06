@@ -66,7 +66,7 @@ public static class ClusterComplianceReportCrExtensions
     public static ClusterComplianceReportDto ToClusterComplianceReportDto(
         this ClusterComplianceReportCr clusterComplianceReportCr)
     {
-        ClusterComplianceReportDetailDto[] details = clusterComplianceReportCr.Spec.Compliance.Controls.Select(
+        ClusterComplianceReportDetailDto[] details = [.. clusterComplianceReportCr.Spec.Compliance.Controls.Select(
                 control => new ClusterComplianceReportDetailDto
                 {
                     Id = control.Id,
@@ -80,8 +80,7 @@ public static class ClusterComplianceReportCrExtensions
                                     .FirstOrDefault()
                                     ?.TotalFail ??
                                 0,
-                })
-            .ToArray();
+                })];
 
         return new ClusterComplianceReportDto
         {
@@ -111,7 +110,7 @@ public static class ClusterComplianceReportCrExtensions
         };
     }
 
-    public static IList<ClusterComplianceReportDenormalizedDto> ToClusterComplianceReportDenormalizedDto(
+    public static IEnumerable<ClusterComplianceReportDenormalizedDto> ToClusterComplianceReportDenormalizedDto(
         this ClusterComplianceReportCr clusterComplianceReportCr) =>
         clusterComplianceReportCr.Spec.Compliance.Controls.Select(
                 control => new ClusterComplianceReportDenormalizedDto
@@ -141,6 +140,5 @@ public static class ClusterComplianceReportCrExtensions
                                     .FirstOrDefault()
                                     ?.TotalFail ??
                                 0,
-                })
-            .ToList();
+                });
 }

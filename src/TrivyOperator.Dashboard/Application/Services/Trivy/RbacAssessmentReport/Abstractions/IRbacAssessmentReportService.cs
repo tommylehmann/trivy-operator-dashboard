@@ -6,7 +6,7 @@ public interface IRbacAssessmentReportService
 {
     Task<IEnumerable<string>> GetActiveNamespaces();
 
-    Task<IList<RbacAssessmentReportDenormalizedDto>> GetRbacAssessmentReportDenormalizedDtos(
+    Task<IEnumerable<RbacAssessmentReportDenormalizedDto>> GetRbacAssessmentReportDenormalizedDtos(
         string? namespaceName = null);
 
     Task<IEnumerable<RbacAssessmentReportDto>> GetRbacAssessmentReportDtos(

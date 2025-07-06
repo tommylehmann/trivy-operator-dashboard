@@ -1,4 +1,5 @@
 ﻿using k8s.Models;
+using System.Collections.Concurrent;
 using TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinators.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -7,7 +8,7 @@ using TrivyOperator.Dashboard.Utils;
 namespace TrivyOperator.Dashboard.Application.Services.CacheRefreshers;
 
 public class NamespaceCacheRefresher(
-    IListConcurrentCache<V1Namespace> cache,
+    IConcurrentDictionaryCache<V1Namespace> cache,
     IEnumerable<INamespacedKubernetesEventCoordinator> services,
     ILogger<NamespaceCacheRefresher> logger)
     : CacheRefresher<V1Namespace>(cache, logger)
@@ -59,9 +60,9 @@ public class NamespaceCacheRefresher(
 
     protected override async Task ProcessInitEvent(IWatcherEvent<V1Namespace> watcherEvent, CancellationToken cancellationToken)
     {
-        if (cache.TryGetValue(VarUtils.DefaultCacheRefreshKey, out IList<V1Namespace>? namespaceNames))
+        if (cache.TryGetValue(VarUtils.DefaultCacheRefreshKey, out ConcurrentDictionary<string, V1Namespace>? namespaceNamesCache))
         {
-            string[] newNamespaceNames = namespaceNames.Select(x => x.Metadata.Name).ToArray();
+            string[] newNamespaceNames = [.. namespaceNamesCache.Select(kvp => kvp.Value.Metadata.Name)];
             IEnumerable<Task> tasks = services.Select(s => s.ReconcileWatchers(newNamespaceNames, cancellationToken));
             await Task.WhenAll(tasks);
         }

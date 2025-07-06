@@ -8,6 +8,7 @@ using TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport.Abstractions
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy;
 using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
+using TrivyOperator.Dashboard.Domain.Trivy.ExposedSecretReport;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -15,8 +16,8 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 namespace TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport;
 
 public class SbomReportService(
-    IListConcurrentCache<SbomReportCr> cache,
-    IListConcurrentCache<VulnerabilityReportCr> vrCache,
+    IConcurrentDictionaryCache<SbomReportCr> cache,
+    IConcurrentDictionaryCache<VulnerabilityReportCr> vrCache,
     INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>> domainService,
     IOptions<FileExportOptions> fileExportOptions,
     ILogger<SbomReportService> logger)
@@ -24,18 +25,23 @@ public class SbomReportService(
 {
     public Task<IEnumerable<SbomReportDto>> GetSbomReportDtos(string? namespaceName = null)
     {
-        IEnumerable<SbomReportDto> dtos = cache
+        IEnumerable<SbomReportCr> cachedValues = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Select(cr => cr.ToSbomReportDto()));
+            .SelectMany(kvp => kvp.Value.Values)];
+        IEnumerable<SbomReportDto> dtos = cachedValues.Select(cr => cr.ToSbomReportDto());
 
         return Task.FromResult(dtos);
     }
 
     public Task<IEnumerable<SbomReportImageDto>> GetSbomReportImageDtos(string? digest = null, string? namespaceName = null)
     {
-        var vrDigests = vrCache
+        IEnumerable<SbomReportCr> cachedValues = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value
+            .SelectMany(kvp => kvp.Value.Values)];
+        IEnumerable<VulnerabilityReportCr> cachedVrValues = [.. vrCache
+            .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.Values)];
+        var vrDigests = cachedVrValues
             .Where(vr => string.IsNullOrEmpty(digest) || vr.Report?.Artifact?.Digest == digest)
             .GroupBy(vr => new
             {
@@ -50,13 +56,11 @@ public class SbomReportService(
                 MediumCount = group.FirstOrDefault()?.Report?.Summary?.MediumCount ?? -1,
                 LowCount = group.FirstOrDefault()?.Report?.Summary?.LowCount ?? -1,
                 UnknownCount = group.FirstOrDefault()?.Report?.Summary?.UnknownCount ?? -1
-            }));
-        SbomReportImageDto[] dtos = [.. cache
-            .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value
+            });
+        IEnumerable<SbomReportImageDto> dtos = cachedValues
             .Where(vr => string.IsNullOrEmpty(digest) || vr.Report?.Artifact?.Digest == digest)
             .GroupBy(sbom => sbom.Report?.Artifact?.Digest)
-                .Select(group => group.ToSbomReportImageDto()))
+            .Select(group => group.ToSbomReportImageDto())
             .GroupJoin(
                 vrDigests,
                 dto => new { dto.ImageDigest, dto.ResourceNamespace },
@@ -72,14 +76,16 @@ public class SbomReportService(
                     dto.UnknownCount = vr?.UnknownCount ?? -1;
 
                     return dto;
-                })];
+                });
 
-        return Task.FromResult((IEnumerable<SbomReportImageDto>)dtos);
+        return Task.FromResult(dtos);
     }
 
     public async Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid)
     {
-        foreach (string namespaceName in cache.Keys)
+        string[] namespaceNames = [.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key)];
+
+        foreach (string namespaceName in namespaceNames)
         {
             SbomReportDto? sr = await GetFullSbomReportDtoByUidNamespace(uid, namespaceName);
             if (sr != null)
@@ -92,80 +98,84 @@ public class SbomReportService(
 
     public async Task<SbomReportDto?> GetFullSbomReportDtoByUidNamespace(string uid, string namespaceName)
     {
-        if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
+        IEnumerable<SbomReportCr> cachedValues = [.. cache
+            .Where(kvp => kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.Values)];
+
+        SbomReportCr? sr = cachedValues.FirstOrDefault(x => x.Metadata.Uid == uid);
+        if (sr != null)
         {
-            SbomReportCr? sr = sbomReportCrs.FirstOrDefault(x => x.Metadata.Uid == uid);
-            if (sr != null)
+            try
             {
-                try
-                {
-                    SbomReportDto sbomReportDto = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
-                                .ToSbomReportDto();
-                    SetVulnerabilityReportStatistics(sbomReportDto);
-                    return sbomReportDto;
-                }
-                catch { }
+                SbomReportDto sbomReportDto = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
+                            .ToSbomReportDto();
+                SetVulnerabilityReportStatistics(sbomReportDto);
+                return sbomReportDto;
             }
+            catch { }
         }
         return null;
     }
 
     public async Task<SbomReportDto?> GetFullSbomReportDtoByDigestNamespace(string digest, string namespaceName)
     {
-        if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
+        IEnumerable<SbomReportCr> cachedValues = [.. cache
+            .Where(kvp => kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.Values)];
+
+        SbomReportCr? x = cachedValues
+            .Where(x => x.Report?.Artifact?.Digest == digest)
+            .Aggregate((SbomReportCr?)null, (max, current) =>
+                max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
+        if (x != null)
         {
-            SbomReportCr? x = sbomReportCrs
-                .Where(x => x.Report?.Artifact?.Digest == digest)
-                .Aggregate((SbomReportCr?)null, (max, current) =>
-                    max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
-            if (x != null)
-            {
-                return await GetFullSbomReportDtoByUidNamespace(x.Metadata.Uid, namespaceName);
-            }
+            return await GetFullSbomReportDtoByUidNamespace(x.Metadata.Uid, namespaceName);
         }
         return null;
     }
 
     public async Task<CycloneDxBom?> GetCycloneDxBomByDigestNamespace(string digest, string namespaceName)
     {
-        if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
+        IEnumerable<SbomReportCr> cachedValues = [.. cache
+            .Where(kvp => kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.Values)];
+
+        SbomReportCr? sr = cachedValues
+            .Where(x => x.Report?.Artifact?.Digest == digest)
+            .Aggregate((SbomReportCr?)null, (max, current) =>
+                max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
+        if (sr != null)
         {
-            SbomReportCr? sr = sbomReportCrs
-                .Where(x => x.Report?.Artifact?.Digest == digest)
-                .Aggregate((SbomReportCr?)null, (max, current) =>
-                    max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
-            if (sr != null)
+            try
             {
-                try
-                {
-                    CycloneDxBom cycloneDx = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
-                                .ToCycloneDx();
-                    return cycloneDx;
-                }
-                catch { }
+                CycloneDxBom cycloneDx = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
+                            .ToCycloneDx();
+                return cycloneDx;
             }
+            catch { }
         }
         return null;
     }
 
     public async Task<SpdxBom?> GetSpdxBomByDigestNamespace(string digest, string namespaceName)
     {
-        if (cache.TryGetValue(namespaceName, out IList<SbomReportCr>? sbomReportCrs))
+        IEnumerable<SbomReportCr> cachedValues = [.. cache
+            .Where(kvp => kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.Values)];
+
+        SbomReportCr? sr = cachedValues
+            .Where(x => x.Report?.Artifact?.Digest == digest)
+            .Aggregate((SbomReportCr?)null, (max, current) =>
+                max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
+        if (sr != null)
         {
-            SbomReportCr? sr = sbomReportCrs
-                .Where(x => x.Report?.Artifact?.Digest == digest)
-                .Aggregate((SbomReportCr?)null, (max, current) =>
-                    max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
-            if (sr != null)
+            try
             {
-                try
-                {
-                    SpdxBom spdx = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
-                                .ToSpdx();
-                    return spdx;
-                }
-                catch { }
+                SpdxBom spdx = (await domainService.GetResource(sr.Metadata.Name, sr.Metadata.NamespaceProperty))
+                            .ToSpdx();
+                return spdx;
             }
+            catch { }
         }
         return null;
     }
@@ -231,15 +241,18 @@ public class SbomReportService(
     }
 
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
-        Task.FromResult(cache.Where(x => x.Value.Any()).Select(x => x.Key));
+        Task.FromResult<IEnumerable<string>>([.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key)]);
 
     private void SetVulnerabilityReportStatistics(SbomReportDto sbomReportDto)
     {
-        VulnerabilityReportCr? vr = null;
-        if (vrCache.TryGetValue(sbomReportDto.ResourceNamespace, out IList<VulnerabilityReportCr>? vulnerabilityReportCrs))
-        {
-            vr = vulnerabilityReportCrs.FirstOrDefault(x => x.Report?.Artifact?.Digest == sbomReportDto.ImageDigest);
-        }
+        IEnumerable<VulnerabilityReportCr> cachedVrValues = [.. vrCache
+            .Where(kvp => kvp.Key == sbomReportDto.ResourceNamespace)
+            .SelectMany(kvp => kvp.Value.Values)];
+
+        VulnerabilityReportCr? vr = cachedVrValues
+            .Where(x => x.Report?.Artifact?.Digest == sbomReportDto.ImageDigest)
+            .Aggregate((VulnerabilityReportCr?)null, (max, current) =>
+                max == null || current?.Metadata.CreationTimestamp > max.Metadata.CreationTimestamp ? current : max);
 
         if (vr != null)
         {

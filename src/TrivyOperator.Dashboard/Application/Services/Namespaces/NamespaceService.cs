@@ -1,20 +1,21 @@
 ﻿using k8s.Models;
+using System.Collections.Concurrent;
 using TrivyOperator.Dashboard.Application.Services.Namespaces.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.Namespaces;
 
-public class NamespaceService(IListConcurrentCache<V1Namespace> cache) : INamespaceService
+public class NamespaceService(IConcurrentDictionaryCache<V1Namespace> cache) : INamespaceService
 {
-    public Task<List<string>> GetKubernetesNamespaces()
+    public Task<IEnumerable<string>> GetKubernetesNamespaces()
     {
-        List<V1Namespace> allNamespaces = [];
-        if (cache.TryGetValue(VarUtils.DefaultCacheRefreshKey, out IList<V1Namespace>? namespaces))
+        IEnumerable<string> namespaceNames = [];
+        if (cache.TryGetValue(VarUtils.DefaultCacheRefreshKey, out ConcurrentDictionary<string, V1Namespace>? namespacesCache))
         {
-            allNamespaces.AddRange(namespaces);
+            namespaceNames = [.. namespacesCache.Values.Select(x => x.Metadata.Name)];
         }
 
-        return Task.FromResult(allNamespaces.Select(x => x.Metadata!.Name).ToList());
+        return Task.FromResult(namespaceNames);
     }
 }

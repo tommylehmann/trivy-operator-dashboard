@@ -5,22 +5,24 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Trivy.ClusterComplianceReport;
 
-public class ClusterComplianceReportService(IListConcurrentCache<ClusterComplianceReportCr> cache)
+public class ClusterComplianceReportService(IConcurrentDictionaryCache<ClusterComplianceReportCr> cache)
     : IClusterComplianceReportService
 {
     public Task<IEnumerable<ClusterComplianceReportDto>> GetClusterComplianceReportDtos()
     {
-        IEnumerable<ClusterComplianceReportDto> value = cache.SelectMany(kvp => kvp.Value)
+        IEnumerable<ClusterComplianceReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values)];
+        IEnumerable<ClusterComplianceReportDto> values = cachedValues
             .Select(x => x.ToClusterComplianceReportDto());
 
-        return Task.FromResult(value);
+        return Task.FromResult(values);
     }
 
     public Task<IEnumerable<ClusterComplianceReportDenormalizedDto>> GetClusterComplianceReportDenormalizedDtos()
     {
-        IEnumerable<ClusterComplianceReportDenormalizedDto> value = cache.SelectMany(kvp => kvp.Value)
+        IEnumerable<ClusterComplianceReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values)];
+        IEnumerable<ClusterComplianceReportDenormalizedDto> values = cachedValues
             .SelectMany(x => x.ToClusterComplianceReportDenormalizedDto());
 
-        return Task.FromResult(value);
+        return Task.FromResult(values);
     }
 }

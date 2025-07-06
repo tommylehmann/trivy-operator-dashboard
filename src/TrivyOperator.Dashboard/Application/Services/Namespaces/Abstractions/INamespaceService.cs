@@ -2,5 +2,5 @@
 
 public interface INamespaceService
 {
-    Task<List<string>> GetKubernetesNamespaces();
+    Task<IEnumerable<string>> GetKubernetesNamespaces();
 }

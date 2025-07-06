@@ -97,13 +97,12 @@ public static class ClusterRbacAssessmentReportCrExtensions
         return clusterRbacAssessmentReportDto;
     }
 
-    public static IList<ClusterRbacAssessmentReportDenormalizedDto> ToClusterRbacAssessmentReportDenormalizedDtos(
+    public static IEnumerable<ClusterRbacAssessmentReportDenormalizedDto> ToClusterRbacAssessmentReportDenormalizedDtos(
         this ClusterRbacAssessmentReportCr clusterRbacAssessmentReportCr)
     {
-        List<ClusterRbacAssessmentReportDenormalizedDto> clusterRbacAssessmentReportDetailDtos = [];
-        foreach (Check check in clusterRbacAssessmentReportCr.Report?.Checks ?? [])
-        {
-            ClusterRbacAssessmentReportDenormalizedDto clusterRbacAssessmentReportDenormalizedDto = new()
+        IEnumerable<ClusterRbacAssessmentReportDenormalizedDto> clusterRbacAssessmentReportDetailDtos =
+            (clusterRbacAssessmentReportCr.Report?.Checks ?? [])
+            .Select(check => new ClusterRbacAssessmentReportDenormalizedDto
             {
                 Category = check.Category,
                 CheckId = check.CheckId,
@@ -128,9 +127,7 @@ public static class ClusterRbacAssessmentReportCrExtensions
                 HighCount = clusterRbacAssessmentReportCr?.Report?.Summary?.HighCount ?? 0,
                 MediumCount = clusterRbacAssessmentReportCr?.Report?.Summary?.MediumCount ?? 0,
                 LowCount = clusterRbacAssessmentReportCr?.Report?.Summary?.LowCount ?? 0,
-            };
-            clusterRbacAssessmentReportDetailDtos.Add(clusterRbacAssessmentReportDenormalizedDto);
-        }
+            });
 
         return clusterRbacAssessmentReportDetailDtos;
     }

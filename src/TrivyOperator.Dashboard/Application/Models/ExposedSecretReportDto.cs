@@ -87,7 +87,7 @@ public class EsSeveritiesByNsSummaryDto
     [Required]
     public bool IsTotal { get; init; } = false;
 
-    public List<EsSeveritiesByNsSummaryDetailDto> Details { get; init; } = [];
+    public IEnumerable<EsSeveritiesByNsSummaryDetailDto> Details { get; init; } = [];
 }
 
 public class EsSeveritiesByNsSummaryDetailDto
@@ -232,13 +232,11 @@ public static class ExposedSecretReportCrExtensions
         return exposedSecretReportImageDto;
     }
 
-    public static IList<ExposedSecretReportDenormalizedDto> ToExposedSecretReportDenormalizedDtos(
+    public static IEnumerable<ExposedSecretReportDenormalizedDto> ToExposedSecretReportDenormalizedDtos(
         this ExposedSecretReportCr exposedSecretReportCr)
     {
-        List<ExposedSecretReportDenormalizedDto> exposedSecretReportDenormalizedDtos = [];
-        foreach (Secret secret in exposedSecretReportCr.Report?.Secrets ?? [])
-        {
-            ExposedSecretReportDenormalizedDto exposedSecretReportDenormalizedDto = new()
+        IEnumerable<ExposedSecretReportDenormalizedDto> exposedSecretReportDenormalizedDtos = (exposedSecretReportCr.Report?.Secrets ?? [])
+            .Select(secret => new ExposedSecretReportDenormalizedDto()
             {
                 Category = secret.Category,
                 Match = secret.Match,
@@ -248,33 +246,33 @@ public static class ExposedSecretReportCrExtensions
                 Title = secret.Title,
                 Uid = new Guid(exposedSecretReportCr?.Metadata?.Uid ?? string.Empty),
                 ResourceName =
-                    exposedSecretReportCr?.Metadata?.Labels != null &&
-                    exposedSecretReportCr.Metadata.Labels.TryGetValue(
-                        "trivy-operator.resource.name",
-                        out string? resourceName)
-                        ? resourceName
-                        : string.Empty,
+                exposedSecretReportCr?.Metadata?.Labels != null &&
+                exposedSecretReportCr.Metadata.Labels.TryGetValue(
+                    "trivy-operator.resource.name",
+                    out string? resourceName)
+                    ? resourceName
+                    : string.Empty,
                 ResourceNamespace =
-                    exposedSecretReportCr?.Metadata?.Labels != null &&
-                    exposedSecretReportCr.Metadata.Labels.TryGetValue(
-                        "trivy-operator.resource.namespace",
-                        out string? resourceNamespace)
-                        ? resourceNamespace
-                        : string.Empty,
+                exposedSecretReportCr?.Metadata?.Labels != null &&
+                exposedSecretReportCr.Metadata.Labels.TryGetValue(
+                    "trivy-operator.resource.namespace",
+                    out string? resourceNamespace)
+                    ? resourceNamespace
+                    : string.Empty,
                 ResourceKind =
-                    exposedSecretReportCr?.Metadata?.Labels != null &&
-                    exposedSecretReportCr.Metadata.Labels.TryGetValue(
-                        "trivy-operator.resource.kind",
-                        out string? resourceKind)
-                        ? resourceKind
-                        : string.Empty,
+                exposedSecretReportCr?.Metadata?.Labels != null &&
+                exposedSecretReportCr.Metadata.Labels.TryGetValue(
+                    "trivy-operator.resource.kind",
+                    out string? resourceKind)
+                    ? resourceKind
+                    : string.Empty,
                 ResourceContainerName =
-                    exposedSecretReportCr?.Metadata?.Labels != null &&
-                    exposedSecretReportCr.Metadata.Labels.TryGetValue(
-                        "trivy-operator.container.name",
-                        out string? resourceContainerName)
-                        ? resourceContainerName
-                        : string.Empty,
+                exposedSecretReportCr?.Metadata?.Labels != null &&
+                exposedSecretReportCr.Metadata.Labels.TryGetValue(
+                    "trivy-operator.container.name",
+                    out string? resourceContainerName)
+                    ? resourceContainerName
+                    : string.Empty,
                 ImageName = exposedSecretReportCr?.Report?.Artifact?.Repository ?? string.Empty,
                 ImageTag = exposedSecretReportCr?.Report?.Artifact?.Tag ?? string.Empty,
                 ImageDigest = exposedSecretReportCr?.Report?.Artifact?.Digest ?? string.Empty,
@@ -283,9 +281,7 @@ public static class ExposedSecretReportCrExtensions
                 HighCount = exposedSecretReportCr?.Report?.Summary?.HighCount ?? 0,
                 MediumCount = exposedSecretReportCr?.Report?.Summary?.MediumCount ?? 0,
                 LowCount = exposedSecretReportCr?.Report?.Summary?.LowCount ?? 0,
-            };
-            exposedSecretReportDenormalizedDtos.Add(exposedSecretReportDenormalizedDto);
-        }
+            });
 
         return exposedSecretReportDenormalizedDtos;
     }

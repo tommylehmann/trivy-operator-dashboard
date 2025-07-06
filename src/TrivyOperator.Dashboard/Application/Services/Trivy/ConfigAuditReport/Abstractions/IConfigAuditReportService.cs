@@ -4,7 +4,7 @@ namespace TrivyOperator.Dashboard.Application.Services.Trivy.ConfigAuditReport.A
 
 public interface IConfigAuditReportService
 {
-    Task<IList<ConfigAuditReportDenormalizedDto>> GetConfigAuditReportDenormalizedDtos(string? namespaceName = null);
+    Task<IEnumerable<ConfigAuditReportDenormalizedDto>> GetConfigAuditReportDenormalizedDtos(string? namespaceName = null);
 
     Task<IEnumerable<ConfigAuditReportDto>> GetConfigAuditReportDtos(
         string? namespaceName = null,

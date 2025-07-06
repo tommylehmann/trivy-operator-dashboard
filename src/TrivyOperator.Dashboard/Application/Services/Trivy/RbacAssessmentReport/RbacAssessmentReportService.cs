@@ -6,7 +6,7 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services.Trivy.RbacAssessmentReport;
 
-public class RbacAssessmentReportService(IListConcurrentCache<RbacAssessmentReportCr> cache)
+public class RbacAssessmentReportService(IConcurrentDictionaryCache<RbacAssessmentReportCr> cache)
     : IRbacAssessmentReportService
 {
     public Task<IEnumerable<RbacAssessmentReportDto>> GetRbacAssessmentReportDtos(
@@ -14,15 +14,14 @@ public class RbacAssessmentReportService(IListConcurrentCache<RbacAssessmentRepo
         IEnumerable<int>? excludedSeverities = null)
     {
         excludedSeverities ??= [];
-        int[] excludedSeveritiesArray = excludedSeverities.ToArray();
-        int[] includedSeverities = ((int[])Enum.GetValues(typeof(TrivySeverity))).ToList()
-            .Except(excludedSeveritiesArray)
-            .ToArray();
+        int[] excludedSeveritiesArray = [.. excludedSeverities];
+        int[] includedSeverities = [.. Enum.GetValues<TrivySeverity>().Cast<int>().Except(excludedSeveritiesArray)];
 
-        IEnumerable<RbacAssessmentReportDto> dtos = cache
+        IEnumerable<RbacAssessmentReportCr> cachedValues = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(
-                kvp => kvp.Value.Select(cr => cr.ToRbacAssessmentReportDto())
+            .SelectMany(kvp => kvp.Value.Values)];
+
+        IEnumerable<RbacAssessmentReportDto> dtos = cachedValues.Select(cr => cr.ToRbacAssessmentReportDto())
                     .Select(
                         dto =>
                         {
@@ -34,23 +33,24 @@ public class RbacAssessmentReportService(IListConcurrentCache<RbacAssessmentRepo
                                 .ToArray();
                             return dto;
                         })
-                    .Where(dto => excludedSeveritiesArray.Length == 0 || dto.Details.Length != 0));
+                    .Where(dto => excludedSeveritiesArray.Length == 0 || dto.Details.Length != 0);
 
         return Task.FromResult(dtos);
     }
 
-    public Task<IList<RbacAssessmentReportDenormalizedDto>> GetRbacAssessmentReportDenormalizedDtos(
+    public Task<IEnumerable<RbacAssessmentReportDenormalizedDto>> GetRbacAssessmentReportDenormalizedDtos(
         string? namespaceName = null)
     {
-        List<RbacAssessmentReportDenormalizedDto> result = cache
+        IEnumerable<RbacAssessmentReportCr> cachedValues = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value)
-            .SelectMany(cr => cr.ToRbacAssessmentReportDenormalizedDtos())
-            .ToList();
+            .SelectMany(kvp => kvp.Value.Values)];
 
-        return Task.FromResult<IList<RbacAssessmentReportDenormalizedDto>>(result);
+        IEnumerable<RbacAssessmentReportDenormalizedDto> result = cachedValues
+            .SelectMany(cr => cr.ToRbacAssessmentReportDenormalizedDtos());
+
+        return Task.FromResult(result);
     }
 
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
-        Task.FromResult(cache.Where(x => x.Value.Any()).Select(x => x.Key));
+        Task.FromResult<IEnumerable<string>>([.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key)]);
 }
