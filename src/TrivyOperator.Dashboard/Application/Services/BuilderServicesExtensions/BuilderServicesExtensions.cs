@@ -108,6 +108,7 @@ public static class BuilderServicesExtensions
         if (useServices == null || !(bool)useServices)
         {
             services.AddScoped<IClusterRbacAssessmentReportService, ClusterRbacAssessmentReportNullService>();
+            services.AddTransient<IConcurrentDictionaryCache<ClusterRbacAssessmentReportCr>, ConcurrentDictionaryCache<ClusterRbacAssessmentReportCr>>();
             return;
         }
 
@@ -139,6 +140,7 @@ public static class BuilderServicesExtensions
         if (useServices == null || !(bool)useServices)
         {
             services.AddScoped<IConfigAuditReportService, ConfigAuditReportNullService>();
+            services.AddTransient<IConcurrentDictionaryCache<ConfigAuditReportCr>, ConcurrentDictionaryCache<ConfigAuditReportCr>>();
             return;
         }
 
@@ -167,6 +169,7 @@ public static class BuilderServicesExtensions
         if (useServices == null || !(bool)useServices)
         {
             services.AddScoped<IExposedSecretReportService, ExposedSecretReportNullService>();
+            services.AddTransient<IConcurrentDictionaryCache<ExposedSecretReportCr>, ConcurrentDictionaryCache<ExposedSecretReportCr>>();
             return;
         }
 
@@ -196,6 +199,7 @@ public static class BuilderServicesExtensions
         if (useServices == null || !(bool)useServices)
         {
             services.AddScoped<IVulnerabilityReportService, VulnerabilityReportNullService>();
+            services.AddTransient<IConcurrentDictionaryCache<VulnerabilityReportCr>, ConcurrentDictionaryCache<VulnerabilityReportCr>>();
             return;
         }
 
@@ -226,6 +230,7 @@ public static class BuilderServicesExtensions
         if (useServices == null || !(bool)useServices)
         {
             services.AddScoped<IClusterComplianceReportService, ClusterComplianceReportNullService>();
+            services.AddTransient<IConcurrentDictionaryCache<ClusterComplianceReportCr>, ConcurrentDictionaryCache<ClusterComplianceReportCr>>();
             return;
         }
 
@@ -257,6 +262,7 @@ public static class BuilderServicesExtensions
         if (useServices == null || !(bool)useServices)
         {
             services.AddScoped<IClusterVulnerabilityReportService, ClusterVulnerabilityReportNullService>();
+            services.AddTransient<IConcurrentDictionaryCache<ClusterVulnerabilityReportCr>, ConcurrentDictionaryCache<ClusterVulnerabilityReportCr>>();
             return;
         }
 
@@ -289,6 +295,7 @@ public static class BuilderServicesExtensions
         if (useServices == null || !(bool)useServices)
         {
             services.AddScoped<IRbacAssessmentReportService, RbacAssessmentReportNullService>();
+            services.AddTransient<IConcurrentDictionaryCache<RbacAssessmentReportCr>, ConcurrentDictionaryCache<RbacAssessmentReportCr>>();
             return;
         }
 
@@ -319,6 +326,7 @@ public static class BuilderServicesExtensions
         if (useServices == null || !(bool)useServices)
         {
             services.AddScoped<ISbomReportService, SbomReportNullService>();
+            services.AddTransient<IConcurrentDictionaryCache<SbomReportCr>, ConcurrentDictionaryCache<SbomReportCr>>();
             return;
         }
 
@@ -389,18 +397,15 @@ public static class BuilderServicesExtensions
         services.AddSingleton<ICustomResourceDefinitionFactory, CustomResourceDefinitionFactory>();
 
         services
-            .AddSingleton<
-                IClusterScopedResourceWatchDomainService<ClusterComplianceReportCr,
+            .AddSingleton<IClusterScopedResourceWatchDomainService<ClusterComplianceReportCr,
                     CustomResourceList<ClusterComplianceReportCr>>,
                 ClusterScopedTrivyReportDomainService<ClusterComplianceReportCr>>();
         services
-            .AddSingleton<
-                IClusterScopedResourceWatchDomainService<ClusterRbacAssessmentReportCr,
+            .AddSingleton<IClusterScopedResourceWatchDomainService<ClusterRbacAssessmentReportCr,
                     CustomResourceList<ClusterRbacAssessmentReportCr>>,
                 ClusterScopedTrivyReportDomainService<ClusterRbacAssessmentReportCr>>();
         services
-            .AddSingleton<
-                IClusterScopedResourceWatchDomainService<ClusterSbomReportCr, CustomResourceList<ClusterSbomReportCr>>,
+            .AddSingleton<IClusterScopedResourceWatchDomainService<ClusterSbomReportCr, CustomResourceList<ClusterSbomReportCr>>,
                 ClusterScopedTrivyReportDomainService<ClusterSbomReportCr>>();
         services
             .AddSingleton<
@@ -409,24 +414,20 @@ public static class BuilderServicesExtensions
                 ClusterScopedTrivyReportDomainService<ClusterVulnerabilityReportCr>>();
 
         services
-            .AddSingleton<
-                INamespacedResourceWatchDomainService<ConfigAuditReportCr, CustomResourceList<ConfigAuditReportCr>>,
+            .AddSingleton<INamespacedResourceWatchDomainService<ConfigAuditReportCr, CustomResourceList<ConfigAuditReportCr>>,
                 NamespacedTrivyReportDomainService<ConfigAuditReportCr>>();
         services
-            .AddSingleton<
-                INamespacedResourceWatchDomainService<ExposedSecretReportCr, CustomResourceList<ExposedSecretReportCr>>,
+            .AddSingleton<INamespacedResourceWatchDomainService<ExposedSecretReportCr, CustomResourceList<ExposedSecretReportCr>>,
                 NamespacedTrivyReportDomainService<ExposedSecretReportCr>>();
         services
-            .AddSingleton<
-                INamespacedResourceWatchDomainService<RbacAssessmentReportCr,
+            .AddSingleton<INamespacedResourceWatchDomainService<RbacAssessmentReportCr,
                     CustomResourceList<RbacAssessmentReportCr>>,
                 NamespacedTrivyReportDomainService<RbacAssessmentReportCr>>();
         services
             .AddSingleton<INamespacedResourceWatchDomainService<SbomReportCr, CustomResourceList<SbomReportCr>>,
                 NamespacedTrivyReportDomainService<SbomReportCr>>();
         services
-            .AddSingleton<
-                INamespacedResourceWatchDomainService<VulnerabilityReportCr, CustomResourceList<VulnerabilityReportCr>>,
+            .AddSingleton<INamespacedResourceWatchDomainService<VulnerabilityReportCr, CustomResourceList<VulnerabilityReportCr>>,
                 NamespacedTrivyReportDomainService<VulnerabilityReportCr>>();
     }
 

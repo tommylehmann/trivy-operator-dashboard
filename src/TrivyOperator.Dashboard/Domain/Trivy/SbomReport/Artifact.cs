@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using TrivyOperator.Dashboard.Domain.Trivy.TrivyReport.Abstractions;
 
 namespace TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 
-public class Artifact
+public class Artifact : IArtifact
 {
     [JsonPropertyName("digest")]
     public string Digest { get; init; } = string.Empty;
