@@ -88,6 +88,7 @@ builder.Services.AddClusterVulnerabilityReportServices(configuration.GetSection(
 builder.Services.AddRbacAssessmentReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddSbomReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddUiCommons();
+builder.Services.AddOthers();
 builder.Services.AddOpenTelemetry(configuration.GetSection("OpenTelemetry"), applicationNameForOtlp);
 
 WebApplication app = builder.Build();

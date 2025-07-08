@@ -37,6 +37,8 @@ using TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Trivy.VulnerabilityReport;
 using TrivyOperator.Dashboard.Application.Services.Trivy.VulnerabilityReport.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.TrivyReportDependencies;
+using TrivyOperator.Dashboard.Application.Services.TrivyReportDependencies.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.Watchers;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
@@ -429,6 +431,11 @@ public static class BuilderServicesExtensions
         services
             .AddSingleton<INamespacedResourceWatchDomainService<VulnerabilityReportCr, CustomResourceList<VulnerabilityReportCr>>,
                 NamespacedTrivyReportDomainService<VulnerabilityReportCr>>();
+    }
+
+    public static void AddOthers(this IServiceCollection services)
+    {
+        services.AddScoped<ITrivyReportDependency, TrivyReportDependency>();
     }
 
     public static void AddOpenTelemetry(this IServiceCollection services, IConfiguration configuration, string applicationName)

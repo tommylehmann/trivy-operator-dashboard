@@ -9,12 +9,17 @@ namespace TrivyOperator.Dashboard.Application.Models;
 
 public class TrivyReportDependencyDto
 {
+    public TrivyReportImageDto Image { get; set; } = new();
+    public TrivyReportDependencyKubernetesResourceLinkDto[] KubernetesDependencies { get; set; } = [];
+}
+
+public class TrivyReportImageDto
+{
     public string NamespaceName { get; set; } = string.Empty;
     public string ImageDigest { get; set; } = string.Empty;
     public string ImageName { get; set; } = string.Empty;
     public string ImageTag { get; set; } = string.Empty;
     public string ImageRepository { get; set; } = string.Empty;
-    public TrivyReportDependencyKubernetesResourceLinkDto[] KubernetesDependencies { get; set; } = [];
 }
 
 public class TrivyReportDependencyKubernetesResourceLinkDto
@@ -39,9 +44,9 @@ public class TrivyReportDependencyKubernetesResourceDto : IEquatable<TrivyReport
     {
         if (other is null) return false;
 
-        return ResourceContainerName == other.ResourceContainerName &&
-               ResourceKind == other.ResourceKind &&
-               ResourceName == other.ResourceName;
+        return ResourceContainerName == other.ResourceContainerName 
+            && ResourceKind == other.ResourceKind
+            && ResourceName == other.ResourceName;
     }
 
     public override bool Equals(object? obj) => Equals(obj as TrivyReportDependencyKubernetesResourceDto);
@@ -164,5 +169,5 @@ public static class TrivyReportDependencyDtoExtensions
         };
     }
 
-    private static string NotAvailable => "N/A";
+    public static readonly string NotAvailable = "N/A";
 }

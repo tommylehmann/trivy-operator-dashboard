@@ -1014,6 +1014,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+  /api/trivy-report-dependencies/digest:
+    get:
+      tags:
+        - TrivyReportDependency
+      operationId: GetTrivyReportDependecyDtoByDigestNamespace
+      parameters:
+        - name: digest
+          in: query
+          schema:
+            type: string
+        - name: namespaceName
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrivyReportDependencyDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /api/vulnerability-reports:
     get:
       tags:
@@ -2421,6 +2454,10 @@ components:
     SbomReportDetailDto:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
         bomRef:
           type: string
           nullable: true
@@ -2471,7 +2508,7 @@ components:
       properties:
         uid:
           type: string
-          nullable: true
+          format: uuid
         creationTimestamp:
           type: string
           format: date-time
@@ -2523,7 +2560,7 @@ components:
       properties:
         uid:
           type: string
-          nullable: true
+          format: uuid
         creationTimestamp:
           type: string
           format: date-time
@@ -2685,6 +2722,89 @@ components:
           type: string
           nullable: true
       additionalProperties: false
+    TrivyReport:
+      enum:
+        - ConfigAudit
+        - ExposedSecret
+        - Sbom
+        - Vulnerability
+        - Unknown
+      type: string
+    TrivyReportDependencyDetailDto:
+      type: object
+      properties:
+        trivyReport:
+          $ref: '#/components/schemas/TrivyReport'
+        criticalCount:
+          type: integer
+          format: int64
+        highCount:
+          type: integer
+          format: int64
+        mediumCount:
+          type: integer
+          format: int64
+        lowCount:
+          type: integer
+          format: int64
+        unknownCount:
+          type: integer
+          format: int64
+      additionalProperties: false
+    TrivyReportDependencyDto:
+      type: object
+      properties:
+        image:
+          $ref: '#/components/schemas/TrivyReportImageDto'
+        kubernetesDependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrivyReportDependencyKubernetesResourceLinkDto'
+          nullable: true
+      additionalProperties: false
+    TrivyReportDependencyKubernetesResourceDto:
+      type: object
+      properties:
+        resourceContainerName:
+          type: string
+          nullable: true
+        resourceKind:
+          type: string
+          nullable: true
+        resourceName:
+          type: string
+          nullable: true
+      additionalProperties: false
+    TrivyReportDependencyKubernetesResourceLinkDto:
+      type: object
+      properties:
+        kubernetesResource:
+          $ref: '#/components/schemas/TrivyReportDependencyKubernetesResourceDto'
+        trivyReportDependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrivyReportDependencyDetailDto'
+          nullable: true
+      additionalProperties: false
+    TrivyReportImageDto:
+      type: object
+      properties:
+        namespaceName:
+          type: string
+          nullable: true
+        imageDigest:
+          type: string
+          nullable: true
+        imageName:
+          type: string
+          nullable: true
+        imageTag:
+          type: string
+          nullable: true
+        imageRepository:
+          type: string
+          nullable: true
+      additionalProperties: false
     VRSeveritiesByNsSummaryDetailDto:
       type: object
       properties:
@@ -2730,6 +2850,7 @@ components:
         uid:
           type: string
           format: uuid
+          readOnly: true
         resourceName:
           type: string
           nullable: true
@@ -2824,6 +2945,7 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
         fixedVersion:
           type: string
           nullable: true
