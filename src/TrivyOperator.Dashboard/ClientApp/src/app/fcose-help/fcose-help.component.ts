@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { FcoseComponent } from '../fcose/fcose.component';
 import { NodeDataDto } from '../fcose/fcose.types';

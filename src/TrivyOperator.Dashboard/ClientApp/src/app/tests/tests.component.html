@@ -1,22 +1,9 @@
-<mat-icon>device_hub</mat-icon>
-<div class="tod-content-border">
-  <app-trivy-table
-    csvFileName="RBAC Assessment Reports"
-    csvStorageKey="RBAC Assessment Reports"
-    [activeNamespaces]="activeNamespaces"
-    [dataDtos]="dataDtos"
-    [isLoading]="isLoading"
-    [trivyTableColumns]="trivyTableColumns"
-    (refreshRequested)="getTableDataDtos()"
-
-    [rowExpandData]="rowExpandResponse"
-    (rowExpandDataChange)="onRowExpandChange($event)"
-
-    [isExportCsvVisible]="true"
-    [isResetFiltersVisible]="true"
-    [isRefreshVisible]="true"
-    [isFooterVisible]="true"
-    [style]="{ width: '2100px' }"
-    [stateKey]="'RBAC Assessment Reports Detailed'"
-  />
+<div class="col-span-12 md:col-span-6">
+  <app-fcose [nodeDataDtos]="nodeDataDtos"
+             [isStatic]="false"
+             [staticInputFilterByNameValue]="'notdimmed'"
+             [staticSelectedNodeId]="'n11'"
+             [staticHighlightedNodeId]="'n21'"
+             [fcoseClasses]="'fcose border border-gray-500 mt-2'"
+             [extraColorClasses]="extraColorClasses" />
 </div>

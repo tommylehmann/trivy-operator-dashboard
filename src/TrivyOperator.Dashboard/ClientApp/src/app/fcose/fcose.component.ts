@@ -114,6 +114,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
 
   fcoseClasses = input<string>("fcose fcose-half");
 
+  extraColorClasses = input<{name: string, code: string}[]>([]);
+
   isHelpDialogVisible: boolean = false;
 
   constructor(private darkModeService: DarkModeService) {
@@ -251,12 +253,17 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           },
         },
         {
+          selector: '.mainBackgroundColor',
+          style: {
+            'background-color': 'Aqua',
+          }
+        },
+        {
           selector: '.nodePackage',
           style: {
             label: 'data(label)',
             width: 'mapData(label.length, 1, 30, 20, 200)',
             height: '20px',
-            'background-color': 'Aqua',
             'text-valign': 'center',
             'text-halign': 'center',
             'text-wrap': 'ellipsis',
@@ -446,6 +453,15 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         }
       ],
     });
+
+    const extraStyles = this.extraColorClasses().map(c => ({
+      selector: `.${c.name}`,
+      style: {
+        'background-color': c.code
+      }
+    }));
+    const mergedStyles = [...extraStyles, ...(this.cy.style() as any).json()];
+    this.cy.style().fromJson(mergedStyles).update();
   }
 
   private setupCyEvents() {
@@ -752,7 +768,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.updateNavMenuItems(this.activeNodeId ?? "");
       setTimeout(() => {
         this.cy.elements().removeClass('hidden');
-        
+
         const node = this.cy.$(`#${this.selectedNodeId()}`);
         if (node) {
           node.select();
@@ -800,7 +816,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
           label: nodeData.name ? nodeData.name : '\u2003', // so called 'em space' - just a 'long' space,
           parent: parentId,
         },
-        classes: `nodeCommon nodePackage ${nodeData.dependsOn?.length ? 'nodeBranch' : 'nodeLeaf'}`,
+        classes: `nodeCommon nodePackage ${nodeData.colorClass ?? 'mainBackgroundColor'} ${nodeData.dependsOn?.length ? 'nodeBranch' : 'nodeLeaf'}`,
       });
       nodeData.dependsOn?.forEach((depends) => {
         elements.push({

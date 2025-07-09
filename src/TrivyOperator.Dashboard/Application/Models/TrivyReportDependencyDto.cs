@@ -4,6 +4,7 @@ using TrivyOperator.Dashboard.Domain.Trivy.ConfigAuditReport;
 using TrivyOperator.Dashboard.Domain.Trivy.ExposedSecretReport;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
@@ -15,6 +16,7 @@ public class TrivyReportDependencyDto
 
 public class TrivyReportImageDto
 {
+    public Guid Id => VarUtils.GetDeterministicGuid(NamespaceName, ImageDigest, ImageName, ImageTag, ImageRepository);
     public string NamespaceName { get; set; } = string.Empty;
     public string ImageDigest { get; set; } = string.Empty;
     public string ImageName { get; set; } = string.Empty;
@@ -36,6 +38,7 @@ public class TrivyReportDependencyKubernetesResourceBindingDto
 
 public class TrivyReportDependencyKubernetesResourceDto : IEquatable<TrivyReportDependencyKubernetesResourceDto>
 {
+    public Guid Id => VarUtils.GetDeterministicGuid(ResourceContainerName, ResourceKind, ResourceName);
     public string ResourceContainerName { get; set; } = string.Empty;
     public string ResourceKind { get; set; } = string.Empty;
     public string ResourceName { get; set; } = string.Empty;
@@ -57,6 +60,7 @@ public class TrivyReportDependencyKubernetesResourceDto : IEquatable<TrivyReport
 
 public class TrivyReportDependencyDetailDto
 {
+    public string Uid { get; init; } = Guid.NewGuid().ToString();
     public TrivyReport TrivyReport { get; set; } = TrivyReport.Unknown;
     public long CriticalCount { get; set; } = -1;
     public long HighCount { get; set; } = -1;
@@ -84,6 +88,7 @@ public static class TrivyReportDependencyDtoExtensions
             KubernetesResource = GetTrivyReportDependencyKubernetesResourceDto(tr),
             TrivyReportDependency = new TrivyReportDependencyDetailDto
             {
+                Uid = tr.Uid(),
                 TrivyReport = TrivyReport.ConfigAudit,
                 CriticalCount = tr.Report?.Summary?.CriticalCount ?? -1,
                 HighCount = tr.Report?.Summary?.HighCount ?? -1,
@@ -101,6 +106,7 @@ public static class TrivyReportDependencyDtoExtensions
             KubernetesResource = GetTrivyReportDependencyKubernetesResourceDto(tr),
             TrivyReportDependency = new TrivyReportDependencyDetailDto
             {
+                Uid = tr.Uid(),
                 TrivyReport = TrivyReport.ExposedSecret,
                 CriticalCount = tr.Report?.Summary?.CriticalCount ?? -1,
                 HighCount = tr.Report?.Summary?.HighCount ?? -1,
@@ -118,6 +124,7 @@ public static class TrivyReportDependencyDtoExtensions
             KubernetesResource = GetTrivyReportDependencyKubernetesResourceDto(tr),
             TrivyReportDependency = new TrivyReportDependencyDetailDto
             {
+                Uid = tr.Uid(),
                 TrivyReport = TrivyReport.Vulnerability,
                 CriticalCount = tr.Report?.Summary?.CriticalCount ?? -1,
                 HighCount = tr.Report?.Summary?.HighCount ?? -1,
@@ -135,6 +142,7 @@ public static class TrivyReportDependencyDtoExtensions
             KubernetesResource = GetTrivyReportDependencyKubernetesResourceDto(tr),
             TrivyReportDependency = new TrivyReportDependencyDetailDto
             {
+                Uid = tr.Uid(),
                 TrivyReport = TrivyReport.Sbom,
             },
         };

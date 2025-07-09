@@ -2733,6 +2733,9 @@ components:
     TrivyReportDependencyDetailDto:
       type: object
       properties:
+        uid:
+          type: string
+          nullable: true
         trivyReport:
           $ref: '#/components/schemas/TrivyReport'
         criticalCount:
@@ -2765,6 +2768,10 @@ components:
     TrivyReportDependencyKubernetesResourceDto:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
         resourceContainerName:
           type: string
           nullable: true
@@ -2789,6 +2796,10 @@ components:
     TrivyReportImageDto:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
         namespaceName:
           type: string
           nullable: true

@@ -44,8 +44,9 @@ public static class VarUtils
         return excludedSeverityIds;
     }
 
-    public static Guid GetDeterministicGuid(string input)
+    public static Guid GetDeterministicGuid(params string[] inputs)
     {
+        string input = string.Join("#", inputs);
         byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
         byte[] guidBytes = new byte[16];
         Array.Copy(hashBytes, guidBytes, 16);

@@ -1,170 +1,87 @@
-import { Component } from '@angular/core';
+import { Component, effect, input, OnInit } from '@angular/core';
 
-import { RbacAssessmentReportDenormalizedDto } from '../../api/models/rbac-assessment-report-denormalized-dto';
-import { SeverityDto } from '../../api/models/severity-dto';
-import { RbacAssessmentReportService } from '../../api/services/rbac-assessment-report.service';
+import { FcoseComponent } from '../fcose/fcose.component';
+import { NodeDataDto } from '../fcose/fcose.types';
 
-import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
-import { TrivyTableColumn, TrivyTableExpandRowData } from '../trivy-table/trivy-table.types';
-
-import { MatIconModule } from '@angular/material/icon';
+import { TrivyReportDependencyService } from '../../api/services/trivy-report-dependency.service';
+import { TrivyReportDependencyDto } from '../../api/models/trivy-report-dependency-dto';
 
 @Component({
   selector: 'app-tests',
-  imports: [TrivyTableComponent, MatIconModule],
+  imports: [FcoseComponent],
   templateUrl: './tests.component.html',
   styleUrl: './tests.component.scss'
 })
-export class TestsComponent {
-  public dataDtos?: RbacAssessmentReportDenormalizedDto[] | null;
-  public severityDtos: SeverityDto[] = [];
-  public activeNamespaces: string[] = [];
-  public isLoading: boolean = false;
+export class TestsComponent implements OnInit {
+  nodeDataDtos: NodeDataDto[] = [];
 
-  public csvFileName: string = 'Rbac.Assessment.Reports';
+  extraColorClasses: {name: string, code: string}[] = [
+    { name: 'teal', code: '#40B0A6' },
+    { name: 'yellow', code: '#FFC20A' },
+    { name: 'purple', code: '#5D3A9B' },
+    { name: 'orange', code: '#E66100' },
+    { name: 'turquoise', code: '#1A85FF' },
+    { name: 'lime', code: '#B2DF8A' },
+  ];
 
-  public trivyTableColumns: TrivyTableColumn[];
+  trivyReportDependencyDto = input<TrivyReportDependencyDto | undefined>();
+  protected _trivyReportDependencyDto?: TrivyReportDependencyDto;
 
-  constructor(private dataDtoService: RbacAssessmentReportService) {
-    this.getTableDataDtos();
-
-    this.trivyTableColumns = [
-      {
-        field: 'resourceNamespace',
-        header: 'NS',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'namespaces',
-        style: 'width: 130px; max-width: 130px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'resourceName',
-        header: 'Name',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 240px; max-width: 240px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'severityId',
-        header: 'Sev',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'severities',
-        style: 'width: 90px; max-width: 90px;',
-        renderType: 'severityBadge',
-      },
-      {
-        field: 'category',
-        header: 'Category',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 140px; max-width: 140px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'checkId',
-        header: 'Id',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 95px; max-width: 95px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'title',
-        header: 'Title',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 180px; max-width: 180px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'description',
-        header: 'Description',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 360px; max-width: 360px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'remediation',
-        header: 'Remediation',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 360px; max-width: 360px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'messages',
-        header: 'Messages',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 500px; max-width: 500px; white-space: normal;',
-        renderType: 'multiline',
-      },
-    ];
-  }
-
-  public getTableDataDtos() {
-    this.isLoading = true;
-    this.dataDtoService.getRbacAssessmentReportDenormalizedDtos().subscribe({
-      next: (res) => this.onGetDataDtos(res),
-      error: (err) => console.error(err),
-    });
-    this.dataDtoService.getRbacAssessmentReportActiveNamespaces().subscribe({
-      next: (res) => this.onGetActiveNamespaces(res),
-      error: (err) => console.error(err),
+  constructor(private service: TrivyReportDependencyService ) {
+    effect(() => {
+      this.onGetDataDto(this.trivyReportDependencyDto());
     });
   }
 
-  onGetDataDtos(dtos: RbacAssessmentReportDenormalizedDto[]) {
-    this.dataDtos = dtos;
-    this.isLoading = false;
+  ngOnInit() {
+    this.service
+      .getTrivyReportDependecyDtoByDigestNamespace({digest: "sha256:1be4ab8d95b478553ab8ba5bf46ffd9ad9788c8a2d373e1a63dc545e6f141fe1", namespaceName: "trivy"})
+      .subscribe({
+        next: (res) => this.onGetDataDto(res),
+        error: (err) => console.error(err),
+      });
   }
 
-  onGetActiveNamespaces(activeNamespaces: string[]) {
-    this.activeNamespaces = activeNamespaces.sort((x, y) => (x > y ? 1 : -1));
+  onGetDataDto(res?: TrivyReportDependencyDto) {
+    this._trivyReportDependencyDto = res;
+
+    if (!res) {
+      this.nodeDataDtos = [];
+      return;
+    }
+
+    if (!res.image) {
+      this.nodeDataDtos = [{ id: 'undefined', name: 'undefined', isMain: true}]
+      return;
+    }
+
+    const rootNodeDepIds: string[] = [];
+    this.nodeDataDtos.push({id: res.image.id, name: res.image.imageName ?? 'n/a', isMain: true, dependsOn: rootNodeDepIds, colorClass: 'teal', });
+
+    (res.kubernetesDependencies ?? []).forEach((dependency) => {
+      rootNodeDepIds.push(dependency.kubernetesResource?.id ?? 'n/a');
+
+      const trivyRepIds: string[] = [];
+      this.nodeDataDtos.push({id: dependency.kubernetesResource?.id, name: dependency.kubernetesResource?.resourceName, isMain: false, dependsOn: trivyRepIds, colorClass: 'yellow', });
+      (dependency.trivyReportDependencies ?? []).forEach((trivyRep) => {
+        trivyRepIds.push(trivyRep.uid ?? 'n/a');
+        this.nodeDataDtos.push({id: trivyRep.uid ?? 'n/a', name: trivyRep.trivyReport, colorClass: this.getColorClass(trivyRep.trivyReport ?? '')}, );
+      })
+    });
   }
 
-  // TODO: row expand tests
-  rowExpandResponse?: TrivyTableExpandRowData<RbacAssessmentReportDenormalizedDto>;
-  onRowExpandChange(event: RbacAssessmentReportDenormalizedDto) {
-    setTimeout(() => {this.rowExpandResponse = {
-      rowKey: event,
-      colStyles: [
-        { 'width' : '100px'},
-        { 'width' : '500px'},
-      ],
-      // headerDef: [
-      //   {label: "header 1"},
-      //   {label: "header 2"},
-      // ],
-      details: [
-        [
-          {
-            label: 'label01',
-          },
-          {
-            label: 'label02',
-          },
-        ],
-        [
-          {
-            label: 'label11',
-          },
-          {
-            label: 'label12',
-          }
-        ]
-      ]};}, 2000)
-
+  private getColorClass(trivyReportName: string): string {
+      switch (trivyReportName.toLowerCase()) {
+        case "configaudit":
+          return "purple";
+        case "exposedsecret":
+          return "orange";
+        case "sbom":
+          return "turquoise";
+        case "vulnerability":
+          return "lime";
+        default:
+          return "aqua"; // fallback to black
+      }
   }
 }

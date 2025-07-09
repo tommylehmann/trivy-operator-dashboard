@@ -4,6 +4,7 @@ export interface NodeDataDto {
   dependsOn?: Array<string> | null;
   groupName?: string;
   isMain?: boolean;
+  colorClass?: string;
 }
 
 export interface DeletedNodes {
