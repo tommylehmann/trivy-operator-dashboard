@@ -1,9 +1,73 @@
-<div class="col-span-12 md:col-span-6">
-  <app-fcose [nodeDataDtos]="nodeDataDtos"
-             [isStatic]="false"
-             [staticInputFilterByNameValue]="'notdimmed'"
-             [staticSelectedNodeId]="'n11'"
-             [staticHighlightedNodeId]="'n21'"
-             [fcoseClasses]="'fcose border border-gray-500 mt-2'"
-             [extraColorClasses]="extraColorClasses" />
-</div>
+<p-splitter styleClass="mb-8" [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
+            [panelSizes]="[50, 50]" >
+  <ng-template #panel>
+    <div class="w-full">
+      <p-treeTable [value]="treeNodes"
+                   [autoLayout]="true"
+                   [resizableColumns]="true"
+                   selectionMode="single"
+                   [(selection)]="selectedTreeNode"
+                   dataKey="id">
+        <ng-template pTemplate="header" let-rowNode>
+          <tr>
+            <th ttResizableColumn>Object Type</th>
+            <th ttResizableColumn>Description</th>
+            <th ttResizableColumn>C</th>
+            <th ttResizableColumn>H</th>
+            <th ttResizableColumn>M</th>
+            <th ttResizableColumn>L</th>
+            <th ttResizableColumn>U</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+          <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+            <td>
+              <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+              {{ rowData.objectType }}
+            </td>
+            <td>{{ rowData.description }}</td>
+            <td>
+              <p-tag [rounded]="true"
+                     [style]="0 | severityCssStyleById:(rowData.critical ?? -1)"
+                     [value]="rowData.critical | vulnerabilityCount" />
+            </td>
+            <td>
+              <p-tag [rounded]="true"
+                       [style]="1 | severityCssStyleById:(rowData.high ?? -1)"
+                       [value]="rowData.high | vulnerabilityCount" />
+            </td>
+            <td>
+              <p-tag [rounded]="true"
+                     [style]="2 | severityCssStyleById:(rowData.medium ?? -1)"
+                     [value]="rowData.medium | vulnerabilityCount" />
+            </td>
+            <td>
+              <p-tag [rounded]="true"
+                     [style]="3 | severityCssStyleById:(rowData.low ?? -1)"
+                     [value]="rowData.low | vulnerabilityCount" />
+            </td>
+            <td>
+              <p-tag [rounded]="true"
+                     [style]="4 | severityCssStyleById:(rowData.unknown ?? -1)"
+                     [value]="rowData.unknown | vulnerabilityCount" />
+            </td>
+          </tr>
+        </ng-template>
+      </p-treeTable>
+    </div>
+  </ng-template>
+  <ng-template #panel>
+    <div class="w-full">
+
+      <app-fcose [nodeDataDtos]="nodeDataDtos"
+                 [isStatic]="false"
+                 [staticInputFilterByNameValue]="'notdimmed'"
+                 [staticSelectedNodeId]="'n11'"
+                 [staticHighlightedNodeId]="'n21'"
+                 [fcoseClasses]="'fcose border border-gray-500 mt-2'"
+                 [idealEdgeLength]="30"
+                 [extraColorClasses]="extraColorClasses" />
+    </div>
+  </ng-template>
+</p-splitter>

@@ -1,4 +1,4 @@
-import { Component, effect, input, OnInit } from '@angular/core';
+import { Component, effect, HostListener, input, OnInit } from '@angular/core';
 
 import { FcoseComponent } from '../fcose/fcose.component';
 import { NodeDataDto } from '../fcose/fcose.types';
@@ -6,9 +6,32 @@ import { NodeDataDto } from '../fcose/fcose.types';
 import { TrivyReportDependencyService } from '../../api/services/trivy-report-dependency.service';
 import { TrivyReportDependencyDto } from '../../api/models/trivy-report-dependency-dto';
 
+import { SplitterModule } from 'primeng/splitter';
+import { TagModule } from 'primeng/tag';
+import { TreeTableModule } from 'primeng/treetable';
+import { TreeNode } from 'primeng/api';
+import { NgSwitchCase } from '@angular/common';
+import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
+import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
+
+export interface ReportTreeNode extends TreeNode {
+  data: {
+    id: string;
+    objectType: string;
+    description: string;
+    critical: number;
+    high: number;
+    medium: number;
+    low: number;
+    unknown: number;
+  };
+}
+
+
+
 @Component({
   selector: 'app-tests',
-  imports: [FcoseComponent],
+  imports: [FcoseComponent, SplitterModule, TagModule, TreeTableModule, NgSwitchCase, SeverityCssStyleByIdPipe, VulnerabilityCountPipe],
   templateUrl: './tests.component.html',
   styleUrl: './tests.component.scss'
 })
@@ -16,16 +39,21 @@ export class TestsComponent implements OnInit {
   nodeDataDtos: NodeDataDto[] = [];
 
   extraColorClasses: {name: string, code: string}[] = [
-    { name: 'teal', code: '#40B0A6' },
-    { name: 'yellow', code: '#FFC20A' },
-    { name: 'purple', code: '#5D3A9B' },
-    { name: 'orange', code: '#E66100' },
-    { name: 'turquoise', code: '#1A85FF' },
-    { name: 'lime', code: '#B2DF8A' },
+    { name: 'buttermilk',     code: '#FFF2B2' },
+    { name: 'sunbeam-yellow', code: '#F7C948' },
+    { name: 'amber-glow',     code: '#E8B04B' },
+    { name: 'harvest-orange', code: '#F4A261' },
+    { name: 'spiced-apricot', code: '#D88B4A' },
+    { name: 'burnt-sienna',   code: '#B25C33' }
   ];
 
   trivyReportDependencyDto = input<TrivyReportDependencyDto | undefined>();
   protected _trivyReportDependencyDto?: TrivyReportDependencyDto;
+
+  screenSize: string = this.getScreenSize();
+
+  treeNodes: ReportTreeNode[] = [];
+  selectedTreeNode?: ReportTreeNode;
 
   constructor(private service: TrivyReportDependencyService ) {
     effect(() => {
@@ -47,25 +75,103 @@ export class TestsComponent implements OnInit {
 
     if (!res) {
       this.nodeDataDtos = [];
+      this.treeNodes = [];
       return;
     }
 
+
+    this.getTreeNodes(res);
+    this.getFcoseNodes(res);
+  }
+
+  private getTreeNodes(res: TrivyReportDependencyDto): void {
+    const tree: ReportTreeNode[] = [];
+
+    if (res.image) {
+      const imageKey = res.image.id || res.image.imageDigest || 'image-root';
+
+      const imageNode: ReportTreeNode = {
+        key: imageKey,
+        data: {
+          id: res.image.id ?? '',
+          objectType: 'image',
+          description: `${res.image.imageName || ''}:${res.image.imageTag || ''}`,
+          critical: 0,
+          high: 0,
+          medium: 0,
+          low: 0,
+          unknown: 0
+        },
+        expanded: true,
+        children: []
+      };
+
+      res.kubernetesDependencies?.forEach((dep, depIndex) => {
+        if (dep.kubernetesResource) {
+          const resourceKey = dep.kubernetesResource.id || `${imageKey}-resource-${depIndex}`;
+
+          const resourceNode: ReportTreeNode = {
+            key: resourceKey,
+            data: {
+              id: dep.kubernetesResource.id ?? '',
+              objectType: 'k8s resource',
+              description: `${dep.kubernetesResource.resourceKind || ''} ${dep.kubernetesResource.resourceName || ''}`,
+              critical: 0,
+              high: 0,
+              medium: 0,
+              low: 0,
+              unknown: 0
+            },
+            expanded: true,
+            children: []
+          };
+
+          dep.trivyReportDependencies?.forEach((detail, detailIndex) => {
+            const detailKey = detail.uid || `${resourceKey}-detail-${detailIndex}`;
+
+            resourceNode.children!.push({
+              key: detailKey,
+              data: {
+                id: detail.uid ?? '',
+                objectType: detail.trivyReport || 'unknown',
+                description: detail.uid || '',
+                critical: detail.criticalCount ?? 0,
+                high: detail.highCount ?? 0,
+                medium: detail.mediumCount ?? 0,
+                low: detail.lowCount ?? 0,
+                unknown: detail.unknownCount ?? 0
+              },
+              expanded: true
+            });
+          });
+
+          imageNode.children!.push(resourceNode);
+        }
+      });
+
+      tree.push(imageNode);
+    }
+
+    this.treeNodes = tree;
+  }
+
+  private getFcoseNodes(res: TrivyReportDependencyDto){
     if (!res.image) {
       this.nodeDataDtos = [{ id: 'undefined', name: 'undefined', isMain: true}]
       return;
     }
 
     const rootNodeDepIds: string[] = [];
-    this.nodeDataDtos.push({id: res.image.id, name: res.image.imageName ?? 'n/a', isMain: true, dependsOn: rootNodeDepIds, colorClass: 'teal', });
+    this.nodeDataDtos.push({id: res.image.id, name: `${res.image.imageName ?? 'n/a'}`, isMain: true, dependsOn: rootNodeDepIds, colorClass: 'sunbeam-yellow', });
 
     (res.kubernetesDependencies ?? []).forEach((dependency) => {
       rootNodeDepIds.push(dependency.kubernetesResource?.id ?? 'n/a');
 
       const trivyRepIds: string[] = [];
-      this.nodeDataDtos.push({id: dependency.kubernetesResource?.id, name: dependency.kubernetesResource?.resourceName, isMain: false, dependsOn: trivyRepIds, colorClass: 'yellow', });
+      this.nodeDataDtos.push({id: dependency.kubernetesResource?.id, name: dependency.kubernetesResource?.resourceName, isMain: false, dependsOn: trivyRepIds, colorClass: 'buttermilk', });
       (dependency.trivyReportDependencies ?? []).forEach((trivyRep) => {
         trivyRepIds.push(trivyRep.uid ?? 'n/a');
-        this.nodeDataDtos.push({id: trivyRep.uid ?? 'n/a', name: trivyRep.trivyReport, colorClass: this.getColorClass(trivyRep.trivyReport ?? '')}, );
+        this.nodeDataDtos.push({id: trivyRep.uid ?? 'n/a', name: trivyRep.trivyReport, colorClass: 'spiced-apricot'}, );
       })
     });
   }
@@ -83,5 +189,21 @@ export class TestsComponent implements OnInit {
         default:
           return "aqua"; // fallback to black
       }
+  }
+
+  // screen size
+  @HostListener('window:resize', [])
+  onResize() {
+    this.screenSize = this.getScreenSize();
+  }
+
+  getScreenSize(): string {
+    const cssVarValue = getComputedStyle(document.documentElement)
+      .getPropertyValue('--tod-screen-width-xs')
+      .trim(); // Get and clean the CSS variable value
+
+    const threshold = parseInt(cssVarValue, 10); // Convert it to a number
+
+    return window.innerWidth < threshold ? 'sm' : 'lg';
   }
 }

@@ -95,7 +95,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     tilingPaddingHorizontal: 100,
     tilingPaddingVertical: 100,
     idealEdgeLength: (edge: EdgeSingular) => {
-      return 150;
+      return this.idealEdgeLength();
     },
     edgeElasticity: (edge: EdgeSingular) => {
       return 0.15;
@@ -115,6 +115,8 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   fcoseClasses = input<string>("fcose fcose-half");
 
   extraColorClasses = input<{name: string, code: string}[]>([]);
+
+  idealEdgeLength = input<number>(150);
 
   isHelpDialogVisible: boolean = false;
 
