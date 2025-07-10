@@ -249,3 +249,22 @@ p-tag:has(> mat-icon) {
 .tod-separator {
   background: var(--p-button-text-primary-color);
 }
+
+blockquote {
+  padding-top: 1rem;
+
+  font-style: italic;
+  color: var(--p-tod-blockquote-text-color);
+}
+
+blockquote p:first-of-type {
+  padding-top: 0;
+  padding-left: 1rem;
+  border-left: 4px solid var(--p-surface-700);
+}
+
+blockquote p:not(:first-of-type) {
+  padding-top: 1rem;
+  padding-left: 1rem;
+  border-left: 4px solid var(--p-surface-700);
+}

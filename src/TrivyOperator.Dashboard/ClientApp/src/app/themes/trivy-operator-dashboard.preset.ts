@@ -36,6 +36,7 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         },
         text: { color: '#000000' },
         'tod-togglebutton-background-border-color': '{surface.100}',
+        'tod-blockquote-text-color': '{surface.900}',
       },
       dark: {
         surface: {
@@ -54,6 +55,7 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         },
         text: { color: '#ffffff' },
         'tod-togglebutton-background-border-color': '{surface.950}',
+        'tod-blockquote-text-color': '{surface.200}',
       },
 
     },
