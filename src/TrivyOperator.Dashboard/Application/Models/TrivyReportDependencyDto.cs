@@ -130,6 +130,7 @@ public static class TrivyReportDependencyDtoExtensions
                 HighCount = tr.Report?.Summary?.HighCount ?? -1,
                 MediumCount = tr.Report?.Summary?.MediumCount ?? -1,
                 LowCount = tr.Report?.Summary?.LowCount ?? -1,
+                UnknownCount = tr.Report?.Summary?.UnknownCount ?? -1,
             },
         };
     }

@@ -10,15 +10,17 @@ import { SplitterModule } from 'primeng/splitter';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNode } from 'primeng/api';
-import { NgSwitchCase } from '@angular/common';
+import {NgIf, NgSwitchCase} from '@angular/common';
 import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
+import {TrivyReportDependencyDetailDto} from "../../api/models/trivy-report-dependency-detail-dto";
 
 export interface ReportTreeNode extends TreeNode {
   data: {
     id: string;
     objectType: string;
     description: string;
+    hasSeverities: boolean;
     critical: number;
     high: number;
     medium: number;
@@ -31,7 +33,7 @@ export interface ReportTreeNode extends TreeNode {
 
 @Component({
   selector: 'app-tests',
-  imports: [FcoseComponent, SplitterModule, TagModule, TreeTableModule, NgSwitchCase, SeverityCssStyleByIdPipe, VulnerabilityCountPipe],
+  imports: [FcoseComponent, SplitterModule, TagModule, TreeTableModule, NgSwitchCase, SeverityCssStyleByIdPipe, VulnerabilityCountPipe, NgIf],
   templateUrl: './tests.component.html',
   styleUrl: './tests.component.scss'
 })
@@ -94,8 +96,9 @@ export class TestsComponent implements OnInit {
         key: imageKey,
         data: {
           id: res.image.id ?? '',
-          objectType: 'image',
-          description: `${res.image.imageName || ''}:${res.image.imageTag || ''}`,
+          objectType: 'Image',
+          description: `${res.image.imageRepository ?? ''}/${res.image.imageName ?? ''}:${res.image.imageTag ?? ''}`,
+          hasSeverities: false,
           critical: 0,
           high: 0,
           medium: 0,
@@ -108,14 +111,15 @@ export class TestsComponent implements OnInit {
 
       res.kubernetesDependencies?.forEach((dep, depIndex) => {
         if (dep.kubernetesResource) {
-          const resourceKey = dep.kubernetesResource.id || `${imageKey}-resource-${depIndex}`;
+          const resourceKey = dep.kubernetesResource.id ?? `${imageKey}-resource-${depIndex}`;
 
           const resourceNode: ReportTreeNode = {
             key: resourceKey,
             data: {
               id: dep.kubernetesResource.id ?? '',
-              objectType: 'k8s resource',
-              description: `${dep.kubernetesResource.resourceKind || ''} ${dep.kubernetesResource.resourceName || ''}`,
+              objectType: `${dep.kubernetesResource.resourceKind ?? 'K8s Resource'}`,
+              description: `${dep.kubernetesResource.resourceName ?? ''}`,
+              hasSeverities: false,
               critical: 0,
               high: 0,
               medium: 0,
@@ -127,14 +131,15 @@ export class TestsComponent implements OnInit {
           };
 
           dep.trivyReportDependencies?.forEach((detail, detailIndex) => {
-            const detailKey = detail.uid || `${resourceKey}-detail-${detailIndex}`;
+            const detailKey = detail.uid ?? `${resourceKey}-detail-${detailIndex}`;
 
             resourceNode.children!.push({
               key: detailKey,
               data: {
                 id: detail.uid ?? '',
                 objectType: detail.trivyReport || 'unknown',
-                description: detail.uid || '',
+                description: '',
+                hasSeverities: detail.trivyReport !== 'Sbom',
                 critical: detail.criticalCount ?? 0,
                 high: detail.highCount ?? 0,
                 medium: detail.mediumCount ?? 0,
@@ -171,9 +176,21 @@ export class TestsComponent implements OnInit {
       this.nodeDataDtos.push({id: dependency.kubernetesResource?.id, name: dependency.kubernetesResource?.resourceName, isMain: false, dependsOn: trivyRepIds, colorClass: 'buttermilk', });
       (dependency.trivyReportDependencies ?? []).forEach((trivyRep) => {
         trivyRepIds.push(trivyRep.uid ?? 'n/a');
-        this.nodeDataDtos.push({id: trivyRep.uid ?? 'n/a', name: trivyRep.trivyReport, colorClass: 'spiced-apricot'}, );
+        this.nodeDataDtos.push({id: trivyRep.uid ?? 'n/a', name: this.getTrivyRepLabel(trivyRep), colorClass: 'spiced-apricot'}, );
       })
     });
+  }
+
+  private getTrivyRepLabel(trivyRep: TrivyReportDependencyDetailDto) {
+    switch (trivyRep.trivyReport?.toLowerCase()) {
+      case "configaudit":
+      case "exposedsecret":
+        return `${trivyRep.trivyReport} - ${trivyRep.criticalCount ?? 0} / ${trivyRep.highCount ?? 0} / ${trivyRep.mediumCount ?? 0} / ${trivyRep.lowCount ?? 0}`;
+      case "vulnerability":
+        return `${trivyRep.trivyReport} - ${trivyRep.criticalCount ?? 0} / ${trivyRep.highCount ?? 0} / ${trivyRep.mediumCount ?? 0} / ${trivyRep.lowCount ?? 0} / ${trivyRep.unknownCount ?? 0}`;
+      default:
+        return `${trivyRep.trivyReport}`;
+    }
   }
 
   private getColorClass(trivyReportName: string): string {
@@ -187,7 +204,7 @@ export class TestsComponent implements OnInit {
         case "vulnerability":
           return "lime";
         default:
-          return "aqua"; // fallback to black
+          return "aqua";
       }
   }
 

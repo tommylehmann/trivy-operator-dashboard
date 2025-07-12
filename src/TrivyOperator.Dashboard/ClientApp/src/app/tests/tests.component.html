@@ -22,37 +22,37 @@
 
         <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
           <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
-            <td>
+            <td style="width: 250px">
               <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
               {{ rowData.objectType }}
             </td>
-            <td>{{ rowData.description }}</td>
-            <td>
+            <td [attr.colspan]="rowData.hasSeverities ? 1 : 6">{{ rowData.description }}</td>
+            <td *ngIf="rowData.hasSeverities" style="width: 90px">
               <p-tag [rounded]="true"
                      [style]="0 | severityCssStyleById:(rowData.critical ?? -1)"
                      [value]="rowData.critical | vulnerabilityCount" />
             </td>
-            <td>
+            <td *ngIf="rowData.hasSeverities" style="width: 90px">
               <p-tag [rounded]="true"
                        [style]="1 | severityCssStyleById:(rowData.high ?? -1)"
                        [value]="rowData.high | vulnerabilityCount" />
             </td>
-            <td>
+            <td *ngIf="rowData.hasSeverities" style="width: 90px">
               <p-tag [rounded]="true"
                      [style]="2 | severityCssStyleById:(rowData.medium ?? -1)"
                      [value]="rowData.medium | vulnerabilityCount" />
             </td>
-            <td>
+            <td *ngIf="rowData.hasSeverities" style="width: 90px">
               <p-tag [rounded]="true"
                      [style]="3 | severityCssStyleById:(rowData.low ?? -1)"
                      [value]="rowData.low | vulnerabilityCount" />
             </td>
-            <td>
+            <td *ngIf="rowData.hasSeverities" style="width: 90px">
               <p-tag [rounded]="true"
                      [style]="4 | severityCssStyleById:(rowData.unknown ?? -1)"
                      [value]="rowData.unknown | vulnerabilityCount" />
             </td>
-          </tr>
+        </tr>
         </ng-template>
       </p-treeTable>
     </div>
@@ -65,7 +65,7 @@
                  [staticInputFilterByNameValue]="'notdimmed'"
                  [staticSelectedNodeId]="'n11'"
                  [staticHighlightedNodeId]="'n21'"
-                 [fcoseClasses]="'fcose border border-gray-500 mt-2'"
+                 [fcoseClasses]="'fcose mt-2'"
                  [idealEdgeLength]="30"
                  [extraColorClasses]="extraColorClasses" />
     </div>
