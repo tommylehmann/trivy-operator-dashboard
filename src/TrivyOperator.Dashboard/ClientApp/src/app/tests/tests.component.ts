@@ -9,7 +9,7 @@ import { TrivyReportDependencyDto } from '../../api/models/trivy-report-dependen
 import { SplitterModule } from 'primeng/splitter';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
-import { TreeNode } from 'primeng/api';
+import { TreeNode, TreeTableNode } from 'primeng/api';
 import {NgIf, NgSwitchCase} from '@angular/common';
 import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
@@ -56,6 +56,7 @@ export class TestsComponent implements OnInit {
 
   treeNodes: ReportTreeNode[] = [];
   selectedTreeNode?: ReportTreeNode;
+  selectedNodeId?: string;
 
   constructor(private service: TrivyReportDependencyService ) {
     effect(() => {
@@ -206,6 +207,42 @@ export class TestsComponent implements OnInit {
         default:
           return "aqua";
       }
+  }
+
+  // node change
+
+  onGraphSelectedNodeIdChange(event: string | undefined) {
+    const currentSelectedTreeNodeId = this.selectedTreeNode?.data.id;
+    if (event !== currentSelectedTreeNodeId) {
+      if (!event) {
+        this.selectedTreeNode = undefined;
+        return;
+      }
+      this.selectedTreeNode = this.findTreeNodeById(this.treeNodes, event);
+    }
+  }
+
+  onTreeTableNodeSelect(event: TreeTableNode<ReportTreeNode['data']>) {
+    this.selectedNodeId = event.node?.data?.id;
+  }
+
+  onTreeTableNodeUnselect() {
+    this.selectedNodeId = undefined;
+  }
+
+  findTreeNodeById(nodes: ReportTreeNode[], nodeId: string): ReportTreeNode | undefined {
+    for (const node of nodes) {
+      if (node.data.id === nodeId) {
+        return node;
+      }
+
+      if (node.children && node.children.length > 0) {
+        const found = this.findTreeNodeById(node.children as ReportTreeNode[], nodeId);
+        if (found) return found;
+      }
+    }
+
+    return undefined;
   }
 
   // screen size
