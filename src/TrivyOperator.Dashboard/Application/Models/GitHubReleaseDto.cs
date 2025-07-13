@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
+﻿using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 

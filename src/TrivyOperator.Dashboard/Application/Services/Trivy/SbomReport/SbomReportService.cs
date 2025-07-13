@@ -8,7 +8,6 @@ using TrivyOperator.Dashboard.Application.Services.Trivy.SbomReport.Abstractions
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy;
 using TrivyOperator.Dashboard.Domain.Trivy.CustomResources.Abstractions;
-using TrivyOperator.Dashboard.Domain.Trivy.ExposedSecretReport;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
@@ -27,7 +26,7 @@ public class SbomReportService(
     {
         IEnumerable<SbomReportCr> cachedValues = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
         IEnumerable<SbomReportDto> dtos = cachedValues.Select(cr => cr.ToSbomReportDto());
 
         return Task.FromResult(dtos);
@@ -37,16 +36,16 @@ public class SbomReportService(
     {
         IEnumerable<SbomReportCr> cachedValues = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
         IEnumerable<VulnerabilityReportCr> cachedVrValues = [.. vrCache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
         var vrDigests = cachedVrValues
             .Where(vr => string.IsNullOrEmpty(digest) || vr.Report?.Artifact?.Digest == digest)
             .GroupBy(vr => new
             {
                 ImageDigest = vr.Report?.Artifact?.Digest ?? string.Empty,
-                ResourceNamespace = vr.Metadata.NamespaceProperty
+                ResourceNamespace = vr.Metadata.NamespaceProperty,
             })
             .Select(group => new {
                 group.Key.ImageDigest,
@@ -55,7 +54,7 @@ public class SbomReportService(
                 HighCount = group.FirstOrDefault()?.Report?.Summary?.HighCount ?? -1,
                 MediumCount = group.FirstOrDefault()?.Report?.Summary?.MediumCount ?? -1,
                 LowCount = group.FirstOrDefault()?.Report?.Summary?.LowCount ?? -1,
-                UnknownCount = group.FirstOrDefault()?.Report?.Summary?.UnknownCount ?? -1
+                UnknownCount = group.FirstOrDefault()?.Report?.Summary?.UnknownCount ?? -1,
             });
         IEnumerable<SbomReportImageDto> dtos = cachedValues
             .Where(vr => string.IsNullOrEmpty(digest) || vr.Report?.Artifact?.Digest == digest)
@@ -63,8 +62,8 @@ public class SbomReportService(
             .Select(group => group.ToSbomReportImageDto())
             .GroupJoin(
                 vrDigests,
-                dto => new { dto.ImageDigest, dto.ResourceNamespace },
-                vr => new { vr.ImageDigest, vr.ResourceNamespace },
+                dto => new { dto.ImageDigest, dto.ResourceNamespace, },
+                vr => new { vr.ImageDigest, vr.ResourceNamespace, },
                 (dto, vrMatches) =>
                 {
                     var vr = vrMatches.FirstOrDefault();
@@ -83,7 +82,7 @@ public class SbomReportService(
 
     public async Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid)
     {
-        string[] namespaceNames = [.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key)];
+        string[] namespaceNames = [.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key),];
 
         foreach (string namespaceName in namespaceNames)
         {
@@ -100,7 +99,7 @@ public class SbomReportService(
     {
         IEnumerable<SbomReportCr> cachedValues = [.. cache
             .Where(kvp => kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
 
         SbomReportCr? sr = cachedValues.FirstOrDefault(x => x.Metadata.Uid == uid);
         if (sr != null)
@@ -112,7 +111,10 @@ public class SbomReportService(
                 SetVulnerabilityReportStatistics(sbomReportDto);
                 return sbomReportDto;
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
         return null;
     }
@@ -121,7 +123,7 @@ public class SbomReportService(
     {
         IEnumerable<SbomReportCr> cachedValues = [.. cache
             .Where(kvp => kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
 
         SbomReportCr? x = cachedValues
             .Where(x => x.Report?.Artifact?.Digest == digest)
@@ -138,7 +140,7 @@ public class SbomReportService(
     {
         IEnumerable<SbomReportCr> cachedValues = [.. cache
             .Where(kvp => kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
 
         SbomReportCr? sr = cachedValues
             .Where(x => x.Report?.Artifact?.Digest == digest)
@@ -152,7 +154,10 @@ public class SbomReportService(
                             .ToCycloneDx();
                 return cycloneDx;
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
         return null;
     }
@@ -161,7 +166,7 @@ public class SbomReportService(
     {
         IEnumerable<SbomReportCr> cachedValues = [.. cache
             .Where(kvp => kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
 
         SbomReportCr? sr = cachedValues
             .Where(x => x.Report?.Artifact?.Digest == digest)
@@ -175,7 +180,10 @@ public class SbomReportService(
                             .ToSpdx();
                 return spdx;
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
         return null;
     }
@@ -204,7 +212,7 @@ public class SbomReportService(
                 string fileExtension = fileType.ToLower() == "json" ? "json" : "xml";
                 string fileName = InvalidFileNameCharsRegex.Replace(
                     $"{exportSbom.NamespaceName}_{imageName}_{imageVersion}_{exportSbom.Digest}.${fileExtension}", "_");
-                using var stream = archive.CreateEntry(fileName).Open();
+                await using var stream = archive.CreateEntry(fileName).Open();
                 if (fileType == "json")
                 {
                     JsonSerializer.Serialize(stream, cycloneDxBom);
@@ -241,13 +249,13 @@ public class SbomReportService(
     }
 
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
-        Task.FromResult<IEnumerable<string>>([.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key)]);
+        Task.FromResult<IEnumerable<string>>([.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key),]);
 
     private void SetVulnerabilityReportStatistics(SbomReportDto sbomReportDto)
     {
         IEnumerable<VulnerabilityReportCr> cachedVrValues = [.. vrCache
             .Where(kvp => kvp.Key == sbomReportDto.ResourceNamespace)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
 
         VulnerabilityReportCr? vr = cachedVrValues
             .Where(x => x.Report?.Artifact?.Digest == sbomReportDto.ImageDigest)
@@ -257,7 +265,7 @@ public class SbomReportService(
         if (vr != null)
         {
             var result = vr.Report?.Vulnerabilities?
-                .GroupBy(vrd => new { vrd.PackagePurl })
+                .GroupBy(vrd => new { vrd.PackagePurl, })
                 .Select(g => new
                 {
                     g.Key.PackagePurl,
@@ -265,7 +273,7 @@ public class SbomReportService(
                     HighCount = g.Count(vrd => vrd.Severity == TrivySeverity.HIGH),
                     MediumCount = g.Count(vrd => vrd.Severity == TrivySeverity.MEDIUM),
                     LowCount = g.Count(vrd => vrd.Severity == TrivySeverity.LOW),
-                    UnknownCount = g.Count(vrd => vrd.Severity == TrivySeverity.UNKNOWN)
+                    UnknownCount = g.Count(vrd => vrd.Severity == TrivySeverity.UNKNOWN),
                 })
                 .ToArray() ?? [];
 

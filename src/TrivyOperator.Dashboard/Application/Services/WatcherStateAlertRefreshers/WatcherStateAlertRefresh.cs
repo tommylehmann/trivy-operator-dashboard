@@ -15,6 +15,9 @@ public class WatcherStateAlertRefresh<TKubernetesObject>(
     : IKubernetesEventProcessor<TKubernetesObject>
     where TKubernetesObject : IKubernetesObject<V1ObjectMeta>
 {
+    private const string AlertEmitter = "Watcher";
+    private static readonly HashSet<string> ActiveAlerts = [];
+    
     public async Task ProcessKubernetesEvent(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
         if (watcherEvent.IsStatic)
@@ -47,16 +50,16 @@ public class WatcherStateAlertRefresh<TKubernetesObject>(
 
     private async ValueTask AddAlert(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
-        if (activeAlerts.Contains(watcherEvent.WatcherKey))
+        if (ActiveAlerts.Contains(watcherEvent.WatcherKey))
         {
             return;
         }
 
-        activeAlerts.Add(watcherEvent.WatcherKey);
+        ActiveAlerts.Add(watcherEvent.WatcherKey);
 
         string namespaceName = watcherEvent.WatcherKey == CacheUtils.DefaultCacheRefreshKey ? "n/a" : watcherEvent.WatcherKey;
         await alertService.AddAlert(
-            alertEmitter,
+            AlertEmitter,
             new Alert
             {
                 EmitterKey = GetCacheKey(watcherEvent),
@@ -67,12 +70,12 @@ public class WatcherStateAlertRefresh<TKubernetesObject>(
 
     private async ValueTask RemoveAlert(IWatcherEvent<TKubernetesObject> watcherEvent, CancellationToken cancellationToken)
     {
-        if (activeAlerts.Contains(watcherEvent.WatcherKey))
+        if (ActiveAlerts.Contains(watcherEvent.WatcherKey))
         {
-            activeAlerts.Remove(watcherEvent.WatcherKey);
+            ActiveAlerts.Remove(watcherEvent.WatcherKey);
 
             await alertService.RemoveAlert(
-            alertEmitter,
+            AlertEmitter,
             new Alert
             {
                 EmitterKey = GetCacheKey(watcherEvent),
@@ -83,8 +86,6 @@ public class WatcherStateAlertRefresh<TKubernetesObject>(
         }
     }
 
-    private static readonly string alertEmitter = "Watcher";
     private static string GetCacheKey(IWatcherEvent<TKubernetesObject> watcherEvent) =>
         $"{typeof(TKubernetesObject).Name}|{watcherEvent.WatcherKey}";
-    private static readonly HashSet<string> activeAlerts = [];
 }

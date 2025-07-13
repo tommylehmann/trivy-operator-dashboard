@@ -11,7 +11,7 @@ public class ClusterRbacAssessmentReportService(IConcurrentDictionaryCache<Clust
 {
     public Task<IEnumerable<ClusterRbacAssessmentReportDto>> GetClusterRbacAssessmentReportDtos()
     {
-        IEnumerable<ClusterRbacAssessmentReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values)];
+        IEnumerable<ClusterRbacAssessmentReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values),];
         IEnumerable <ClusterRbacAssessmentReportDto> values = cachedValues
             .Select(x => x.ToClusterRbacAssessmentReportDto());
 
@@ -20,7 +20,7 @@ public class ClusterRbacAssessmentReportService(IConcurrentDictionaryCache<Clust
 
     public Task<IEnumerable<ClusterRbacAssessmentReportDenormalizedDto>> GetClusterRbacAssessmentReportDenormalizedDtos()
     {
-        IEnumerable<ClusterRbacAssessmentReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values)];
+        IEnumerable<ClusterRbacAssessmentReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values),];
         IEnumerable<ClusterRbacAssessmentReportDenormalizedDto> values = cachedValues
             .SelectMany(cr => cr.ToClusterRbacAssessmentReportDenormalizedDtos());
 
@@ -29,9 +29,9 @@ public class ClusterRbacAssessmentReportService(IConcurrentDictionaryCache<Clust
 
     public Task<IEnumerable<ClusterRbacAssessmentReportSummaryDto>> GetClusterRbacAssessmentReportSummaryDtos()
     {
-        int[] allSeverities = [.. Enum.GetValues<TrivySeverity>().Cast<int>().Where(x => x < 4)];
+        int[] allSeverities = [.. Enum.GetValues<TrivySeverity>().Cast<int>().Where(x => x < 4),];
 
-        IEnumerable<ClusterRbacAssessmentReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values)];
+        IEnumerable<ClusterRbacAssessmentReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values),];
         IEnumerable<ClusterRbacAssessmentReportSummaryDto> actualValues = cachedValues
             .SelectMany(crar => crar.Report?.Checks ?? [])
             .GroupBy(key => key.Severity)
@@ -48,7 +48,7 @@ public class ClusterRbacAssessmentReportService(IConcurrentDictionaryCache<Clust
                 right => right.SeverityId,
                 (left, group) =>
                 {
-                    ClusterRbacAssessmentReportSummaryDto[] groupArray = [.. group];
+                    ClusterRbacAssessmentReportSummaryDto[] groupArray = [.. group,];
                     return new ClusterRbacAssessmentReportSummaryDto
                     {
                         SeverityId = left,

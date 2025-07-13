@@ -43,29 +43,7 @@ public class StaticNamespaceDomainService(
             Metadata = new V1ListMeta { ResourceVersion = "1", },
             Items = GetResources().Result,
         });
-    // failed attempt to implement this method. will not work for a "kubernetes watch" scenario.
-    //public Task<HttpOperationResponse<V1NamespaceList>> GetResourceWatchList(
-    //    string? lastResourceVersion = null,
-    //    int? timeoutSeconds = null,
-    //    CancellationToken cancellationToken = default)
-    //{
-    //    TaskCompletionSource<HttpOperationResponse<V1NamespaceList>> tcs = new();
-    //    V1NamespaceList v1NamespaceList = string.IsNullOrWhiteSpace(lastResourceVersion)
-    //        ? new V1NamespaceList()
-    //        : GetResourceList().Result;
-    //    HttpResponseMessage responseMessage = new(HttpStatusCode.OK)
-    //    {
-    //        Content = new StringContent("{}")
-    //    };
-    //    HttpOperationResponse<V1NamespaceList> response = new()
-    //    {
-    //        Body = new V1NamespaceList(),
-    //        Response = responseMessage
-    //    };
-    //    Task.Delay(timeoutSeconds * 1000 ?? 6000, cancellationToken).ContinueWith(_ => tcs.SetResult(response), cancellationToken);
-
-    //    return tcs.Task;
-    //}
+    
     private static V1Namespace CreateNamespace(string namespaceName) => new()
     {
         ApiVersion = "v1", Kind = "Namespace", Metadata = new V1ObjectMeta { Name = namespaceName, },

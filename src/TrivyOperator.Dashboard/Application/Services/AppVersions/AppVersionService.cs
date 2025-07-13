@@ -10,14 +10,14 @@ public class AppVersionService(IConcurrentCache<long, GitHubRelease> cache) : IA
 {
     public Task<GitHubReleaseDto?> GetTrivyDashboardLatestRelease()
     {
-        GitHubRelease? release = cache.Select(x => x.Value).FirstOrDefault(x => x.IsLatest == true);
+        GitHubRelease? release = cache.Select(x => x.Value).FirstOrDefault(x => x.IsLatest);
         return Task.FromResult(release?.ToGitHubReleaseDto());
     }
 
     public Task<IList<GitHubReleaseDto>> GetTrivyDashboardReleases()
     {
-        List<GitHubReleaseDto> releases = [.. cache.Select(x => x.Value.ToGitHubReleaseDto())];
-        return Task.FromResult((IList<GitHubReleaseDto>)releases);
+        List<GitHubReleaseDto> releases = [.. cache.Select(x => x.Value.ToGitHubReleaseDto()),];
+        return Task.FromResult<IList<GitHubReleaseDto>>(releases);
     }
 
     public AppVersion GetCurrentVersion()

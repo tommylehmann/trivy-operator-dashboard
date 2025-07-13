@@ -14,12 +14,12 @@ public class RbacAssessmentReportService(IConcurrentDictionaryCache<RbacAssessme
         IEnumerable<int>? excludedSeverities = null)
     {
         excludedSeverities ??= [];
-        int[] excludedSeveritiesArray = [.. excludedSeverities];
-        int[] includedSeverities = [.. Enum.GetValues<TrivySeverity>().Cast<int>().Except(excludedSeveritiesArray)];
+        int[] excludedSeveritiesArray = [.. excludedSeverities,];
+        int[] includedSeverities = [.. Enum.GetValues<TrivySeverity>().Cast<int>().Except(excludedSeveritiesArray),];
 
         IEnumerable<RbacAssessmentReportCr> cachedValues = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
 
         IEnumerable<RbacAssessmentReportDto> dtos = cachedValues.Select(cr => cr.ToRbacAssessmentReportDto())
                     .Select(
@@ -43,7 +43,7 @@ public class RbacAssessmentReportService(IConcurrentDictionaryCache<RbacAssessme
     {
         IEnumerable<RbacAssessmentReportCr> cachedValues = [.. cache
             .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
-            .SelectMany(kvp => kvp.Value.Values)];
+            .SelectMany(kvp => kvp.Value.Values),];
 
         IEnumerable<RbacAssessmentReportDenormalizedDto> result = cachedValues
             .SelectMany(cr => cr.ToRbacAssessmentReportDenormalizedDtos());
@@ -52,5 +52,5 @@ public class RbacAssessmentReportService(IConcurrentDictionaryCache<RbacAssessme
     }
 
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
-        Task.FromResult<IEnumerable<string>>([.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key)]);
+        Task.FromResult<IEnumerable<string>>([.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key),]);
 }

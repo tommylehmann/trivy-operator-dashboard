@@ -10,7 +10,7 @@ public class ClusterComplianceReportService(IConcurrentDictionaryCache<ClusterCo
 {
     public Task<IEnumerable<ClusterComplianceReportDto>> GetClusterComplianceReportDtos()
     {
-        IEnumerable<ClusterComplianceReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values)];
+        IEnumerable<ClusterComplianceReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values),];
         IEnumerable<ClusterComplianceReportDto> values = cachedValues
             .Select(x => x.ToClusterComplianceReportDto());
 
@@ -19,7 +19,7 @@ public class ClusterComplianceReportService(IConcurrentDictionaryCache<ClusterCo
 
     public Task<IEnumerable<ClusterComplianceReportDenormalizedDto>> GetClusterComplianceReportDenormalizedDtos()
     {
-        IEnumerable<ClusterComplianceReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values)];
+        IEnumerable<ClusterComplianceReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values),];
         IEnumerable<ClusterComplianceReportDenormalizedDto> values = cachedValues
             .SelectMany(x => x.ToClusterComplianceReportDenormalizedDto());
 

@@ -1,8 +1,4 @@
-﻿using System.Globalization;
-using System.Security.Cryptography;
-using System.Text;
-using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
-using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
+﻿using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;

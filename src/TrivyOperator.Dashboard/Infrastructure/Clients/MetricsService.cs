@@ -5,17 +5,18 @@ namespace TrivyOperator.Dashboard.Infrastructure.Clients;
 
 public class MetricsService : IMetricsService
 {
-    private readonly Meter _meter;
+    private readonly Meter meter;
+    
     public string AppName { get; }
 
     public Counter<long> WatcherProcessedMessagesCounter { get; }
 
     public MetricsService(string appName)
     {
-        _meter = new Meter($"{appName}.metrics");
+        meter = new Meter($"{appName}.metrics");
         AppName = appName;
 
-        WatcherProcessedMessagesCounter = _meter.CreateCounter<long>(
+        WatcherProcessedMessagesCounter = meter.CreateCounter<long>(
             name: $"{appName}.watcher.processed_messages.count",
             unit: "events",
             description: "Counts the total number of processed messages in watcher."
@@ -24,6 +25,6 @@ public class MetricsService : IMetricsService
 
     public void CreateObservableGauge(string name, Func<IEnumerable<Measurement<long>>> observeValues, string? unit, string? description)
     {
-        _meter.CreateObservableGauge(name, observeValues, unit: unit, description: description);
+        meter.CreateObservableGauge(name, observeValues, unit: unit, description: description);
     }
 }

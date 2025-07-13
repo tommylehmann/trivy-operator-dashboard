@@ -8,7 +8,6 @@ using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Domain.Services.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
-using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.Watchers;
 
@@ -41,7 +40,8 @@ public class ClusterScopedWatcher<TKubernetesObjectList, TKubernetesObject, TBac
     protected override async Task<TKubernetesObjectList> GetInitialResources(
         string watcherKey,
         string? continueToken,
-        CancellationToken? cancellationToken) => await clusterScopResourceWatchDomainService.GetResourceList(
+        CancellationToken? cancellationToken = null
+    ) => await clusterScopResourceWatchDomainService.GetResourceList(
         resourceListPageSize,
         continueToken,
         cancellationToken);

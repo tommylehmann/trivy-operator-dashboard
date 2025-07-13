@@ -32,7 +32,7 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     // TODO: new for ns cleanup
     public async Task ReconcileNamespaces(string[] newNamespaceNames, CancellationToken cancellationToken)
     {
-        IEnumerable<string> existingWatcherKeys = Watchers.Select(kvp => kvp.Key);
+        string[] existingWatcherKeys = Watchers.Select(kvp => kvp.Key).ToArray();
         IEnumerable<string> newWatcherKeys = newNamespaceNames.Except(existingWatcherKeys);
         IEnumerable<string> staleWatcherKeys = existingWatcherKeys.Except(newNamespaceNames);
         List<Task> tasks = [];
@@ -44,7 +44,8 @@ public class NamespacedWatcher<TKubernetesObjectList, TKubernetesObject, TBackgr
     protected override Task<HttpOperationResponse<TKubernetesObjectList>> GetKubernetesObjectWatchList(
         string watcherKey,
         string? lastResourceVersion,
-        CancellationToken? cancellationToken) => namespacedResourceWatchDomainService.GetResourceWatchList(
+        CancellationToken? cancellationToken = null
+    ) => namespacedResourceWatchDomainService.GetResourceWatchList(
         watcherKey,
         lastResourceVersion,
         GetWatcherRandomTimeout(),

@@ -13,7 +13,7 @@ public class NamespaceService(IConcurrentDictionaryCache<V1Namespace> cache) : I
         IEnumerable<string> namespaceNames = [];
         if (cache.TryGetValue(CacheUtils.DefaultCacheRefreshKey, out ConcurrentDictionary<string, V1Namespace>? namespacesCache))
         {
-            namespaceNames = [.. namespacesCache.Values.Select(x => x.Metadata.Name)];
+            namespaceNames = [.. namespacesCache.Values.Select(x => x.Metadata.Name),];
         }
 
         return Task.FromResult(namespaceNames);

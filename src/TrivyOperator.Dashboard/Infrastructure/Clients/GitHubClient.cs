@@ -22,6 +22,7 @@ public class GitHubClient(HttpClient httpClient, ILogger<GitHubClient> logger) :
             return null;
         }
     }
+    
     public async Task<GitHubRelease[]?> GitHubReleases(string baseRepoUrl, CancellationToken cancellationToken)
     {
         try

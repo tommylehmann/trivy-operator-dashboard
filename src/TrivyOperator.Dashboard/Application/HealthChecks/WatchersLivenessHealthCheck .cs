@@ -12,6 +12,7 @@ public class WatchersLivenessHealthCheck(
     ILogger<WatchersLivenessHealthCheck> logger) : IHealthCheck
 {
     private readonly int timeFrameInSeconds = (int)((options.Value.WatchTimeoutInSeconds * 1.1) + 120);
+    
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
 
