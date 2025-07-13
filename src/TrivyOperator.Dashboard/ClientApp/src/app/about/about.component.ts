@@ -34,7 +34,7 @@ export class AboutComponent {
       docsUrl: 'https://aquasecurity.github.io/trivy-operator/latest/'
     },
     {
-      name: '.net', imgSrc: 'assets/dotnet.png', imgAlt: 'dot net Logo',
+      name: '.NET', imgSrc: 'assets/dotnet.png', imgAlt: 'dot net Logo',
       homeUrl: 'https://dotnet.microsoft.com/en-us/', gitUrl: 'https://github.com/dotnet/core',
       docsUrl: 'https://learn.microsoft.com/en-us/dotnet/'
     },
