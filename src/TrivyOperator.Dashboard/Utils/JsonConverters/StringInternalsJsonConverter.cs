@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TrivyOperator.Dashboard.Utils;
+namespace TrivyOperator.Dashboard.Utils.JsonConverters;
 
 public class StringInternalsJsonConverter : JsonConverter<string>
 {

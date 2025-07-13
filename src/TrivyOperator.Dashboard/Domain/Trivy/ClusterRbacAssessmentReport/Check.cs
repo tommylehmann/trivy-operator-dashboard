@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using TrivyOperator.Dashboard.Utils;
+using TrivyOperator.Dashboard.Utils.JsonConverters;
 
 namespace TrivyOperator.Dashboard.Domain.Trivy.ClusterRbacAssessmentReport;
 

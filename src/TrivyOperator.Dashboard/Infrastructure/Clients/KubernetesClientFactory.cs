@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using System.Text.Json;
 using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
-using TrivyOperator.Dashboard.Utils;
+using TrivyOperator.Dashboard.Utils.JsonConverters;
 
 namespace TrivyOperator.Dashboard.Infrastructure.Clients;
 
