@@ -6,18 +6,30 @@ using TrivyOperator.Dashboard.Infrastructure.Clients.Models;
 
 namespace TrivyOperator.Dashboard.Infrastructure.Clients;
 
-public class GitHubReleaseCacheTimedHostedService(
+public sealed class GitHubReleaseCacheTimedHostedService(
     IGitHubClient gitHubClient, 
     IOptions<GitHubOptions> options,
     IConcurrentCache<long, GitHubRelease> cache,
     ILogger<AppVersionService> logger)
     : IHostedService, IDisposable
 {
+    ~GitHubReleaseCacheTimedHostedService()
+    {
+        Dispose(false);
+    }
+    
     private readonly int timeFrameInMinutes = options.Value.CheckForUpdatesIntervalInMinutes;
     private bool disposed;
     private Task? executingTask;
     private CancellationTokenSource? stoppingCts;
     private Timer? timer;
+    
+    public void Dispose()
+    {
+        Dispose(true);
+
+        GC.SuppressFinalize(this);
+    }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -95,14 +107,7 @@ public class GitHubReleaseCacheTimedHostedService(
         }
     }
 
-    public void Dispose()
-    {
-        Dispose(true);
-
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (disposed)
         {

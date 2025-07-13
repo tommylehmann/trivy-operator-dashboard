@@ -6,13 +6,18 @@ using TrivyOperator.Dashboard.Infrastructure.Abstractions;
 
 namespace TrivyOperator.Dashboard.Application.Services;
 
-public class WatcherStateCacheTimedHostedService(
+public sealed class WatcherStateCacheTimedHostedService(
     IConcurrentCache<string, WatcherStateInfo> cache,
     IServiceProvider serviceProvider,
     IOptions<WatchersOptions> options,
     ILogger<WatcherStateCacheTimedHostedService> logger
 ) : IHostedService, IDisposable
 {
+    ~WatcherStateCacheTimedHostedService()
+    {
+        Dispose(false);
+    }
+    
     private readonly int timeFrameInSeconds = (int)((options.Value.WatchTimeoutInSeconds * 1.1) + 60);
     private bool disposed;
     private Task? executingTask;
@@ -100,7 +105,7 @@ public class WatcherStateCacheTimedHostedService(
         }
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (disposed)
         {

@@ -2,7 +2,7 @@
 
 namespace TrivyOperator.Dashboard.Application.Services;
 
-public class KubernetesEventCoordinatorsHandlerHostedService(
+public sealed class KubernetesEventCoordinatorsHandlerHostedService(
     IEnumerable<IClusterScopedKubernetesEventCoordinator> services,
     ILogger<KubernetesEventCoordinatorsHandlerHostedService> logger) : BackgroundService
 {
