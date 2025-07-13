@@ -10,7 +10,7 @@ public class GitHubClient(HttpClient httpClient, ILogger<GitHubClient> logger) :
     {
         try
         {
-            httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Trivy.Operator.Dashboard/1.4");
+            httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.USER_AGENT_NAME);
             HttpResponseMessage response = await httpClient.GetAsync($"{baseRepoUrl.TrimEnd('/')}/releases/latest", cancellationToken);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -26,7 +26,7 @@ public class GitHubClient(HttpClient httpClient, ILogger<GitHubClient> logger) :
     {
         try
         {
-            httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("Trivy.Operator.Dashboard/1.4");
+            httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd(Constants.USER_AGENT_NAME);
             HttpResponseMessage response = await httpClient.GetAsync($"{baseRepoUrl.TrimEnd('/')}/releases", cancellationToken);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync(cancellationToken);
