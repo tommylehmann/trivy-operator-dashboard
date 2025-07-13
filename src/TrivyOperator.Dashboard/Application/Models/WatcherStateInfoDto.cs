@@ -23,7 +23,7 @@ public static class WatcherStateInfoExtensions
             : new WatcherStateInfoDto
             {
                 KubernetesObjectType = watcherStateInfo.WatchedKubernetesObjectType.Name,
-                NamespaceName = watcherStateInfo.WatcherKey == VarUtils.DefaultCacheRefreshKey
+                NamespaceName = watcherStateInfo.WatcherKey == CacheUtils.DefaultCacheRefreshKey
                     ? string.Empty
                     : watcherStateInfo.WatcherKey,
                 Status = watcherStateInfo.Status.ToString(),

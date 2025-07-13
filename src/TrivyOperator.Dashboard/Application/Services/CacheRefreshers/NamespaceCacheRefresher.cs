@@ -60,7 +60,7 @@ public class NamespaceCacheRefresher(
 
     protected override async Task ProcessInitEvent(IWatcherEvent<V1Namespace> watcherEvent, CancellationToken cancellationToken)
     {
-        if (cache.TryGetValue(VarUtils.DefaultCacheRefreshKey, out ConcurrentDictionary<string, V1Namespace>? namespaceNamesCache))
+        if (cache.TryGetValue(CacheUtils.DefaultCacheRefreshKey, out ConcurrentDictionary<string, V1Namespace>? namespaceNamesCache))
         {
             string[] newNamespaceNames = [.. namespaceNamesCache.Select(kvp => kvp.Value.Metadata.Name)];
             IEnumerable<Task> tasks = services.Select(s => s.ReconcileWatchers(newNamespaceNames, cancellationToken));

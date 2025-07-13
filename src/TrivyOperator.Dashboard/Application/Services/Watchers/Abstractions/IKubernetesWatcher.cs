@@ -6,8 +6,8 @@ namespace TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 
 public interface IKubernetesWatcher
 {
-    Task Add(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey);
-    Task Recreate(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey);
+    Task Add(CancellationToken cancellationToken, string watcherKey = CacheUtils.DefaultCacheRefreshKey);
+    Task Recreate(CancellationToken cancellationToken, string watcherKey = CacheUtils.DefaultCacheRefreshKey);
 }
 
 public interface IKubernetesWatcher<TKubernetesObject> : IKubernetesWatcher

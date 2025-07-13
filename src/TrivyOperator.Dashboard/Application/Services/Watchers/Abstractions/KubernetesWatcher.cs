@@ -29,7 +29,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
     protected readonly int resourceListPageSize = 500;
     protected readonly Dictionary<string, TaskWithCts> Watchers = [];
 
-    public Task Add(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey)
+    public Task Add(CancellationToken cancellationToken, string watcherKey = CacheUtils.DefaultCacheRefreshKey)
     {
         if (Watchers.TryGetValue(watcherKey, out _))
         {
@@ -88,7 +88,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
         }
     }
 
-    public async Task Recreate(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey)
+    public async Task Recreate(CancellationToken cancellationToken, string watcherKey = CacheUtils.DefaultCacheRefreshKey)
     {
         logger.LogWarning("Recreated called for {kubernetesObjectType} - {watcherKey}", typeof(TKubernetesObject).Name,
                         watcherKey);
@@ -248,8 +248,8 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
     {
         metricsService.WatcherProcessedMessagesCounter.Add(value,
             new KeyValuePair<string, object?>("resource_kind", typeof(TKubernetesObject).Name),
-            new KeyValuePair<string, object?>("resource_level", watcherKey == VarUtils.DefaultCacheRefreshKey ? "cluster_scoped" : "namespaced"),
-            new KeyValuePair<string, object?>("namespace_name", watcherKey == VarUtils.DefaultCacheRefreshKey ? null : watcherKey),
+            new KeyValuePair<string, object?>("resource_level", watcherKey == CacheUtils.DefaultCacheRefreshKey ? "cluster_scoped" : "namespaced"),
+            new KeyValuePair<string, object?>("namespace_name", watcherKey == CacheUtils.DefaultCacheRefreshKey ? null : watcherKey),
             new KeyValuePair<string, object?>("watch_event_type", watchEventType.ToString())
         );
     }

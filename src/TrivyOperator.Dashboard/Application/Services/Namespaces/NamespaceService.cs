@@ -11,7 +11,7 @@ public class NamespaceService(IConcurrentDictionaryCache<V1Namespace> cache) : I
     public Task<IEnumerable<string>> GetKubernetesNamespaces()
     {
         IEnumerable<string> namespaceNames = [];
-        if (cache.TryGetValue(VarUtils.DefaultCacheRefreshKey, out ConcurrentDictionary<string, V1Namespace>? namespacesCache))
+        if (cache.TryGetValue(CacheUtils.DefaultCacheRefreshKey, out ConcurrentDictionary<string, V1Namespace>? namespacesCache))
         {
             namespaceNames = [.. namespacesCache.Values.Select(x => x.Metadata.Name)];
         }

@@ -26,7 +26,7 @@ public class
 
     public async Task Start(
         CancellationToken cancellationToken,
-        string watcherKey = VarUtils.DefaultCacheRefreshKey)
+        string watcherKey = CacheUtils.DefaultCacheRefreshKey)
     {
         Logger.LogDebug("Adding Watcher for {kubernetesObjectType} - {watcherKey}.", typeof(TKubernetesObject).Name, watcherKey);
         await KubernetesWatcher.Add(cancellationToken, watcherKey);

@@ -4,6 +4,6 @@ namespace TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinato
 
 public interface INamespacedKubernetesEventCoordinator : IKubernetesEventCoordinator
 {
-    Task Stop(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey);
+    Task Stop(CancellationToken cancellationToken, string watcherKey = CacheUtils.DefaultCacheRefreshKey);
     Task ReconcileWatchers(string[] newNamespaceNames, CancellationToken cancellationToken);
 }

@@ -6,5 +6,5 @@ namespace TrivyOperator.Dashboard.Application.Services.KubernetesEventCoordinato
 
 public interface IKubernetesEventCoordinator
 {
-    Task Start(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey);
+    Task Start(CancellationToken cancellationToken, string watcherKey = CacheUtils.DefaultCacheRefreshKey);
 }

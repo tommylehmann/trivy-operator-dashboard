@@ -1,23 +1,13 @@
-﻿using k8s;
-using k8s.Models;
-using System.Security.Cryptography;
-using System.Text;
-using TrivyOperator.Dashboard.Domain.Trivy;
+﻿using TrivyOperator.Dashboard.Domain.Trivy;
 
 namespace TrivyOperator.Dashboard.Utils;
 
-public static class VarUtils
+public static class TrivyUtils
 {
-    public const string DefaultCacheRefreshKey = "generic.Key";
-
-    public static string GetCacheRefreshKey(IKubernetesObject<V1ObjectMeta>? kubernetesObject) =>
-        kubernetesObject?.Namespace() ?? DefaultCacheRefreshKey;
-
     public static List<int>? GetExcludedSeverityIdsFromStringList(string? excludedSeverities)
     {
         List<int> excludedSeverityIds = [];
         List<int> knownSeverityIds = [.. (int[])Enum.GetValues(typeof(TrivySeverity)),];
-
         if (string.IsNullOrWhiteSpace(excludedSeverities))
         {
             return excludedSeverityIds;
@@ -42,14 +32,5 @@ public static class VarUtils
         }
 
         return excludedSeverityIds;
-    }
-
-    public static Guid GetDeterministicGuid(params string[] inputs)
-    {
-        string input = string.Join("#", inputs);
-        byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
-        byte[] guidBytes = new byte[16];
-        Array.Copy(hashBytes, guidBytes, 16);
-        return new Guid(guidBytes);
     }
 }

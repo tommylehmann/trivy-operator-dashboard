@@ -98,7 +98,7 @@ appLifetime.ApplicationStarted.Register(OnStarted);
 appLifetime.ApplicationStopping.Register(OnStopping);
 appLifetime.ApplicationStopped.Register(OnStopped);
 
-// Configure the HTTP request pipeline. Middleware order: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-8.0#middleware-order
+// Configure the HTTP request pipeline. Middleware order: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-9.0#middleware-order
 app.UseForwardedHeaders();
 if (!app.Environment.IsProduction())
 {

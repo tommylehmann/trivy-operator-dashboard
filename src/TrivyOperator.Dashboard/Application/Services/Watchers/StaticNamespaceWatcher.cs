@@ -13,7 +13,7 @@ public class StaticNamespaceWatcher(
     IClusterScopedResourceQueryDomainService<V1Namespace, V1NamespaceList> kubernetesNamespaceDomainService)
     : IClusterScopedWatcher<V1Namespace>
 {
-    public async Task Add(CancellationToken cancellationToken, string watcherKey = VarUtils.DefaultCacheRefreshKey)
+    public async Task Add(CancellationToken cancellationToken, string watcherKey = CacheUtils.DefaultCacheRefreshKey)
     {
         IList<V1Namespace> kubernetesNamespaces = await kubernetesNamespaceDomainService.GetResources();
         foreach (V1Namespace kubernetesNamespace in kubernetesNamespaces)

@@ -54,7 +54,7 @@ public class WatcherStateAlertRefresh<TKubernetesObject>(
 
         activeAlerts.Add(watcherEvent.WatcherKey);
 
-        string namespaceName = watcherEvent.WatcherKey == VarUtils.DefaultCacheRefreshKey ? "n/a" : watcherEvent.WatcherKey;
+        string namespaceName = watcherEvent.WatcherKey == CacheUtils.DefaultCacheRefreshKey ? "n/a" : watcherEvent.WatcherKey;
         await alertService.AddAlert(
             alertEmitter,
             new Alert

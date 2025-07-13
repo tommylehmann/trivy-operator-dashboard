@@ -16,7 +16,7 @@ public class TrivyReportDependencyDto
 
 public class TrivyReportImageDto
 {
-    public Guid Id => VarUtils.GetDeterministicGuid(NamespaceName, ImageDigest, ImageName, ImageTag, ImageRepository);
+    public Guid Id => GuidUtils.GetDeterministicGuid(NamespaceName, ImageDigest, ImageName, ImageTag, ImageRepository);
     public string NamespaceName { get; set; } = string.Empty;
     public string ImageDigest { get; set; } = string.Empty;
     public string ImageName { get; set; } = string.Empty;
@@ -38,7 +38,7 @@ public class TrivyReportDependencyKubernetesResourceBindingDto
 
 public class TrivyReportDependencyKubernetesResourceDto : IEquatable<TrivyReportDependencyKubernetesResourceDto>
 {
-    public Guid Id => VarUtils.GetDeterministicGuid(ResourceContainerName, ResourceKind, ResourceName);
+    public Guid Id => GuidUtils.GetDeterministicGuid(ResourceContainerName, ResourceKind, ResourceName);
     public string ResourceContainerName { get; set; } = string.Empty;
     public string ResourceKind { get; set; } = string.Empty;
     public string ResourceName { get; set; } = string.Empty;

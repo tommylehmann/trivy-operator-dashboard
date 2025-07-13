@@ -102,7 +102,7 @@ public class CacheRefresher<TKubernetesObject>(
 
     protected virtual void ProcessErrorEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
     {
-        string watcherKey = VarUtils.GetCacheRefreshKey(watcherEvent.KubernetesObject);
+        string watcherKey = CacheUtils.GetCacheRefreshKey(watcherEvent.KubernetesObject);
         logger.LogDebug(
             "ProcessErrorEvent - {kubernetesObjectType} - {watcherKey}",
             typeof(TKubernetesObject).Name,
