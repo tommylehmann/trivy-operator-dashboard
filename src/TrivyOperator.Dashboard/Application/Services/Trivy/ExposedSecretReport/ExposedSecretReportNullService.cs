@@ -18,6 +18,9 @@ public class ExposedSecretReportNullService : IExposedSecretReportService
         string? namespaceName = null,
         IEnumerable<int>? excludedSeverities = null) => Task.FromResult<IEnumerable<ExposedSecretReportImageDto>>([]);
 
+    public Task<ExposedSecretReportImageDto?> GetExposedSecretReportImageDtoByDigestNamespace(string digest, string namespaceName) =>
+        Task.FromResult<ExposedSecretReportImageDto?>(null);
+
     public Task<IEnumerable<EsSeveritiesByNsSummaryDto>> GetExposedSecretReportSummaryDtos() =>
         Task.FromResult<IEnumerable<EsSeveritiesByNsSummaryDto>>([]);
 }

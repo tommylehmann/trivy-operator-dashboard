@@ -9,6 +9,7 @@
                    [(selection)]="selectedTreeNode"
                    (onNodeSelect)="onTreeTableNodeSelect($event)"
                    (onNodeUnselect)="onTreeTableNodeUnselect()"
+                   styleClass="p-treetable-sm text-sm"
                    dataKey="id">
         <ng-template pTemplate="header" let-rowNode>
           <tr>

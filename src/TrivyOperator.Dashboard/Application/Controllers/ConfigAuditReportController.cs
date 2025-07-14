@@ -13,19 +13,38 @@ public class ConfigAuditReportController(IConfigAuditReportService configAuditRe
     [ProducesResponseType<IEnumerable<ConfigAuditReportDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Get([FromQuery] string? namespaceName, [FromQuery] string? excludedSeverities)
+    public async Task<IResult> Get(string? namespaceName, string? excludedSeverities)
     {
         List<int>? excludedSeverityIds = TrivyUtils.GetExcludedSeverityIdsFromStringList(excludedSeverities);
 
         if (excludedSeverityIds == null)
         {
-            return BadRequest();
+            return Results.BadRequest();
         }
 
         IEnumerable<ConfigAuditReportDto> configAuditReportImageDtos =
             await configAuditReportService.GetConfigAuditReportDtos(namespaceName, excludedSeverityIds);
-        return Ok(configAuditReportImageDtos);
+
+        return Results.Ok(configAuditReportImageDtos);
     }
+
+
+    [HttpGet("{uid:guid}", Name = "GetConfigAuditReportDtoByUid")]
+    [ProducesResponseType<ConfigAuditReportDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+    public async Task<IResult> GetByUid(Guid uid)
+    {
+        ConfigAuditReportDto? configAuditReportDto =
+            await configAuditReportService.GetConfigAuditReportDtoByUid(uid);
+
+        return configAuditReportDto is null
+            ? Results.NotFound()
+            : Results.Ok(configAuditReportDto);
+    }
+
+
 
     [HttpGet("denormalized", Name = "GetConfigAuditReportDenormalizedDtos")]
     [ProducesResponseType<IEnumerable<ConfigAuditReportDenormalizedDto>>(StatusCodes.Status200OK)]

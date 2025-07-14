@@ -27,6 +27,7 @@ public class ExposedSecretReportImageDto
     public string ResourceNamespace { get; init; } = string.Empty;
     public string ImageName { get; init; } = string.Empty;
     public string ImageTag { get; init; } = string.Empty;
+    public string ImageDigest { get; init; } = string.Empty;
     public string ImageRepository { get; init; } = string.Empty;
     public List<ExposedSecretReportImageResourceDto> Resources { get; init; } = [];
     public long CriticalCount { get; init; }
@@ -166,7 +167,7 @@ public static class ExposedSecretReportCrExtensions
         IEnumerable<int>? excludedSeverities = null)
     {
         excludedSeverities ??= [];
-        int[] excludedSeveritiesArray = excludedSeverities.ToArray();
+        int[] excludedSeveritiesArray = [.. excludedSeverities];
         List<ExposedSecretReportImageResourceDto> eseirDtos = [];
         foreach (ExposedSecretReportCr vr in groupedExposedSecretReportCr)
         {
@@ -221,6 +222,7 @@ public static class ExposedSecretReportCrExtensions
             Resources = eseirDtos,
             ImageName = latestExposedSecretReportCr?.Report?.Artifact?.Repository ?? string.Empty,
             ImageTag = latestExposedSecretReportCr?.Report?.Artifact?.Tag ?? string.Empty,
+            ImageDigest = latestExposedSecretReportCr?.Report?.Artifact?.Digest ?? string.Empty,
             ImageRepository = latestExposedSecretReportCr?.Report?.Registry?.Server ?? string.Empty,
             CriticalCount = latestExposedSecretReportCr?.Report?.Summary?.CriticalCount ?? 0,
             HighCount = latestExposedSecretReportCr?.Report?.Summary?.HighCount ?? 0,

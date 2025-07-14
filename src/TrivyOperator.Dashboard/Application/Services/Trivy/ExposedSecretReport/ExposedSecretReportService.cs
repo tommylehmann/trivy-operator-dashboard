@@ -82,6 +82,19 @@ public class ExposedSecretReportService(IConcurrentDictionaryCache<ExposedSecret
         return Task.FromResult(exposedSecretReportImageDtos);
     }
 
+    public Task<ExposedSecretReportImageDto?> GetExposedSecretReportImageDtoByDigestNamespace(string digest, string namespaceName)
+    {
+        IEnumerable<ExposedSecretReportCr> cachedValues = [.. cache
+            .Where(kvp => kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.Values),];
+        ExposedSecretReportImageDto? exposedSecretReportImageDto = cachedValues
+                .Where(x => x.Report?.Artifact?.Digest == digest)
+                .GroupBy(x => x.Report?.Artifact?.Digest)
+                .Select(group => group.ToExposedSecretReportImageDto())
+                .FirstOrDefault();
+        return Task.FromResult(exposedSecretReportImageDto);
+    }
+
     public Task<IEnumerable<EsSeveritiesByNsSummaryDto>> GetExposedSecretReportSummaryDtos()
     {
         int[] severityIds = [.. Enum.GetValues<TrivySeverity>().Cast<int>().Where(x => x < 4),];

@@ -1,4 +1,5 @@
 import { Component, effect, HostListener, input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { FcoseComponent } from '../fcose/fcose.component';
 import { NodeDataDto } from '../fcose/fcose.types';
@@ -10,10 +11,10 @@ import { SplitterModule } from 'primeng/splitter';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNode, TreeTableNode } from 'primeng/api';
-import {NgIf, NgSwitchCase} from '@angular/common';
+
 import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
-import {TrivyReportDependencyDetailDto} from "../../api/models/trivy-report-dependency-detail-dto";
+import { TrivyReportDependencyDetailDto } from "../../api/models/trivy-report-dependency-detail-dto";
 
 export interface ReportTreeNode extends TreeNode {
   data: {
@@ -33,7 +34,7 @@ export interface ReportTreeNode extends TreeNode {
 
 @Component({
   selector: 'app-tests',
-  imports: [FcoseComponent, SplitterModule, TagModule, TreeTableModule, NgSwitchCase, SeverityCssStyleByIdPipe, VulnerabilityCountPipe, NgIf],
+  imports: [CommonModule, FcoseComponent, SplitterModule, TagModule, TreeTableModule, SeverityCssStyleByIdPipe, VulnerabilityCountPipe],
   templateUrl: './tests.component.html',
   styleUrl: './tests.component.scss'
 })
@@ -232,9 +233,7 @@ export class TestsComponent implements OnInit {
 
   findTreeNodeById(nodes: ReportTreeNode[], nodeId: string): ReportTreeNode | undefined {
     for (const node of nodes) {
-      if (node.data.id === nodeId) {
-        return node;
-      }
+      if (node.data.id === nodeId) return node;
 
       if (node.children && node.children.length > 0) {
         const found = this.findTreeNodeById(node.children as ReportTreeNode[], nodeId);

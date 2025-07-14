@@ -15,5 +15,7 @@ public interface IExposedSecretReportService
         string? namespaceName = null,
         IEnumerable<int>? excludedSeverities = null);
 
+    Task<ExposedSecretReportImageDto?> GetExposedSecretReportImageDtoByDigestNamespace(string digest, string namespaceName);
+
     public Task<IEnumerable<EsSeveritiesByNsSummaryDto>> GetExposedSecretReportSummaryDtos();
 }

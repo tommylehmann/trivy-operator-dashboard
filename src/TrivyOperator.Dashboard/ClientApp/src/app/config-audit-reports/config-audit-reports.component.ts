@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { GetConfigAuditReportDtos$Params } from '../../api/fn/config-audit-report/get-config-audit-report-dtos';
 import { ConfigAuditReportDto } from '../../api/models/config-audit-report-dto';
@@ -6,6 +6,8 @@ import { ConfigAuditReportService } from '../../api/services/config-audit-report
 import { GenericMasterDetailComponent } from '../generic-master-detail/generic-master-detail.component';
 import { TrivyFilterData, TrivyTableColumn } from '../trivy-table/trivy-table.types';
 import { SeverityUtils } from '../utils/severity.utils';
+import { ActivatedRoute } from '@angular/router';
+import { VulnerabilityReportImageDto } from '../../api/models/vulnerability-report-image-dto';
 
 @Component({
   selector: 'app-config-audit-reports',
@@ -14,7 +16,7 @@ import { SeverityUtils } from '../utils/severity.utils';
   templateUrl: './config-audit-reports.component.html',
   styleUrl: './config-audit-reports.component.scss',
 })
-export class ConfigAuditReportsComponent {
+export class ConfigAuditReportsComponent implements OnInit {
   public dataDtos: ConfigAuditReportDto[] = [];
   public activeNamespaces?: string[] = [];
 
@@ -23,15 +25,17 @@ export class ConfigAuditReportsComponent {
 
   public detailsTableColumns: TrivyTableColumn[] = [];
 
-  constructor(private dataDtoService: ConfigAuditReportService) {
-    dataDtoService.getConfigAuditReportDtos().subscribe({
-      next: (res) => this.onGetDataDtos(res),
-      error: (err) => console.error(err),
+  queryUid?: string;
+  isSingleMode: boolean = false;
+  singleSelectDataDto?: ConfigAuditReportDto;
+
+  constructor(private dataDtoService: ConfigAuditReportService, private activatedRoute: ActivatedRoute) {
+    this.activatedRoute.queryParamMap.subscribe(params => {
+      this.queryUid = params.get('uid') ?? undefined;
     });
-    dataDtoService.getConfigAuditReportActiveNamespaces().subscribe({
-      next: (res) => this.onGetActiveNamespaces(res),
-      error: (err) => console.error(err),
-    });
+    this.isSingleMode = !!(this.queryUid);
+
+
     this.mainTableColumns = [
       {
         field: 'resourceNamespace',
@@ -159,8 +163,30 @@ export class ConfigAuditReportsComponent {
     ];
   }
 
+  ngOnInit() {
+    if (!this.isSingleMode) {
+      this.dataDtoService.getConfigAuditReportDtos().subscribe({
+        next: (res) => this.onGetDataDtos(res),
+        error: (err) => console.error(err),
+      });
+    } else {
+      this.dataDtoService.getConfigAuditReportDtoByUid({uid: this.queryUid!}).subscribe({
+        next: (res) => this.onGetDataDto(res),
+        error: (err) => console.error(err),
+      });
+    }
+    this.dataDtoService.getConfigAuditReportActiveNamespaces().subscribe({
+      next: (res) => this.onGetActiveNamespaces(res),
+      error: (err) => console.error(err),
+    });
+  }
+
   onGetDataDtos(dtos: ConfigAuditReportDto[]) {
     this.dataDtos = dtos;
+  }
+
+  onGetDataDto(dto: ConfigAuditReportDto) {
+    this.singleSelectDataDto = dto;
   }
 
   onGetActiveNamespaces(activeNamespaces: string[]) {

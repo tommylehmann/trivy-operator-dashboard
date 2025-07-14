@@ -370,6 +370,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+  '/api/config-audit-reports/{uid}':
+    get:
+      tags:
+        - ConfigAuditReport
+      operationId: GetConfigAuditReportDtoByUid
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigAuditReportDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /api/config-audit-reports/denormalized:
     get:
       tags:
@@ -546,6 +583,10 @@ paths:
           schema:
             type: string
         - name: excludedSeverities
+          in: query
+          schema:
+            type: string
+        - name: digest
           in: query
           schema:
             type: string
@@ -2241,6 +2282,9 @@ components:
           type: string
           nullable: true
         imageTag:
+          type: string
+          nullable: true
+        imageDigest:
           type: string
           nullable: true
         imageRepository:

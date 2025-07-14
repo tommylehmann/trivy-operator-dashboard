@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ExposedSecretReport.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.Trivy.VulnerabilityReport;
 using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Controllers;
@@ -13,18 +14,18 @@ public class ExposedSecretReportController(IExposedSecretReportService exposedSe
     [ProducesResponseType<IEnumerable<ExposedSecretReportDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Get([FromQuery] string? namespaceName, [FromQuery] string? excludedSeverities)
+    public async Task<IResult> Get([FromQuery] string? namespaceName, [FromQuery] string? excludedSeverities)
     {
         List<int>? excludedSeverityIds = TrivyUtils.GetExcludedSeverityIdsFromStringList(excludedSeverities);
 
         if (excludedSeverityIds == null)
         {
-            return BadRequest();
+            return Results.BadRequest();
         }
 
         IEnumerable<ExposedSecretReportDto> exposedSecretReportImageDtos =
             await exposedSecretReportService.GetExposedSecretReportDtos(namespaceName, excludedSeverityIds);
-        return Ok(exposedSecretReportImageDtos);
+        return Results.Ok(exposedSecretReportImageDtos);
     }
 
     [HttpGet("denormalized", Name = "GetExposedSecretReportDenormalizedDtos")]
@@ -45,21 +46,37 @@ public class ExposedSecretReportController(IExposedSecretReportService exposedSe
     [ProducesResponseType<IEnumerable<ExposedSecretReportImageDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetGroupedByImage(
-        [FromQuery] string? namespaceName,
-        [FromQuery] string? excludedSeverities)
+    public async Task<IResult> GetGroupedByImage(
+        string? namespaceName,
+        string? excludedSeverities,
+        string? digest)
     {
         List<int>? excludedSeverityIds = TrivyUtils.GetExcludedSeverityIdsFromStringList(excludedSeverities);
 
         if (excludedSeverityIds == null)
         {
-            return BadRequest();
+            return Results.BadRequest();
+        }
+
+        if (digest != null && namespaceName == null)
+        {
+            return Results.BadRequest("Namespace name is required when digest is provided.");
+        }
+
+        if (digest != null && namespaceName != null)
+        {
+            ExposedSecretReportImageDto? exposedSecretReportImageDto =
+                await exposedSecretReportService.GetExposedSecretReportImageDtoByDigestNamespace(digest, namespaceName);
+
+            return exposedSecretReportImageDto is null
+                ? Results.NotFound()
+                : Results.Ok(new[] { exposedSecretReportImageDto });
         }
 
         IEnumerable<ExposedSecretReportImageDto> exposedSecretReportImageDtos =
             await exposedSecretReportService.GetExposedSecretReportImageDtos(namespaceName, excludedSeverityIds);
 
-        return Ok(exposedSecretReportImageDtos);
+        return Results.Ok(exposedSecretReportImageDtos);
     }
 
     [HttpGet("summary", Name = "GetExposedSecretReportSummaryDtos")]

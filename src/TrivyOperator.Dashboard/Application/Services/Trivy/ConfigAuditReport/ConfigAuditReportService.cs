@@ -1,4 +1,5 @@
-﻿using TrivyOperator.Dashboard.Application.Models;
+﻿using System.Collections.Concurrent;
+using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ConfigAuditReport.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy;
 using TrivyOperator.Dashboard.Domain.Trivy.ConfigAuditReport;
@@ -38,6 +39,25 @@ public class ConfigAuditReportService(IConcurrentDictionaryCache<ConfigAuditRepo
 
         return Task.FromResult(values);
     }
+
+    public Task<ConfigAuditReportDto?> GetConfigAuditReportDtoByUid(Guid uid)
+    {
+        string[] namespaceNames = [.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key)];
+
+        foreach (string namespaceName in namespaceNames)
+        {
+            if (cache.TryGetValue(namespaceName, out ConcurrentDictionary<string, ConfigAuditReportCr>? configAuditReportCrs))
+            {
+                if (configAuditReportCrs.TryGetValue(uid.ToString(), out ConfigAuditReportCr? configAuditReportCr))
+                {
+                    return Task.FromResult<ConfigAuditReportDto?>(configAuditReportCr.ToConfigAuditReportDto());
+                }
+            }
+        }
+
+        return Task.FromResult<ConfigAuditReportDto?>(null);
+    }
+
 
     public Task<IEnumerable<ConfigAuditReportDenormalizedDto>> GetConfigAuditReportDenormalizedDtos(
         string? namespaceName = null)

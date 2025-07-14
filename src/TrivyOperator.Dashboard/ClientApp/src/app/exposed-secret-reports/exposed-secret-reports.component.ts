@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { GetExposedSecretReportImageDtos$Params } from '../../api/fn/exposed-secret-report/get-exposed-secret-report-image-dtos';
 import { ExposedSecretReportImageDto } from '../../api/models/exposed-secret-report-image-dto';
@@ -10,6 +10,8 @@ import { SeverityUtils } from '../utils/severity.utils';
 
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
+import { VulnerabilityReportImageDto } from '../../api/models/vulnerability-report-image-dto';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-exposed-secret-reports',
@@ -18,7 +20,7 @@ import { TableModule } from 'primeng/table';
   templateUrl: './exposed-secret-reports.component.html',
   styleUrl: './exposed-secret-reports.component.scss',
 })
-export class ExposedSecretReportsComponent {
+export class ExposedSecretReportsComponent implements OnInit {
   public dataDtos: ExposedSecretReportImageDto[] = [];
   public activeNamespaces?: string[] = [];
 
@@ -30,15 +32,17 @@ export class ExposedSecretReportsComponent {
 
   public isImageUsageDialogVisible: boolean = false;
 
-  constructor(private dataDtoService: ExposedSecretReportService) {
-    dataDtoService.getExposedSecretReportImageDtos().subscribe({
-      next: (res) => this.onGetDataDtos(res),
-      error: (err) => console.error(err),
+  queryNamespaceName?: string;
+  queryDigest?: string;
+  isSingleMode: boolean = false;
+  singleSelectDataDto?: ExposedSecretReportImageDto;
+
+  constructor(private dataDtoService: ExposedSecretReportService, private activatedRoute: ActivatedRoute) {
+    this.activatedRoute.queryParamMap.subscribe(params => {
+      this.queryNamespaceName = params.get('namespaceName') ?? undefined;
+      this.queryDigest = params.get('digest') ?? undefined;
     });
-    dataDtoService.getExposedSecretReportActiveNamespaces().subscribe({
-      next: (res) => this.onGetActiveNamespaces(res),
-      error: (err) => console.error(err),
-    });
+    this.isSingleMode = !!(this.queryNamespaceName && this.queryDigest);
 
     this.mainTableColumns = [
       {
@@ -159,8 +163,22 @@ export class ExposedSecretReportsComponent {
     ];
   }
 
+  ngOnInit() {
+    this.dataDtoService.getExposedSecretReportImageDtos({digest: this.queryDigest, namespaceName: this.queryNamespaceName}).subscribe({
+      next: (res) => this.onGetDataDtos(res),
+      error: (err) => console.error(err),
+    });
+    this.dataDtoService.getExposedSecretReportActiveNamespaces().subscribe({
+      next: (res) => this.onGetActiveNamespaces(res),
+      error: (err) => console.error(err),
+    });
+  }
+
   onGetDataDtos(vrDtos: ExposedSecretReportImageDto[]) {
     this.dataDtos = vrDtos;
+    if (this.isSingleMode) {
+      this.singleSelectDataDto = vrDtos[0];
+    }
   }
 
   onGetActiveNamespaces(activeNamespaces: string[]) {
