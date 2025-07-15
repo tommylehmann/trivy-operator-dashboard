@@ -49,16 +49,7 @@ export class NamespaceImageSelectorComponent implements OnInit {
           .from(new Set(currentDataDtos.map(x => x.resourceNamespace)))
           ?.sort((x, y) => (x > y ? 1 : -1));
         // try to autoselect is selectedImageId is provided
-        if (this.selectedImageId()) {
-          const selectedNamespaceName = currentDataDtos
-            .find(x => x.uid === this.selectedImageId())
-            ?.resourceNamespace;
-          if (selectedNamespaceName) {
-            this.selectedNamespace = selectedNamespaceName;
-            this.filterImageDtos();
-            return;
-          }
-        }
+        this.autoselectNamespace();
         // autoselect if only one row
         if (this.activeNamespaces && this.activeNamespaces.length == 1) {
           this.selectedNamespace = this.activeNamespaces[0];
@@ -69,9 +60,25 @@ export class NamespaceImageSelectorComponent implements OnInit {
         this.resetData();
       }
     });
+    effect(() => {
+      const imageId = this.selectedImageId();
+      this.autoselectNamespace();
+    });
   }
 
   ngOnInit() {
+  }
+
+  autoselectNamespace() {
+    const imageId = this.selectedImageId();
+    const selectedNamespaceName = this.dataDtos()
+      ?.find(x => x.uid === imageId)
+      ?.resourceNamespace;
+    if (selectedNamespaceName && this.selectedNamespace !== selectedNamespaceName) {
+      this.selectedNamespace = selectedNamespaceName;
+      this.filterImageDtos();
+      return;
+    }
   }
 
   filterImageDtos() {

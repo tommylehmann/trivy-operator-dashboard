@@ -164,7 +164,7 @@ export class ExposedSecretReportsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataDtoService.getExposedSecretReportImageDtos({digest: this.queryDigest, namespaceName: this.queryNamespaceName}).subscribe({
+    this.dataDtoService.getExposedSecretReportImageDtos().subscribe({
       next: (res) => this.onGetDataDtos(res),
       error: (err) => console.error(err),
     });
@@ -177,7 +177,8 @@ export class ExposedSecretReportsComponent implements OnInit {
   onGetDataDtos(vrDtos: ExposedSecretReportImageDto[]) {
     this.dataDtos = vrDtos;
     if (this.isSingleMode) {
-      this.singleSelectDataDto = vrDtos[0];
+      this.singleSelectDataDto = vrDtos
+        .find(x => x.imageDigest == this.queryDigest && x.resourceNamespace == this.queryNamespaceName);
     }
   }
 

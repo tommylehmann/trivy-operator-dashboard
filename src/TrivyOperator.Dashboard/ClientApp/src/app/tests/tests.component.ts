@@ -7,6 +7,7 @@ import { NodeDataDto } from '../fcose/fcose.types';
 import { TrivyReportDependencyService } from '../../api/services/trivy-report-dependency.service';
 import { TrivyReportDependencyDto } from '../../api/models/trivy-report-dependency-dto';
 
+import { ButtonModule } from 'primeng/button'
 import { SplitterModule } from 'primeng/splitter';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
@@ -15,26 +16,26 @@ import { TreeNode, TreeTableNode } from 'primeng/api';
 import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
 import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
 import { TrivyReportDependencyDetailDto } from "../../api/models/trivy-report-dependency-detail-dto";
+import { Router } from '@angular/router';
 
-export interface ReportTreeNode extends TreeNode {
-  data: {
-    id: string;
-    objectType: string;
-    description: string;
-    hasSeverities: boolean;
-    critical: number;
-    high: number;
-    medium: number;
-    low: number;
-    unknown: number;
-  };
+export interface TrivyReportTreeNodeData {
+  id: string;
+  objectType: string;
+  description: string;
+  hasSeverities: boolean;
+  isTrivyReport: boolean;
+  critical: number;
+  high: number;
+  medium: number;
+  low: number;
+  unknown: number;
 }
 
 
 
 @Component({
   selector: 'app-tests',
-  imports: [CommonModule, FcoseComponent, SplitterModule, TagModule, TreeTableModule, SeverityCssStyleByIdPipe, VulnerabilityCountPipe],
+  imports: [CommonModule, FcoseComponent, ButtonModule, SplitterModule, TagModule, TreeTableModule, SeverityCssStyleByIdPipe, VulnerabilityCountPipe],
   templateUrl: './tests.component.html',
   styleUrl: './tests.component.scss'
 })
@@ -55,11 +56,11 @@ export class TestsComponent implements OnInit {
 
   screenSize: string = this.getScreenSize();
 
-  treeNodes: ReportTreeNode[] = [];
-  selectedTreeNode?: ReportTreeNode;
+  treeNodes: TreeNode<TrivyReportTreeNodeData>[] = [];
+  selectedTreeNode?: TreeNode<TrivyReportTreeNodeData>;
   selectedNodeId?: string;
 
-  constructor(private service: TrivyReportDependencyService ) {
+  constructor(private service: TrivyReportDependencyService, private router: Router) {
     effect(() => {
       this.onGetDataDto(this.trivyReportDependencyDto());
     });
@@ -89,17 +90,18 @@ export class TestsComponent implements OnInit {
   }
 
   private getTreeNodes(res: TrivyReportDependencyDto): void {
-    const tree: ReportTreeNode[] = [];
+    const tree: TreeNode<TrivyReportTreeNodeData>[] = [];
 
     if (res.image) {
       const imageKey = res.image.id || res.image.imageDigest || 'image-root';
 
-      const imageNode: ReportTreeNode = {
+      const imageNode: TreeNode<TrivyReportTreeNodeData> = {
         key: imageKey,
         data: {
           id: res.image.id ?? '',
           objectType: 'Image',
           description: `${res.image.imageRepository ?? ''}/${res.image.imageName ?? ''}:${res.image.imageTag ?? ''}`,
+          isTrivyReport: false,
           hasSeverities: false,
           critical: 0,
           high: 0,
@@ -115,12 +117,13 @@ export class TestsComponent implements OnInit {
         if (dep.kubernetesResource) {
           const resourceKey = dep.kubernetesResource.id ?? `${imageKey}-resource-${depIndex}`;
 
-          const resourceNode: ReportTreeNode = {
+          const resourceNode: TreeNode<TrivyReportTreeNodeData> = {
             key: resourceKey,
             data: {
               id: dep.kubernetesResource.id ?? '',
               objectType: `${dep.kubernetesResource.resourceKind ?? 'K8s Resource'}`,
               description: `${dep.kubernetesResource.resourceName ?? ''}`,
+              isTrivyReport: false,
               hasSeverities: false,
               critical: 0,
               high: 0,
@@ -141,6 +144,7 @@ export class TestsComponent implements OnInit {
                 id: detail.uid ?? '',
                 objectType: detail.trivyReport || 'unknown',
                 description: '',
+                isTrivyReport: true,
                 hasSeverities: detail.trivyReport !== 'Sbom',
                 critical: detail.criticalCount ?? 0,
                 high: detail.highCount ?? 0,
@@ -210,10 +214,51 @@ export class TestsComponent implements OnInit {
       }
   }
 
+  // open Trivy Report
+  onOpenTrivyReport(treeNodeData: TrivyReportTreeNodeData) {
+    console.log(treeNodeData.id);
+    console.log(this._trivyReportDependencyDto?.image?.namespaceName);
+    console.log(this._trivyReportDependencyDto?.image?.imageDigest);
+
+    let url: string | undefined = undefined;
+    switch (treeNodeData.objectType.toLowerCase()) {
+      case "vulnerability":
+        url = this.router.serializeUrl(
+          this.router.createUrlTree(['/vulnerability-reports'], { queryParams: {
+              namespaceName: this._trivyReportDependencyDto?.image?.namespaceName,
+              digest: this._trivyReportDependencyDto?.image?.imageDigest,
+            }}));
+        break;
+      case "configaudit":
+        url = this.router.serializeUrl(
+          this.router.createUrlTree(['/config-audit-reports'], { queryParams: { uid: treeNodeData.id } }));
+        break;
+      case "exposedsecret":
+        url = this.router.serializeUrl(
+          this.router.createUrlTree(['/exposed-secret-reports'], { queryParams: {
+              namespaceName: this._trivyReportDependencyDto?.image?.namespaceName,
+              digest: this._trivyReportDependencyDto?.image?.imageDigest,
+            }}));
+        break;
+      case "sbom":
+        url = this.router.serializeUrl(
+          this.router.createUrlTree(['/sbom-reports'], { queryParams: {
+              namespaceName: this._trivyReportDependencyDto?.image?.namespaceName,
+              digest: this._trivyReportDependencyDto?.image?.imageDigest,
+            }}));
+        break;
+    }
+
+    if (url) {
+      console.log("url", url);
+      window.open(url, '_blank');
+    }
+  }
+
   // node change
 
   onGraphSelectedNodeIdChange(event: string | undefined) {
-    const currentSelectedTreeNodeId = this.selectedTreeNode?.data.id;
+    const currentSelectedTreeNodeId = this.selectedTreeNode?.data?.id ?? undefined;
     if (event !== currentSelectedTreeNodeId) {
       if (!event) {
         this.selectedTreeNode = undefined;
@@ -223,7 +268,7 @@ export class TestsComponent implements OnInit {
     }
   }
 
-  onTreeTableNodeSelect(event: TreeTableNode<ReportTreeNode['data']>) {
+  onTreeTableNodeSelect(event: TreeTableNode<TrivyReportTreeNodeData>) {
     this.selectedNodeId = event.node?.data?.id;
   }
 
@@ -231,12 +276,12 @@ export class TestsComponent implements OnInit {
     this.selectedNodeId = undefined;
   }
 
-  findTreeNodeById(nodes: ReportTreeNode[], nodeId: string): ReportTreeNode | undefined {
+  findTreeNodeById(nodes: TreeTableNode<TrivyReportTreeNodeData>[], nodeId: string): TreeTableNode<TrivyReportTreeNodeData> | undefined {
     for (const node of nodes) {
       if (node.data.id === nodeId) return node;
 
       if (node.children && node.children.length > 0) {
-        const found = this.findTreeNodeById(node.children as ReportTreeNode[], nodeId);
+        const found = this.findTreeNodeById(node.children as TreeTableNode<TrivyReportTreeNodeData>[], nodeId);
         if (found) return found;
       }
     }

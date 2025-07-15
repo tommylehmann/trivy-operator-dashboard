@@ -145,6 +145,10 @@ export class TrivyTableComponent<TData> implements OnInit {
       this._dataDtos = this.dataDtos() ?? [];
       this.updateMultiHeaderActionOnDataChanged();
       this.newData();
+      const currentSingleSelectDataDto = this.singleSelectDataDto();
+      if (currentSingleSelectDataDto) {
+        this.scrollToDto(currentSingleSelectDataDto);
+      }
     });
     effect(() => {
       const rowExpandDataResponse = this.rowExpandData();
@@ -163,10 +167,7 @@ export class TrivyTableComponent<TData> implements OnInit {
       this.selectedDataDtos = value;
       this.updateMultiHeaderActionSelectionChanged();
       if (value) {
-        const index = this._dataDtos?.indexOf(value);
-        if (index && this.trivyTable) {
-          this.trivyTable.scrollToVirtualIndex(index);
-        }
+        this.scrollToDto(value);
         this.selectedRowsChanged.emit([value]);
       }
     })
@@ -190,7 +191,7 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.updateMultiHeaderActionSelectionChanged();
   }
 
-  
+
 
   onSelectionChange(event: any): void {
     this.isTableRowsSelected = this.selectedDataDtos ? this.selectedDataDtos.length > 0 : false;
@@ -454,6 +455,16 @@ export class TrivyTableComponent<TData> implements OnInit {
       localStorage.setItem(stateKey, JSON.stringify(tableStateJson));
     }
     this.updateMultiHeaderActionClearSortFilters();
+  }
+
+  scrollToDto(value: TData) {
+    setTimeout(() => {
+      const index = this._dataDtos?.indexOf(value);
+      if (index && this.trivyTable) {
+        this.trivyTable.scrollToVirtualIndex(index);
+      }
+    }, 0)
+
   }
 
   // force resize event - bug as table is not properly sized and on row expand it looks not ok

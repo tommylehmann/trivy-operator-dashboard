@@ -164,17 +164,10 @@ export class ConfigAuditReportsComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.isSingleMode) {
-      this.dataDtoService.getConfigAuditReportDtos().subscribe({
-        next: (res) => this.onGetDataDtos(res),
-        error: (err) => console.error(err),
-      });
-    } else {
-      this.dataDtoService.getConfigAuditReportDtoByUid({uid: this.queryUid!}).subscribe({
-        next: (res) => this.onGetDataDto(res),
-        error: (err) => console.error(err),
-      });
-    }
+    this.dataDtoService.getConfigAuditReportDtos().subscribe({
+      next: (res) => this.onGetDataDtos(res),
+      error: (err) => console.error(err),
+    });
     this.dataDtoService.getConfigAuditReportActiveNamespaces().subscribe({
       next: (res) => this.onGetActiveNamespaces(res),
       error: (err) => console.error(err),
@@ -183,6 +176,7 @@ export class ConfigAuditReportsComponent implements OnInit {
 
   onGetDataDtos(dtos: ConfigAuditReportDto[]) {
     this.dataDtos = dtos;
+    this.singleSelectDataDto = dtos.find(x => x.uid == this.queryUid);
   }
 
   onGetDataDto(dto: ConfigAuditReportDto) {

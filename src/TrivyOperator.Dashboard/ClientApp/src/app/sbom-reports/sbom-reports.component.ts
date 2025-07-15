@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, effect, HostListener, model, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -55,15 +55,16 @@ export class SbomReportsComponent implements OnInit {
   namespacedImageDtos?: NamespacedImageDto[];
   protected selectedSbomReportImageDto?: SbomReportImageDto;
 
-  set selectedImageId(value: string | undefined) {
-    this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid && x.uid === value);
-    if (this.selectedSbomReportImageDto) {
-      this.resetAllRelatedData();
-      this.getFullSbomDto(
-        this.selectedSbomReportImageDto.imageDigest ?? undefined,
-        this.selectedSbomReportImageDto.resourceNamespace ?? undefined);
-    }
-  }
+  // set selectedImageId(value: string | undefined) {
+  //   this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid && x.uid === value);
+  //   if (this.selectedSbomReportImageDto) {
+  //     this.resetAllRelatedData();
+  //     this.getFullSbomDto(
+  //       this.selectedSbomReportImageDto.imageDigest ?? undefined,
+  //       this.selectedSbomReportImageDto.resourceNamespace ?? undefined);
+  //   }
+  // }
+  selectedImageId = model<string | undefined>();
   // endregion
   // region dependsOnTable data
   selectedSbomDetailDto?: SbomDetailExtendedDto;
@@ -175,6 +176,17 @@ export class SbomReportsComponent implements OnInit {
       this.queryNamespaceName = params.get('namespaceName') ?? undefined;
       this.queryDigest = params.get('digest') ?? undefined;
     });
+
+    effect(() => {
+      const selectedImageId = this.selectedImageId();
+      this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid && x.uid === selectedImageId);
+        if (this.selectedSbomReportImageDto) {
+          this.resetAllRelatedData();
+          this.getFullSbomDto(
+            this.selectedSbomReportImageDto.imageDigest ?? undefined,
+            this.selectedSbomReportImageDto.resourceNamespace ?? undefined);
+        }
+    });
   }
 
   ngOnInit() {
@@ -185,10 +197,7 @@ export class SbomReportsComponent implements OnInit {
 
   // #region get data from api
   getTableDataDtos() {
-    const params = this.isStatic
-      ? { digest: this.queryDigest, namespaceName: this.queryNamespaceName } as GetSbomReportImageDtos$Params
-      : undefined;
-    this.service.getSbomReportImageDtos(params).subscribe({
+    this.service.getSbomReportImageDtos().subscribe({
       next: (res) => this.onGetDataDtos(res),
       error: (err) => console.error(err),
     });
@@ -212,6 +221,14 @@ export class SbomReportsComponent implements OnInit {
   onGetDataDtos(dtos: SbomReportImageDto[]) {
     this.dataDtos = dtos;
     this.getNamespacedImageDtos();
+    if (this.isStatic) {
+      const queryDto = dtos
+        .find(x => x.imageDigest == this.queryDigest && x.resourceNamespace == this.queryNamespaceName);
+      if (queryDto) {
+        this.selectedImageId.set(queryDto.uid);
+      }
+
+    }
   }
 
   onRefreshRequested() {

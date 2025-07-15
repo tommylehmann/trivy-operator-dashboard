@@ -20,6 +20,7 @@
             <th ttResizableColumn>M</th>
             <th ttResizableColumn>L</th>
             <th ttResizableColumn>U</th>
+            <th ttResizableColumn></th>
           </tr>
         </ng-template>
 
@@ -54,6 +55,15 @@
               <p-tag [rounded]="true"
                      [style]="4 | severityCssStyleById:(rowData.unknown ?? -1)"
                      [value]="rowData.unknown | vulnerabilityCount" />
+            </td>
+            <td>
+              <p-button *ngIf="rowData.isTrivyReport"
+                        label="Open... ⧉"
+                        size="small"
+                        text
+                        raised
+                        (onClick)="onOpenTrivyReport(rowData)"
+ />
             </td>
         </tr>
         </ng-template>
