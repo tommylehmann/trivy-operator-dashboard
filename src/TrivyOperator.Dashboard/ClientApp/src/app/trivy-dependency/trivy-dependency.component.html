@@ -1,0 +1,84 @@
+<p-splitter styleClass="mb-8" [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
+            [panelSizes]="[40, 60]" >
+  <ng-template #panel>
+    <div class="w-full">
+      <p-treeTable [value]="treeNodes"
+                   [autoLayout]="true"
+                   [resizableColumns]="true"
+                   selectionMode="single"
+                   [(selection)]="selectedTreeNode"
+                   (onNodeSelect)="onTreeTableNodeSelect($event)"
+                   (onNodeUnselect)="onTreeTableNodeUnselect()"
+                   styleClass="p-treetable-sm text-sm"
+                   dataKey="id">
+        <ng-template pTemplate="header" let-rowNode>
+          <tr>
+            <th ttResizableColumn>Object Type</th>
+            <th ttResizableColumn>Description</th>
+            <th ttResizableColumn>C</th>
+            <th ttResizableColumn>H</th>
+            <th ttResizableColumn>M</th>
+            <th ttResizableColumn>L</th>
+            <th ttResizableColumn>U</th>
+            <th ttResizableColumn></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+          <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+            <td style="width: 250px">
+              <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+              {{ rowData.objectType }}
+            </td>
+            <td [attr.colspan]="rowData.hasSeverities ? 1 : (rowData.isTrivyReport ? 6 : 7)">{{ rowData.description }}</td>
+            <td *ngIf="rowData.hasSeverities" style="width: 60px">
+              <p-tag [rounded]="true"
+                     [style]="0 | severityCssStyleById:(rowData.critical ?? -1)"
+                     [value]="rowData.critical | vulnerabilityCount" />
+            </td>
+            <td *ngIf="rowData.hasSeverities" style="width: 60px">
+              <p-tag [rounded]="true"
+                     [style]="1 | severityCssStyleById:(rowData.high ?? -1)"
+                     [value]="rowData.high | vulnerabilityCount" />
+            </td>
+            <td *ngIf="rowData.hasSeverities" style="width: 60px">
+              <p-tag [rounded]="true"
+                     [style]="2 | severityCssStyleById:(rowData.medium ?? -1)"
+                     [value]="rowData.medium | vulnerabilityCount" />
+            </td>
+            <td *ngIf="rowData.hasSeverities" style="width: 60px">
+              <p-tag [rounded]="true"
+                     [style]="3 | severityCssStyleById:(rowData.low ?? -1)"
+                     [value]="rowData.low | vulnerabilityCount" />
+            </td>
+            <td *ngIf="rowData.hasSeverities" style="width: 60px">
+              <p-tag [rounded]="true"
+                     [style]="4 | severityCssStyleById:(rowData.unknown ?? -1)"
+                     [value]="rowData.unknown | vulnerabilityCount" />
+            </td>
+            <td>
+              <p-button *ngIf="rowData.isTrivyReport"
+                        label="Open... ⧉"
+                        size="small"
+                        text
+                        raised
+                        severity="contrast"
+                        (onClick)="onOpenTrivyReport(rowData)" />
+            </td>
+          </tr>
+        </ng-template>
+      </p-treeTable>
+    </div>
+  </ng-template>
+  <ng-template #panel>
+    <div class="w-full">
+
+      <app-fcose [nodeDataDtos]="nodeDataDtos"
+                 [fcoseClasses]="'fcose mt-2'"
+                 [idealEdgeLength]="30"
+                 [extraColorClasses]="extraColorClasses"
+                 [selectedNodeId]="selectedNodeId"
+                 (selectedNodeIdChange)="onGraphSelectedNodeIdChange($event)" />
+    </div>
+  </ng-template>
+</p-splitter>
