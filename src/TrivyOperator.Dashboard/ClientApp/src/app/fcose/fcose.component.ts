@@ -124,7 +124,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     effect(() => {
       const nodeDataDtos = this.nodeDataDtos();
       this.isLayoutRedraw = true;
-      console.log("fcose - nodeDataDtos", nodeDataDtos?.length);
       if (nodeDataDtos.length == 0) {
         this._rootNodeId = this._defaultRootNodeId;
         this.navHome = undefined;

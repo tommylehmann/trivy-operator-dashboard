@@ -1,26 +1,42 @@
 <p-splitter styleClass="mb-8" [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
             [panelSizes]="[40, 60]" >
   <ng-template #panel>
-    <div class="w-full">
+    <div class="w-full flex flex-col">
       <p-treeTable [value]="treeNodes"
-                   [autoLayout]="true"
                    [resizableColumns]="true"
+                   columnResizeMode="expand"
+                   [autoLayout]="true"
                    selectionMode="single"
+                   [scrollable]="true"
+                   scrollHeight="90vh"
                    [(selection)]="selectedTreeNode"
                    (onNodeSelect)="onTreeTableNodeSelect($event)"
                    (onNodeUnselect)="onTreeTableNodeUnselect()"
                    styleClass="p-treetable-sm text-sm"
+                   [ngStyle]="{ 'flex-grow': '1', display: 'flex', 'flex-direction': 'column' }"
                    dataKey="id">
+        <ng-template pTemplate="colgroup">
+          <colgroup>
+            <col style="width: auto" />
+            <col style="width: auto" />
+            <col style="width: 60px" />
+            <col style="width: 60px" />
+            <col style="width: 60px" />
+            <col style="width: 60px" />
+            <col style="width: 60px" />
+            <col style="width: 100px" />
+          </colgroup>
+        </ng-template>
         <ng-template pTemplate="header" let-rowNode>
           <tr>
             <th ttResizableColumn>Object Type</th>
             <th ttResizableColumn>Description</th>
-            <th ttResizableColumn>C</th>
-            <th ttResizableColumn>H</th>
-            <th ttResizableColumn>M</th>
-            <th ttResizableColumn>L</th>
-            <th ttResizableColumn>U</th>
-            <th ttResizableColumn></th>
+            <th ttResizableColumn style="width: 60px">C</th>
+            <th ttResizableColumn style="width: 60px">H</th>
+            <th ttResizableColumn style="width: 60px">M</th>
+            <th ttResizableColumn style="width: 60px">L</th>
+            <th ttResizableColumn style="width: 60px">U</th>
+            <th ttResizableColumn style="width: 100px"></th>
           </tr>
         </ng-template>
 
@@ -30,7 +46,7 @@
               <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
               {{ rowData.objectType }}
             </td>
-            <td [attr.colspan]="rowData.hasSeverities ? 1 : (rowData.isTrivyReport ? 6 : 7)">{{ rowData.description }}</td>
+            <td [attr.colspan]="rowData.hasSeverities ? 1 : 6">{{ rowData.description }}</td>
             <td *ngIf="rowData.hasSeverities" style="width: 60px">
               <p-tag [rounded]="true"
                      [style]="0 | severityCssStyleById:(rowData.critical ?? -1)"
@@ -56,7 +72,7 @@
                      [style]="4 | severityCssStyleById:(rowData.unknown ?? -1)"
                      [value]="rowData.unknown | vulnerabilityCount" />
             </td>
-            <td>
+            <td style="width: 100px">
               <p-button *ngIf="rowData.isTrivyReport"
                         label="Open... ⧉"
                         size="small"
@@ -82,3 +98,4 @@
     </div>
   </ng-template>
 </p-splitter>
+

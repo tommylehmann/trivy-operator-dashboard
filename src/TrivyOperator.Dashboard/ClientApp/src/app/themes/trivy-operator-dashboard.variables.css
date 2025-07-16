@@ -39,6 +39,7 @@
   --p-dialog-header-padding: .8rem 1.25rem;
   /* generic vars */
   --tod-screen-width-xs: 576px;
+  --tod-screen-width-sm: 640px;
   /* just tests */
 
 }

@@ -251,7 +251,6 @@ export class TrivyDependencyComponent {
     }
 
     if (url) {
-      console.log("url", url);
       window.open(url, '_blank');
     }
   }
@@ -298,7 +297,7 @@ export class TrivyDependencyComponent {
 
   getScreenSize(): string {
     const cssVarValue = getComputedStyle(document.documentElement)
-      .getPropertyValue('--tod-screen-width-xs')
+      .getPropertyValue('--tod-screen-width-sm')
       .trim(); // Get and clean the CSS variable value
 
     const threshold = parseInt(cssVarValue, 10); // Convert it to a number
