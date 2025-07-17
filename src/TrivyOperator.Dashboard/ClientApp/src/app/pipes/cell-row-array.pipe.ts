@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TrivyExpandTableOptions } from '../trivy-table/trivy-table.types';
+import { TrivyExpandTableOptions } from '../ui-elements/trivy-table/trivy-table.types';
 
 @Pipe({
   name: 'cellRowArray',

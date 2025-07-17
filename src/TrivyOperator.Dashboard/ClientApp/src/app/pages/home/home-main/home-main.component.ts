@@ -1,0 +1,82 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import { MainAppInitService } from '../../../services/main-app-init.service';
+import { LocalStorageUtils } from '../../../utils/local-storage.utils';
+
+import { HomeClusterRbacAssessmentReportsComponent } from '../home-cluster-rbac-assessment-reports/home-cluster-rbac-assessment-reports.component';
+import { HomeConfigAuditReportsComponent } from '../home-config-audit-reports/home-config-audit-reports.component';
+import { HomeExposedSecretReportsComponent } from '../home-exposed-secret-reports/home-exposed-secret-reports.component';
+import { HomeVulnerabilityReportsComponent } from '../home-vulnerability-reports/home-vulnerability-reports.component';
+
+import { ButtonModule } from 'primeng/button';
+import { TabsModule } from 'primeng/tabs';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+
+@Component({
+  selector: 'app-home-main',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    HomeVulnerabilityReportsComponent,
+    HomeConfigAuditReportsComponent,
+    HomeClusterRbacAssessmentReportsComponent,
+    HomeExposedSecretReportsComponent,
+    TabsModule,
+    ToggleSwitchModule,
+    ButtonModule,
+  ],
+  templateUrl: './home-main.component.html',
+  styleUrl: './home-main.component.scss',
+})
+export class HomeMainComponent implements OnInit {
+  enabledTrivyReports: string[] = ['crar', 'car', 'esr', 'vr'];
+  tabPageActiveIndex: string = "0";
+
+  @ViewChild(HomeVulnerabilityReportsComponent) homeVr?: HomeVulnerabilityReportsComponent;
+  @ViewChild(HomeConfigAuditReportsComponent) homeCar?: HomeConfigAuditReportsComponent;
+  @ViewChild(HomeClusterRbacAssessmentReportsComponent) homeCrar?: HomeClusterRbacAssessmentReportsComponent;
+  @ViewChild(HomeExposedSecretReportsComponent) homeEsr?: HomeExposedSecretReportsComponent;
+
+  constructor(private mainAppInitService: MainAppInitService) {}
+
+  private _showDistinctValues: boolean = true;
+
+  get showDistinctValues() {
+    return this._showDistinctValues;
+  }
+
+  set showDistinctValues(value: boolean) {
+    this._showDistinctValues = value;
+    localStorage.setItem('home-main.showDistinctValues', value.toString());
+  }
+
+  ngOnInit() {
+    this.mainAppInitService.backendSettingsDto$.subscribe((updatedBackendSettingsDto) => {
+      this.enabledTrivyReports =
+        updatedBackendSettingsDto.trivyReportConfigDtos?.filter((x) => x.enabled).map((x) => x.id ?? '') ??
+        this.enabledTrivyReports;
+    });
+
+    this.showDistinctValues = LocalStorageUtils.getBoolKeyValue('home-main.showDistinctValues') ?? true;
+    this.tabPageActiveIndex = localStorage.getItem('home-main.tabPageActiveIndex') ?? "0";
+  }
+
+  onTabPageChange(event: string | number) {
+    localStorage.setItem('home-main.tabPageActiveIndex', event.toString());
+  }
+
+  onRefreshData() {
+    if (this.homeVr) {
+      this.homeVr.loadData();
+    }
+    if (this.homeCar) {
+      this.homeCar.loadData();
+    }
+    if (this.homeEsr) {
+      this.homeEsr.loadData();
+    }
+  }
+}

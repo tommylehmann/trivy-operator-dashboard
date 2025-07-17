@@ -2,7 +2,7 @@ import { Component, importProvidersFrom, inject, provideAppInitializer } from '@
 import { RouterOutlet } from '@angular/router';
 
 import { TitleService } from './services/title.service';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
+import { NavMenuComponent } from './ui-elements/nav-menu/nav-menu.component';
 
 
 @Component({

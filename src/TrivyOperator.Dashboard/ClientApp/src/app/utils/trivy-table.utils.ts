@@ -1,4 +1,4 @@
-import { ExportColumn, TrivyTableColumn } from '../trivy-table/trivy-table.types';
+import { ExportColumn, TrivyTableColumn } from '../ui-elements/trivy-table/trivy-table.types';
 
 export class TrivyTableUtils {
   public static convertFromTableColumnToExportColumn(columns: TrivyTableColumn[]): ExportColumn[] {

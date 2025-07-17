@@ -1,8 +1,8 @@
 import { Component, effect, HostListener, input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { FcoseComponent } from '../fcose/fcose.component';
-import { NodeDataDto } from '../fcose/fcose.types';
+import { FcoseComponent } from '../ui-elements/fcose/fcose.component';
+import { NodeDataDto } from '../ui-elements/fcose/fcose.types';
 
 import { TrivyReportDependencyService } from '../../api/services/trivy-report-dependency.service';
 import { TrivyReportDependencyDto } from '../../api/models/trivy-report-dependency-dto';

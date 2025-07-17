@@ -3,10 +3,10 @@ import { Component, effect, input, model, OnInit } from '@angular/core';
 import { SbomReportImageDto } from '../../api/models/sbom-report-image-dto';
 import { SbomReportService } from '../../api/services/sbom-report.service';
 
-import { GenericReportsCompareComponent } from '../generic-reports-compare/generic-reports-compare.component';
-import { NamespacedImageDto } from '../namespace-image-selector/namespace-image-selector.types';
+import { GenericReportsCompareComponent } from '../ui-elements/generic-reports-compare/generic-reports-compare.component';
+import { NamespacedImageDto } from '../ui-elements/namespace-image-selector/namespace-image-selector.types';
 
-import { TrivyTableColumn } from '../trivy-table/trivy-table.types';
+import { TrivyTableColumn } from '../ui-elements/trivy-table/trivy-table.types';
 
 @Component({
   selector: 'app-sbom-reports-compare',

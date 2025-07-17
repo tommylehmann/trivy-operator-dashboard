@@ -230,6 +230,10 @@ p-splitter.tod-splitter-no-background div.p-splitter {
   color: var(--p-primary-text-color)
 }
 
+p-button.tod-text-primary-color span.p-button-label{
+  color: var(--p-primary-text-color)
+}
+
 mat-icon.text-sm {
   font-size: 1.25rem;
   height: unset;

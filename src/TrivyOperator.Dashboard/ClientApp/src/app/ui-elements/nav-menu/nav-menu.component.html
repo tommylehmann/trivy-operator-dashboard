@@ -1,0 +1,37 @@
+<p-menubar>
+  <ng-template pTemplate="start">
+    <div class="flex items-center gap-4">
+      <p-button icon="pi pi-bars" [raised]="true" [text]="true" (click)="openDrawer()" />
+      <img alt="logo" src="../../../assets/logo_AL.ico" style="cursor: pointer; height: 45px" (click)="router.navigate(['/'])" />
+      <h4 class="no-margins font-semibold">
+        <span class="hidden sm:inline">Trivy Operator Dashboard - </span>{{ activePage }}
+      </h4>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="end">
+    <div class="flex items-center gap-4">
+      <div *ngIf="alertsCount" class="p-overlay-badge">
+        <p-button icon="pi pi-bell" label="" [raised]="true" [rounded]="true" [text]="true" (click)="onAlertsClick()" />
+        <span class="p-badge p-badge-danger text-xs">{{ alertsCount }}</span>
+      </div>
+      <p-button [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
+                [raised]="true"
+                [rounded]="true"
+                [text]="true"
+                (click)="switchLightDarkMode()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-menubar>
+<p-drawer [baseZIndex]="10000" [showCloseIcon]="false" [(visible)]="isDrawerVisible">
+  <p-panelMenu styleClass="w-full" [model]="items" [multiple]="true">
+    <ng-template let-item #item>
+      <a pRipple class="flex items-center cursor-pointer text-color px-4 py-2">
+        <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+        <span class="ml-2">{{ item.label }}</span>
+        <!--<p-badge *ngIf="item.badge" [ngClass]="{ 'ml-auto': !root, 'ml-2': root }" [value]="item.badge" />-->
+      </a>
+    </ng-template>
+  </p-panelMenu>
+</p-drawer>
+<p-toast />
