@@ -6,6 +6,7 @@
 $default-height: calc(100vh - 190px);
 $default-dialog-height: calc(100vh - 500px);
 $default-height-half: calc(50vh - 145px);
+$default-breakpoint: 640px;
 
 /* base style */
 .fcose {
@@ -18,7 +19,7 @@ $default-height-half: calc(50vh - 145px);
   &.fcose-half {
     height: $default-height-half;
 
-    @media (min-width: 576px) {
+    @media (min-width: $default-breakpoint) {
       height: $default-height;
     }
   }
@@ -32,7 +33,7 @@ $default-height-half: calc(50vh - 145px);
   display: none;
 }
 
-@media (min-width: 576px) {
+@media (min-width: $default-breakpoint) {
   .hidden-sm {
     display: block;
   }

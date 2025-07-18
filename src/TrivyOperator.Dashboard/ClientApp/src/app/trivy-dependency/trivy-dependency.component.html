@@ -1,19 +1,17 @@
 <p-splitter styleClass="mb-8" [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
-            [panelSizes]="[40, 60]" >
+            [panelSizes]="[42, 58]" stateStorage="local" [stateKey]="screenSize !== 'sm' ? 'splitter.TrivyDependency' : undefined" >
   <ng-template #panel>
-    <div class="w-full flex flex-col">
+    <div class="trivy-tree-table trivy-half overflow-auto" >
       <p-treeTable [value]="treeNodes"
                    [resizableColumns]="true"
                    columnResizeMode="expand"
                    [autoLayout]="true"
                    selectionMode="single"
-                   [scrollable]="true"
-                   scrollHeight="90vh"
                    [(selection)]="selectedTreeNode"
                    (onNodeSelect)="onTreeTableNodeSelect($event)"
                    (onNodeUnselect)="onTreeTableNodeUnselect()"
                    styleClass="p-treetable-sm text-sm"
-                   [ngStyle]="{ 'flex-grow': '1', display: 'flex', 'flex-direction': 'column' }"
+                   [style]="{'width': '770px'}"
                    dataKey="id">
         <ng-template pTemplate="colgroup">
           <colgroup>
@@ -90,7 +88,7 @@
     <div class="w-full">
 
       <app-fcose [nodeDataDtos]="nodeDataDtos"
-                 [fcoseClasses]="'fcose mt-2'"
+                 [fcoseClasses]="'fcose fcose-half mt-2'"
                  [idealEdgeLength]="30"
                  [extraColorClasses]="extraColorClasses"
                  [selectedNodeId]="selectedNodeId"

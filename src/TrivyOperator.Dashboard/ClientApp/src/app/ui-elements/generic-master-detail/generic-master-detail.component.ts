@@ -147,7 +147,7 @@ export class GenericMasterDetailComponent<TTrivyReport extends TrivyReport<TTriv
 
   getScreenSize(): string {
     const cssVarValue = getComputedStyle(document.documentElement)
-      .getPropertyValue('--tod-screen-width-xs')
+      .getPropertyValue('--tod-screen-width-sm')
       .trim(); // Get and clean the CSS variable value
 
     const threshold = parseInt(cssVarValue, 10); // Convert it to a number

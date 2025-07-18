@@ -1,0 +1,23 @@
+$default-height: calc(100vh - 120px);
+$default-height-half: calc(50vh - 60px);
+$default-breakpoint: 640px;
+
+/* base style */
+.trivy-tree-table {
+  height: $default-height;
+  min-height: $default-height;
+  display: flex !important;
+  flex-direction: column !important;
+  flex-grow: 1 !important;
+  align-items: stretch !important;
+  /* styles when classB is also present */
+  &.trivy-half {
+    height: $default-height-half;
+    min-height: $default-height-half;
+
+    @media (min-width: $default-breakpoint) {
+      height: $default-height;
+      min-height: $default-height;
+    }
+  }
+}
