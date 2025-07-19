@@ -1,5 +1,5 @@
 <p-splitter styleClass="mb-8" [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
-            [panelSizes]="[42, 58]" stateStorage="local" [stateKey]="screenSize !== 'sm' ? 'splitter.TrivyDependency' : undefined" >
+            [panelSizes]="[45, 55]" stateStorage="local" [stateKey]="screenSize !== 'sm' ? 'splitter.TrivyDependency' : undefined" >
   <ng-template #panel>
     <div class="trivy-tree-table trivy-half overflow-auto" >
       <p-treeTable [value]="treeNodes"

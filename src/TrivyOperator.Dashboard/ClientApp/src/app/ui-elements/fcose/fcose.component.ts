@@ -466,6 +466,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     this.cy.style().fromJson(mergedStyles).update();
   }
 
+  private xxx: boolean = false;
   private setupCyEvents() {
     if (this.isStatic()) {
       return;
@@ -480,6 +481,18 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       this.hoveredNode = undefined;
       this.unhighlightHoveredNode(event.target as NodeSingular);
     });
+
+    // this.cy.on('click', 'node', (event) => {
+    //   this.xxx=false;
+    //   const rawEvent = event.originalEvent;
+    //   const isCtrlShiftClick = rawEvent?.ctrlKey && rawEvent?.shiftKey;
+    //
+    //   if (isCtrlShiftClick) {
+    //     this.xxx = true;
+    //     console.log("mama");
+    //   }
+    //
+    // })
 
     this.cy.on('dbltap', 'node', (event) => {
       this.diveInNode(event.target as NodeSingular);

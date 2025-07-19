@@ -177,7 +177,8 @@ export class TrivyDependencyComponent {
       return;
     }
     const rootNodeDepIds: string[] = [];
-    nodes.push({id: res.image.id, name: `${res.image.imageName ?? 'n/a'}`, isMain: true, dependsOn: rootNodeDepIds, colorClass: 'sunbeam-yellow', });
+    const imageNodeLabel = `${res.image.imageName ?? 'n/a'}:${res.image.imageTag ?? 'n/a'}`;
+    nodes.push({id: res.image.id, name: imageNodeLabel, isMain: true, dependsOn: rootNodeDepIds, colorClass: 'sunbeam-yellow', });
 
     (res.kubernetesDependencies ?? []).forEach((dependency) => {
       rootNodeDepIds.push(dependency.kubernetesResource?.id ?? 'n/a');
