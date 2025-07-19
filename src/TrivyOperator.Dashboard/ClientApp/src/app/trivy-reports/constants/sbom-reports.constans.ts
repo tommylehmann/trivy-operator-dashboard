@@ -82,15 +82,6 @@ export const sbomReportDetailColumns: readonly TrivyTableColumn[] = [
 
 export const sbomReportDenormalizedColumns: readonly TrivyTableColumn[] = [
   {
-    field: 'resourceNamespace',
-    header: 'Namespace',
-    isFilterable: true,
-    isSortable: true,
-    multiSelectType: 'namespaces',
-    style: 'width: 130px; max-width: 130px;',
-    renderType: 'standard',
-  },
-  {
     field: 'imageName',
     header: 'Image Name',
     isFilterable: true,
@@ -118,7 +109,7 @@ export const sbomReportDenormalizedColumns: readonly TrivyTableColumn[] = [
     renderType: 'standard',
   },
   {
-    field: 'repository',
+    field: 'imageRepository',
     header: 'Repository',
     isFilterable: true,
     isSortable: true,

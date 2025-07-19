@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, effect, HostListener, model, OnInit } from '@angular/core';
+import { Component, effect, HostListener, inject, model, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -10,7 +10,6 @@ import { SbomReportImageDto } from '../../../api/models/sbom-report-image-dto';
 import { SbomReportService } from '../../../api/services/sbom-report.service';
 import { NodeDataDto } from '../../ui-elements/fcose/fcose.types';
 import { SbomDetailExtendedDto } from './sbom-reports.types';
-import { namespacedColumns } from '../constants/generic.constants';
 import { sbomReportDetailColumns } from '../constants/sbom-reports.constans';
 
 import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
@@ -33,6 +32,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNode } from 'primeng/api';
+import { ImageInfo, TrivyDependencyComponent } from '../../trivy-dependency/trivy-dependency.component';
 
 @Component({
   selector: 'app-sbom-reports',
@@ -40,7 +40,7 @@ import { TreeNode } from 'primeng/api';
   imports: [CommonModule, FormsModule,
     FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
-    ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule],
+    ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule, TrivyDependencyComponent],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
@@ -54,16 +54,6 @@ export class SbomReportsComponent implements OnInit {
   // region namespaced image selector component
   namespacedImageDtos?: NamespacedImageDto[];
   protected selectedSbomReportImageDto?: SbomReportImageDto;
-
-  // set selectedImageId(value: string | undefined) {
-  //   this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid && x.uid === value);
-  //   if (this.selectedSbomReportImageDto) {
-  //     this.resetAllRelatedData();
-  //     this.getFullSbomDto(
-  //       this.selectedSbomReportImageDto.imageDigest ?? undefined,
-  //       this.selectedSbomReportImageDto.resourceNamespace ?? undefined);
-  //   }
-  // }
   selectedImageId = model<string | undefined>();
   // endregion
   // region dependsOnTable data
@@ -91,14 +81,18 @@ export class SbomReportsComponent implements OnInit {
   queryDigest?: string;
   isStatic: boolean = false;
 
+  isDependencyTreeViewVisible: boolean = false;
+  trivyImage?: ImageInfo;
+  trivyDependencyDialogTitle: string = "";
+
   screenSize: string = this.getScreenSize();
 
-  constructor(private service: SbomReportService, private http: HttpClient, private router: Router, private activatedRoute: ActivatedRoute) {
-    this.activatedRoute.queryParamMap.subscribe(params => {
-      this.queryNamespaceName = params.get('namespaceName') ?? undefined;
-      this.queryDigest = params.get('digest') ?? undefined;
-    });
+  private readonly service = inject(SbomReportService);
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
+  constructor() {
     effect(() => {
       const selectedImageId = this.selectedImageId();
       this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid && x.uid === selectedImageId);
@@ -112,6 +106,11 @@ export class SbomReportsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.activatedRoute.queryParamMap.subscribe(params => {
+      this.queryNamespaceName = params.get('namespaceName') ?? undefined;
+      this.queryDigest = params.get('digest') ?? undefined;
+    });
+
     this.isStatic = !!(this.queryNamespaceName && this.queryDigest);
 
     this.getTableDataDtos();
@@ -365,8 +364,8 @@ export class SbomReportsComponent implements OnInit {
       case "Export SPDX":
         this.exportSbom('spdx','json');
         break;
-      case "Go to Vulnerability Report \u29C9":
-        this.goToVr();
+      case "Dependency tree":
+        this.goToDependencyTree();
         break;
       default:
         console.error("sbom - multi action call back - unknown: " + event);
@@ -426,17 +425,17 @@ export class SbomReportsComponent implements OnInit {
     });
   }
 
-  private goToVr() {
-    if (this.isStatic) {
-      return;
-    }
+  private goToDependencyTree() {
     const digest = this.selectedSbomReportImageDto?.imageDigest;
-    const namespace = this.selectedSbomReportImageDto?.resourceNamespace ?? "";
-    if (digest && namespace && this.selectedSbomReportImageDto?.hasVulnerabilities) {
-      const url = this.router.serializeUrl(
-        this.router.createUrlTree(['/vulnerability-reports'], { queryParams: { namespaceName: namespace, digest: digest } })
-      );
-      window.open(url, '_blank');
+    const namespace = this.selectedSbomReportImageDto?.resourceNamespace;
+    if (digest && namespace) {
+      const imageRepository = this.selectedSbomReportImageDto?.imageRepository ?? 'n/a';
+      const imageName = this.selectedSbomReportImageDto?.imageName ?? 'n/a';
+      const imageTag = this.selectedSbomReportImageDto?.imageTag ?? 'n/a';
+      const imageNamespace = this.selectedSbomReportImageDto?.resourceNamespace ?? 'n/a';
+      this.trivyDependencyDialogTitle = `Dependency Tree for Image ${imageRepository}/${imageName}:${imageTag} in ${imageNamespace}`;
+      this.trivyImage = { digest: digest, namespaceName: namespace };
+      this.isDependencyTreeViewVisible = true;
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
 import { ExposedSecretReportDenormalizedDto } from '../../../api/models/exposed-secret-report-denormalized-dto';
 import { SeverityDto } from '../../../api/models/severity-dto';
@@ -6,6 +6,8 @@ import { ExposedSecretReportService } from '../../../api/services/exposed-secret
 
 import { TrivyTableComponent } from '../../ui-elements/trivy-table/trivy-table.component';
 import { TrivyTableColumn } from '../../ui-elements/trivy-table/trivy-table.types';
+import { namespacedColumns } from '../constants/generic.constants';
+import { exposedSecretReportDenormalizedColumns } from '../constants/exposed-secret-reports.constants';
 
 @Component({
   selector: 'app-exposed-secret-reports-detailed',
@@ -14,138 +16,20 @@ import { TrivyTableColumn } from '../../ui-elements/trivy-table/trivy-table.type
   templateUrl: './exposed-secret-reports-detailed.component.html',
   styleUrl: './exposed-secret-reports-detailed.component.scss',
 })
-export class ExposedSecretReportsDetailedComponent {
-  public dataDtos?: ExposedSecretReportDenormalizedDto[] | null;
+export class ExposedSecretReportsDetailedComponent implements OnInit {
+  public dataDtos?: ExposedSecretReportDenormalizedDto[];
   public severityDtos: SeverityDto[] = [];
   public activeNamespaces: string[] = [];
   public isLoading: boolean = false;
 
-  public csvFileName: string = 'Config.Audit.Reports';
+  public csvFileName: string = 'Exposed.Secret.Reports';
 
-  public trivyTableColumns: TrivyTableColumn[];
+  public trivyTableColumns: TrivyTableColumn[] = [...namespacedColumns, ...exposedSecretReportDenormalizedColumns];
 
-  constructor(private dataDtoService: ExposedSecretReportService) {
+  private readonly dataDtoService = inject(ExposedSecretReportService);
+
+  ngOnInit() {
     this.getTableDataDtos();
-
-    this.trivyTableColumns = [
-      {
-        field: 'resourceNamespace',
-        header: 'NS',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'namespaces',
-        style: 'width: 130px; max-width: 130px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'resourceName',
-        header: 'Name',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 280px; max-width: 280px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'resourceKind',
-        header: 'Kind',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 110px; max-width: 110px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'resourceContainerName',
-        header: 'Container',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 170px; max-width: 170px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'imageName',
-        header: 'Image',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 210px; max-width: 210px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'imageTag',
-        header: 'Tag',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 115px; max-width: 115px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'imageRepository',
-        header: 'Repository',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 220px; max-width: 220px;',
-        renderType: 'standard',
-      },
-      {
-        field: 'severityId',
-        header: 'Sev',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'severities',
-        style: 'width: 90px; max-width: 90px;',
-        renderType: 'severityBadge',
-      },
-      {
-        field: 'category',
-        header: 'Category',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 140px; max-width: 140px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'ruleId',
-        header: 'Id',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 95px; max-width: 95px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'match',
-        header: 'Match',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 130px; max-width: 130px',
-        renderType: 'standard',
-      },
-      {
-        field: 'target',
-        header: 'Target',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 130px; max-width: 130px',
-        renderType: 'standard',
-      },
-      {
-        field: 'title',
-        header: 'Title',
-        isFilterable: true,
-        isSortable: false,
-        multiSelectType: 'none',
-        style: 'min-with: 200px; white-space: normal;',
-        renderType: 'standard',
-      },
-    ];
   }
 
   public getTableDataDtos() {
@@ -154,18 +38,13 @@ export class ExposedSecretReportsDetailedComponent {
       next: (res) => this.onGetDataDtos(res),
       error: (err) => console.error(err),
     });
-    this.dataDtoService.getExposedSecretReportActiveNamespaces().subscribe({
-      next: (res) => this.onGetActiveNamespaces(res),
-      error: (err) => console.error(err),
-    });
   }
 
-  onGetDataDtos(dtos: ExposedSecretReportDenormalizedDto[]) {
+  private onGetDataDtos(dtos: ExposedSecretReportDenormalizedDto[]) {
     this.dataDtos = dtos;
+    this.activeNamespaces = Array
+      .from(new Set(dtos.map(dto => dto.resourceNamespace ?? "N/A")))
+      .sort();
     this.isLoading = false;
-  }
-
-  onGetActiveNamespaces(dtos: string[]) {
-    this.activeNamespaces = dtos.sort((x, y) => (x > y ? 1 : -1));
   }
 }

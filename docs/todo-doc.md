@@ -12,8 +12,14 @@ Generic
 - change TrivyTableColumn[] to const in trivy-table-definitions
 - change where aplicable to lazy loading of components in pages (ie vr compare in vr, home pages). maybe deferred load?
 - change material-symbols font to svgs
+- check isLoading
+- add updatedate, imagedigest
+- treat onError - getDataDtos()
 
 Extend Settings Service (maybe cross tab communication?)
+
+!!! Check Cluster VR missing fields in detailed
+
 
 ## Backend
 

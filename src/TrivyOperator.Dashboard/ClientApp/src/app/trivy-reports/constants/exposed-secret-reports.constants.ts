@@ -1,14 +1,15 @@
 import { TrivyTableColumn } from '../../ui-elements/trivy-table/trivy-table.types';
 
-export const rbacAssessmentReportColumns: readonly TrivyTableColumn[] = [
+export const exposedSecretReportColumns: readonly TrivyTableColumn[] = [
   {
-    field: 'resourceName',
-    header: 'Name',
+    field: 'imageName',
+    header: 'Image Name - Tag',
     isFilterable: true,
     isSortable: true,
     multiSelectType: 'none',
     style: 'width: 265px; max-width: 265px; white-space: normal;',
-    renderType: 'standard',
+    renderType: 'imageNameTag',
+    extraFields: ['imageTag', 'imageEosl'],
   },
   {
     field: 'criticalCount',
@@ -52,7 +53,7 @@ export const rbacAssessmentReportColumns: readonly TrivyTableColumn[] = [
   },
 ];
 
-export const rbacAssessmentReportDetailColumns: readonly TrivyTableColumn[] = [
+export const exposedSecretReportDetailColumns: readonly TrivyTableColumn[] = [
   {
     field: 'severityId',
     header: 'Sev',
@@ -72,7 +73,7 @@ export const rbacAssessmentReportDetailColumns: readonly TrivyTableColumn[] = [
     renderType: 'standard',
   },
   {
-    field: 'checkId',
+    field: 'ruleId',
     header: 'Id',
     isFilterable: true,
     isSortable: true,
@@ -81,42 +82,87 @@ export const rbacAssessmentReportDetailColumns: readonly TrivyTableColumn[] = [
     renderType: 'standard',
   },
   {
+    field: 'match',
+    header: 'Match',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 130px; max-width: 130px',
+    renderType: 'standard',
+  },
+  {
+    field: 'target',
+    header: 'Target',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 130px; max-width: 130px',
+    renderType: 'standard',
+  },
+  {
     field: 'title',
     header: 'Title',
     isFilterable: true,
-    isSortable: true,
+    isSortable: false,
     multiSelectType: 'none',
-    style: 'width: 180px; max-width: 180px; white-space: normal;',
-    renderType: 'standard',
-  },
-  {
-    field: 'description',
-    header: 'Description',
-    isFilterable: true,
-    isSortable: true,
-    multiSelectType: 'none',
-    style: 'width: 360px; max-width: 360px; white-space: normal;',
-    renderType: 'standard',
-  },
-  {
-    field: 'remediation',
-    header: 'Remediation',
-    isFilterable: true,
-    isSortable: true,
-    multiSelectType: 'none',
-    style: 'width: 360px; max-width: 360px; white-space: normal;',
+    style: 'min-with: 200px; white-space: normal;',
     renderType: 'standard',
   },
 ];
 
-export const rbacAssessmentReportDenormalizedColumns: readonly TrivyTableColumn[] = [
+export const exposedSecretReportDenormalizedColumns: readonly TrivyTableColumn[] = [
   {
     field: 'resourceName',
     header: 'Name',
     isFilterable: true,
     isSortable: true,
     multiSelectType: 'none',
-    style: 'width: 240px; max-width: 240px; white-space: normal;',
+    style: 'width: 280px; max-width: 280px;',
+    renderType: 'standard',
+  },
+  {
+    field: 'resourceKind',
+    header: 'Kind',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 110px; max-width: 110px;',
+    renderType: 'standard',
+  },
+  {
+    field: 'resourceContainerName',
+    header: 'Container',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 170px; max-width: 170px;',
+    renderType: 'standard',
+  },
+  {
+    field: 'imageName',
+    header: 'Image',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 210px; max-width: 210px;',
+    renderType: 'standard',
+  },
+  {
+    field: 'imageTag',
+    header: 'Tag',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 115px; max-width: 115px;',
+    renderType: 'standard',
+  },
+  {
+    field: 'imageRepository',
+    header: 'Repository',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 220px; max-width: 220px;',
     renderType: 'standard',
   },
   {
@@ -138,7 +184,7 @@ export const rbacAssessmentReportDenormalizedColumns: readonly TrivyTableColumn[
     renderType: 'standard',
   },
   {
-    field: 'checkId',
+    field: 'ruleId',
     header: 'Id',
     isFilterable: true,
     isSortable: true,
@@ -147,39 +193,31 @@ export const rbacAssessmentReportDenormalizedColumns: readonly TrivyTableColumn[
     renderType: 'standard',
   },
   {
+    field: 'match',
+    header: 'Match',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 130px; max-width: 130px',
+    renderType: 'standard',
+  },
+  {
+    field: 'target',
+    header: 'Target',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 130px; max-width: 130px',
+    renderType: 'standard',
+  },
+  {
     field: 'title',
     header: 'Title',
     isFilterable: true,
-    isSortable: true,
+    isSortable: false,
     multiSelectType: 'none',
-    style: 'width: 180px; max-width: 180px; white-space: normal;',
+    style: 'min-with: 200px; white-space: normal;',
     renderType: 'standard',
-  },
-  {
-    field: 'description',
-    header: 'Description',
-    isFilterable: true,
-    isSortable: true,
-    multiSelectType: 'none',
-    style: 'width: 360px; max-width: 360px; white-space: normal;',
-    renderType: 'standard',
-  },
-  {
-    field: 'remediation',
-    header: 'Remediation',
-    isFilterable: true,
-    isSortable: true,
-    multiSelectType: 'none',
-    style: 'width: 360px; max-width: 360px; white-space: normal;',
-    renderType: 'standard',
-  },
-  {
-    field: 'messages',
-    header: 'Messages',
-    isFilterable: true,
-    isSortable: true,
-    multiSelectType: 'none',
-    style: 'width: 500px; max-width: 500px; white-space: normal;',
-    renderType: 'multiline',
   },
 ];
+

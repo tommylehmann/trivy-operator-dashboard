@@ -25,3 +25,32 @@ try {
   console.error('Failed to update tailwindcss-primeui/package.json:', error);
 }
 ```
+
+```ts
+export interface NarrowedResourceNameInfo {
+  label: string;
+  buttonLink: string;
+}
+
+export class ReportHelper {
+  static getNarrowedResourceNames<T extends TrivyReportImageResourceDto>(
+    dto: TrivyReportImageDto<T>
+  ): NarrowedResourceNameInfo {
+    const resourceNames: string[] =
+      dto.resources?.map((x) => x.name ?? 'unknown') ?? [];
+
+    const label = resourceNames.slice(0, 2).join(', ');
+    const buttonLink =
+      resourceNames.length > 2 ? ` [+${resourceNames.length - 2}]` : '[...]';
+
+    return {
+      label,
+      buttonLink,
+    };
+  }
+}
+
+const result = ReportHelper.getNarrowedResourceNames(
+  vulnerabilityReportImageDto as TrivyReportImageDto<VulnerabilityReportImageResourceDto>
+);
+```

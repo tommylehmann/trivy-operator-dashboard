@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
 import { ClusterRbacAssessmentReportDenormalizedDto } from '../../../api/models/cluster-rbac-assessment-report-denormalized-dto';
 import { SeverityDto } from '../../../api/models/severity-dto';
@@ -6,6 +6,7 @@ import { ClusterRbacAssessmentReportService } from '../../../api/services/cluste
 
 import { TrivyTableComponent } from '../../ui-elements/trivy-table/trivy-table.component';
 import { TrivyTableColumn } from '../../ui-elements/trivy-table/trivy-table.types';
+import { rbacAssessmentReportDenormalizedColumns } from '../constants/rbac-assessment-reports.constants';
 
 @Component({
   selector: 'app-cluster-rbac-assessment-reports-detailed',
@@ -14,7 +15,7 @@ import { TrivyTableColumn } from '../../ui-elements/trivy-table/trivy-table.type
   templateUrl: './cluster-rbac-assessment-reports-detailed.component.html',
   styleUrl: './cluster-rbac-assessment-reports-detailed.component.scss',
 })
-export class ClusterRbacAssessmentReportsDetailedComponent {
+export class ClusterRbacAssessmentReportsDetailedComponent implements OnInit {
   public dataDtos?: ClusterRbacAssessmentReportDenormalizedDto[] | null;
   public severityDtos: SeverityDto[] = [];
   public activeNamespaces: string[] = [];
@@ -22,85 +23,12 @@ export class ClusterRbacAssessmentReportsDetailedComponent {
 
   public csvFileName: string = 'Cluster.Rbac.Assessment.Reports';
 
-  public trivyTableColumns: TrivyTableColumn[];
+  public trivyTableColumns: TrivyTableColumn[] = [...rbacAssessmentReportDenormalizedColumns];
 
-  constructor(private dataDtoService: ClusterRbacAssessmentReportService) {
+  private readonly dataDtoService = inject(ClusterRbacAssessmentReportService);
+
+  ngOnInit() {
     this.getTableDataDtos();
-
-    this.trivyTableColumns = [
-      {
-        field: 'resourceName',
-        header: 'Name',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 240px; max-width: 240px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'severityId',
-        header: 'Sev',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'severities',
-        style: 'width: 90px; max-width: 90px;',
-        renderType: 'severityBadge',
-      },
-      {
-        field: 'category',
-        header: 'Category',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 140px; max-width: 140px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'checkId',
-        header: 'Id',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 95px; max-width: 95px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'title',
-        header: 'Title',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 180px; max-width: 180px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'description',
-        header: 'Description',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 360px; max-width: 360px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'remediation',
-        header: 'Remediation',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 360px; max-width: 360px; white-space: normal;',
-        renderType: 'standard',
-      },
-      {
-        field: 'messages',
-        header: 'Messages',
-        isFilterable: true,
-        isSortable: true,
-        multiSelectType: 'none',
-        style: 'width: 500px; max-width: 500px; white-space: normal;',
-        renderType: 'multiline',
-      },
-    ];
   }
 
   public getTableDataDtos() {

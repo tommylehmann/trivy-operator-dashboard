@@ -1,6 +1,6 @@
 import { TrivyTableColumn } from '../../ui-elements/trivy-table/trivy-table.types';
 
-export const rbacAssessmentReportColumns: readonly TrivyTableColumn[] = [
+export const configAuditReportColumns: readonly TrivyTableColumn[] = [
   {
     field: 'resourceName',
     header: 'Name',
@@ -8,6 +8,15 @@ export const rbacAssessmentReportColumns: readonly TrivyTableColumn[] = [
     isSortable: true,
     multiSelectType: 'none',
     style: 'width: 265px; max-width: 265px; white-space: normal;',
+    renderType: 'standard',
+  },
+  {
+    field: 'resourceKind',
+    header: 'Kind',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 100px; max-width: 100px;',
     renderType: 'standard',
   },
   {
@@ -52,7 +61,7 @@ export const rbacAssessmentReportColumns: readonly TrivyTableColumn[] = [
   },
 ];
 
-export const rbacAssessmentReportDetailColumns: readonly TrivyTableColumn[] = [
+export const configAuditReportDetailColumns: readonly TrivyTableColumn[] = [
   {
     field: 'severityId',
     header: 'Sev',
@@ -109,7 +118,16 @@ export const rbacAssessmentReportDetailColumns: readonly TrivyTableColumn[] = [
   },
 ];
 
-export const rbacAssessmentReportDenormalizedColumns: readonly TrivyTableColumn[] = [
+export const configAuditReportDenormalizedColumns: readonly TrivyTableColumn[] = [
+  {
+    field: 'resourceNamespace',
+    header: 'NS',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'namespaces',
+    style: 'width: 130px; max-width: 130px;',
+    renderType: 'standard',
+  },
   {
     field: 'resourceName',
     header: 'Name',
@@ -117,6 +135,15 @@ export const rbacAssessmentReportDenormalizedColumns: readonly TrivyTableColumn[
     isSortable: true,
     multiSelectType: 'none',
     style: 'width: 240px; max-width: 240px; white-space: normal;',
+    renderType: 'standard',
+  },
+  {
+    field: 'resourceKind',
+    header: 'Kind',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 100px; max-width: 100px;',
     renderType: 'standard',
   },
   {

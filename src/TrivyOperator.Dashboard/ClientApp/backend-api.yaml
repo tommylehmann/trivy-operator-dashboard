@@ -2620,7 +2620,7 @@ components:
         imageDigest:
           type: string
           nullable: true
-        repository:
+        imageRepository:
           type: string
           nullable: true
         resources:

@@ -7,6 +7,7 @@ import { rbacAssessmentReportDenormalizedColumns } from '../constants/rbac-asses
 
 import { TrivyTableComponent } from '../../ui-elements/trivy-table/trivy-table.component';
 import { TrivyTableColumn } from '../../ui-elements/trivy-table/trivy-table.types';
+import { namespacedColumns } from '../constants/generic.constants';
 
 @Component({
   selector: 'app-rbac-assessment-reports-detailed',
@@ -23,7 +24,7 @@ export class RbacAssessmentReportsDetailedComponent implements OnInit {
 
   csvFileName: string = 'Rbac.Assessment.Reports';
 
-  trivyTableColumns: TrivyTableColumn[] = [...rbacAssessmentReportDenormalizedColumns];
+  trivyTableColumns: TrivyTableColumn[] = [...namespacedColumns, ...rbacAssessmentReportDenormalizedColumns];
 
   private readonly dataDtoService = inject(RbacAssessmentReportService);
 
