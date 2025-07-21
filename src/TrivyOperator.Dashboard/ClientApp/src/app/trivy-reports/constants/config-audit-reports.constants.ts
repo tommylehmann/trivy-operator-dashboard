@@ -120,15 +120,6 @@ export const configAuditReportDetailColumns: readonly TrivyTableColumn[] = [
 
 export const configAuditReportDenormalizedColumns: readonly TrivyTableColumn[] = [
   {
-    field: 'resourceNamespace',
-    header: 'NS',
-    isFilterable: true,
-    isSortable: true,
-    multiSelectType: 'namespaces',
-    style: 'width: 130px; max-width: 130px;',
-    renderType: 'standard',
-  },
-  {
     field: 'resourceName',
     header: 'Name',
     isFilterable: true,

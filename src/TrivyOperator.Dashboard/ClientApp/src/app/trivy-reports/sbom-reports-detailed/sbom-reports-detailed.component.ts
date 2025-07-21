@@ -33,6 +33,7 @@ export class SbomReportsDetailedComponent implements OnInit {
   ngOnInit() {
     this.getTableDataDtos();
   }
+
   getTableDataDtos() {
     this.isTableLoading = true;
     this.service.getSbomReportImageDtos().subscribe({

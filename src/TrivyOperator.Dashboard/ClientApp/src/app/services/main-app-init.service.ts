@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, forkJoin } from 'rxjs';
 
 import { BackendSettingsDto } from '../../api/models/backend-settings-dto';
@@ -17,10 +17,9 @@ export class MainAppInitService {
   });
   backendSettingsDto$ = this.backendSettingsDtoSubject.asObservable();
 
-  constructor(
-    private backendSettingsService: BackendSettingsService,
-    private settingsService: SettingsService,
-    private darkModeService: DarkModeService) { }
+  private readonly backendSettingsService =inject(BackendSettingsService);
+  private readonly settingsService = inject(SettingsService);
+  private readonly darkModeService = inject(DarkModeService);
 
   initializeApp(): Promise<void> {
     return new Promise((resolve, reject) => {
