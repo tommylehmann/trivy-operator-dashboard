@@ -86,19 +86,6 @@ export class MainAppInitService {
 
     this.migrationService.applyTableMigrations(savedAppVersion, appVersion.fileVersion ?? "1.0", trivyMigrations);
 
-    // this.migrationService.applyTableMigrations('1.7.1', '1.8', trivyMigrations);
-
-    //
-    // if (!savedAppVersion) {
-    //   const keys: string[] = [];
-    //   for (let i = 0; i < localStorage.length; i++) {
-    //     const key = localStorage.key(i);
-    //     if (key && key.startsWith('trivyTable')) {
-    //       keys.push(key);
-    //     }
-    //   }
-    //   keys.forEach(x => localStorage.removeItem(x));
-    // }
     localStorage.setItem(appVersionKeyName, appVersion.fileVersion ?? "1.0");
   }
 }

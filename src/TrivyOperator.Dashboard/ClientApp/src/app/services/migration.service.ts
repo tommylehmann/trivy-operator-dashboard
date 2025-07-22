@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { VersionUtils } from '../utils/version.utils';
+import { LocalStorageUtils } from '../utils/local-storage.utils';
 
 export type MigrationAction =
+  | 'deleteAllTableDefinitions'
   | 'deleteTableDefinition'
   | 'deleteTableField'
   | 'addTableField'
@@ -18,8 +20,6 @@ export interface MigrationStep {
   anchorRight?: string;
 }
 
-
-
 @Injectable({
   providedIn: 'root',
 })
@@ -29,29 +29,45 @@ export class MigrationService {
   applyTableMigrations(fromVersion: string, toVersion: string, migrationSteps: readonly MigrationStep[]) {
     for (const step of migrationSteps) {
       if (!this.isFirstVersionOlder(fromVersion, step.version) || this.isFirstVersionOlder(toVersion, step.version)) continue;
-      //if (this.isFirstVersionOlder(toVersion, step.version)) continue;
-      console.log("Step version: ", step.version, " - Applying migration step: ", step.action);
+      console.log("Step version:", step.version, "- Applying migration step:", step.action);
 
       switch (step.action) {
+        case 'deleteAllTableDefinitions': {
+          const keys = LocalStorageUtils.getKeysWithPrefix(LocalStorageUtils.trivyTableKeyPrefix);
+          for (const key of keys) {
+            localStorage.removeItem(key);
+          }
+          break;
+        }
         case 'deleteTableDefinition': {
-          const key = step.table ? `trivyTable.${step.table}` : '';
+          if (!step.table) break;
+          const key = this.getTableKey(step.table);
           if (key) localStorage.removeItem(key);
           break;
         }
         case 'deleteTableField': {
-          const key = step.table ? `trivyTable.${step.table}` : '';
-          const state = this.getTableDefinition(step.table ?? '');
-          if (!state.columnOrder || !step.oldFieldName) break;
+          if (!step.table || !step.oldFieldName) break;
+          const key = this.getTableKey(step.table);
+          const state = this.getTableDefinition(key);
+          if (!state || !state.columnOrder) break;
 
-          state.columnOrder = state.columnOrder.filter((f: string) => f !== step.oldFieldName);
-          state.columnWidths = this.recalculateWidths(state.columnOrder, state.columnWidths);
+          const indexToRemove = state.columnOrder.indexOf(step.oldFieldName);
+          if (indexToRemove === -1) break;
+
+          state.columnOrder.splice(indexToRemove, 1);
+
+          const widths = state.columnWidths?.split(',') ?? [];
+          widths.splice(indexToRemove, 1);
+          state.columnWidths = widths.join(',');
+
           localStorage.setItem(key, JSON.stringify(state));
           break;
         }
         case 'addTableField': {
-          const key = step.table ? `trivyTable.${step.table}` : '';
-          const state = this.getTableDefinition(step.table ?? '');
-          if (!state.columnOrder || !step.newFieldName || state.columnOrder.includes(step.newFieldName)) break;
+          if (!step.table || !step.newFieldName) break;
+          const key = this.getTableKey(step.table);
+          const state = this.getTableDefinition(key);
+          if (!state || !state.columnOrder || state.columnOrder.includes(step.newFieldName)) break;
 
           let insertAt = state.columnOrder.length; // default to end
 
@@ -68,9 +84,10 @@ export class MigrationService {
           break;
         }
         case 'renameTableField': {
-          const key = step.table ? `trivyTable.${step.table}` : '';
-          const state = this.getTableDefinition(step.table ?? '');
-          if (!state.columnOrder || !step.oldFieldName || !step.newFieldName) break;
+          if (!step.table || !step.oldFieldName || !step.newFieldName) break;
+          const key = this.getTableKey(step.table);
+          const state = this.getTableDefinition(key);
+          if (!state || !state.columnOrder) break;
           if (state.columnOrder.includes(step.newFieldName)) break;
 
           const renameIndex = state.columnOrder.indexOf(step.oldFieldName);
@@ -90,8 +107,11 @@ export class MigrationService {
     return VersionUtils.parseVersion(firstVersion) < VersionUtils.parseVersion(secondVersion);
   }
 
-  private getTableDefinition(tableName: string): any {
-    const key = `trivyTable.${tableName}`;
+  private getTableKey(tableName: string): string {
+    return `${LocalStorageUtils.trivyTableKeyPrefix}${tableName}`;
+  }
+
+  private getTableDefinition(key: string): any {
     const raw = localStorage.getItem(key);
     return raw ? this.safelyParse(raw) : null;
   }
@@ -103,11 +123,6 @@ export class MigrationService {
       console.warn('Failed to parse localStorage value.');
       return {};
     }
-  }
-
-  private recalculateWidths(order: string[], existing: string = ''): string {
-    const existingWidths = existing.split(',');
-    return order.map((_, i) => existingWidths[i] ?? '100').join(',');
   }
 
   private insertWidth(existing: string = '', index: number, width: number): string {
