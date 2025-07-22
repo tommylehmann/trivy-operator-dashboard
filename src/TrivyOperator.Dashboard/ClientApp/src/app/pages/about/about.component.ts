@@ -11,6 +11,7 @@ import { AppVersionService } from '../../../api/services/app-version.service';
 import { GitHubReleaseDto } from '../../../api/models/git-hub-release-dto';
 import { AppVersion } from '../../../api/models/app-version'
 import { AboutCredits } from './about.types';
+import { VersionUtils } from '../../utils/version.utils';
 
 @Component({
   selector: 'app-about',
@@ -76,7 +77,7 @@ export class AboutComponent {
   }
 
   private onReleaseNoteDtos(data: GitHubReleaseDto[]) {
-    this.releaseNotes = data.sort((a, b) => this.parseVersion(b.tagName ?? '') - this.parseVersion(a.tagName ?? ''));
+    this.releaseNotes = data.sort((a, b) => VersionUtils.parseVersion(b.tagName ?? '') - VersionUtils.parseVersion(a.tagName ?? ''));
     this.latestVersion = data.find(x => x.isLatest)?.tagName?.replace('v', '');
     this.checkNewVersionAvailable();
   }
@@ -86,23 +87,13 @@ export class AboutComponent {
     this.checkNewVersionAvailable();
   }
 
-  private parseVersion(version: string): number {
-    const parts = version.replace('v', '').split('.');
-
-    const x = parseInt(parts[0], 10) || 0;
-    const y = parseInt(parts[1], 10) || 0;
-    const z = parseInt(parts[2], 10) || 0;
-
-    return x * 10000 + y * 100 + z;
-  }
-
   private checkNewVersionAvailable() {
     if (!this.currentVersion || !this.releaseNotes || !this.releaseNotes[0]) {
       return;
     }
 
-    const parsedCurrentVersion = this.parseVersion(this.currentVersion.fileVersion ?? "0.0");
-    const parsedLastVersion = this.parseVersion(this.releaseNotes[0].tagName ?? "0.0");
+    const parsedCurrentVersion = VersionUtils.parseVersion(this.currentVersion.fileVersion ?? "0.0");
+    const parsedLastVersion = VersionUtils.parseVersion(this.releaseNotes[0].tagName ?? "0.0");
 
     this.newVersionAvailable = parsedLastVersion - parsedCurrentVersion > 0;
     this.experimentalVersion = parsedLastVersion - parsedCurrentVersion < 0;

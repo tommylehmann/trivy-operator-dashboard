@@ -6,6 +6,8 @@ import { BackendSettingsService } from '../../api/services/backend-settings.serv
 import { SettingsService } from './settings.service';
 import { AppVersion } from '../../api/models';
 import { DarkModeService } from './dark-mode.service';
+import { MigrationService } from './migration.service';
+import { trivyMigrations } from '../constants/migration.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +22,7 @@ export class MainAppInitService {
   private readonly backendSettingsService =inject(BackendSettingsService);
   private readonly settingsService = inject(SettingsService);
   private readonly darkModeService = inject(DarkModeService);
+  private readonly migrationService = inject(MigrationService);
 
   initializeApp(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -31,7 +34,7 @@ export class MainAppInitService {
           this.darkModeService.restoreMode();
           this.defaultBackendSettingsDto = backendSettings;
           this.mergeBackendSettingsDto(backendSettings);
-          this.something(appVersion);
+          this.applyMigrations(appVersion);
           resolve();
         },
         error: (err) => {
@@ -77,19 +80,25 @@ export class MainAppInitService {
     this.updateBackendSettingsTrivyReportConfigDto(mergedItems);
   }
 
-  private something(appVersion: AppVersion) {
+  private applyMigrations(appVersion: AppVersion) {
     const appVersionKeyName = 'settings.appVersion';
-    const savedAppVersion = localStorage.getItem(appVersionKeyName);
-    if (!savedAppVersion) {
-      const keys: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('trivyTable')) {
-          keys.push(key);
-        }
-      }
-      keys.forEach(x => localStorage.removeItem(x));
-    }
+    const savedAppVersion = localStorage.getItem(appVersionKeyName) ?? "1.0";
+
+    this.migrationService.applyTableMigrations(savedAppVersion, appVersion.fileVersion ?? "1.0", trivyMigrations);
+
+    // this.migrationService.applyTableMigrations('1.7.1', '1.8', trivyMigrations);
+
+    //
+    // if (!savedAppVersion) {
+    //   const keys: string[] = [];
+    //   for (let i = 0; i < localStorage.length; i++) {
+    //     const key = localStorage.key(i);
+    //     if (key && key.startsWith('trivyTable')) {
+    //       keys.push(key);
+    //     }
+    //   }
+    //   keys.forEach(x => localStorage.removeItem(x));
+    // }
     localStorage.setItem(appVersionKeyName, appVersion.fileVersion ?? "1.0");
   }
 }
