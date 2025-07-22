@@ -1655,7 +1655,7 @@ components:
         imageTag:
           type: string
           nullable: true
-        repository:
+        imageRepository:
           type: string
           nullable: true
         details:
@@ -2577,7 +2577,7 @@ components:
         imageDigest:
           type: string
           nullable: true
-        repository:
+        imageRepository:
           type: string
           nullable: true
         rootNodeBomRef:

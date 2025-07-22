@@ -8,7 +8,7 @@ public class ClusterSbomReportDto
     public string Uid { get; set; } = Guid.NewGuid().ToString();
     public string ImageName { get; set; } = string.Empty;
     public string ImageTag { get; set; } = string.Empty;
-    public string Repository { get; set; } = string.Empty;
+    public string ImageRepository { get; set; } = string.Empty;
     public ClusterSbomReportDetailDto[] Details { get; set; } = [];
 }
 
@@ -74,7 +74,7 @@ public static class ClusterSbomReportCrExtensions
             Uid = clusterSbomReportCr.Metadata.Uid,
             ImageName = clusterSbomReportCr.Report?.Artifact?.Repository ?? string.Empty,
             ImageTag = clusterSbomReportCr.Report?.Artifact?.Tag ?? string.Empty,
-            Repository = clusterSbomReportCr.Report?.Registry?.Server ?? string.Empty,
+            ImageRepository = clusterSbomReportCr.Report?.Registry?.Server ?? string.Empty,
             Details = details.ToArray(),
         };
 

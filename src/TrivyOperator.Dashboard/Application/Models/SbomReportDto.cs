@@ -14,7 +14,7 @@ public class SbomReportDto : ISbomReportDto
     public string ImageName { get; set; } = string.Empty;
     public string ImageTag { get; set; } = string.Empty;
     public string ImageDigest { get; set; } = string.Empty;
-    public string Repository { get; set; } = string.Empty;
+    public string ImageRepository { get; set; } = string.Empty;
     public string RootNodeBomRef { get; set; } = string.Empty;
     public SbomReportDetailDto[] Details { get; set; } = [];
 }
@@ -132,7 +132,7 @@ public static partial class SbomReportCrExtensions
             ImageName = sbomReportCr.Report?.Artifact?.Repository ?? string.Empty,
             ImageTag = sbomReportCr.Report?.Artifact?.Tag ?? string.Empty,
             ImageDigest = sbomReportCr.Report?.Artifact?.Digest ?? string.Empty,
-            Repository = sbomReportCr.Report?.Registry?.Server ?? string.Empty,
+            ImageRepository = sbomReportCr.Report?.Registry?.Server ?? string.Empty,
             RootNodeBomRef = sbomReportCr.Report?.Components.Metadata.Component.BomRef ?? string.Empty,
             Details = [.. details],
         };

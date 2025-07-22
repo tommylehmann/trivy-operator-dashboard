@@ -80,7 +80,7 @@
 <p-panel header="Credits" [toggleable]="true">
   <p class="text-lg font-semibold pb-2">Acknowledging the Building Blocks Behind the App</p>
   <div class="grid grid-cols-12 gap-4 items-stretch">
-    <div *ngFor="let credit of credits" class="col-span-3 md:col-span-2 xl:col-span-1 items-stretch">
+    <div *ngFor="let credit of credits" class="col-span-4 md:col-span-3 lg:col-span-2 xl:col-span-1 items-stretch">
       <p-card class="h-full small-header tod-panel-mt-auto" header="{{ credit.name }}">
         <div class="text-left pb-4">
           <div class="mt-2"><a href="{{ credit.homeUrl }}" target="_blank">Home</a></div>
@@ -93,7 +93,7 @@
         </div>
       </p-card>
     </div>
-    <div class="col-span-6 md:col-span-2 items-stretch">
+    <div class="col-span-6 md:col-span-3 lg:col-span-2 items-stretch">
       <p-card class="h-full small-header" header="Others">
         <div class="gap-4">
           <div class="flex-col text-left mt-auto">
