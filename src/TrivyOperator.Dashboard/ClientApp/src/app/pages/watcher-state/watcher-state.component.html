@@ -4,7 +4,7 @@
     [isLoading]="isLoading"
     [trivyTableColumns]="trivyTableColumns"
     (refreshRequested)="getTableDataDtos()"
-
+    (rowActionRequested)="onRowActionRequested($event)"
     [isResetFiltersVisible]="true"
     [isRefreshVisible]="true"
     [style]="{ width: '1205px' }"

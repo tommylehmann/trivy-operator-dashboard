@@ -333,14 +333,6 @@ export class SbomReportsComponent implements OnInit {
     this.dependsOnBoms = [...(this.dependsOnBoms || []), ...undeletedSboms];
   }
 
-  // #region to be moved from here
-  onRowActionRequested(event: SbomDetailExtendedDto) {
-    const bomRefId = event.bomRef ?? undefined;
-    if (bomRefId) {
-      this.onActiveNodeIdChange(bomRefId);
-    }
-  }
-
   onMultiHeaderActionRequested(event: string) {
     switch (event) {
       case "goToDetailedPage":

@@ -1265,10 +1265,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /api/watcher-state-infos:
+  /api/watcher-status:
     get:
       tags:
-        - WatcherStateInfo
+        - WatcherStatus
       operationId: GetWatcherStateInfos
       responses:
         '200':
@@ -1278,7 +1278,35 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/WatcherStateInfoDto'
+                  $ref: '#/components/schemas/WatcherStatusDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /api/watcher-status/recreate:
+    post:
+      tags:
+        - WatcherStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecreateWatcherRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RecreateWatcherRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RecreateWatcherRequest'
+      responses:
         '400':
           description: Bad Request
           content:
@@ -2495,6 +2523,16 @@ components:
             $ref: '#/components/schemas/RbacAssessmentReportDetailDto'
           nullable: true
       additionalProperties: false
+    RecreateWatcherRequest:
+      type: object
+      properties:
+        kubernetesObjectType:
+          type: string
+          nullable: true
+        namespaceName:
+          type: string
+          nullable: true
+      additionalProperties: false
     SbomReportDetailDto:
       type: object
       properties:
@@ -3212,7 +3250,7 @@ components:
             $ref: '#/components/schemas/GenericSummaryDto'
           nullable: true
       additionalProperties: false
-    WatcherStateInfoDto:
+    WatcherStatusDto:
       type: object
       properties:
         kubernetesObjectType:

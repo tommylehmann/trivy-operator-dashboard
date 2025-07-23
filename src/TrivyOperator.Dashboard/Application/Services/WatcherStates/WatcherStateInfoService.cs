@@ -1,16 +1,85 @@
 ﻿using TrivyOperator.Dashboard.Application.Models;
+using TrivyOperator.Dashboard.Application.Services.Common;
+using TrivyOperator.Dashboard.Application.Services.Watchers.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.WatcherStates.Abstractions;
+using TrivyOperator.Dashboard.Domain.Trivy;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.WatcherStates;
 
-public class WatcherStateInfoService(IConcurrentCache<string, WatcherStateInfo> cache) : IWatcherStateInfoService
+public class WatcherStateInfoService(IConcurrentCache<string, WatcherStateInfo> cache, IServiceProvider serviceProvider) : IWatcherStateInfoService
 {
-    public Task<IList<WatcherStateInfoDto>> GetWatcherStateInfos()
+    public Task<IList<WatcherStatusDto>> GetWatcherStateInfos()
     {
-        List<WatcherStateInfoDto> watcherStateInfoDtos =
-            cache.Select(kvp => kvp.Value.ToWatcherStateInfoDto()).ToList();
+        List<WatcherStatusDto> watcherStateInfoDtos =
+            cache.Select(kvp => kvp.Value.ToWatcherStatusDto()).ToList();
 
-        return Task.FromResult((IList<WatcherStateInfoDto>)watcherStateInfoDtos);
+        return Task.FromResult((IList<WatcherStatusDto>)watcherStateInfoDtos);
+    }
+
+    public async Task<OperationResult> RecreateWatcher(string kubernetesObjectType, string? namespaceName)
+    {
+        if (string.IsNullOrWhiteSpace(kubernetesObjectType))
+        {
+            return new OperationResult
+            {
+                Success = false,
+                Message = "KubernetesObjectType is required."
+            };
+        }
+
+        string fullTypeName;
+        if (kubernetesObjectType == "V1Namespace") // the only known type that is not a Trivy Report
+        {
+            fullTypeName = $"k8s.Models.{kubernetesObjectType}";
+        }
+        else
+        {
+            fullTypeName = $"{TrivyDomainUtils.TrivyDomainNamespace}.{kubernetesObjectType.TrimEnd('C', 'r')}.{kubernetesObjectType}";
+        }
+
+        Type? watchedKubernetesType = Type.GetType(fullTypeName);
+
+        if (watchedKubernetesType == null)
+        {
+            return new OperationResult
+            {
+                Success = false,
+                Message = $"KubernetesObjectType '{kubernetesObjectType}' is not recognized."
+            };
+        }
+
+        Type clusteredScopedWatcherType =
+                    typeof(IClusterScopedWatcher<>).MakeGenericType(watchedKubernetesType);
+        Type namespacedWatcherType =
+            typeof(INamespacedWatcher<>).MakeGenericType(watchedKubernetesType);
+
+        object? watcherService = null;
+        if (string.IsNullOrWhiteSpace(namespaceName))
+        {
+            watcherService = serviceProvider.GetServices(clusteredScopedWatcherType).FirstOrDefault();
+        }
+        else
+        {
+            watcherService = serviceProvider.GetServices(namespacedWatcherType).FirstOrDefault();
+        }
+
+        if (watcherService is IKubernetesWatcher watcher)
+        {
+            await watcher.Recreate(new CancellationToken(), namespaceName ?? CacheUtils.DefaultCacheRefreshKey);
+            
+            return new OperationResult
+            {
+                Success = true,
+                Message = $"Watcher for {kubernetesObjectType} in namespace '{namespaceName ?? "all"}' has been recreated."
+            };
+        }
+
+        return new OperationResult
+        {
+            Success = false,
+            Message = $"No watcher found for {kubernetesObjectType} in namespace '{namespaceName ?? "all"}'."
+        };
     }
 }

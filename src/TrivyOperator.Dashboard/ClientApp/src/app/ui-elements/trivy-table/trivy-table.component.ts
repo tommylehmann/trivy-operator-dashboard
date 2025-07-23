@@ -91,7 +91,7 @@ export class TrivyTableComponent<TData> implements OnInit {
   refreshRequested = output<TrivyFilterData>();
   rowExpandActionCallback = output<TData>();
   rowExpandDataChange = output<TData>();
-  rowActionRequested = output<TData>();
+  rowActionRequested = output<{row: TData, col: string}>();
   selectedRowsChanged = output<TData[]>();
 
   @ViewChild('trivyTable') trivyTable!: Table;
@@ -412,8 +412,8 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.updateMultiHeaderActionClearSortFilters();
   }
 
-  onRowAction(event: TData) {
-    this.rowActionRequested.emit(event);
+  onRowAction(rowDto: TData, columnName: string) {
+    this.rowActionRequested.emit({row: rowDto, col: columnName});
   }
 
   onRowExpand(event: TableRowExpandEvent) {

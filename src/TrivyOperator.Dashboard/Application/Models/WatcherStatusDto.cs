@@ -5,7 +5,7 @@ using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
-public class WatcherStateInfoDto
+public class WatcherStatusDto
 {
     public string KubernetesObjectType { get; init; } = string.Empty;
     public string? NamespaceName { get; init; }
@@ -15,12 +15,18 @@ public class WatcherStateInfoDto
     public DateTime? LastEventMoment { get; init; }
 }
 
-public static class WatcherStateInfoExtensions
+public class RecreateWatcherRequest
 {
-    public static WatcherStateInfoDto ToWatcherStateInfoDto(this WatcherStateInfo? watcherStateInfo) =>
+    public string KubernetesObjectType { get; init; } = string.Empty;
+    public string? NamespaceName { get; init; }
+}
+
+public static class WatcherStatusExtensions
+{
+    public static WatcherStatusDto ToWatcherStatusDto(this WatcherStateInfo? watcherStateInfo) =>
         watcherStateInfo == null
-            ? new WatcherStateInfoDto()
-            : new WatcherStateInfoDto
+            ? new WatcherStatusDto()
+            : new WatcherStatusDto
             {
                 KubernetesObjectType = watcherStateInfo.WatchedKubernetesObjectType.Name,
                 NamespaceName = watcherStateInfo.WatcherKey == CacheUtils.DefaultCacheRefreshKey
