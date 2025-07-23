@@ -11,3 +11,31 @@
     [stateKey]="'Watcher States'"
   />
 </div>
+
+<p-dialog header="Recreate watcher"
+          [modal]="true"
+          [closable]="true"
+          [closeOnEscape]="true"
+          [dismissableMask]="true"
+          [(visible)]="isRecreateWatcherDialogVisible"
+          [style]="{ width: '45rem', height: '15rem' }">
+  <div class="flex flex-col h-full">
+
+    <div class="flex-1 overflow-auto">
+      <p *ngIf="!isActionStarted" class="p-text-secondary mb-4">
+        Are you sure you want to recreate the watcher
+        <b>{{ requestedRecreateWatcher?.kubernetesObjectType ?? 'n/a' }}</b>
+        in namespace <b>{{ requestedRecreateWatcher?.namespaceName ?? 'n/a' }}</b>?
+        This will delete the existing watcher and create a new one.
+      </p>
+      <p *ngIf="isActionStarted">{{ recreateWatcherResponseMessage }}</p>
+      <p *ngIf="recreateWatcherResponseError">Error: {{ recreateWatcherResponseError }}</p>
+    </div>
+
+    <div class="mt-auto pt-6 flex justify-end gap-2">
+      <p-button label="Cancel" text raised severity="secondary" (click)="isRecreateWatcherDialogVisible = false" />
+      <p-button label="Recreate" text raised [disabled]="isActionStarted" (click)="onRecreateWatcherRequested()" />
+    </div>
+
+  </div>
+</p-dialog>

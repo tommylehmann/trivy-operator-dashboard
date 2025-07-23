@@ -21,6 +21,14 @@ public class RecreateWatcherRequest
     public string? NamespaceName { get; init; }
 }
 
+public class RecreateWatcherResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public string? Error { get; set; }
+    public string? KubernetesObjectType { get; set; }
+    public string? NamespaceName { get; set; }
+}
+
 public static class WatcherStatusExtensions
 {
     public static WatcherStatusDto ToWatcherStatusDto(this WatcherStateInfo? watcherStateInfo) =>

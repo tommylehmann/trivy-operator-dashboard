@@ -16,34 +16,37 @@ public class WatcherStatusController(IWatcherStateInfoService watcherStateInfoSe
         await watcherStateInfoService.GetWatcherStateInfos();
 
     [HttpPost("recreate")]
+    [ProducesResponseType(typeof(RecreateWatcherResponse), StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
     public async Task<IResult> RecreateWatcher([FromBody] RecreateWatcherRequest request)
     {
         if (string.IsNullOrWhiteSpace(request?.KubernetesObjectType))
         {
-            return Results.BadRequest(new
+            return Results.BadRequest(new RecreateWatcherResponse
             {
-                error = "KubernetesObjectType is required.",
-                kubernetesObjectType = request?.KubernetesObjectType,
-                namespaceName = request?.NamespaceName
+                Message = "Error occured",
+                Error = "KubernetesObjectType is required.",
+                KubernetesObjectType = request?.KubernetesObjectType,
+                NamespaceName = request?.NamespaceName
             });
         }
         var result = await watcherStateInfoService.RecreateWatcher(request.KubernetesObjectType, request.NamespaceName);
         
         if (result.Success)
         {
-            return Results.Ok(new
+            return Results.Ok(new RecreateWatcherResponse
             {
-                message = $"Watcher for '{request.KubernetesObjectType}' in namespace '{request.NamespaceName}' recreated successfully."
+                Message = $"Watcher for '{request.KubernetesObjectType}' in namespace '{request.NamespaceName}' recreated successfully."
             });
         }
 
-        return Results.UnprocessableEntity(new
+        return Results.UnprocessableEntity(new RecreateWatcherResponse
         {
-            error = result.Message,
-            kubernetesObjectType = request.KubernetesObjectType,
-            namespaceName = request.NamespaceName
+            Message = "Error occured",
+            Error = result.Message,
+            KubernetesObjectType = request.KubernetesObjectType,
+            NamespaceName = request.NamespaceName
         });
     }
 }
