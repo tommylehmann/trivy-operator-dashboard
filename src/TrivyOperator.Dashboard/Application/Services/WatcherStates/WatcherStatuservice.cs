@@ -8,14 +8,13 @@ using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Services.WatcherStates;
 
-public class WatcherStateInfoService(IConcurrentCache<string, WatcherStateInfo> cache, IServiceProvider serviceProvider) : IWatcherStateInfoService
+public class WatcherStatuservice(IConcurrentCache<string, WatcherStateInfo> cache, IServiceProvider serviceProvider) : IWatcherStatusService
 {
-    public Task<IList<WatcherStatusDto>> GetWatcherStateInfos()
+    public Task<IEnumerable<WatcherStatusDto>> GetWatcherStatusDtos()
     {
-        List<WatcherStatusDto> watcherStateInfoDtos =
-            cache.Select(kvp => kvp.Value.ToWatcherStatusDto()).ToList();
+        WatcherStatusDto[] cachedValues = [.. cache.Values.Select(x => x.ToWatcherStatusDto())];
 
-        return Task.FromResult((IList<WatcherStatusDto>)watcherStateInfoDtos);
+        return Task.FromResult((IEnumerable<WatcherStatusDto>)cachedValues);
     }
 
     public async Task<OperationResult> RecreateWatcher(string kubernetesObjectType, string? namespaceName)

@@ -3294,4 +3294,7 @@ components:
           type: string
           format: date-time
           nullable: true
+        eventsGauge:
+          type: integer
+          format: int64
       additionalProperties: false

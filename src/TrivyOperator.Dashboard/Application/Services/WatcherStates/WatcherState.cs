@@ -4,6 +4,7 @@ using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Ab
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents.Abstractions;
 using TrivyOperator.Dashboard.Infrastructure.Abstractions;
+using TrivyOperator.Dashboard.Infrastructure.Services;
 
 namespace TrivyOperator.Dashboard.Application.Services.WatcherStates;
 
@@ -22,14 +23,21 @@ public class WatcherState<TKubernetesObject>(
         switch (watcherEvent.WatcherEventType)
         {
             case WatcherEventType.Added:
+                eventsGauge.OffsetValue(watcherEvent.WatcherKey, 1);
+                ProcessGreenEvent(watcherEvent);
+                break;
             case WatcherEventType.Deleted:
+                eventsGauge.OffsetValue(watcherEvent.WatcherKey, -1);
+                ProcessGreenEvent(watcherEvent);
+                break;
             case WatcherEventType.Modified:
             case WatcherEventType.Bookmark:
             case WatcherEventType.WatcherConnected:
                 ProcessGreenEvent(watcherEvent);
                 break;
             case WatcherEventType.Flushed:
-                ProcessDeleteEvent(watcherEvent);
+                eventsGauge.RemoveKey(watcherEvent.WatcherKey);
+                ProcessFlushedEvent(watcherEvent);
                 break;
             case WatcherEventType.Error:
                 ProcessRedEvent(watcherEvent);
@@ -37,8 +45,8 @@ public class WatcherState<TKubernetesObject>(
             case WatcherEventType.Initialized:
                 break;
             case WatcherEventType.Unknown:
-                logger.LogWarning("{watcherEventType} event type {eventType} for {kubernetesObjectType}.",
-                    watcherEvent.WatcherEventType.ToString(), watcherEvent.WatcherEventType, typeof(TKubernetesObject).Name);
+                logger.LogWarning("{watcherEventType} event type for {kubernetesObjectType}.",
+                    watcherEvent.WatcherEventType.ToString(), typeof(TKubernetesObject).Name);
                 break;
             default:
                 break;
@@ -56,6 +64,7 @@ public class WatcherState<TKubernetesObject>(
             LastException = null,
             LastEventMoment = DateTime.UtcNow,
             Status = WatcherStateStatus.Green,
+            EventsGauge = eventsGauge.GetValue(watcherEvent.WatcherKey),
         };
         
         cache[GetCacheKey(watcherEvent)] = watcherStateInfo;
@@ -70,16 +79,19 @@ public class WatcherState<TKubernetesObject>(
             LastException = watcherEvent.Exception,
             LastEventMoment = DateTime.UtcNow,
             Status = WatcherStateStatus.Red,
+            EventsGauge = eventsGauge.GetValue(watcherEvent.WatcherKey),
         };
         
         cache[GetCacheKey(watcherEvent)] = watcherStateInfo;
     }
 
-    private void ProcessDeleteEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
+    private void ProcessFlushedEvent(IWatcherEvent<TKubernetesObject> watcherEvent)
     {
         cache.TryRemove(GetCacheKey(watcherEvent), out _);
     }
     
     private static string GetCacheKey(IWatcherEvent<TKubernetesObject> watcherEvent) =>
         $"{typeof(TKubernetesObject).Name}|{watcherEvent.WatcherKey}";
+
+    private readonly DictionaryCounter eventsGauge = new();
 }

@@ -3,8 +3,8 @@ using TrivyOperator.Dashboard.Application.Services.Common;
 
 namespace TrivyOperator.Dashboard.Application.Services.WatcherStates.Abstractions;
 
-public interface IWatcherStateInfoService
+public interface IWatcherStatusService
 {
-    Task<IList<WatcherStatusDto>> GetWatcherStateInfos();
+    Task<IEnumerable<WatcherStatusDto>> GetWatcherStatusDtos();
     Task<OperationResult> RecreateWatcher(string kubernetesObjectType, string? namespaceName);
 }

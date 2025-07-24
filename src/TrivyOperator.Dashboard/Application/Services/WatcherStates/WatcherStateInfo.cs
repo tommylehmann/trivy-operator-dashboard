@@ -7,4 +7,5 @@ public class WatcherStateInfo
     public WatcherStateStatus Status { get; init; }
     public Exception? LastException { get; init; }
     public DateTime LastEventMoment { get; init; } = DateTime.UtcNow;
+    public long EventsGauge { get; init; } = 0;
 }

@@ -6,14 +6,14 @@ namespace TrivyOperator.Dashboard.Application.Controllers;
 
 [ApiController]
 [Route("api/watcher-status")]
-public class WatcherStatusController(IWatcherStateInfoService watcherStateInfoService) : ControllerBase
+public class WatcherStatusController(IWatcherStatusService watcherStateInfoService) : ControllerBase
 {
     [HttpGet(Name = "GetWatcherStateInfos")]
     [ProducesResponseType<IEnumerable<WatcherStatusDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
     public async Task<IEnumerable<WatcherStatusDto>> GetAll() =>
-        await watcherStateInfoService.GetWatcherStateInfos();
+        await watcherStateInfoService.GetWatcherStatusDtos();
 
     [HttpPost("recreate")]
     [ProducesResponseType(typeof(RecreateWatcherResponse), StatusCodes.Status200OK)]

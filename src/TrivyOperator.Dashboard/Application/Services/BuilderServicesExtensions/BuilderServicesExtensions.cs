@@ -353,7 +353,7 @@ public static class BuilderServicesExtensions
         
         services.AddSingleton<IConcurrentCache<string, WatcherStateInfo>, ConcurrentCache<string, WatcherStateInfo>>();
         //services.AddSingleton<IBackgroundQueue<WatcherStateInfo>, BackgroundQueue<WatcherStateInfo>>();
-        services.AddScoped<IWatcherStateInfoService, WatcherStateInfoService>();
+        services.AddScoped<IWatcherStatusService, WatcherStatuservice>();
     }
 
     public static void AddAlertsServices(this IServiceCollection services)

@@ -13,6 +13,7 @@ public class WatcherStatusDto
     public string MitigationMessage { get; init; } = string.Empty;
     public string? LastException { get; init; }
     public DateTime? LastEventMoment { get; init; }
+    public long EventsGauge { get; init; } = 0;
 }
 
 public class RecreateWatcherRequest
@@ -44,6 +45,7 @@ public static class WatcherStatusExtensions
                 MitigationMessage = GetMitigationMessage(watcherStateInfo),
                 LastException = watcherStateInfo.LastException?.Message ?? string.Empty,
                 LastEventMoment = watcherStateInfo.LastEventMoment,
+                EventsGauge = watcherStateInfo.EventsGauge,
             };
 
     private static string GetMitigationMessage(WatcherStateInfo watcherStateInfo)

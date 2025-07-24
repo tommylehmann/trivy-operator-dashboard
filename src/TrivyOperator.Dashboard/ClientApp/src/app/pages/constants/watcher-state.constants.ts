@@ -56,6 +56,15 @@ export const watcherStateColumns: readonly TrivyTableColumn[] = [
     renderType: 'dateTime',
   },
   {
+    field: 'eventsGauge',
+    header: 'Items',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 155px; max-width: 155px; text-align: right;',
+    renderType: 'standard',
+  },
+  {
     field: 'recreateAction',
     header: 'Manage',
     isFilterable: false,

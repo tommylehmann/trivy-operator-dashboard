@@ -84,7 +84,8 @@ export class MainAppInitService {
     const appVersionKeyName = 'settings.appVersion';
     const savedAppVersion = localStorage.getItem(appVersionKeyName) ?? "1.0";
 
-    this.migrationService.applyTableMigrations(savedAppVersion, appVersion.fileVersion ?? "1.0", trivyMigrations);
+    //this.migrationService.applyTableMigrations(savedAppVersion, appVersion.fileVersion ?? "1.0", trivyMigrations);
+    this.migrationService.applyTableMigrations("1.6", "1.7", trivyMigrations);
 
     localStorage.setItem(appVersionKeyName, appVersion.fileVersion ?? "1.0");
   }
