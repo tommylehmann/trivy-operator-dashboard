@@ -62,7 +62,8 @@ export const watcherStateColumns: readonly TrivyTableColumn[] = [
     isSortable: true,
     multiSelectType: 'none',
     style: 'width: 155px; max-width: 155px; text-align: right;',
-    renderType: 'standard',
+    renderType: 'severityValue',
+    extraFields: ['-1'],
   },
   {
     field: 'recreateAction',
