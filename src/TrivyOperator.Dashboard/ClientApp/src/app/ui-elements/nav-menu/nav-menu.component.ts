@@ -79,7 +79,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   }
 
   public onAlertsClick() {
-    this.router.navigate(['/watcher-states']);
+    this.router.navigate(['/alerts']);
   }
 
   openDrawer() {

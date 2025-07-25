@@ -4,6 +4,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Reflection;
 using TrivyOperator.Dashboard.Application.HealthChecks;
+using TrivyOperator.Dashboard.Application.Internals;
 using TrivyOperator.Dashboard.Application.Services.Alerts;
 using TrivyOperator.Dashboard.Application.Services.Alerts.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.AppVersions;
@@ -388,6 +389,20 @@ public static class BuilderServicesExtensions
         services.AddHealthChecks()
             .AddCheck<WatchersLivenessHealthCheck>("watchers-liveness")
             .AddCheck<WatchersReadinessHealthCheck>("watchers-readiness");
+
+        // only for tests!!!
+        services.AddHostedService<SingleBucketTimedHostedService>();
+        services.AddSingleton<IHostedService>(provider =>
+            new MultiBucketTimedHostedService(
+                provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
+                provider.GetRequiredService<IAlertsService>(),
+                "MultiBucket1"));
+
+        services.AddSingleton<IHostedService>(provider =>
+            new MultiBucketTimedHostedService(
+                provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
+                provider.GetRequiredService<IAlertsService>(),
+                "MultiBucket2"));
     }
 
     public static void AddUiCommons(this IServiceCollection services) =>

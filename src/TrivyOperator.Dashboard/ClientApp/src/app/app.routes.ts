@@ -119,6 +119,12 @@ export const routes: Routes = [
     data: { title: 'Watcher Status' },
   },
   {
+    path: 'alerts',
+    loadComponent: () => import('./pages/alerts/alerts.component').then(
+      (m) => m.AlertsComponent),
+    data: { title: 'Alerts' },
+  },
+  {
     path: 'settings',
     loadComponent: () => import('./pages/settings/settings.component').then(
       (m) => m.SettingsComponent),

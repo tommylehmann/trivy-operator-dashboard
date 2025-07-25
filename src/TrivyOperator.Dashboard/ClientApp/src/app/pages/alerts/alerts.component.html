@@ -1,0 +1,18 @@
+<p-treeTable [value]="treeData">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Node</th>
+      <th>Message</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+    <tr [ttRow]="rowNode">
+      <td>
+        <p-treeTableToggler [rowNode]="rowNode" />
+        {{ rowData.label }}
+        <p-tag *ngIf="rowData.count" [value]="rowData.count" severity="info" styleClass="ml-2" />
+      </td>
+      <td>{{ rowData.message || '' }}</td>
+    </tr>
+  </ng-template>
+</p-treeTable>
