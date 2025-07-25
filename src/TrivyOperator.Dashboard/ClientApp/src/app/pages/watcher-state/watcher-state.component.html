@@ -33,8 +33,9 @@
     </div>
 
     <div class="mt-auto pt-6 flex justify-end gap-2">
-      <p-button label="Cancel" text raised severity="secondary" (click)="isRecreateWatcherDialogVisible = false" />
-      <p-button label="Recreate" text raised [disabled]="isActionStarted" (click)="onRecreateWatcherRequested()" />
+      <p-button *ngIf="!isActionStarted" label="Cancel" text raised severity="secondary" (click)="isRecreateWatcherDialogVisible = false" />
+      <p-button *ngIf="!isActionStarted" label="Recreate" text raised [disabled]="isActionStarted" (click)="onRecreateWatcherRequested()" />
+      <p-button *ngIf="isActionStarted" label="Close" text raised severity="secondary" (click)="isRecreateWatcherDialogVisible = false" />
     </div>
 
   </div>
