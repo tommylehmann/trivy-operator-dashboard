@@ -28,6 +28,7 @@ import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.p
 import { SeverityNameByIdPipe } from "../../pipes/severity-name-by-id.pipe";
 import { SeverityNamesMaxDisplayPipe } from "../../pipes/severity-names-max-display.pipe";
 import { VulnerabilityCountPipe } from '../../pipes/vulnerability-count.pipe';
+import { UnPascalCasePipe } from '../../pipes/un-pascal-case.pipe';
 
 import { ReactiveMap } from '../../abstracts/reactive-map'
 
@@ -55,6 +56,7 @@ import { ReactiveMap } from '../../abstracts/reactive-map'
     LocalTimePipe,
     SeverityNameByIdPipe,
     SeverityNamesMaxDisplayPipe,
+    UnPascalCasePipe,
   ],
   templateUrl: './trivy-table.component.html',
   styleUrl: './trivy-table.component.scss',

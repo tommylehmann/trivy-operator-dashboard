@@ -45,7 +45,7 @@ public static class WatcherStatusExtensions
                 MitigationMessage = GetMitigationMessage(watcherStateInfo),
                 LastException = watcherStateInfo.LastException?.Message ?? string.Empty,
                 LastEventMoment = watcherStateInfo.LastEventMoment,
-                EventsGauge = watcherStateInfo.EventsGauge,
+                EventsGauge = watcherStateInfo.EventsGauge ?? -1,
             };
 
     private static string GetMitigationMessage(WatcherStateInfo watcherStateInfo)

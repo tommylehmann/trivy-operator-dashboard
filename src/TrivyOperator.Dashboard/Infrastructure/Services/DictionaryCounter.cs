@@ -21,7 +21,7 @@ public class DictionaryCounter
 
     public bool RemoveKey(string key) => data.Remove(key);
 
-    public int GetValue(string key) => data.TryGetValue(key, out var value) ? value : 0;
+    public int? GetValue(string key) => data.TryGetValue(key, out var value) ? value : null;
 
     public void Clear() => data.Clear();
 }

@@ -248,6 +248,7 @@
                    [rounded]="true"
                    [style]="rowData[col.field] | booleanCssStyle"
                    [value]="rowData[col.field]?.toString() ?? 'N/A' | capitalizeFirst" />
+            <span *ngSwitchCase="'unPascalCase'">{{ rowData[col.field] | unPascalCase : col.extraFields?.[0] ?? [] }}</span>
           </ng-container>
         </td>
       </tr>
