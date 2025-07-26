@@ -1,7 +1,16 @@
-<div class="h-[90vh] overflow-auto">
+<app-trivy-toolbar class="block w-full">
+  <div class="tod-content-background w-full">
+    <p-button icon="pi pi-refresh"
+              label="Refresh" size="small" text raised
+              (click)="loadData()" />
+  </div>
+</app-trivy-toolbar>
+<div class="h-[85vh] overflow-auto">
   <p-treeTable [value]="treeData"
                [resizableColumns]="true"
-                columnResizeMode="fit"
+               (onNodeExpand)="onNodeExpand($event)"
+               (onNodeCollapse)="onNodeCollapse($event)"
+               columnResizeMode="fit"
                styleClass="p-treetable-sm text-sm w-full">
     <ng-template pTemplate="colgroup">
       <colgroup>
@@ -18,7 +27,7 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+    <ng-template pTemplate="body" let-rowNode let-rowData="rowData" >
       <tr [ttRow]="rowNode">
         <td>
           <p-treeTableToggler [rowNode]="rowNode" />
@@ -36,7 +45,12 @@
                  [rounded]="true"
                  styleClass="ml-2" />
         </td>
-        <td>{{ rowData.message || '' }}</td>
+
+        <td>
+          <small class="text-muted">expanded: {{ rowData.isExpanded }}</small><br />
+          <span *ngIf="rowData.isExpanded">{{ rowData.message || '' }}</span>
+          <span *ngIf="!rowData.isExpanded">{{ rowData.messageCollapsed || '' }}</span>
+        </td>
       </tr>
     </ng-template>
   </p-treeTable>

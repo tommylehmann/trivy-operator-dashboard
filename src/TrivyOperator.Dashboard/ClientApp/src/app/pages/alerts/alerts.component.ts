@@ -4,24 +4,33 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AlertsService } from '../../services/alerts.service';
 import { AlertDto } from '../../../api/models/alert-dto';
 import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
-
-import { TagModule } from 'primeng/tag';
-import { TreeTableModule } from 'primeng/treetable';
-import { TreeNode } from 'primeng/api';
 import { VulnerabilityCountPipe } from '../../pipes/vulnerability-count.pipe';
+import { TrivyToolbarComponent } from '../../ui-elements/trivy-toolbar/trivy-toolbar.component';
+
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { TreeTableModule, TreeTableNodeCollapseEvent, TreeTableNodeExpandEvent } from 'primeng/treetable';
+import { TreeNode } from 'primeng/api';
+
 
 interface AlertNodeData {
   label: string;
   message?: string;
+  messageCollapsed?: string,
   count: number;
   severityId?: number;
   isLeaf?: boolean;
   isRoot?: boolean;
+  isExpanded: boolean;
 }
 
 @Component({
   selector: 'app-alerts',
-  imports: [CommonModule, TagModule, TreeTableModule, SeverityCssStyleByIdPipe, VulnerabilityCountPipe],
+  imports: [
+    CommonModule,
+    ButtonModule, TagModule, TreeTableModule,
+    SeverityCssStyleByIdPipe, VulnerabilityCountPipe, TrivyToolbarComponent,
+  ],
   templateUrl: './alerts.component.html',
   styleUrl: './alerts.component.scss'
 })
@@ -46,7 +55,15 @@ export class AlertsComponent implements OnInit {
     });
   }
 
-  private loadData() {
+  onNodeExpand(event: TreeTableNodeExpandEvent) {
+    event.node.data.isExpanded = true;
+  }
+
+  onNodeCollapse(event: TreeTableNodeCollapseEvent) {
+    event.node.data.isExpanded = false;
+  }
+
+  loadData() {
     const alerts = this.alertsService.getAlerts();
     console.log("AlertsComponent ngOnInit - alerts: ", alerts.length);
     this.treeData = this.buildTree(alerts);
@@ -71,9 +88,10 @@ export class AlertsComponent implements OnInit {
             count: 0,
             isLeaf: false,
             isRoot: true,
+            isExpanded: true,
           },
           children: [],
-          expanded: true
+          expanded: true,
         });
       }
 
@@ -110,15 +128,23 @@ export class AlertsComponent implements OnInit {
           label: part,
           severityId: severityId,
           count: 0,
-          isLeaf: false
+          isLeaf: false,
+          isExpanded: true,
         },
         children: [],
-        expanded: true
+        expanded: true,
       };
       node.children!.push(child);
     }
 
     this.insertAlert(child, keyParts, message, severityId, depth + 1);
+
+    if (!node.data.isLeaf && node.children?.length) {
+      node.data.messageCollapsed = node.children
+        .map(c => c.data?.label)
+        .filter(l => !!l)
+        .join(', ');
+    }
   }
 
   private sortAlerts(alerts: AlertDto[]): AlertDto[] {
