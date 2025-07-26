@@ -7,7 +7,7 @@ export const watcherStateColumns: readonly TrivyTableColumn[] = [
     isFilterable: true,
     isSortable: true,
     multiSelectType: 'none',
-    style: 'width: 130px; max-width: 200px;',
+    style: 'width: 200px; max-width: 200px;',
     renderType: 'unPascalCase',
     extraFields: ['Cr', ],
   },
@@ -17,7 +17,7 @@ export const watcherStateColumns: readonly TrivyTableColumn[] = [
     isFilterable: true,
     isSortable: true,
     multiSelectType: 'none',
-    style: 'width: 130px; max-width: 130px;',
+    style: 'width: 160px; max-width: 160px;',
     renderType: 'standard',
   },
   {

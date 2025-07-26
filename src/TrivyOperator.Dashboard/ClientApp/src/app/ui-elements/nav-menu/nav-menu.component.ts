@@ -79,7 +79,12 @@ export class NavMenuComponent implements OnInit, OnDestroy {
   }
 
   public onAlertsClick() {
-    this.router.navigate(['/alerts']);
+    // TODO: maybe we will debounce multiple clicks or even disable the button until the navigation is complete
+    if (this.router.url === '/alerts') {
+      this.alertsService.triggerRefresh();
+    } else {
+      this.router.navigate(['/alerts']);
+    }
   }
 
   openDrawer() {

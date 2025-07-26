@@ -1,18 +1,43 @@
-<p-treeTable [value]="treeData">
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Node</th>
-      <th>Message</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-    <tr [ttRow]="rowNode">
-      <td>
-        <p-treeTableToggler [rowNode]="rowNode" />
-        {{ rowData.label }}
-        <p-tag *ngIf="rowData.count" [value]="rowData.count" severity="info" styleClass="ml-2" />
-      </td>
-      <td>{{ rowData.message || '' }}</td>
-    </tr>
-  </ng-template>
-</p-treeTable>
+<div class="h-[90vh] overflow-auto">
+  <p-treeTable [value]="treeData"
+               [resizableColumns]="true"
+                columnResizeMode="fit"
+               styleClass="p-treetable-sm text-sm w-full">
+    <ng-template pTemplate="colgroup">
+      <colgroup>
+        <col style="width: 250px" />
+        <col style="width: 100px" />
+        <col style="width: auto" />
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th ttResizableColumn>Node</th>
+        <th ttResizableColumn>Count</th>
+        <th ttResizableColumn>Message</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+      <tr [ttRow]="rowNode">
+        <td>
+          <p-treeTableToggler [rowNode]="rowNode" />
+          <span *ngIf="!rowData.isRoot">{{ rowData.label }}</span>
+          <p-tag *ngIf="rowData.isRoot"
+                 [style]="rowData.severityId | severityCssStyleById:(rowData.count ?? -1)"
+                 [value]="rowData.label"
+                 [rounded]="true"
+                 styleClass="ml-2 text-lg" />
+        </td>
+        <td>
+          <p-tag *ngIf="!rowData.isLeaf"
+                 [style]="rowData.severityId | severityCssStyleById:(rowData.count ?? -1)"
+                 [value]="rowData.count ?? -1 | vulnerabilityCount"
+                 [rounded]="true"
+                 styleClass="ml-2" />
+        </td>
+        <td>{{ rowData.message || '' }}</td>
+      </tr>
+    </ng-template>
+  </p-treeTable>
+</div>

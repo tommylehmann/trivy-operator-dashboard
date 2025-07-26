@@ -1340,7 +1340,8 @@ components:
           type: string
           nullable: true
         severity:
-          $ref: '#/components/schemas/Severity'
+          type: string
+          nullable: true
       additionalProperties: false
     AppVersion:
       type: object
@@ -2727,12 +2728,6 @@ components:
           type: string
           nullable: true
       additionalProperties: false
-    Severity:
-      enum:
-        - Error
-        - Warning
-        - Info
-      type: string
     SeverityDto:
       required:
         - id

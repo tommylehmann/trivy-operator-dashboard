@@ -250,6 +250,14 @@ p-tag:has(> mat-icon) {
   gap: unset;
 }
 
+p-tag.text-xs span.p-tag-label {
+  font-size: 0.65rem;
+}
+
+p-tag.text-lg span.p-tag-label {
+  font-size: 0.825rem;
+}
+
 .tod-separator {
   background: var(--p-button-text-primary-color);
 }

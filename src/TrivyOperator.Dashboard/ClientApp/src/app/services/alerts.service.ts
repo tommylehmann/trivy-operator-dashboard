@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { ApiConfiguration } from '../../api/api-configuration';
 
@@ -19,6 +19,8 @@ export class AlertsService {
   private readonly hubPath: string = '/alerts-hub';
   private hubUrl: string = '';
 
+  private readonly refreshTrigger = new Subject<void>();
+
   constructor(private apiConfiguration: ApiConfiguration) {
     this.hubUrl = apiConfiguration.rootUrl ? new URL(this.hubPath, apiConfiguration.rootUrl).toString() : this.hubPath;
     this.startConnection();
@@ -27,6 +29,14 @@ export class AlertsService {
 
   getAlerts(): AlertDto[] {
     return this.alertsSubject.value;
+  }
+
+  onRefresh(): Observable<void> {
+    return this.refreshTrigger.asObservable();
+  }
+
+  triggerRefresh(): void {
+    this.refreshTrigger.next();
   }
 
   private startConnection() {
