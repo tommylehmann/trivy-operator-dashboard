@@ -1,17 +1,19 @@
-<div class="relative flex w-full items-center overflow-hidden">
-  <button *ngIf="showLeftButton"
-          (click)="scrollLeft()"
-          class="absolute left-0 tod-scroll-btn hover:tod-scroll-btn py-1 px-4 rounded-full" >
-    <i class="pi pi-chevron-left text-sm"></i>
-  </button>
+<div class="relative flex w-full items-center ">
+  @if (showLeftButton) {
+    <button (click)="scrollLeft()"
+            class="absolute left-0 tod-scroll-btn hover:tod-scroll-btn py-1 px-4 rounded-full" >
+      <i class="pi pi-chevron-left text-sm"></i>
+    </button>
+  }
 
   <div #scrollContainer class="flex overflow-x-auto tod-scrollbar-hide space-x-4">
     <ng-content></ng-content>
   </div>
 
-  <button *ngIf="showRightButton"
-          (click)="scrollRight()"
-          class="absolute right-0 tod-scroll-btn hover:tod-scroll-btn py-1 px-4 rounded-full" >
-    <i class="pi pi-chevron-right text-sm"></i>
-  </button>
+  @if(showRightButton) {
+    <button (click)="scrollRight()"
+            class="absolute right-0 tod-scroll-btn hover:tod-scroll-btn py-1 px-4 rounded-full" >
+      <i class="pi pi-chevron-right text-sm"></i>
+    </button>
+  }
 </div>

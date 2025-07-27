@@ -37,7 +37,8 @@ public class MultiBucketTimedHostedService(
                     {
                         EmitterKey = key,
                         Message = message,
-                        Severity = severity
+                        Severity = severity,
+                        Category = "Test"
                     },
                     cancellationToken);
             }

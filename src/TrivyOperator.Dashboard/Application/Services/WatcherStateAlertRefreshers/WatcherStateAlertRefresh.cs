@@ -65,6 +65,7 @@ public class WatcherStateAlertRefresh<TKubernetesObject>(
                 EmitterKey = GetCacheKey(watcherEvent),
                 Message = $"Watcher for {typeof(TKubernetesObject).Name} and Namespace {namespaceName} failed.",
                 Severity = Severity.Error,
+                Category = "Watcher Failed",
             }, cancellationToken);
     }
 
@@ -79,8 +80,6 @@ public class WatcherStateAlertRefresh<TKubernetesObject>(
             new Alert
             {
                 EmitterKey = GetCacheKey(watcherEvent),
-                Message = string.Empty,
-                Severity = Severity.Info,
             },
             cancellationToken);
         }

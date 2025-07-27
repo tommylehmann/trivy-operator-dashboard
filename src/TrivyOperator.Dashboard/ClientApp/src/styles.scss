@@ -230,6 +230,10 @@ p-splitter.tod-splitter-no-background div.p-splitter {
   color: var(--p-primary-text-color)
 }
 
+.tod-text-muted-color {
+  color: var(--p-text-muted-color);
+}
+
 p-button.tod-text-primary-color span.p-button-label{
   color: var(--p-primary-text-color)
 }
@@ -283,4 +287,9 @@ blockquote p:not(:first-of-type) {
 
 .tod-h90vw {
   height: 90vh;
+}
+
+.p-button-front {
+  z-index: 99;
+  position: relative;
 }

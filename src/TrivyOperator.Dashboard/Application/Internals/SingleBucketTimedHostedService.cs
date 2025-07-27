@@ -34,7 +34,8 @@ public class SingleBucketTimedHostedService(ILogger<SingleBucketTimedHostedServi
                     {
                         EmitterKey = key,
                         Message = $"SingleBucket and key {key} has something.",
-                        Severity = severity
+                        Severity = severity,
+                        Category = "Test",
                     },
                     cancellationToken);
             }

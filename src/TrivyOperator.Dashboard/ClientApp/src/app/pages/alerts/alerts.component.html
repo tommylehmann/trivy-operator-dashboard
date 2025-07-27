@@ -1,11 +1,10 @@
-<app-trivy-toolbar class="block w-full">
-  <div class="tod-content-background w-full">
-    <p-button icon="pi pi-refresh"
-              label="Refresh" size="small" text raised
-              (click)="loadData()" />
-  </div>
-</app-trivy-toolbar>
-<div class="h-[85vh] overflow-auto">
+<div class="tod-content-background p-2 tod-content-border">
+  <p-button icon="pi pi-refresh" class="p-2"
+            label="Refresh" size="small" [raised]="true" text
+            (click)="loadData()" />
+</div>
+
+<div class="h-[85vh] overflow-auto tod-content-border">
   <p-treeTable [value]="treeData"
                [resizableColumns]="true"
                (onNodeExpand)="onNodeExpand($event)"
@@ -23,33 +22,53 @@
       <tr>
         <th ttResizableColumn>Node</th>
         <th ttResizableColumn>Count</th>
-        <th ttResizableColumn>Message</th>
+        <th ttResizableColumn>Info</th>
       </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-rowNode let-rowData="rowData" >
-      <tr [ttRow]="rowNode">
+      <tr [ttRow]="rowNode" class="h-[53px]">
         <td>
           <p-treeTableToggler [rowNode]="rowNode" />
-          <span *ngIf="!rowData.isRoot">{{ rowData.label }}</span>
-          <p-tag *ngIf="rowData.isRoot"
-                 [style]="rowData.severityId | severityCssStyleById:(rowData.count ?? -1)"
-                 [value]="rowData.label"
-                 [rounded]="true"
-                 styleClass="ml-2 text-lg" />
+          @if (rowData.isRoot) {
+            <p-tag [style]="rowData.severityId | severityCssStyleById:(rowData.count ?? -1)"
+                   [value]="rowData.label"
+                   [rounded]="true"
+                   styleClass="ml-2 text-lg" />
+          } @else {
+            <span>{{ rowData.label }}</span>
+          }
         </td>
         <td>
-          <p-tag *ngIf="!rowData.isLeaf"
-                 [style]="rowData.severityId | severityCssStyleById:(rowData.count ?? -1)"
-                 [value]="rowData.count ?? -1 | vulnerabilityCount"
-                 [rounded]="true"
-                 styleClass="ml-2" />
+          @if (!rowData.isLeaf) {
+            <p-tag [style]="rowData.severityId | severityCssStyleById:(rowData.count ?? -1)"
+                   [value]="rowData.count ?? -1 | vulnerabilityCount"
+                   [rounded]="true"
+                   styleClass="ml-2" />
+          }
         </td>
 
         <td>
-          <small class="text-muted">expanded: {{ rowData.isExpanded }}</small><br />
-          <span *ngIf="rowData.isExpanded">{{ rowData.message || '' }}</span>
-          <span *ngIf="!rowData.isExpanded">{{ rowData.messageCollapsed || '' }}</span>
+          @if (rowData.isLeaf) {
+            <small class="tod-text-muted-color">Details: </small><br />
+            <span>{{ rowData.message || '' }}</span>
+          } @else {
+            @if (rowData.isExpanded) {
+              <span class="tod-text-muted-color">
+                Categories statistics: <b>{{ rowData.statistics ?? [] | genericObjectArraySummary }}</b>
+              </span>
+            } @else {
+              <small class="tod-text-muted-color">
+                Children: <b>{{ rowData.childrenLabels || '' }}</b>
+              </small><br />
+              <small class="tod-text-muted-color">
+                Categories statistics: <b>{{ rowData.statistics ?? [] | genericObjectArraySummary }}</b>
+              </small>
+            }
+<!--            <span *ngIf="rowData.isExpanded">{{ rowData.message || '' }}</span>-->
+<!--            <span *ngIf="!rowData.isExpanded">{{ rowData.messageCollapsed || '' }}</span>-->
+          }
+
         </td>
       </tr>
     </ng-template>

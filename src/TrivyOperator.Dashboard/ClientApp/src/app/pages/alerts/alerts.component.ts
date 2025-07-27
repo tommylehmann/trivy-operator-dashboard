@@ -11,16 +11,24 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule, TreeTableNodeCollapseEvent, TreeTableNodeExpandEvent } from 'primeng/treetable';
 import { TreeNode } from 'primeng/api';
+import { GenericObjectArraySummaryPipe } from '../../pipes/generic-object-array-summary.pipe';
 
 
 interface AlertNodeData {
+  key: string,
+  level: number,
   label: string;
   message?: string;
-  messageCollapsed?: string,
+  childrenLabels?: string,
+  children: AlertNodeData[],
+  statistics: {
+    category: string,
+    count: number;
+  }[],
   count: number;
-  severityId?: number;
-  isLeaf?: boolean;
-  isRoot?: boolean;
+  severityId: number;
+  isLeaf: boolean;
+  isRoot: boolean;
   isExpanded: boolean;
 }
 
@@ -29,7 +37,7 @@ interface AlertNodeData {
   imports: [
     CommonModule,
     ButtonModule, TagModule, TreeTableModule,
-    SeverityCssStyleByIdPipe, VulnerabilityCountPipe, TrivyToolbarComponent,
+    SeverityCssStyleByIdPipe, VulnerabilityCountPipe, TrivyToolbarComponent, GenericObjectArraySummaryPipe,
   ],
   templateUrl: './alerts.component.html',
   styleUrl: './alerts.component.scss'
@@ -70,82 +78,79 @@ export class AlertsComponent implements OnInit {
   }
 
   private buildTree(alerts: AlertDto[]): TreeNode<AlertNodeData>[] {
-    const severityMap = new Map<string, TreeNode<AlertNodeData>>();
-    alerts = this.sortAlerts(alerts); // assume this is a clean util
+    const dtoMap = new Map<string, AlertNodeData>();
 
     for (const alert of alerts) {
-      const { severity, emitter, emitterKey, message } = alert;
-      if (!severity || !emitter || !emitterKey || !message) continue;
+      const { severity, emitter, emitterKey, category, message } = alert;
+      if (!severity || !emitter || !emitterKey || !category) continue;
 
-      const keyParts = [emitter, ...emitterKey.split('|')];
-      const severityId = this.severityOrder[severity] ?? 4;
+      const keyPath = [severity, emitter, ...emitterKey.split("|")];
+      let key = "";
+      let prevNode: AlertNodeData | undefined;
 
-      if (!severityMap.has(severity)) {
-        severityMap.set(severity, {
-          data: {
-            label: severity,
-            severityId: severityId,
-            count: 0,
-            isLeaf: false,
-            isRoot: true,
-            isExpanded: true,
-          },
-          children: [],
-          expanded: true,
-        });
+      for (let i = keyPath.length - 1; i >= 0; i--) {
+        key = keyPath.slice(0, i + 1).join("|");
+
+        let node = dtoMap.get(key);
+        if (node) {
+          const statistic = node.statistics?.find(s => s.category === category);
+          if (statistic) {
+            statistic.count++;
+          } else {
+            node.statistics.push({category, count: 1});
+          }
+          node.count++;
+          if (prevNode) {
+            node.children.push(prevNode);
+          }
+          prevNode = undefined; // Reset prevNode since we found an existing node
+        }
+        else {
+          node = {
+            key,
+            level: i,
+            label: keyPath[i],
+            message: i === keyPath.length - 1 ? message ?? "" : undefined,
+            children: prevNode ? [prevNode] : [],
+            statistics: [{category, count: 1}],
+            count: 1,
+            severityId: this.severityOrder[severity] ?? 4, // Default to Info if not found
+            isLeaf: i === keyPath.length - 1,
+            isRoot: i === 0,
+            isExpanded: false,
+          };
+          dtoMap.set(key, node);
+          prevNode = node;
+        }
       }
-
-      const severityNode = severityMap.get(severity)!;
-      this.insertAlert(severityNode, keyParts, message, severityId);
     }
 
-    return Array.from(severityMap.values());
+    dtoMap.forEach((value) => {
+      value.children = value.children.sort((a, b) => a.label.localeCompare(b.label));
+      value.childrenLabels = value.children.map(child => child.label).join(", ");
+    });
+
+    const rootNodes = Array.from(dtoMap.values())
+      .filter(node => node.isRoot)
+      .sort((a, b) => a.severityId - b.severityId);
+    return this.convertToTreeNodes(rootNodes);
   }
 
-  private insertAlert(
-    node: TreeNode<AlertNodeData>,
-    keyParts: string[],
-    message: string,
-    severityId: number,
-    depth = 0
-  ): void {
-    if (!node.data) return;
-
-    node.data.count = (node.data.count || 0) + 1;
-
-    if (depth === keyParts.length) {
-      node.data.message = message;
-      node.data.isLeaf = true;
-      return;
-    }
-
-    const part = keyParts[depth];
-    let child = node.children?.find(n => n.data?.label === part);
-
-    if (!child) {
-      child = {
-        data: {
-          label: part,
-          severityId: severityId,
-          count: 0,
-          isLeaf: false,
-          isExpanded: true,
-        },
-        children: [],
-        expanded: true,
+  private convertToTreeNodes(data: AlertNodeData[]): TreeNode<AlertNodeData>[] {
+    return data.map(node => {
+      const treeNode: TreeNode<AlertNodeData> = {
+        key: node.key,
+        label: node.label, // optional, if your tree uses the `label` field directly
+        data: node,
+        expanded: node.isExpanded,
+        leaf: node.isLeaf,
+        children: this.convertToTreeNodes(node.children || [])
       };
-      node.children!.push(child);
-    }
 
-    this.insertAlert(child, keyParts, message, severityId, depth + 1);
-
-    if (!node.data.isLeaf && node.children?.length) {
-      node.data.messageCollapsed = node.children
-        .map(c => c.data?.label)
-        .filter(l => !!l)
-        .join(', ');
-    }
+      return treeNode;
+    });
   }
+
 
   private sortAlerts(alerts: AlertDto[]): AlertDto[] {
     return alerts.sort((a, b) => {

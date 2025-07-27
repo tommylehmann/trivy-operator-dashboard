@@ -1342,6 +1342,9 @@ components:
         severity:
           type: string
           nullable: true
+        category:
+          type: string
+          nullable: true
       additionalProperties: false
     AppVersion:
       type: object
