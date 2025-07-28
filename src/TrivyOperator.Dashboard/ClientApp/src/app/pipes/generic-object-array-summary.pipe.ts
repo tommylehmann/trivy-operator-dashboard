@@ -7,7 +7,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class GenericObjectArraySummaryPipe implements PipeTransform {
   transform(value: any[]): string {
     if (value === null) return 'mama mia';
-    console.log(value.map(x => JSON.stringify(x)).join(', '));
+    if (!Array.isArray(value)) return 'none 1';
     if (!Array.isArray(value)) return 'none 1';
     if (value.length === 0) return 'none 2';
 

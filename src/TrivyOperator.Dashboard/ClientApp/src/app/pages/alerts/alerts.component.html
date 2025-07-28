@@ -1,7 +1,16 @@
-<div class="tod-content-background p-2 tod-content-border">
+<div class="tod-content-background p-2 tod-content-border flex items-center">
   <p-button icon="pi pi-refresh" class="p-2"
             label="Refresh" size="small" [raised]="true" text
             (click)="loadData()" />
+  <div class="h-6 w-px tod-separator mx-1"></div>
+  <span class="px-2 text-sm">Fully visible level: </span>
+  <p-selectButton [options]="treeExpandLevelOptions"
+                  [(ngModel)]="treeExpandLevelOptionValue"
+                  (onOptionClick)="onOptionClickTreeExpandLevel($event)"
+                  optionLabel="label"
+                  optionValue="id"
+                  class="text-sm"
+                  unselectable="true" />
 </div>
 
 <div class="h-[85vh] overflow-auto tod-content-border">
@@ -13,7 +22,7 @@
                styleClass="p-treetable-sm text-sm w-full">
     <ng-template pTemplate="colgroup">
       <colgroup>
-        <col style="width: 250px" />
+        <col style="width: 350px" />
         <col style="width: 100px" />
         <col style="width: auto" />
       </colgroup>
@@ -50,7 +59,7 @@
 
         <td>
           @if (rowData.isLeaf) {
-            <small class="tod-text-muted-color">Details: </small><br />
+            <small class="tod-text-muted-color">Category: <b>{{ rowData.statistics?.[0]?.category || '' }}</b></small><br />
             <span>{{ rowData.message || '' }}</span>
           } @else {
             @if (rowData.isExpanded) {
@@ -65,8 +74,6 @@
                 Categories statistics: <b>{{ rowData.statistics ?? [] | genericObjectArraySummary }}</b>
               </small>
             }
-<!--            <span *ngIf="rowData.isExpanded">{{ rowData.message || '' }}</span>-->
-<!--            <span *ngIf="!rowData.isExpanded">{{ rowData.messageCollapsed || '' }}</span>-->
           }
 
         </td>

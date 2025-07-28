@@ -1,10 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-trivy-toolbar',
   standalone: true,
-  imports: [ CommonModule ],
+  imports: [],
   templateUrl: './trivy-toolbar.component.html',
   styleUrl: './trivy-toolbar.component.scss'
 })
