@@ -50,8 +50,12 @@
             <p-tag class="p-2" [rounded]="true" [value]="latestVersion ?? 'n/a'" />
           </div>
           <div class="p-1">
-            <p-tag *ngIf="newVersionAvailable" [rounded]="true" value="New version available!" icon="pi pi-info-circle" severity="info" />
-            <p-tag *ngIf="experimentalVersion" [rounded]="true" value="Experimental version!" icon="pi pi-info-circle" severity="info" />
+            @if(newVersionAvailable) {
+              <p-tag [rounded]="true" value="New version available!" icon="pi pi-info-circle" severity="info" />
+            }
+            @if(experimentalVersion) {
+              <p-tag [rounded]="true" value="Experimental version!" icon="pi pi-info-circle" severity="info" />
+            }
           </div>
         </div>
       </div>
@@ -60,21 +64,23 @@
 </div>
 
 <div class="pb-2">
-  <p-panel *ngIf="releaseNotes.length > 0" header="Release Notes" [toggleable]="true">
-    <div class="grid grid-cols-12 gap-4 items-start md:items-stretch">
-      <div *ngFor="let releaseNote of releaseNotes; let i = index"
-           class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3">
-        <p-card class="h-full small-header"
-                [ngClass]="{'p-card-bold-subtitle': i === 0}"
-                [header]="releaseNote.name ?? ''"
-                subheader="{{ releaseNote.createdAt ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
-          <div class="prose prose-ul">
-            <markdown class="list-disc pl-5" [data]="releaseNote.body ?? ''"></markdown>
-          </div>
-        </p-card>
+  @if(releaseNotes.length > 0) {
+    <p-panel header="Release Notes" [toggleable]="true">
+      <div class="grid grid-cols-12 gap-4 items-start md:items-stretch">
+        <div *ngFor="let releaseNote of releaseNotes; let i = index"
+             class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3">
+          <p-card class="h-full small-header"
+                  [ngClass]="{'p-card-bold-subtitle': i === 0}"
+                  [header]="releaseNote.name ?? ''"
+                  subheader="{{ releaseNote.createdAt ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
+            <div class="prose prose-ul">
+              <markdown class="list-disc pl-5" [data]="releaseNote.body ?? ''"></markdown>
+            </div>
+          </p-card>
+        </div>
       </div>
-    </div>
-  </p-panel>
+    </p-panel>
+  }
 </div>
 
 <p-panel header="Credits" [toggleable]="true">

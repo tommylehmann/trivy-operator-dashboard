@@ -22,9 +22,11 @@
       <ng-template let-imageDto pTemplate="imageDtos">
         <div class="flex items-center gap-2 w-full overflow-hidden text-sm">
           <div class="truncate whitespace-nowrap">{{ imageDto.imageNameTag }}</div>
-          <p-tag *ngIf="imageDto.icon" rounded class="ml-auto">
-            <mat-icon class="text-xs">{{ imageDto.icon }}</mat-icon>
-          </p-tag>
+          @if (imageDto.icon) {
+            <p-tag rounded class="ml-auto">
+              <mat-icon class="text-xs">{{ imageDto.icon }}</mat-icon>
+            </p-tag>
+          }
         </div>
       </ng-template>
     </p-select>

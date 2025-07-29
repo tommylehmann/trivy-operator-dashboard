@@ -7,13 +7,13 @@ import { SeverityNameByIdPipe } from '../../../pipes/severity-name-by-id.pipe';
 import { TableModule } from 'primeng/table';
 
 @Component({
-  selector: 'app-home-cluster-rbac-assessment-reports',
+  selector: 'app-dashboard-cluster-rbac-assessment-reports',
   standalone: true,
   imports: [TableModule, SeverityNameByIdPipe],
-  templateUrl: './home-cluster-rbac-assessment-reports.component.html',
-  styleUrl: './home-cluster-rbac-assessment-reports.component.scss',
+  templateUrl: './dashboard-cluster-rbac-assessment-reports.component.html',
+  styleUrl: './dashboard-cluster-rbac-assessment-reports.component.scss',
 })
-export class HomeClusterRbacAssessmentReportsComponent implements OnInit {
+export class DashboardClusterRbacAssessmentReportsComponent implements OnInit {
   clusterRbacAssessmentReportSummaryDtos: ClusterRbacAssessmentReportSummaryDto[] = [];
 
   showDistinctValues = input.required<boolean>();

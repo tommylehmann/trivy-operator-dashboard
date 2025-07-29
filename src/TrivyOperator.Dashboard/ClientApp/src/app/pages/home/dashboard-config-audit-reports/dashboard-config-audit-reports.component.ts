@@ -4,7 +4,7 @@ import { Component, effect, input, Input, OnInit } from '@angular/core';
 import { ConfigAuditReportSummaryDto } from '../../../../api/models/config-audit-report-summary-dto';
 import { ConfigAuditReportService } from '../../../../api/services/config-audit-report.service';
 import { PrimeNgChartUtils, PrimeNgHorizontalBarChartData, SeveritiesSummary } from '../../../utils/primeng-chart.utils';
-import { CarDetailsDto, CarSeveritySummary } from './home-config-audit-reports.types';
+import { CarDetailsDto, CarSeveritySummary } from './dashboard-config-audit-reports.types';
 
 import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
@@ -20,16 +20,16 @@ import { SeverityUtils } from '../../../utils/severity.utils';
 import { DarkModeService } from '../../../services/dark-mode.service';
 
 @Component({
-  selector: 'app-home-config-audit-reports',
+  selector: 'app-dashboard-config-audit-reports',
   standalone: true,
   imports: [CommonModule,
     ButtonModule, CarouselModule, ChartModule, DialogModule, TableModule, TagModule,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
   ],
-  templateUrl: './home-config-audit-reports.component.html',
-  styleUrl: './home-config-audit-reports.component.scss',
+  templateUrl: './dashboard-config-audit-reports.component.html',
+  styleUrl: './dashboard-config-audit-reports.component.scss',
 })
-export class HomeConfigAuditReportsComponent implements OnInit {
+export class DashboardConfigAuditReportsComponent implements OnInit {
   configAuditReportSummaryDtos: ConfigAuditReportSummaryDto[] | null = null;
   namespaceNames: string[] = [];
   kinds: string[] = [];

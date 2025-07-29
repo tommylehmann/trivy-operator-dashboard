@@ -3,7 +3,7 @@ import { Component, effect, input, OnInit } from '@angular/core';
 
 import { EsSeveritiesByNsSummaryDto } from '../../../../api/models/es-severities-by-ns-summary-dto';
 import { ExposedSecretReportService } from '../../../../api/services/exposed-secret-report.service';
-import { EsTableSummary } from './home-exposed-secret-reports.types';
+import { EsTableSummary } from './dashboard-exposed-secret-reports.types';
 
 import { PrimeNgChartUtils, PrimeNgHorizontalBarChartData, SeveritiesSummary } from '../../../utils/primeng-chart.utils';
 import { DarkModeService } from '../../../services/dark-mode.service';
@@ -20,15 +20,15 @@ import { TagModule } from 'primeng/tag';
 
 
 @Component({
-  selector: 'app-home-exposed-secret-reports',
+  selector: 'app-dashboard-exposed-secret-reports',
   standalone: true,
   imports: [CommonModule,
     ButtonModule, CarouselModule, ChartModule, DialogModule, TableModule, TagModule,
     SeverityNameByIdPipe, SeverityCssStyleByIdPipe],
-  templateUrl: './home-exposed-secret-reports.component.html',
-  styleUrl: './home-exposed-secret-reports.component.scss',
+  templateUrl: './dashboard-exposed-secret-reports.component.html',
+  styleUrl: './dashboard-exposed-secret-reports.component.scss',
 })
-export class HomeExposedSecretReportsComponent implements OnInit {
+export class DashboardExposedSecretReportsComponent implements OnInit {
   exposedSecretReportSummaryDtos: EsSeveritiesByNsSummaryDto[] = [];
   esTableSummary: EsTableSummary[] = [];
   namespaceNames: string[] = [];

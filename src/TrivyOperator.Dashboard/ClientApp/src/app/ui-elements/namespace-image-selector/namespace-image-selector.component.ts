@@ -1,5 +1,4 @@
-import { Component, effect, input, model, OnInit, output } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { Component, effect, input, model, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -17,7 +16,7 @@ interface ImageDto {
 
 @Component({
   selector: 'app-namespace-image-selector',
-  imports: [FormsModule, ButtonModule, SelectModule, TagModule, NgIf, MatIconModule],
+  imports: [FormsModule, ButtonModule, SelectModule, TagModule, MatIconModule],
   templateUrl: './namespace-image-selector.component.html',
   styleUrl: './namespace-image-selector.component.scss'
 })

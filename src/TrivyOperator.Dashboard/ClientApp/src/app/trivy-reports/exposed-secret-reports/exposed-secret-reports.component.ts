@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 
 import { GetExposedSecretReportImageDtos$Params } from '../../../api/fn/exposed-secret-report/get-exposed-secret-report-image-dtos';
@@ -10,20 +9,16 @@ import { SeverityUtils } from '../../utils/severity.utils';
 
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
-import { VulnerabilityReportImageDto } from '../../../api/models/vulnerability-report-image-dto';
 import { ActivatedRoute } from '@angular/router';
 import { ReportHelper, TrivyReportImageDto } from '../abstracts/trivy-report-image';
 import { VulnerabilityReportImageResourceDto } from '../../../api/models/vulnerability-report-image-resource-dto';
 import { namespacedColumns } from '../constants/generic.constants';
-import {
-  exposedSecretReportColumns,
-  exposedSecretReportDetailColumns,
-} from '../constants/exposed-secret-reports.constants';
+import { exposedSecretReportColumns, exposedSecretReportDetailColumns } from '../constants/exposed-secret-reports.constants';
 
 @Component({
   selector: 'app-exposed-secret-reports',
   standalone: true,
-  imports: [CommonModule, GenericMasterDetailComponent, DialogModule, TableModule],
+  imports: [GenericMasterDetailComponent, DialogModule, TableModule],
   templateUrl: './exposed-secret-reports.component.html',
   styleUrl: './exposed-secret-reports.component.scss',
 })

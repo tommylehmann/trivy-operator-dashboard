@@ -53,188 +53,193 @@
                  (deletedNodeIdsChange)="onDeletedNodeIds($event)"
                  (undeletedNodeIdsChange)="onUndeletedNodeIds($event)"
                  class="px-2"/>
-      <div class="mt-auto pb-1 pl-2" *ngIf="hoveredSbomDetailDto as detail">
-        <span>
-          <b>Name:</b> {{ detail.name ?? '' }} -
-          <b>Version:</b> {{ detail.version }} -
-          <b>Dependencies:</b> {{ detail.dependsOn?.length ?? 0 }}
-        </span>
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="0 | severityCssStyleById:(detail.criticalCount ?? -1)"
-               [value]="detail.criticalCount ?? -1 | vulnerabilityCount" />
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="1 | severityCssStyleById:(detail.highCount ?? -1)"
-               [value]="detail.highCount ?? -1 | vulnerabilityCount" />
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="2 | severityCssStyleById:(detail.mediumCount ?? -1)"
-               [value]="detail.mediumCount ?? -1 | vulnerabilityCount" />
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="3 | severityCssStyleById:(detail.lowCount ?? -1)"
-               [value]="detail.lowCount ?? -1 | vulnerabilityCount" />
-        <p-tag class="ml-2"
-               [rounded]="true"
-               [style]="4 | severityCssStyleById:(detail.unknownCount ?? -1)"
-               [value]="detail.unknownCount ?? -1 | vulnerabilityCount" />
-      </div>
+      @if (hoveredSbomDetailDto) {
+        @let detail = hoveredSbomDetailDto;
+        <div class="mt-auto pb-1 pl-2" >
+          <span>
+            <b>Name:</b> {{ detail.name ?? '' }} -
+            <b>Version:</b> {{ detail.version }} -
+            <b>Dependencies:</b> {{ detail.dependsOn?.length ?? 0 }}
+          </span>
+          <p-tag class="ml-2"
+                 [rounded]="true"
+                 [style]="0 | severityCssStyleById:(detail.criticalCount ?? -1)"
+                 [value]="detail.criticalCount ?? -1 | vulnerabilityCount" />
+          <p-tag class="ml-2"
+                 [rounded]="true"
+                 [style]="1 | severityCssStyleById:(detail.highCount ?? -1)"
+                 [value]="detail.highCount ?? -1 | vulnerabilityCount" />
+          <p-tag class="ml-2"
+                 [rounded]="true"
+                 [style]="2 | severityCssStyleById:(detail.mediumCount ?? -1)"
+                 [value]="detail.mediumCount ?? -1 | vulnerabilityCount" />
+          <p-tag class="ml-2"
+                 [rounded]="true"
+                 [style]="3 | severityCssStyleById:(detail.lowCount ?? -1)"
+                 [value]="detail.lowCount ?? -1 | vulnerabilityCount" />
+          <p-tag class="ml-2"
+                 [rounded]="true"
+                 [style]="4 | severityCssStyleById:(detail.unknownCount ?? -1)"
+                 [value]="detail.unknownCount ?? -1 | vulnerabilityCount" />
+        </div>
+      }
+
     </div>
   </ng-template>
 </p-splitter>
 
-<p-dialog *ngIf="fullSbomDataDto"
-          closable="true"
-          closeOnEscape="true"
-          dismissableMask="true"
-          resizable="true"
-          [breakpoints]="{ '1700px': '1360px', '576px': '90vw' }"
-          [style]="{ width: '1360px', height: '90vh' }"
-          [maximizable]="true"
-          [header]="'SBOM Reports Details - ' + (fullSbomDataDto.imageName ?? 'unknown') + ':' + (fullSbomDataDto.imageTag ?? 'unknown')"
-          [modal]="true"
-          [(visible)]="isSbomReportOverviewDialogVisible">
+@if(fullSbomDataDto) {
+  <p-dialog closable="true"
+            closeOnEscape="true"
+            dismissableMask="true"
+            resizable="true"
+            [breakpoints]="{ '1700px': '1360px', '576px': '90vw' }"
+            [style]="{ width: '1360px', height: '90vh' }"
+            [maximizable]="true"
+            [header]="'SBOM Reports Details - ' + (fullSbomDataDto.imageName ?? 'unknown') + ':' + (fullSbomDataDto.imageTag ?? 'unknown')"
+            [modal]="true"
+            [(visible)]="isSbomReportOverviewDialogVisible">
 
-  <div class="grid grid-cols-12 gap-4 h-full">
-    <div class="col-span-12 md:col-span-4 h-full flex flex-col">
-      <div style="height: 180px; min-height: 180px">
-        <b class="col-span-12 text-sm">S-BoM</b>
-        <div class="grid grid-cols-12 gap-4 ml-1 mt-1">
-          <div class="col-span-3">
-            <div class="flex items-center justify-between">
-              <span class="text-sm">Nodes</span>
-              <p-tag [rounded]="true"
-                     [value]="sbomReportDetailStatistics[5]?.toString() ?? 'N/A'" />
+    <div class="grid grid-cols-12 gap-4 h-full">
+      <div class="col-span-12 md:col-span-4 h-full flex flex-col">
+        <div style="height: 180px; min-height: 180px">
+          <b class="col-span-12 text-sm">S-BoM</b>
+          <div class="grid grid-cols-12 gap-4 ml-1 mt-1">
+            <div class="col-span-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm">Nodes</span>
+                <p-tag [rounded]="true"
+                       [value]="sbomReportDetailStatistics[5]?.toString() ?? 'N/A'" />
+              </div>
+            </div>
+            <div class="col-span-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm">Edges</span>
+                <p-tag [rounded]="true"
+                       [value]="sbomReportDetailStatistics[6]?.toString() ?? 'N/A'" />
+              </div>
             </div>
           </div>
-          <div class="col-span-3">
-            <div class="flex items-center justify-between">
-              <span class="text-sm">Edges</span>
-              <p-tag [rounded]="true"
-                     [value]="sbomReportDetailStatistics[6]?.toString() ?? 'N/A'" />
+          <b class="col-span-12 text-sm">Vulnerabilities</b>
+          <div class="grid grid-cols-12 gap-4 ml-1 mt-1">
+            <div *ngFor="let _ of [].constructor(5); let i = index" class="col-span-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm">{{ i | severityNameById:true }}</span>
+                <p-tag [rounded]="true"
+                       [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
+                       [value]="sbomReportDetailStatistics[i] ?? -1 | vulnerabilityCount" />
+              </div>
             </div>
           </div>
         </div>
-        <b class="col-span-12 text-sm">Vulnerabilities</b>
-        <div class="grid grid-cols-12 gap-4 ml-1 mt-1">
-          <div *ngFor="let _ of [].constructor(5); let i = index" class="col-span-3">
-            <div class="flex items-center justify-between">
-              <span class="text-sm">{{ i | severityNameById:true }}</span>
-              <p-tag [rounded]="true"
-                     [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
-                     [value]="sbomReportDetailStatistics[i] ?? -1 | vulnerabilityCount" />
-            </div>
-          </div>
+        <div class="h-full flex-col">
+          <p-treeTable [value]="sbomReportDetailLicensesTreeNodes"
+                       [scrollable]="true"
+                       [virtualScroll]="true"
+                       [virtualScrollItemSize]="49"
+                       scrollHeight="flex"
+                       styleClass="p-treetable-sm text-sm">
+            <ng-template pTemplate="header">
+              <tr style="height: 49px">
+                <th ttSortableColumn="name">License<p-treeTableSortIcon field="name" /></th>
+                <th class="text-right" style="width: 55px; max-width: 55px;">Count</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+              <tr [ttRow]="rowNode" style="height: 49px">
+                <td>
+                  <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                  {{ rowData.name }}
+                </td>
+                <td class="text-right" style="width: 55px; max-width: 55px;">
+                  {{ rowData.count }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-treeTable>
         </div>
       </div>
-      <div class="h-full flex-col">
-        <p-treeTable [value]="sbomReportDetailLicensesTreeNodes"
-                     [scrollable]="true"
-                     [virtualScroll]="true"
-                     [virtualScrollItemSize]="49"
-                     scrollHeight="flex"
-                     styleClass="p-treetable-sm text-sm">
-          <ng-template pTemplate="header">
-            <tr style="height: 49px">
-              <th ttSortableColumn="name">License<p-treeTableSortIcon field="name" /></th>
-              <th class="text-right" style="width: 55px; max-width: 55px;">Count</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-            <tr [ttRow]="rowNode" style="height: 49px">
-              <td>
-                <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-                {{ rowData.name }}
-              </td>
-              <td class="text-right" style="width: 55px; max-width: 55px;">
-                {{ rowData.count }}
-              </td>
-            </tr>
-          </ng-template>
-        </p-treeTable>
+      <div class="col-span-12 md:col-span-8 h-full flex flex-col">
+        <div style="height: 180px; min-height: 180px">
+          <p-table scrollHeight="flex"
+                   sortMode="multiple"
+                   styleClass="p-datatable-sm text-sm p-0"
+                   [virtualScrollItemSize]="49"
+                   [scrollable]="true"
+                   [value]="selectedSbomReportImageDto?.resources ?? []">
+            <ng-template pTemplate="header">
+              <tr style="height: 49px">
+                <th pSortableColumn="name" style="width: 55%">
+                  Resource Name
+                  <p-sortIcon field="name" />
+                </th>
+                <th pSortableColumn="kind" style="width: 20%">
+                  Kind
+                  <p-sortIcon field="kind" />
+                </th>
+                <th pSortableColumn="containerName" style="width: 25%">
+                  Container
+                  <p-sortIcon field="containerName" />
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template let-resource pTemplate="body">
+              <tr style="height: 49px">
+                <td style="width: 55%">
+                  {{ resource.name }}
+                </td>
+                <td style="width: 20%">
+                  {{ resource.kind }}
+                </td>
+                <td style="width: 25%">
+                  {{ resource.containerName }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+        </div>
+        <div class="h-full flex-col">
+          <p-treeTable [value]="sbomReportDetailPropertiesTreeNodes"
+                       [scrollable]="true"
+                       [virtualScroll]="true"
+                       [virtualScrollItemSize]="49"
+                       scrollHeight="flex"
+                       styleClass="p-treetable-sm text-sm">
+            <ng-template pTemplate="header">
+              <tr style="height: 49px">
+                <th ttSortableColumn="name">Property<p-treeTableSortIcon field="name" /></th>
+                <th class="text-right" style="width: 55px; max-width: 55px;">Count</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+              <tr [ttRow]="rowNode" style="height: 49px">
+                <td>
+                  <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                  {{ rowData.name }}
+                </td>
+                <td class="text-right" style="width: 55px; max-width: 55px;">
+                  {{ rowData.usedByCount }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-treeTable>
+        </div>
       </div>
     </div>
-    <div class="col-span-12 md:col-span-8 h-full flex flex-col">
-      <div style="height: 180px; min-height: 180px">
-        <p-table scrollHeight="flex"
-                 sortMode="multiple"
-                 styleClass="p-datatable-sm text-sm p-0"
-                 [virtualScrollItemSize]="49"
-                 [scrollable]="true"
-                 [value]="selectedSbomReportImageDto?.resources ?? []">
-          <ng-template pTemplate="header">
-            <tr style="height: 49px">
-              <th pSortableColumn="name" style="width: 55%">
-                Resource Name
-                <p-sortIcon field="name" />
-              </th>
-              <th pSortableColumn="kind" style="width: 20%">
-                Kind
-                <p-sortIcon field="kind" />
-              </th>
-              <th pSortableColumn="containerName" style="width: 25%">
-                Container
-                <p-sortIcon field="containerName" />
-              </th>
-            </tr>
-          </ng-template>
-          <ng-template let-resource pTemplate="body">
-            <tr style="height: 49px">
-              <td style="width: 55%">
-                {{ resource.name }}
-              </td>
-              <td style="width: 20%">
-                {{ resource.kind }}
-              </td>
-              <td style="width: 25%">
-                {{ resource.containerName }}
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+  </p-dialog>
 
-      </div>
-      <div class="h-full flex-col">
-        <p-treeTable [value]="sbomReportDetailPropertiesTreeNodes"
-                     [scrollable]="true"
-                     [virtualScroll]="true"
-                     [virtualScrollItemSize]="49"
-                     scrollHeight="flex"
-                     styleClass="p-treetable-sm text-sm">
-          <ng-template pTemplate="header">
-            <tr style="height: 49px">
-              <th ttSortableColumn="name">Property<p-treeTableSortIcon field="name" /></th>
-              <th class="text-right" style="width: 55px; max-width: 55px;">Count</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-            <tr [ttRow]="rowNode" style="height: 49px">
-              <td>
-                <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-                {{ rowData.name }}
-              </td>
-              <td class="text-right" style="width: 55px; max-width: 55px;">
-                {{ rowData.usedByCount }}
-              </td>
-            </tr>
-          </ng-template>
-        </p-treeTable>
-      </div>
-    </div>
-  </div>
-</p-dialog>
-
-<p-dialog closable="true"
-          closeOnEscape="true"
-          dismissableMask="true"
-          resizable="true"
-          maximizable="true"
-          [breakpoints]="{ '890px': '90vw' }"
-          [contentStyle]="{ height: '95vh' }"
-          [header]="trivyDependencyDialogTitle"
-          [modal]="true"
-          [style]="{ width: '95vw' }"
-          [(visible)]="isDependencyTreeViewVisible" >
-  <app-trivy-dependency [trivyImage]="trivyImage" />
-</p-dialog>
+  <p-dialog closable="true"
+            closeOnEscape="true"
+            dismissableMask="true"
+            resizable="true"
+            maximizable="true"
+            [breakpoints]="{ '890px': '90vw' }"
+            [contentStyle]="{ height: '95vh' }"
+            [header]="trivyDependencyDialogTitle"
+            [modal]="true"
+            [style]="{ width: '95vw' }"
+            [(visible)]="isDependencyTreeViewVisible" >
+    <app-trivy-dependency [trivyImage]="trivyImage" />
+  </p-dialog>
+}

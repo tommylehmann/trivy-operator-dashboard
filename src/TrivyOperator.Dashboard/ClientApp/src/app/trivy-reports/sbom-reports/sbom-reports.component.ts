@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, effect, HostListener, inject, model, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -37,10 +36,10 @@ import { ImageInfo, TrivyDependencyComponent } from '../../trivy-dependency/triv
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule,
-    FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent,
+  imports: [FormsModule,
+    FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent, TrivyDependencyComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
-    ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule, TrivyDependencyComponent],
+    ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule],
   templateUrl: './sbom-reports.component.html',
   styleUrl: './sbom-reports.component.scss',
 })
