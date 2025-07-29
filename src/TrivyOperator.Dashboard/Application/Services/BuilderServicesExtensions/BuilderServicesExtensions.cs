@@ -396,13 +396,13 @@ public static class BuilderServicesExtensions
             new MultiBucketTimedHostedService(
                 provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
                 provider.GetRequiredService<IAlertsService>(),
-                "MultiBucket1"));
+                "MultiBucket", ["Hey!", "Yo!", "No way, Jose!"], "subLevel|mama", 3));
 
         services.AddSingleton<IHostedService>(provider =>
             new MultiBucketTimedHostedService(
                 provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
                 provider.GetRequiredService<IAlertsService>(),
-                "MultiBucket2"));
+                "MultiBucket", ["Hey!", "Yo!", "Yes way, Jose!"], "subLevel|dada", 3));
 #endif
     }
 

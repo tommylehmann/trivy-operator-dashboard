@@ -6,11 +6,14 @@ namespace TrivyOperator.Dashboard.Application.Internals;
 public class MultiBucketTimedHostedService(
     ILogger<MultiBucketTimedHostedService> logger,
     IAlertsService alertService,
-    string bucketName) : IHostedService, IDisposable
+    string bucketName,
+    string[] categories,
+    string subBucket,
+    int subBucketCount) : IHostedService, IDisposable
 {
     private Timer? _timer;
     private readonly Random _random = new();
-    private readonly HashSet<string> _activeAlerts = [];
+    private readonly HashSet<string> _activeAlerts = new();
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -22,14 +25,16 @@ public class MultiBucketTimedHostedService(
     private async void DoWork(CancellationToken cancellationToken)
     {
         bool add = _random.Next(2) == 0;
-        string key = $"key-{_random.Next(100)}";
+        string randomSub = $"{subBucket}{_random.Next(1, subBucketCount + 1)}";
+        string key = $"{randomSub}-key-{_random.Next(100)}";
 
         if (add)
         {
             if (_activeAlerts.Add(key))
             {
                 var severity = GetRandomSeverity();
-                string message = $"{bucketName} {severity} alert on key {key}.";
+                string category = categories[_random.Next(categories.Length)];
+                string message = $"{bucketName} [{category}] {severity} alert on key {key}.";
 
                 await alertService.AddAlert(
                     bucketName,
@@ -38,7 +43,7 @@ public class MultiBucketTimedHostedService(
                         EmitterKey = key,
                         Message = message,
                         Severity = severity,
-                        Category = "Test"
+                        Category = category
                     },
                     cancellationToken);
             }
@@ -63,6 +68,7 @@ public class MultiBucketTimedHostedService(
             }
         }
     }
+
 
     private static Severity GetRandomSeverity()
     {

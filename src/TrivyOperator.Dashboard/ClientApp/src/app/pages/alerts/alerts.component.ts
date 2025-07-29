@@ -1,4 +1,5 @@
-import { Component, effect, inject, model, OnInit } from '@angular/core';
+import { Component, inject, model, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { AlertsService } from '../../services/alerts.service';
 import { AlertDto } from '../../../api/models/alert-dto';
@@ -6,16 +7,13 @@ import { GenericObjectArraySummaryPipe } from '../../pipes/generic-object-array-
 import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
 import { VulnerabilityCountPipe } from '../../pipes/vulnerability-count.pipe';
 import { TrivyToolbarComponent } from '../../ui-elements/trivy-toolbar/trivy-toolbar.component';
+import { NumberStringUtil } from '../../utils/number-string.utils';
 
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule, SelectButtonOptionClickEvent } from 'primeng/selectbutton';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule, TreeTableNodeCollapseEvent, TreeTableNodeExpandEvent } from 'primeng/treetable';
 import { TreeNode } from 'primeng/api';
-import { FormsModule } from '@angular/forms';
-import { NumberStringUtil } from '../../utils/number-string.utils';
-
-
 
 interface AlertNodeData {
   key: string,
@@ -50,7 +48,6 @@ export class AlertsComponent implements OnInit {
 
   treeExpandLevelOptions: { id: number, label: string }[] = [];
   treeExpandLevelOptionValue = model<number>(0);
-  treeMaxLevel = 0;
 
   alertsService: AlertsService = inject(AlertsService);
 
@@ -90,6 +87,7 @@ export class AlertsComponent implements OnInit {
 
   private buildTree(alerts: AlertDto[]): TreeNode<AlertNodeData>[] {
     const dtoMap = new Map<string, AlertNodeData>();
+    let treeMaxLevel = 0;
 
     for (const alert of alerts) {
       const { severity, emitter, emitterKey, category, message } = alert;
@@ -98,7 +96,7 @@ export class AlertsComponent implements OnInit {
       const keyPath = [severity, emitter, ...emitterKey.split("|")];
       let key = "";
       let prevNode: AlertNodeData | undefined;
-      this.treeMaxLevel = Math.max(this.treeMaxLevel, keyPath.length - 1);
+      treeMaxLevel = Math.max(treeMaxLevel, keyPath.length - 1);
 
       for (let i = keyPath.length - 1; i >= 0; i--) {
         key = keyPath.slice(0, i + 1).join("|");
@@ -137,7 +135,7 @@ export class AlertsComponent implements OnInit {
       }
     }
 
-    this.fillTreeExpandLevelOptions();
+    this.fillTreeExpandLevelOptions(treeMaxLevel);
 
     dtoMap.forEach((value) => {
       value.children = value.children.sort((a, b) => a.label.localeCompare(b.label));
@@ -168,10 +166,12 @@ export class AlertsComponent implements OnInit {
     return treeNodes;
   }
 
+
+
   // on load; this method fills the treeExpandLevelOptions array with options for the select button
-  private fillTreeExpandLevelOptions() {
+  private fillTreeExpandLevelOptions(treeMaxLevel: number) {
     this.treeExpandLevelOptions = [];
-    for (let i = 0; i <= this.treeMaxLevel; i++) {
+    for (let i = 0; i <= treeMaxLevel; i++) {
       this.treeExpandLevelOptions.push({ id: i, label: NumberStringUtil.FormatOrdinal(i + 1) });
     }
   }
