@@ -390,19 +390,20 @@ public static class BuilderServicesExtensions
             .AddCheck<WatchersLivenessHealthCheck>("watchers-liveness")
             .AddCheck<WatchersReadinessHealthCheck>("watchers-readiness");
 
-        // only for tests!!!
-        //services.AddHostedService<SingleBucketTimedHostedService>();
-        //services.AddSingleton<IHostedService>(provider =>
-        //    new MultiBucketTimedHostedService(
-        //        provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
-        //        provider.GetRequiredService<IAlertsService>(),
-        //        "MultiBucket1"));
+#if DEBUG
+        services.AddHostedService<SingleBucketTimedHostedService>();
+        services.AddSingleton<IHostedService>(provider =>
+            new MultiBucketTimedHostedService(
+                provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
+                provider.GetRequiredService<IAlertsService>(),
+                "MultiBucket1"));
 
-        //services.AddSingleton<IHostedService>(provider =>
-        //    new MultiBucketTimedHostedService(
-        //        provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
-        //        provider.GetRequiredService<IAlertsService>(),
-        //        "MultiBucket2"));
+        services.AddSingleton<IHostedService>(provider =>
+            new MultiBucketTimedHostedService(
+                provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
+                provider.GetRequiredService<IAlertsService>(),
+                "MultiBucket2"));
+#endif
     }
 
     public static void AddUiCommons(this IServiceCollection services) =>

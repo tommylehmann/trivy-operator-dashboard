@@ -1,17 +1,25 @@
-<div class="tod-content-background p-2 tod-content-border flex items-center">
-  <p-button icon="pi pi-refresh" class="p-2"
-            label="Refresh" size="small" [raised]="true" text
-            (click)="loadData()" />
-  <div class="h-6 w-px tod-separator mx-1"></div>
-  <span class="px-2 text-sm">Fully visible level: </span>
-  <p-selectButton [options]="treeExpandLevelOptions"
-                  [(ngModel)]="treeExpandLevelOptionValue"
-                  (onOptionClick)="onOptionClickTreeExpandLevel($event)"
-                  optionLabel="label"
-                  optionValue="id"
-                  class="text-sm"
-                  unselectable="true" />
-</div>
+<app-trivy-toolbar class="block p-3 tod-content-border tod-content-background">
+  <div class="w-full flex items-center">
+      <p-button icon="pi pi-refresh"
+                class="mr-2"
+                label="Refresh" size="small" text raised
+                (click)="loadData()" />
+    <div class="h-8 w-[2px] min-w-[2px] tod-separator mx-2"></div>
+    @if (treeData.length > 0) {
+      <span class="px-2 text-sm whitespace-nowrap">Fully visible level: </span>
+      <p-selectButton [options]="treeExpandLevelOptions"
+                      [(ngModel)]="treeExpandLevelOptionValue"
+                      (onOptionClick)="onOptionClickTreeExpandLevel($event)"
+                      optionLabel="label"
+                      optionValue="id"
+                      class="text-sm"
+                      unselectable="true" />
+
+    } @else {
+      <span class="px-2 text-sm whitespace-nowrap">No data</span>
+    }
+  </div>
+</app-trivy-toolbar>
 
 <div class="h-[85vh] overflow-auto tod-content-border">
   <p-treeTable [value]="treeData"
@@ -22,9 +30,9 @@
                styleClass="p-treetable-sm text-sm w-full">
     <ng-template pTemplate="colgroup">
       <colgroup>
-        <col style="width: 350px" />
-        <col style="width: 100px" />
-        <col style="width: auto" />
+        <col class="w-[350px]" />
+        <col class="w-[100px]" />
+        <col class="w-auto" />
       </colgroup>
     </ng-template>
     <ng-template pTemplate="header">
