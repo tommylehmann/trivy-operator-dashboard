@@ -17,8 +17,6 @@ import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 
-
-
 @Component({
   selector: 'app-dashboard-exposed-secret-reports',
   standalone: true,

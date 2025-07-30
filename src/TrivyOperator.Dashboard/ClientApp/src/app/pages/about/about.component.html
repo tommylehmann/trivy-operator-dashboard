@@ -67,17 +67,18 @@
   @if(releaseNotes.length > 0) {
     <p-panel header="Release Notes" [toggleable]="true">
       <div class="grid grid-cols-12 gap-4 items-start md:items-stretch">
-        <div *ngFor="let releaseNote of releaseNotes; let i = index"
-             class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3">
-          <p-card class="h-full small-header"
-                  [ngClass]="{'p-card-bold-subtitle': i === 0}"
-                  [header]="releaseNote.name ?? ''"
-                  subheader="{{ releaseNote.createdAt ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
-            <div class="prose prose-ul">
-              <markdown class="list-disc pl-5" [data]="releaseNote.body ?? ''"></markdown>
-            </div>
-          </p-card>
-        </div>
+        @for (releaseNote of releaseNotes; let i = $index; track releaseNote) {
+          <div class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3">
+            <p-card class="h-full small-header"
+                    [ngClass]="{'p-card-bold-subtitle': i === 0}"
+                    [header]="releaseNote.name ?? ''"
+                    subheader="{{ releaseNote.createdAt ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
+              <div class="prose prose-ul">
+                <markdown class="list-disc pl-5" [data]="releaseNote.body ?? ''"></markdown>
+              </div>
+            </p-card>
+          </div>
+        }
       </div>
     </p-panel>
   }
@@ -86,19 +87,21 @@
 <p-panel header="Credits" [toggleable]="true">
   <p class="text-lg font-semibold pb-2">Acknowledging the Building Blocks Behind the App</p>
   <div class="grid grid-cols-12 gap-4 items-stretch">
-    <div *ngFor="let credit of credits" class="col-span-4 md:col-span-3 lg:col-span-2 xl:col-span-1 items-stretch">
-      <p-card class="h-full small-header tod-panel-mt-auto" header="{{ credit.name }}">
-        <div class="text-left pb-4">
-          <div class="mt-2"><a href="{{ credit.homeUrl }}" target="_blank">Home</a></div>
-          <div class="mt-2"><a href="{{ credit.gitUrl }}" target="_blank">Git</a></div>
-          <div class="mt-2"><a href="{{ credit.docsUrl }}" target="_blank">Docs</a></div>
-        </div>
-        <div class="mt-auto">
-          <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}" loading="lazy"
-               class="w-full h-auto object-cover" style="{{ credit.imgExtraStyle }}" />
-        </div>
-      </p-card>
-    </div>
+    @for (credit of credits; track credit) {
+      <div>
+        <p-card class="h-full small-header tod-panel-mt-auto" header="{{ credit.name }}">
+          <div class="text-left pb-4">
+            <div class="mt-2"><a href="{{ credit.homeUrl }}" target="_blank">Home</a></div>
+            <div class="mt-2"><a href="{{ credit.gitUrl }}" target="_blank">Git</a></div>
+            <div class="mt-2"><a href="{{ credit.docsUrl }}" target="_blank">Docs</a></div>
+          </div>
+          <div class="mt-auto">
+            <img src="{{ credit.imgSrc }}" alt="{{ credit.imgAlt }}" loading="lazy"
+                 class="w-full h-auto object-cover" style="{{ credit.imgExtraStyle }}" />
+          </div>
+        </p-card>
+      </div>
+    }
     <div class="col-span-6 md:col-span-3 lg:col-span-2 items-stretch">
       <p-card class="h-full small-header" header="Others">
         <div class="gap-4">

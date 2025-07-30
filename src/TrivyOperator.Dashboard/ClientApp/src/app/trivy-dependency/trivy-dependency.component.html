@@ -44,39 +44,43 @@
               {{ rowData.objectType }}
             </td>
             <td [attr.colspan]="rowData.hasSeverities ? 1 : 6">{{ rowData.description }}</td>
-            <td *ngIf="rowData.hasSeverities" style="width: 60px">
-              <p-tag [rounded]="true"
-                     [style]="0 | severityCssStyleById:(rowData.critical ?? -1)"
-                     [value]="rowData.critical | vulnerabilityCount" />
-            </td>
-            <td *ngIf="rowData.hasSeverities" style="width: 60px">
-              <p-tag [rounded]="true"
-                     [style]="1 | severityCssStyleById:(rowData.high ?? -1)"
-                     [value]="rowData.high | vulnerabilityCount" />
-            </td>
-            <td *ngIf="rowData.hasSeverities" style="width: 60px">
-              <p-tag [rounded]="true"
-                     [style]="2 | severityCssStyleById:(rowData.medium ?? -1)"
-                     [value]="rowData.medium | vulnerabilityCount" />
-            </td>
-            <td *ngIf="rowData.hasSeverities" style="width: 60px">
-              <p-tag [rounded]="true"
-                     [style]="3 | severityCssStyleById:(rowData.low ?? -1)"
-                     [value]="rowData.low | vulnerabilityCount" />
-            </td>
-            <td *ngIf="rowData.hasSeverities" style="width: 60px">
-              <p-tag [rounded]="true"
-                     [style]="4 | severityCssStyleById:(rowData.unknown ?? -1)"
-                     [value]="rowData.unknown | vulnerabilityCount" />
-            </td>
+            @if (rowData.hasSeverities) {
+              <td style="width: 60px">
+                <p-tag [rounded]="true"
+                       [style]="0 | severityCssStyleById:(rowData.critical ?? -1)"
+                       [value]="rowData.critical | vulnerabilityCount" />
+              </td>
+              <td style="width: 60px">
+                <p-tag [rounded]="true"
+                       [style]="1 | severityCssStyleById:(rowData.high ?? -1)"
+                       [value]="rowData.high | vulnerabilityCount" />
+              </td>
+              <td style="width: 60px">
+                <p-tag [rounded]="true"
+                       [style]="2 | severityCssStyleById:(rowData.medium ?? -1)"
+                       [value]="rowData.medium | vulnerabilityCount" />
+              </td>
+              <td style="width: 60px">
+                <p-tag [rounded]="true"
+                       [style]="3 | severityCssStyleById:(rowData.low ?? -1)"
+                       [value]="rowData.low | vulnerabilityCount" />
+              </td>
+              <td style="width: 60px">
+                <p-tag [rounded]="true"
+                       [style]="4 | severityCssStyleById:(rowData.unknown ?? -1)"
+                       [value]="rowData.unknown | vulnerabilityCount" />
+              </td>
+            }
+
             <td style="width: 100px">
-              <p-button *ngIf="rowData.isTrivyReport"
-                        styleClass="tod-text-primary-color"
-                        label="Open... ⧉"
-                        size="small"
-                        text
-                        raised
-                        (onClick)="onOpenTrivyReport(rowData)" />
+              @if (rowData.isTrivyReport) {
+                <p-button styleClass="tod-text-primary-color"
+                          label="Open... ⧉"
+                          size="small"
+                          text
+                          raised
+                          (onClick)="onOpenTrivyReport(rowData)" />
+              }
             </td>
           </tr>
         </ng-template>

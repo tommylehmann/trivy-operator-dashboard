@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 
 import { WatcherStatusDto } from '../../../api/models/watcher-status-dto';
@@ -15,7 +14,7 @@ import { DialogModule } from 'primeng/dialog';
 @Component({
   selector: 'app-watcher-state',
   standalone: true,
-  imports: [ButtonModule, DialogModule, TrivyTableComponent, CommonModule],
+  imports: [ButtonModule, DialogModule, TrivyTableComponent],
   templateUrl: './watcher-state.component.html',
   styleUrl: './watcher-state.component.scss',
 })

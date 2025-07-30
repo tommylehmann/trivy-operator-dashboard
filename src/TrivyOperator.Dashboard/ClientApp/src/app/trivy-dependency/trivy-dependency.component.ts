@@ -1,5 +1,4 @@
 import { Component, effect, HostListener, input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { FcoseComponent } from '../ui-elements/fcose/fcose.component';
 import { NodeDataDto } from '../ui-elements/fcose/fcose.types';
@@ -38,7 +37,7 @@ export interface ImageInfo {
 
 @Component({
   selector: 'app-trivy-dependency',
-  imports: [CommonModule, FcoseComponent, ButtonModule, SplitterModule, TagModule, TreeTableModule, SeverityCssStyleByIdPipe, VulnerabilityCountPipe],
+  imports: [FcoseComponent, ButtonModule, SplitterModule, TagModule, TreeTableModule, SeverityCssStyleByIdPipe, VulnerabilityCountPipe],
   templateUrl: './trivy-dependency.component.html',
   styleUrl: './trivy-dependency.component.scss'
 })

@@ -22,20 +22,28 @@
   <div class="flex flex-col h-full">
 
     <div class="flex-1 overflow-auto">
-      <p *ngIf="!isActionStarted" class="p-text-secondary mb-4">
-        Are you sure you want to recreate the watcher
-        <b>{{ requestedRecreateWatcher?.kubernetesObjectType ?? 'n/a' }}</b>
-        in namespace <b>{{ requestedRecreateWatcher?.namespaceName ?? 'n/a' }}</b>?
-        This will delete the existing watcher and create a new one.
-      </p>
-      <p *ngIf="isActionStarted">{{ recreateWatcherResponseMessage }}</p>
-      <p *ngIf="recreateWatcherResponseError">Error: {{ recreateWatcherResponseError }}</p>
+      @if (!isActionStarted) {
+        <p class="p-text-secondary mb-4">
+          Are you sure you want to recreate the watcher
+          <b>{{ requestedRecreateWatcher?.kubernetesObjectType ?? 'n/a' }}</b>
+          in namespace <b>{{ requestedRecreateWatcher?.namespaceName ?? 'n/a' }}</b>?
+          This will delete the existing watcher and create a new one.
+        </p>
+      } @else {
+        <p>{{ recreateWatcherResponseMessage }}</p>
+      }
+      @if (recreateWatcherResponseError) {
+        <p>Error: {{ recreateWatcherResponseError }}</p>
+      }
     </div>
 
     <div class="mt-auto pt-6 flex justify-end gap-2">
-      <p-button *ngIf="!isActionStarted" label="Cancel" text raised severity="secondary" (click)="isRecreateWatcherDialogVisible = false" />
-      <p-button *ngIf="!isActionStarted" label="Recreate" text raised [disabled]="isActionStarted" (click)="onRecreateWatcherRequested()" />
-      <p-button *ngIf="isActionStarted" label="Close" text raised severity="secondary" (click)="isRecreateWatcherDialogVisible = false" />
+      @if (!isActionStarted) {
+        <p-button label="Cancel" text raised severity="secondary" (click)="isRecreateWatcherDialogVisible = false" />
+        <p-button label="Recreate" text raised [disabled]="isActionStarted" (click)="onRecreateWatcherRequested()" />
+      } @else {
+        <p-button label="Close" text raised severity="secondary" (click)="isRecreateWatcherDialogVisible = false" />
+      }
     </div>
 
   </div>

@@ -4,75 +4,72 @@
       <p-button icon="pi pi-search-plus" label="Zoom In" size="small" [text]="true" (onClick)="onZoomIn()" />
       <p-button icon="pi pi-search-minus" label="Zoom Out" size="small" [text]="true" (onClick)="onZoomOut()" />
       <p-button icon="pi pi-arrows-alt" label="Fit" size="small" [text]="true" (onClick)="onZoomFit()" />
-      <div class="h-4 w-px tod-separator mx-1"></div>
+      <div class="h-6 w-[2px] tod-separator mr-3 ml-1"></div>
       <input type="search"
              pInputText
              [formControl]="inputFilterByNameControl"
              placeholder="Highlight by name..."
              style="width: 200px; font-size: 12px" />
-      <div class="h-4 w-px tod-separator mx-1"></div>
-      <p-button *ngIf="!isStatic()"
-                label="Hide Node"
-                size="small"
-                class="hidden-sm"
-                [text]="true"
-                [disabled]="graphSelectedNodes.length == 0"
-                (onClick)="onDeleteNode()">
-        <mat-icon class="text-sm">commit</mat-icon>
-      </p-button>
-      <p-button *ngIf="!isStatic()"
-                label="Hide Subtree"
-                size="small"
-                class="hidden-sm"
-                [text]="true"
-                [disabled]="isStatic() || graphSelectedNodes.length == 0"
-                (onClick)="onDeleteNodeAndChildren()">
-        <mat-icon class="text-sm">graph_2</mat-icon>
-      </p-button>
-      <p-button *ngIf="!isStatic()"
-                label="Undo"
-                size="small"
-                class="hidden-sm"
-                [text]="true"
-                [disabled]="isStatic() || currentDeletedNodesIndex == -1 || deletedNodes.length == 0"
-                (onClick)="onUndo()">
-        <mat-icon class="text-sm">undo</mat-icon>
-      </p-button>
-      <p-button *ngIf="!isStatic()"
-                label="Redo"
-                size="small"
-                class="hidden-sm"
-                [text]="true"
-                [disabled]="isStatic() || currentDeletedNodesIndex >= deletedNodes.length - 1"
-                (onClick)="onRedo()">
-        <mat-icon class="text-sm">redo</mat-icon>
-      </p-button>
-      <p-button *ngIf="!isStatic()"
-                label="Show All"
-                size="small"
-                class="hidden-sm"
-                [text]="true"
-                [disabled]="deletedNodes.length == 0 || this.currentDeletedNodesIndex == -1"
-                (onClick)="onShowAll()">
-        <mat-icon class="text-sm">visibility</mat-icon>
-      </p-button>
-      <div class="h-4 w-px tod-separator mx-1"></div>
-      <p-button *ngIf="!isStatic()"
-                icon="pi pi-question-circle"
-                size="small"
-                class="hidden-sm"
-                [text]="true"
-                (onClick)="onHelp()">
-      </p-button>
+      @if (!isStatic()) {
+        <div class="h-6 w-[2px] tod-separator mr-1 ml-3"></div>
+        <p-button label="Hide Node"
+                  size="small"
+                  class="hidden-sm"
+                  [text]="true"
+                  [disabled]="graphSelectedNodes.length == 0"
+                  (onClick)="onDeleteNode()">
+          <mat-icon class="text-sm">commit</mat-icon>
+        </p-button>
+        <p-button label="Hide Subtree"
+                  size="small"
+                  class="hidden-sm"
+                  [text]="true"
+                  [disabled]="isStatic() || graphSelectedNodes.length == 0"
+                  (onClick)="onDeleteNodeAndChildren()">
+          <mat-icon class="text-sm">graph_2</mat-icon>
+        </p-button>
+        <p-button label="Undo"
+                  size="small"
+                  class="hidden-sm"
+                  [text]="true"
+                  [disabled]="isStatic() || currentDeletedNodesIndex == -1 || deletedNodes.length == 0"
+                  (onClick)="onUndo()">
+          <mat-icon class="text-sm">undo</mat-icon>
+        </p-button>
+        <p-button label="Redo"
+                  size="small"
+                  class="hidden-sm"
+                  [text]="true"
+                  [disabled]="isStatic() || currentDeletedNodesIndex >= deletedNodes.length - 1"
+                  (onClick)="onRedo()">
+          <mat-icon class="text-sm">redo</mat-icon>
+        </p-button>
+        <p-button label="Show All"
+                  size="small"
+                  class="hidden-sm"
+                  [text]="true"
+                  [disabled]="deletedNodes.length == 0 || this.currentDeletedNodesIndex == -1"
+                  (onClick)="onShowAll()">
+          <mat-icon class="text-sm">visibility</mat-icon>
+        </p-button>
+        <div class="h-6 w-[2px] tod-separator mx-1"></div>
+        <p-button icon="pi pi-question-circle"
+                  size="small"
+                  class="hidden-sm"
+                  [text]="true"
+                  (onClick)="onHelp()">
+        </p-button>
+      }
     </div>
   </app-trivy-toolbar>
-  <div class="flex items-center col-span-12 p-0">
-    <p-breadcrumb *ngIf="!isStatic()"
-                  class="breadcrumb-no-background breadcrumb-no-overflow pl-2.5"
-                  [home]="navHome"
-                  [model]="navItems"
-                  (onItemClick)="onNavItemClick($event)"/>
-  </div>
+  @if (!isStatic()) {
+    <div class="flex items-center col-span-12 p-0">
+      <p-breadcrumb class="breadcrumb-no-background breadcrumb-no-overflow pl-2.5"
+                    [home]="navHome"
+                    [model]="navItems"
+                    (onItemClick)="onNavItemClick($event)"/>
+    </div>
+  }
   <div class="col-span-12">
     <div #graphContainer [ngClass]="fcoseClasses()" class="graph-container"></div>
   </div>

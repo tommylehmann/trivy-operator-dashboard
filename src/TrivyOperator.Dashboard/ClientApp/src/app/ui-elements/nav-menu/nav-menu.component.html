@@ -10,14 +10,15 @@
   </ng-template>
   <ng-template pTemplate="end">
     <div class="flex items-center gap-0">
-      <div *ngIf="alertsCount" class="p-overlay-badge">
+      @if (alertsCount) {
         <p-button icon="pi pi-bell" label="" [raised]="true" [rounded]="true" [text]="true" (click)="onAlertsClick()" />
         <p-tag class="left-0 top-1/3 transform -translate-x-1/2 -translate-y-1/2 text-xs px-1 py-0.5 z-10"
                [value]="alertsCount.toString()"
                [rounded]="true"
                severity="info">
         </p-tag>
-      </div>
+      }
+
       <p-button [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
                 [raised]="true"
                 [rounded]="true"
@@ -31,9 +32,11 @@
   <p-panelMenu styleClass="w-full" [model]="items" [multiple]="true">
     <ng-template let-item #item>
       <a pRipple class="flex items-center cursor-pointer text-color px-4 py-2">
-        <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+        @if (item.icon) {
+          <mat-icon>{{ item.icon }}</mat-icon>
+        }
+
         <span class="ml-2">{{ item.label }}</span>
-        <!--<p-badge *ngIf="item.badge" [ngClass]="{ 'ml-auto': !root, 'ml-2': root }" [value]="item.badge" />-->
       </a>
     </ng-template>
   </p-panelMenu>

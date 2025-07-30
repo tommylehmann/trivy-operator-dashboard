@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -20,13 +19,13 @@ import { SettingsService, SeverityColorByNameOption } from '../../services/setti
 
 import { VulnerabilityCountPipe } from '../../pipes/vulnerability-count.pipe';
 import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
+import { sample } from 'rxjs';
 
 
 @Component({
   selector: 'app-settings',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ButtonModule,
     CardModule,
@@ -50,7 +49,6 @@ export class SettingsComponent implements OnInit {
   severityCssStyleByIdOptions: { id: SeverityColorByNameOption, label: string }[] = [];
   severityCssStyleByIdOptionIndex: number = 0;
   severityCssStyleByIdOptionValue: SeverityColorByNameOption = 'grayBelowOne';
-  severityCssStyleByIdOptionValueSamples: number[] = [1, 0, -1];
   severityCssStyleByIdOptionDescription: string = "";
 
 
@@ -193,4 +191,6 @@ export class SettingsComponent implements OnInit {
         break;
     }
   }
+
+  protected readonly sample = sample;
 }

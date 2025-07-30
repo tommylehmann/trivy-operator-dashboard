@@ -75,13 +75,17 @@
   </div>
   <div class="col-span-12 md:col-span-6">
     <p-panel header="CSV File Names" class="h-full">
-      <div *ngFor="let file of csvFileNames" class="field pb-1">
-        <label for="{{ file.dataKey }}" class="text-sm">{{ file.description }}</label>
-        <input id="{{ file.dataKey }}" pInputText class="text-sm w-full" pSize="small" [(ngModel)]="file.savedCsvName" />
-      </div>
-      <div *ngIf="csvFileNames.length == 0">
-        <p class="italic text-muted-color text-sm">No data: no CSV files saved...</p>
-      </div>
+      @for (file of csvFileNames; track file) {
+        <div class="field pb-1">
+          <label for="{{ file.dataKey }}" class="text-sm">{{ file.description }}</label>
+          <input id="{{ file.dataKey }}" pInputText class="text-sm w-full" pSize="small" [(ngModel)]="file.savedCsvName" />
+        </div>
+      }
+      @if (csvFileNames.length == 0) {
+        <div>
+          <p class="italic text-muted-color text-sm">No data: no CSV files saved...</p>
+        </div>
+      }
       <p-button
         icon="pi pi-file-check"
         label="Update Names"
@@ -169,11 +173,12 @@
                         (onOptionClick)="onSeverityCssStyleByIdOptionsClick($event)" />
         <span class="font-semibold pt-2">Sample</span>
         <div class="py-2">
-          <p-tag *ngFor="let sampleValue of severityCssStyleByIdOptionValueSamples"
-                 [rounded]="true"
-                 [style]="3 | severityCssStyleById:sampleValue:severityCssStyleByIdOptions[severityCssStyleByIdOptionIndex].id"
-                 [value]="sampleValue | vulnerabilityCount"
-                 class="mr-1" />
+          @for (sampleValue of [1, 0, -1]; track sampleValue) {
+            <p-tag [rounded]="true"
+                   [style]="3 | severityCssStyleById:sampleValue:severityCssStyleByIdOptions[severityCssStyleByIdOptionIndex].id"
+                   [value]="sampleValue | vulnerabilityCount"
+                   class="mr-1" />
+          }
           <span class="text-sm">{{ severityCssStyleByIdOptionDescription }}</span>
         </div>
       </div>

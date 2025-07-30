@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
@@ -23,7 +22,6 @@ import { ToastModule } from 'primeng/toast';
   selector: 'app-nav-menu',
   standalone: true,
   imports: [
-    CommonModule,
     MenubarModule,
     DrawerModule,
     PanelMenuModule,

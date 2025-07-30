@@ -122,14 +122,16 @@
           </div>
           <b class="col-span-12 text-sm">Vulnerabilities</b>
           <div class="grid grid-cols-12 gap-4 ml-1 mt-1">
-            <div *ngFor="let _ of [].constructor(5); let i = index" class="col-span-3">
-              <div class="flex items-center justify-between">
-                <span class="text-sm">{{ i | severityNameById:true }}</span>
-                <p-tag [rounded]="true"
-                       [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
-                       [value]="sbomReportDetailStatistics[i] ?? -1 | vulnerabilityCount" />
+            @for (i of [0, 1, 2, 3, 4]; track i) {
+              <div class="col-span-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm">{{ i | severityNameById:true }}</span>
+                  <p-tag [rounded]="true"
+                         [style]="i | severityCssStyleById:(sbomReportDetailStatistics[i] ?? -1)"
+                         [value]="sbomReportDetailStatistics[i] ?? -1 | vulnerabilityCount" />
+                </div>
               </div>
-            </div>
+            }
           </div>
         </div>
         <div class="h-full flex-col">
