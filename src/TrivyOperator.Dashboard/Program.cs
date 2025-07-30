@@ -65,7 +65,11 @@ builder.Services.AddControllersWithViews(ConfigureMvcOptions)
 builder.Services.AddHttpClient();
 builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SupportNonNullableReferenceTypes();
+});
+
 // SignalR: CORS with credentials must be allowed in order for cookie-based sticky sessions to work correctly. They must be enabled even when authentication isn't used.
 builder.Services.AddCors(
     options => options.AddDefaultPolicy(
