@@ -8,19 +8,23 @@
 @plugin "tailwindcss-primeui";
 @layer mat-icons, tailwind, primeng, app-layer;
 
-  @import './../node_modules/material-symbols/index' layer(base);
+@import './app/themes/trivy-operator-dashboard.variables.css';
+
+
 
 @layer tailwind {
   @import "./styles/tailwind.local.css";
 
 }
 
+
+@import './../node_modules/material-symbols/index' layer(base);
 /* Components fixes*/
 @layer app-layer {
   a:not([pRipple]):not(p-tieredmenu-item-link) {
     @apply text-blue-400 underline hover:text-blue-500 hover:no-underline;
   }
-  @import './app/themes/trivy-operator-dashboard.variables.css';
+
 }
 
 // Others

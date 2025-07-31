@@ -57,6 +57,18 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
     },
   },
   cssVars: {
+    // '--p-togglebutton-content-checked-background': 'var(--p-button-text-primary-color)',
+    // '--p-togglebutton-background': 'var(--tod-togglebutton-background-border-color)',
+    // '--p-togglebutton-checked-background': 'var(--tod-togglebutton-background-border-color)',
+    // '--p-togglebutton-border-color': 'var(--tod-togglebutton-background-border-color)',
+    // '--p-togglebutton-checked-border-color': 'var(--tod-togglebutton-background-border-color)',
+    // '--p-togglebutton-content-checked-shadow': '0px 1px 2px 0 rgba(0, 0, 0, 0.6)',
+    // '--p-togglebutton-transition-duration': '.5s',
+    // '--p-togglebutton-border-radius': '4px',
+    // '--p-togglebutton-font-weight': '500',
+    // '--p-togglebutton-padding': '.20rem .20rem',
+    // '--p-togglebutton-content-border-radius': '4px',
+    // '--p-togglebutton-content-padding': '0.25rem 0.25rem',
     light: {
       '--tod-togglebutton-background-border-color': '{surface.100}',
       '--tod-blockquote-text-color': '{surface.900}',
@@ -66,48 +78,39 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
       '--tod-blockquote-text-color': '{surface.200}',
     },
   },
-
   components: {
     button: {
-      // label: {
-      //   font: {
-      //     weight: 'var(--tod-button-label-font-weight)',
-      //   },
-      // },
+      root: {
+        label: {
+          fontWeight: 'var(--tod-button-label-font-weight)',
+        },
+      },
     },
     card: {
-      // shadow: 'var(--tod-card-shadow)',
+      root: {
+        shadow: 'var(--tod-card-shadow)',
+      }
     },
     datatable: {
-      // body: {
-      //   cell: {
-      //     padding: 'var(--tod-datatable-body-cell-padding)',
-      //   },
-      // },
-      // column: {
-      //   title: {
-      //     font: {
-      //       weight: 'var(--tod-datatable-column-title-font-weight)',
-      //     },
-      //   },
-      // },
+      bodyCell: {
+        padding: 'var(--tod-datatable-body-cell-padding)',
+      },
+      columnTitle: {
+        fontWeight: 'var(--tod-datatable-column-title-font-weight)',
+      },
       footer: {
         background: 'var(--tod-datatable-footer-cell-background)',
-        // cell: {
-        //   background: 'var(--tod-datatable-footer-cell-background)',
-        // },
       },
-      header: {
-        // cell: {
-        //   padding: 'var(--tod-datatable-header-cell-padding)',
-        //   selected: {
-        //     background: 'var(--p-datatable-header-cell-background)',
-        //     color:'var(--p-button-text-primary-color)',
-        //   },
-        //   sm: {
-        //     padding: 'var(--tod-datatable-header-cell-padding)',
-        //   }
-        // },
+      footerCell: {
+        background: 'var(--tod-datatable-footer-cell-background)',
+      },
+      headerCell: {
+        padding: 'var(--tod-datatable-header-cell-padding)',
+        selectedBackground: 'var(--p-datatable-header-cell-background)',
+        selectedColor:'var(--p-button-text-primary-color)',
+        sm: {
+          padding: 'var(--tod-datatable-header-cell-padding)',
+        }
       },
     },
     drawer: {
@@ -118,11 +121,11 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         padding: '0 0.5rem',
       },
     },
-    // selectbutton: {
-    //   border: {
-    //     radius: 'var(--tod-selectbutton-border-radius)',
-    //   },
-    // },
+    selectbutton: {
+      root: {
+        borderRadius: 'var(--tod-selectbutton-border-radius)',
+      },
+    },
     splitter: {
       // border: {
       //   radius: 'var(--tod-selectbutton-border-radius)',
@@ -134,10 +137,10 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
       },
     },
     tag: {
-      // font: {
-      //   size: 'var(--tod-tag-font-size)',
-      //   weight: 'var(--tod-tag-font-weight)',
-      // },
+      root: {
+        fontSize: 'var(--tod-tag-font-size)',
+        fontWeight: 'var(--tod-tag-font-weight)',
+      },
       primary: {
         color: 'var(--tod-tag-primary-color)',
       },
