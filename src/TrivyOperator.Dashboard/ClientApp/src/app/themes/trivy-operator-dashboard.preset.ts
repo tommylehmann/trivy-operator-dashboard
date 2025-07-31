@@ -35,8 +35,6 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
           950: '{sky.950}'
         },
         text: { color: '#000000' },
-        'tod-togglebutton-background-border-color': '{surface.100}',
-        'tod-blockquote-text-color': '{surface.900}',
       },
       dark: {
         surface: {
@@ -54,53 +52,62 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
           950: '#171E27'
         },
         text: { color: '#ffffff' },
-        'tod-togglebutton-background-border-color': '{surface.950}',
-        'tod-blockquote-text-color': '{surface.200}',
       },
 
     },
   },
+  cssVars: {
+    light: {
+      '--tod-togglebutton-background-border-color': '{surface.100}',
+      '--tod-blockquote-text-color': '{surface.900}',
+    },
+    dark: {
+      '--tod-togglebutton-background-border-color': '{surface.950}',
+      '--tod-blockquote-text-color': '{surface.200}',
+    },
+  },
+
   components: {
     button: {
-      label: {
-        font: {
-          weight: 'var(--tod-button-label-font-weight)',
-        },
-      },
+      // label: {
+      //   font: {
+      //     weight: 'var(--tod-button-label-font-weight)',
+      //   },
+      // },
     },
     card: {
-      shadow: 'var(--tod-card-shadow)',
+      // shadow: 'var(--tod-card-shadow)',
     },
     datatable: {
-      body: {
-        cell: {
-          padding: 'var(--tod-datatable-body-cell-padding)',
-        },
-      },
-      column: {
-        title: {
-          font: {
-            weight: 'var(--tod-datatable-column-title-font-weight)',
-          },
-        },
-      },
+      // body: {
+      //   cell: {
+      //     padding: 'var(--tod-datatable-body-cell-padding)',
+      //   },
+      // },
+      // column: {
+      //   title: {
+      //     font: {
+      //       weight: 'var(--tod-datatable-column-title-font-weight)',
+      //     },
+      //   },
+      // },
       footer: {
         background: 'var(--tod-datatable-footer-cell-background)',
-        cell: {
-          background: 'var(--tod-datatable-footer-cell-background)',
-        },
+        // cell: {
+        //   background: 'var(--tod-datatable-footer-cell-background)',
+        // },
       },
       header: {
-        cell: {
-          padding: 'var(--tod-datatable-header-cell-padding)',
-          selected: {
-            background: 'var(--p-datatable-header-cell-background)',
-            color:'var(--p-button-text-primary-color)',
-          },
-          sm: {
-            padding: 'var(--tod-datatable-header-cell-padding)',
-          }
-        },
+        // cell: {
+        //   padding: 'var(--tod-datatable-header-cell-padding)',
+        //   selected: {
+        //     background: 'var(--p-datatable-header-cell-background)',
+        //     color:'var(--p-button-text-primary-color)',
+        //   },
+        //   sm: {
+        //     padding: 'var(--tod-datatable-header-cell-padding)',
+        //   }
+        // },
       },
     },
     drawer: {
@@ -111,15 +118,15 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         padding: '0 0.5rem',
       },
     },
-    selectbutton: {
-      border: {
-        radius: 'var(--tod-selectbutton-border-radius)',
-      },
-    },
+    // selectbutton: {
+    //   border: {
+    //     radius: 'var(--tod-selectbutton-border-radius)',
+    //   },
+    // },
     splitter: {
-      border: {
-        radius: 'var(--tod-selectbutton-border-radius)',
-      },
+      // border: {
+      //   radius: 'var(--tod-selectbutton-border-radius)',
+      // },
     },
     tabs: {
       tab: {
@@ -127,10 +134,10 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
       },
     },
     tag: {
-      font: {
-        size: 'var(--tod-tag-font-size)',
-        weight: 'var(--tod-tag-font-weight)',
-      },
+      // font: {
+      //   size: 'var(--tod-tag-font-size)',
+      //   weight: 'var(--tod-tag-font-weight)',
+      // },
       primary: {
         color: 'var(--tod-tag-primary-color)',
       },
