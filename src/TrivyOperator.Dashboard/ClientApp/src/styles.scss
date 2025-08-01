@@ -233,16 +233,14 @@ p-splitter.tod-splitter-no-borders {
 //  background: unset !important;
 //}
 
-.tod-text-primary-color {
-  color: var(--p-primary-text-color)
-}
-
 .tod-text-muted-color {
   color: var(--p-text-muted-color);
 }
 
-p-button.tod-text-primary-color span.p-button-label{
-  color: var(--p-primary-text-color)
+.tod-text-primary-color,
+tr.p-datatable-row-selected p-button.tod-text-primary-color button,
+tr.p-treetable-row-selected p-button.tod-text-primary-color button {
+  color: var(--tod-text-primary-color);
 }
 
 mat-icon.text-sm {
