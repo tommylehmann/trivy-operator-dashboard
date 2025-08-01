@@ -1,7 +1,7 @@
 <div class="grid grid-cols-12 gap-2 items-start md:items-stretch">
   <div class="col-span-12 md:col-span-6">
     <p-panel header="Table States" class="h-full">
-      <p-table styleClass="p-datatable-sm text-sm" [tableStyle]="" [value]="clearTablesOptions">
+      <p-table class="p-datatable-sm text-sm" [tableStyle]="" [value]="clearTablesOptions">
         <ng-template pTemplate="header">
           <tr>
             <th style="width: 200px; min-width: 200px">Table Name</th>
@@ -105,7 +105,7 @@
   </div>
   <div class="col-span-12 md:col-span-6">
     <p-panel header="Trivy Reports States" class="h-full">
-      <p-table styleClass="p-datatable-sm text-sm" [tableStyle]="" [value]="trivyReportConfigs">
+      <p-table class="p-datatable-sm text-sm" [tableStyle]="" [value]="trivyReportConfigs">
         <ng-template pTemplate="header">
           <tr>
             <th style="width: 200px; min-width: 200px">Trivy Report</th>

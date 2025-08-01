@@ -1,4 +1,4 @@
-<p-splitter styleClass="mb-8" [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
+<p-splitter class="mb-8" [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
             [panelSizes]="[45, 55]" stateStorage="local" [stateKey]="screenSize !== 'sm' ? 'splitter.TrivyDependency' : undefined" >
   <ng-template #panel>
     <div class="trivy-tree-table trivy-half overflow-auto" >
@@ -10,7 +10,7 @@
                    [(selection)]="selectedTreeNode"
                    (onNodeSelect)="onTreeTableNodeSelect($event)"
                    (onNodeUnselect)="onTreeTableNodeUnselect()"
-                   styleClass="p-treetable-sm text-sm w-full"
+                   class="p-treetable-sm text-sm w-full"
                    dataKey="id">
         <ng-template pTemplate="colgroup">
           <colgroup>
@@ -74,7 +74,7 @@
 
             <td style="width: 100px">
               @if (rowData.isTrivyReport) {
-                <p-button styleClass="tod-text-primary-color"
+                <p-button class="tod-text-primary-color"
                           label="Open... ⧉"
                           size="small"
                           text

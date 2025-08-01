@@ -882,13 +882,13 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     const potentialIndex = this.navItems.map((x) => x.id).indexOf(nodeId);
     if (potentialIndex !== -1) {
       this.navItems = this.navItems.slice(0, potentialIndex + 1);
-      this.navItems[potentialIndex].styleClass = 'breadcrumb-size';
+      this.navItems[potentialIndex].class = 'breadcrumb-size';
       this.activeNodeId = nodeId;
       return;
     }
 
     if (this.navItems.length > 0) {
-      this.navItems[this.navItems.length - 1].styleClass = 'breadcrumb-pointer';
+      this.navItems[this.navItems.length - 1].class = 'breadcrumb-pointer';
     }
     const newDataDetailDto = this.getDataDetailDtoById(nodeId);
     if (newDataDetailDto?.name) {
@@ -897,7 +897,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
         {
           id: nodeId,
           label: newDataDetailDto?.name ? newDataDetailDto?.name : '\u2003', // so called 'em space' - just a 'long' space,
-          styleClass: 'breadcrumb-size',
+          class: 'breadcrumb-size',
         },
         ];
     }

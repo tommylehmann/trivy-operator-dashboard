@@ -29,7 +29,7 @@
   </ng-template>
 </p-menubar>
 <p-drawer [baseZIndex]="10000" [showCloseIcon]="false" [(visible)]="isDrawerVisible">
-  <p-panelMenu styleClass="w-full" [model]="items" [multiple]="true">
+  <p-panelMenu class="w-full" [model]="items" [multiple]="true">
     <ng-template let-item #item>
       <a pRipple class="flex items-center cursor-pointer text-color px-4 py-2">
         @if (item.icon) {

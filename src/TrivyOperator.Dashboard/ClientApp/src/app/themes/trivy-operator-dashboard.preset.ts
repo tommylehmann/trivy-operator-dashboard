@@ -56,29 +56,12 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
 
     },
   },
-  cssVars: {
-    // '--p-togglebutton-content-checked-background': 'var(--p-button-text-primary-color)',
-    // '--p-togglebutton-background': 'var(--tod-togglebutton-background-border-color)',
-    // '--p-togglebutton-checked-background': 'var(--tod-togglebutton-background-border-color)',
-    // '--p-togglebutton-border-color': 'var(--tod-togglebutton-background-border-color)',
-    // '--p-togglebutton-checked-border-color': 'var(--tod-togglebutton-background-border-color)',
-    // '--p-togglebutton-content-checked-shadow': '0px 1px 2px 0 rgba(0, 0, 0, 0.6)',
-    // '--p-togglebutton-transition-duration': '.5s',
-    // '--p-togglebutton-border-radius': '4px',
-    // '--p-togglebutton-font-weight': '500',
-    // '--p-togglebutton-padding': '.20rem .20rem',
-    // '--p-togglebutton-content-border-radius': '4px',
-    // '--p-togglebutton-content-padding': '0.25rem 0.25rem',
-    light: {
-      '--tod-togglebutton-background-border-color': '{surface.100}',
-      '--tod-blockquote-text-color': '{surface.900}',
-    },
-    dark: {
-      '--tod-togglebutton-background-border-color': '{surface.950}',
-      '--tod-blockquote-text-color': '{surface.200}',
-    },
-  },
   components: {
+    breadcrumb: {
+      root: {
+        padding: '0',
+      },
+    },
     button: {
       root: {
         label: {
@@ -104,6 +87,9 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
       footerCell: {
         background: 'var(--tod-datatable-footer-cell-background)',
       },
+      header: {
+        borderWidth: '0 0 1px 0',
+      },
       headerCell: {
         padding: 'var(--tod-datatable-header-cell-padding)',
         selectedBackground: 'var(--p-datatable-header-cell-background)',
@@ -111,6 +97,11 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         sm: {
           padding: 'var(--tod-datatable-header-cell-padding)',
         }
+      },
+    },
+    dialog: {
+      header: {
+        padding: '.8rem 1.25rem',
       },
     },
     drawer: {
@@ -127,9 +118,9 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
       },
     },
     splitter: {
-      // border: {
-      //   radius: 'var(--tod-selectbutton-border-radius)',
-      // },
+      root: {
+        background: 'unset',
+      }
     },
     tabs: {
       tab: {
@@ -142,8 +133,34 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         fontWeight: 'var(--tod-tag-font-weight)',
       },
       primary: {
-        color: 'var(--tod-tag-primary-color)',
+        color: 'var(--p-primary-contrast-color)',
       },
     },
+    tieredmenu: {
+      item: {
+        color: 'var(--p-primary-color)',
+        icon: {
+          color: 'var(--p-primary-icon-color)',
+        },
+      },
+    },
+    togglebutton: {
+      content: {
+        checkedBackground: 'var(--p-button-text-primary-color)',
+        checkedShadow: '0px 1px 2px 0 rgba(0, 0, 0, 0.6)',
+        borderRadius: '4px',
+        padding: '0.25rem 0.25rem',
+      },
+      root: {
+        background: 'var(--tod-togglebutton-background-border-color)',
+        checkedBackground: 'var(--tod-togglebutton-background-border-color)',
+        borderColor: 'var(--tod-togglebutton-background-border-color)',
+        checkedBorderColor: 'var(--tod-togglebutton-background-border-color)',
+        transitionDuration: '.5s',
+        borderRadius: '4px',
+        fontWeight: '500',
+        padding: '.20rem .20rem',
+      },
+    }
   },
 });

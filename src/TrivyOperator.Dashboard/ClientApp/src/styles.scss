@@ -74,6 +74,9 @@ p-splitbutton.text-sm {
   max-height: unset !important;
 }
 
+p-dialog.tod-dialog-h-full div.p-dialog-content {
+  height: 100% !important;
+}
 // various tailwind reverts
 
 ul:not(.p-carousel-indicator-list):not(.p-tieredmenu-root-list) {
@@ -222,13 +225,13 @@ p-columnfilter.tod-active-filter p-button
   padding-left: .75rem;
 }
 
-p-splitter.tod-splitter-no-borders div.p-splitter {
+p-splitter.tod-splitter-no-borders {
   border: none !important;
 }
 
-p-splitter.tod-splitter-no-background div.p-splitter {
-  background: unset !important;
-}
+//p-splitter.tod-splitter-no-background div.p-splitter {
+//  background: unset !important;
+//}
 
 .tod-text-primary-color {
   color: var(--p-primary-text-color)

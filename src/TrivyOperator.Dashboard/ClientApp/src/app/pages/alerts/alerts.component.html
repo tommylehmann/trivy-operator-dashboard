@@ -21,13 +21,16 @@
   </div>
 </app-trivy-toolbar>
 
-<div class="h-[85vh] overflow-auto tod-content-border">
+<div class="h-[85vh] flex flex-col tod-content-border">
+  <div class="overflow-auto flex-grow">
   <p-treeTable [value]="treeData"
+               scrollable="true"
+               scrollHeight="flex"
                [resizableColumns]="true"
                (onNodeExpand)="onNodeExpand($event)"
                (onNodeCollapse)="onNodeCollapse($event)"
-               columnResizeMode="fit"
-               styleClass="p-treetable-sm text-sm w-full">
+               columnResizeMode="expand"
+               class="p-treetable-sm text-sm w-full">
     <ng-template pTemplate="colgroup">
       <colgroup>
         <col class="w-[350px]" />
@@ -36,7 +39,7 @@
       </colgroup>
     </ng-template>
     <ng-template pTemplate="header">
-      <tr>
+      <tr class="sticky top-0 bg-white z-10">
         <th ttResizableColumn>Node</th>
         <th ttResizableColumn>Count</th>
         <th ttResizableColumn>Info</th>
@@ -51,7 +54,7 @@
             <p-tag [style]="rowData.severityId | severityCssStyleById:(rowData.count ?? -1)"
                    [value]="rowData.label"
                    [rounded]="true"
-                   styleClass="ml-2 text-lg" />
+                   class="ml-2 text-lg" />
           } @else {
             <span>{{ rowData.label }}</span>
           }
@@ -61,13 +64,16 @@
             <p-tag [style]="rowData.severityId | severityCssStyleById:(rowData.count ?? -1)"
                    [value]="rowData.count ?? -1 | vulnerabilityCount"
                    [rounded]="true"
-                   styleClass="ml-2" />
+                   class="ml-2" />
           }
         </td>
 
         <td>
           @if (rowData.isLeaf) {
-            <small class="tod-text-muted-color">Category: <b>{{ rowData.statistics?.[0]?.category || '' }}</b></small><br />
+            <small class="tod-text-muted-color">
+              Category: <b>{{ rowData.statistics?.[0]?.category || '' }}</b>
+            </small>
+            <br />
             <span>{{ rowData.message || '' }}</span>
           } @else {
             @if (rowData.isExpanded) {
@@ -88,4 +94,5 @@
       </tr>
     </ng-template>
   </p-treeTable>
+    </div>
 </div>

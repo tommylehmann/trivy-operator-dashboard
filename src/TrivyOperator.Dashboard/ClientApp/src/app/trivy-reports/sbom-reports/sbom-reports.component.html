@@ -1,4 +1,4 @@
-<p-splitter styleClass="mb-8" class="tod-splitter-no-borders tod-splitter-no-background"
+<p-splitter class="tod-splitter-no-borders tod-splitter-no-background mb-8"
             [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
             [panelSizes]="[35, 65]" stateStorage="local" [stateKey]="screenSize !== 'sm' ? 'splitter.SBOM Reports' : undefined">
   <ng-template #panel>
@@ -33,7 +33,7 @@
                            { label: 'Export CycloneDX JSON', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
                            { label: 'Export CycloneDX XML', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
                            { label: 'Export SPDX', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
-                           { label: 'Dependency tree', icon: 'pi-sitemap', enabledIfDataLoaded: true },
+                           { label: 'Dependency tree', icon: 'pi pi-sitemap', enabledIfDataLoaded: true },
                            { label: '', specialAction: 'Clear Selection' },
                            { label: '', specialAction: 'Clear Sort/Filters' },
                            { label: '', specialAction: 'Collapse All' }
@@ -44,7 +44,7 @@
     </div>
   </ng-template>
   <ng-template #panel>
-    <div class="w-full flex flex-col tod-content-border">
+    <div class="w-full flex flex-col tod-content-border h-full">
       <app-fcose [nodeDataDtos]="nodeDataDtos"
                  [selectedNodeId]="selectedSbomDetailBomRef"
                  (activeNodeIdChange)="onActiveNodeIdChange($event)"
@@ -53,34 +53,34 @@
                  (deletedNodeIdsChange)="onDeletedNodeIds($event)"
                  (undeletedNodeIdsChange)="onUndeletedNodeIds($event)"
                  class="px-2"/>
-      @if (hoveredSbomDetailDto) {
-        @let detail = hoveredSbomDetailDto;
+      @let dto = hoveredSbomDetailDto;
+      @if (dto) {
         <div class="mt-auto pb-1 pl-2" >
           <span>
-            <b>Name:</b> {{ detail.name ?? '' }} -
-            <b>Version:</b> {{ detail.version }} -
-            <b>Dependencies:</b> {{ detail.dependsOn?.length ?? 0 }}
+            <b>Name:</b> {{ dto.name ?? '' }} -
+            <b>Version:</b> {{ dto.version }} -
+            <b>Dependencies:</b> {{ dto.dependsOn?.length ?? 0 }}
           </span>
           <p-tag class="ml-2"
                  [rounded]="true"
-                 [style]="0 | severityCssStyleById:(detail.criticalCount ?? -1)"
-                 [value]="detail.criticalCount ?? -1 | vulnerabilityCount" />
+                 [style]="0 | severityCssStyleById:(dto.criticalCount ?? -1)"
+                 [value]="dto.criticalCount ?? -1 | vulnerabilityCount" />
           <p-tag class="ml-2"
                  [rounded]="true"
-                 [style]="1 | severityCssStyleById:(detail.highCount ?? -1)"
-                 [value]="detail.highCount ?? -1 | vulnerabilityCount" />
+                 [style]="1 | severityCssStyleById:(dto.highCount ?? -1)"
+                 [value]="dto.highCount ?? -1 | vulnerabilityCount" />
           <p-tag class="ml-2"
                  [rounded]="true"
-                 [style]="2 | severityCssStyleById:(detail.mediumCount ?? -1)"
-                 [value]="detail.mediumCount ?? -1 | vulnerabilityCount" />
+                 [style]="2 | severityCssStyleById:(dto.mediumCount ?? -1)"
+                 [value]="dto.mediumCount ?? -1 | vulnerabilityCount" />
           <p-tag class="ml-2"
                  [rounded]="true"
-                 [style]="3 | severityCssStyleById:(detail.lowCount ?? -1)"
-                 [value]="detail.lowCount ?? -1 | vulnerabilityCount" />
+                 [style]="3 | severityCssStyleById:(dto.lowCount ?? -1)"
+                 [value]="dto.lowCount ?? -1 | vulnerabilityCount" />
           <p-tag class="ml-2"
                  [rounded]="true"
-                 [style]="4 | severityCssStyleById:(detail.unknownCount ?? -1)"
-                 [value]="detail.unknownCount ?? -1 | vulnerabilityCount" />
+                 [style]="4 | severityCssStyleById:(dto.unknownCount ?? -1)"
+                 [value]="dto.unknownCount ?? -1 | vulnerabilityCount" />
         </div>
       }
 
@@ -140,7 +140,7 @@
                        [virtualScroll]="true"
                        [virtualScrollItemSize]="49"
                        scrollHeight="flex"
-                       styleClass="p-treetable-sm text-sm">
+                       class="p-treetable-sm text-sm">
             <ng-template pTemplate="header">
               <tr style="height: 49px">
                 <th ttSortableColumn="name">License<p-treeTableSortIcon field="name" /></th>
@@ -165,7 +165,7 @@
         <div style="height: 180px; min-height: 180px">
           <p-table scrollHeight="flex"
                    sortMode="multiple"
-                   styleClass="p-datatable-sm text-sm p-0"
+                   class="p-datatable-sm text-sm p-0"
                    [virtualScrollItemSize]="49"
                    [scrollable]="true"
                    [value]="selectedSbomReportImageDto?.resources ?? []">
@@ -207,7 +207,7 @@
                        [virtualScroll]="true"
                        [virtualScrollItemSize]="49"
                        scrollHeight="flex"
-                       styleClass="p-treetable-sm text-sm">
+                       class="p-treetable-sm text-sm">
             <ng-template pTemplate="header">
               <tr style="height: 49px">
                 <th ttSortableColumn="name">Property<p-treeTableSortIcon field="name" /></th>

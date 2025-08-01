@@ -3,7 +3,7 @@
     <div class="col-span-12 lg:col-span-3 h-full">
       <span class="block text-center font-semibold">Config Audit Reports Statistics</span>
       <div class="flex row">
-        <p-table ngClass="w-full" styleClass="p-datatable-sm text-sm" [value]="carSeveritySummaries">
+        <p-table class="w-full p-datatable-sm text-sm" [value]="carSeveritySummaries">
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 50%; max-width: 75%">Severity</th>
@@ -99,10 +99,10 @@
   [(visible)]="isCarDetailsDialogVisible"
 >
   <p-table scrollDirection="both"
-            styleClass="p-datatable-sm text-sm"
-            [scrollable]="true"
-            scrollHeight="flex"
-            [value]="carDetailsDtos">
+           class="p-datatable-sm text-sm"
+           [scrollable]="true"
+           scrollHeight="flex"
+           [value]="carDetailsDtos">
     <ng-template pTemplate="header">
       <tr>
         <th pFrozenColumn rowspan="2">Namespace</th>

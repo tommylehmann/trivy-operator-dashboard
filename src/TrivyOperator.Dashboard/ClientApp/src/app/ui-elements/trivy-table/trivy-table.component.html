@@ -5,7 +5,6 @@
            scrollHeight="flex"
            sortMode="multiple"
            stateStorage="local"
-           styleClass=""
            class="p-datatable-xs"
            [columns]="trivyTableColumns()"
            [expandedRowKeys]="expandedRows"
@@ -138,7 +137,7 @@
                 <ng-template let-filter="filterCallback" pTemplate="filter">
                   <p-multiSelect optionLabel=""
                                  placeholder="Any"
-                                 styleClass="text-sm"
+                                 class="text-sm"
                                  [options]="activeNamespaces()"
                                  [style]="{ width: '300px' }"
                                  [(ngModel)]="filterSelectedActiveNamespaces"
@@ -161,7 +160,7 @@
                 <ng-template let-filter="filterCallback" pTemplate="filter">
                   <p-multiSelect optionLabel="name"
                                  placeholder="Any"
-                                 styleClass="text-sm"
+                                 class="text-sm"
                                  [style]="{ width: '200px' }"
                                  [filter]="false"
                                  [options]="filterSeverityOptions"
@@ -191,7 +190,7 @@
         @if (dataKey()) {
           <td style="max-width: 50px">
             <p-button size="small"
-                      styleClass="p-0 tod-text-primary-color"
+                      class="p-0 tod-text-primary-color"
                       [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                       [pRowToggler]="rowData"
                       [rounded]="true"
@@ -421,7 +420,7 @@
         <div class="row w-full tex-xs">
           <p-select #filterNamespacesSelect
                     placeholder="Select a Namespace"
-                    styleClass="w-full text-sm"
+                    class="w-full text-sm"
                     [checkmark]="true"
                     [options]="activeNamespaces()"
                     [showClear]="true"
@@ -435,7 +434,7 @@
               @for (severityDto of severityDtos; track severityDto.id) {
                 <div class="field-checkbox mb-2 text-sm">
                   <p-checkbox name="group"
-                              styleClass="ml-2"
+                              class="ml-2"
                               [value]="severityDto"
                               [inputId]="severityDto.id.toString()"
                               [(ngModel)]="filterRefreshSeverities" />
@@ -453,7 +452,7 @@
                         label="Refresh"
                         raised
                         size="small"
-                        styleClass="w-full"
+                        class="w-full"
                         text
                         (onClick)="onFilterData()" />
             </div>
