@@ -117,11 +117,6 @@ export const trivyOperatorDashboardPreset = definePreset(Nora, {
         borderRadius: 'var(--tod-selectbutton-border-radius)',
       },
     },
-    splitter: {
-      root: {
-        background: 'unset',
-      }
-    },
     tabs: {
       tab: {
         padding: 'var(--tod-tabs-tab-padding)',

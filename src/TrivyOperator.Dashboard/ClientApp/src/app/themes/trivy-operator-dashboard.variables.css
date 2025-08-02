@@ -21,14 +21,16 @@
   --tod-screen-width-sm: 640px;
 
   /* light mode vars */
-  --tod-text-primary-color: var(--p-surface-200);
+  --tod-text-primary-color: var(--p-surface-900);
+  --tod-text-revert-primary-color: var(--p-surface-100);
   --tod-togglebutton-background-border-color: var(--p-surface-100);
   --tod-blockquote-text-color: var(--p-surface-900);
 }
 
 /* dark mode vars */
 :root.trivy-operator-dashboard-dark {
-  --tod-text-primary-color: var(--p-surface-900);
+  --tod-text-primary-color: var(--p-surface-100);
+  --tod-text-revert-primary-color: var(--p-surface-900);
   --tod-togglebutton-background-border-color: var(--p-surface-950);
   --tod-blockquote-text-color: var(--p-surface-200);
 }

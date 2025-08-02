@@ -265,11 +265,11 @@
               }
               @case ('action') {
                 <p-button [label]="col.extraFields?.[0] ?? 'Change label!'"
+                          class="tod-text-primary-color"
                           size="small"
                           text
                           raised
-                          (onClick)="onRowAction(rowData, col.field)"
-                          severity="contrast" />
+                          (onClick)="onRowAction(rowData, col.field)" />
               }
               @case ('boolean') {
                 <p-tag [icon]="'pi ' + (rowData[col.field] === undefined ? 'pi-question-circle' : (rowData[col.field] ? 'pi-verified' : 'pi-times-circle'))"
@@ -461,7 +461,7 @@
                         label="Reset"
                         raised
                         size="small"
-                        styleClass="w-full"
+                        class="w-full"
                         text
                         (onClick)="onFilterReset()" />
             </div>

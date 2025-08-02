@@ -1,4 +1,4 @@
-<p-splitter class="tod-splitter-no-borders tod-splitter-no-background mb-8"
+<p-splitter class="tod-splitter-no-borders tod-no-background mb-8"
             [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
             [panelSizes]="[35, 65]" stateStorage="local" [stateKey]="screenSize !== 'sm' ? 'splitter.SBOM Reports' : undefined">
   <ng-template #panel>
@@ -7,7 +7,7 @@
         <app-namespace-image-selector [dataDtos]="namespacedImageDtos"
                                       [(selectedImageId)]="selectedImageId" />
       </div>
-      <div class="tod-content-border">
+      <div class="tod-content-border tod-content-background">
         <app-trivy-table [dataDtos]="dependsOnBoms"
                          [isLoading]="isTableLoading"
                          [trivyTableColumns]="dependsOnTableColumns"
