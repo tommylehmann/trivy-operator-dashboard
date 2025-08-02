@@ -18,7 +18,7 @@
                   [text]="true"
                   [disabled]="graphSelectedNodes.length == 0"
                   (onClick)="onDeleteNode()">
-          <mat-icon class="text-sm">commit</mat-icon>
+          <app-icon name="commit" />
         </p-button>
         <p-button label="Hide Subtree"
                   size="small"
@@ -26,7 +26,7 @@
                   [text]="true"
                   [disabled]="isStatic() || graphSelectedNodes.length == 0"
                   (onClick)="onDeleteNodeAndChildren()">
-          <mat-icon class="text-sm">graph_2</mat-icon>
+          <app-icon name="graph_2" />
         </p-button>
         <p-button label="Undo"
                   size="small"
@@ -34,7 +34,7 @@
                   [text]="true"
                   [disabled]="isStatic() || currentDeletedNodesIndex == -1 || deletedNodes.length == 0"
                   (onClick)="onUndo()">
-          <mat-icon class="text-sm">undo</mat-icon>
+          <app-icon name="undo" />
         </p-button>
         <p-button label="Redo"
                   size="small"
@@ -42,7 +42,7 @@
                   [text]="true"
                   [disabled]="isStatic() || currentDeletedNodesIndex >= deletedNodes.length - 1"
                   (onClick)="onRedo()">
-          <mat-icon class="text-sm">redo</mat-icon>
+          <app-icon name="redo" />
         </p-button>
         <p-button label="Show All"
                   size="small"
@@ -50,7 +50,7 @@
                   [text]="true"
                   [disabled]="deletedNodes.length == 0 || this.currentDeletedNodesIndex == -1"
                   (onClick)="onShowAll()">
-          <mat-icon class="text-sm">visibility</mat-icon>
+          <app-icon name="visibility" />
         </p-button>
         <div class="h-6 w-[2px] tod-separator mx-1"></div>
         <p-button icon="pi pi-question-circle"

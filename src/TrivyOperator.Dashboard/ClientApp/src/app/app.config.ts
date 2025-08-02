@@ -12,7 +12,6 @@ import { routes } from "./app.routes";
 import { DarkModeService } from "./services/dark-mode.service";
 import { MainAppInitService, initializeAppFactory } from "./services/main-app-init.service";
 import { trivyOperatorDashboardPreset } from "./themes/trivy-operator-dashboard.preset";
-import { MatIconRegistry } from '@angular/material/icon';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,10 +23,6 @@ export const appConfig: ApplicationConfig = {
     Title,
     MessageService,
     provideAppInitializer(() => initializeAppFactory(inject(MainAppInitService))),
-    provideAppInitializer(() => {
-      const iconRegistry = inject(MatIconRegistry);
-      iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
-    }),
     providePrimeNG({
       ripple: true,
       theme: {

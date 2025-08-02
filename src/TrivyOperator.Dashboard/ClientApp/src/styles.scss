@@ -17,11 +17,8 @@
 
 }
 
-@import './../node_modules/material-symbols/index' layer(base);
-
 /* Components fixes*/
 @layer app-layer {
-
 
 }
 
@@ -42,7 +39,7 @@
 }
 
 .custom-small-row td {
-  padding: 0px;
+  padding: 0;
   padding-left: 4px;
   height: 25px !important;
   line-height: 1em;
@@ -214,6 +211,10 @@ p-splitter.tod-splitter-no-borders {
 
 .tod-text-right {
   text-align: right;
+}
+
+.tod-text-contrast-color {
+  color: var(--p-primary-contrast-color);
 }
 
 .tod-content-border {

@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -8,6 +7,7 @@ import { AlertsService } from '../../services/alerts.service';
 import { DarkModeService } from '../../services/dark-mode.service';
 import { MainAppInitService } from '../../services/main-app-init.service';
 import { RouterEventEmitterService } from '../../services/router-event-emitter.service';
+import { IconComponent } from '../icon/icon.component';
 
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
@@ -29,7 +29,7 @@ import { ToastModule } from 'primeng/toast';
     TagModule,
     BadgeModule,
     ToastModule,
-    MatIconModule,
+    IconComponent,
   ],
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.scss'],

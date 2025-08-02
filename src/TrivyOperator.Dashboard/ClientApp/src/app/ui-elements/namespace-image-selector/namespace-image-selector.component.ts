@@ -1,11 +1,11 @@
 import { Component, effect, input, model, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 
+import { IconComponent } from '../icon/icon.component';
 import { NamespacedImageDto } from './namespace-image-selector.types';
 
 interface ImageDto {
@@ -16,7 +16,7 @@ interface ImageDto {
 
 @Component({
   selector: 'app-namespace-image-selector',
-  imports: [FormsModule, ButtonModule, SelectModule, TagModule, MatIconModule],
+  imports: [FormsModule, ButtonModule, SelectModule, TagModule, IconComponent],
   templateUrl: './namespace-image-selector.component.html',
   styleUrl: './namespace-image-selector.component.scss'
 })

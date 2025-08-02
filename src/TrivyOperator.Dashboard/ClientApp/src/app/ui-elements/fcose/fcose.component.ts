@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { debounceTime } from 'rxjs/operators';
 
 import cytoscape, { EdgeSingular, ElementDefinition, NodeSingular } from 'cytoscape';
@@ -23,6 +22,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 
+import { IconComponent } from '../icon/icon.component';
 import { TrivyToolbarComponent } from '../trivy-toolbar/trivy-toolbar.component';
 
 import { DeletedNodes, NodeDataDto } from './fcose.types'
@@ -35,8 +35,8 @@ cytoscape.use(fcose);
   selector: 'app-fcose',
   standalone: true,
   imports: [BreadcrumbModule, ButtonModule, DialogModule, InputTextModule, TagModule,
-    TrivyToolbarComponent,
-    CommonModule, ReactiveFormsModule, MatIconModule],
+    IconComponent, TrivyToolbarComponent,
+    CommonModule, ReactiveFormsModule],
   templateUrl: './fcose.component.html',
   styleUrl: './fcose.component.scss',
 })

@@ -2,7 +2,7 @@
   <ng-template pTemplate="start">
     <div class="flex items-center gap-4">
       <p-button icon="pi pi-bars" [raised]="true" [text]="true" (click)="openDrawer()" />
-      <img alt="logo" src="../../../assets/logo_AL.ico" style="cursor: pointer; height: 45px" (click)="router.navigate(['/'])" />
+      <img alt="logo" src="assets/logo_AL.ico" style="cursor: pointer; height: 45px" (click)="router.navigate(['/'])" />
       <h4 class="no-margins font-semibold">
         <span class="hidden sm:inline">Trivy Operator Dashboard - </span>{{ activePage }}
       </h4>
@@ -28,14 +28,13 @@
     </div>
   </ng-template>
 </p-menubar>
-<p-drawer [baseZIndex]="10000" [showCloseIcon]="false" [(visible)]="isDrawerVisible">
+<p-drawer [baseZIndex]="10000" [closable]="false" [(visible)]="isDrawerVisible">
   <p-panelMenu class="w-full" [model]="items" [multiple]="true">
     <ng-template let-item #item>
       <a pRipple class="flex items-center cursor-pointer text-color px-4 py-2">
         @if (item.icon) {
-          <mat-icon>{{ item.icon }}</mat-icon>
+          <app-icon [name]="item.icon"/>
         }
-
         <span class="ml-2">{{ item.label }}</span>
       </a>
     </ng-template>

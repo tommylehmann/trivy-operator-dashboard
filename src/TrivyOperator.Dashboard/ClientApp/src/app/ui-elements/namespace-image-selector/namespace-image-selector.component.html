@@ -23,8 +23,8 @@
         <div class="flex items-center gap-2 w-full overflow-hidden text-sm">
           <div class="truncate whitespace-nowrap">{{ imageDto.imageNameTag }}</div>
           @if (imageDto.icon) {
-            <p-tag rounded class="ml-auto">
-              <mat-icon class="text-xs">{{ imageDto.icon }}</mat-icon>
+            <p-tag rounded class="flex items-center">
+              <app-icon [name]="imageDto.icon" class="text-xs align-middle inline-block tod-text-contrast-color"/>
             </p-tag>
           }
         </div>
