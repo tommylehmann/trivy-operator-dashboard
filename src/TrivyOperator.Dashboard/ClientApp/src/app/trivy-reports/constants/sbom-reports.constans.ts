@@ -177,3 +177,51 @@ export const sbomReportDenormalizedColumns: readonly TrivyTableColumn[] = [
     extraFields: ['4'],
   },
 ];
+
+export const sbomReportComparedTableColumns: readonly TrivyTableColumn[] = [
+  {
+    field: 'first',
+    header: '1st',
+    isFilterable: false,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 90px; max-width: 90px;',
+    renderType: 'boolean',
+  },
+  {
+    field: 'second',
+    header: '2nd',
+    isFilterable: false,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 90px; max-width: 90px;',
+    renderType: 'boolean',
+  },
+  {
+    field: 'name',
+    header: 'Name',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 290px;',
+    renderType: 'compareStacked',
+  },
+  {
+    field: 'version',
+    header: 'Version',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 130px; max-width: 130px;',
+    renderType: 'compareStacked',
+  },
+  {
+    field: 'purl',
+    header: 'A purl',
+    isFilterable: true,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 200px; max-width: 200px;',
+    renderType: 'standard',
+  },
+];

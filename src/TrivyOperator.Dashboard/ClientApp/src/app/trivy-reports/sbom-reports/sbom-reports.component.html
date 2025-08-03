@@ -33,6 +33,7 @@
                            { label: 'Export CycloneDX JSON', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
                            { label: 'Export CycloneDX XML', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
                            { label: 'Export SPDX', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
+                           { label: 'Compare with...', icon: 'pi pi-copy', enabledIfRowSelected: true },
                            { label: 'Dependency tree', icon: 'pi pi-sitemap', enabledIfDataLoaded: true },
                            { label: '', specialAction: 'Clear Selection' },
                            { label: '', specialAction: 'Clear Sort/Filters' },
@@ -230,7 +231,32 @@
       </div>
     </div>
   </p-dialog>
+}
 
+@if (fullSbomDataDto && isTrivyReportsCompareVisible) {
+  <p-dialog closable="true"
+            closeOnEscape="true"
+            dismissableMask="true"
+            resizable="true"
+            maximizable="true"
+            [breakpoints]="{ '890px': '90vw' }"
+            [contentStyle]="{ height: '95vh' }"
+            header="Compare Vulnerabilities of Images"
+            [modal]="true"
+            [style]="{ width: '90vw' }"
+            [(visible)]="isTrivyReportsCompareVisible" >
+    <app-generic-reports-compare [dataDtos]="dataDtos"
+                                 [comparedTableColumns]="comparedTableColumns"
+                                 [namespacedImageDtos]="namespacedImageDtos"
+                                 [firstSelectedTrivyReportId]="fullSbomDataDto.uid"
+
+                                 [compareIsResetFiltersVisible]="true"
+                                 [compareStateKey]="'Vulnerability Reports - Compared'"
+                                 [compareExtraClasses]="'trivy-with-filters'" />
+  </p-dialog>
+}
+
+@if (isDependencyTreeViewVisible && trivyImage) {
   <p-dialog closable="true"
             closeOnEscape="true"
             dismissableMask="true"

@@ -9,7 +9,7 @@ import { SbomReportImageDto } from '../../../api/models/sbom-report-image-dto';
 import { SbomReportService } from '../../../api/services/sbom-report.service';
 import { NodeDataDto } from '../../ui-elements/fcose/fcose.types';
 import { SbomDetailExtendedDto } from './sbom-reports.types';
-import { sbomReportDetailColumns } from '../constants/sbom-reports.constans';
+import { sbomReportComparedTableColumns, sbomReportDetailColumns } from '../constants/sbom-reports.constans';
 
 import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
 import { SeverityNameByIdPipe } from '../../pipes/severity-name-by-id.pipe';
@@ -31,13 +31,15 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNode } from 'primeng/api';
+
+import { GenericReportsCompareComponent } from '../../ui-elements/generic-reports-compare/generic-reports-compare.component';
 import { ImageInfo, TrivyDependencyComponent } from '../../trivy-dependency/trivy-dependency.component';
 
 @Component({
   selector: 'app-sbom-reports',
   standalone: true,
   imports: [FormsModule,
-    FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent, TrivyDependencyComponent,
+    FcoseComponent, NamespaceImageSelectorComponent, TrivyTableComponent, GenericReportsCompareComponent, TrivyDependencyComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
     ButtonModule, CardModule, DialogModule, PanelModule, SelectModule, SplitterModule, TableModule, TagModule, TreeTableModule],
   templateUrl: './sbom-reports.component.html',
@@ -79,6 +81,9 @@ export class SbomReportsComponent implements OnInit {
   queryNamespaceName?: string;
   queryDigest?: string;
   isStatic: boolean = false;
+
+  isTrivyReportsCompareVisible: boolean = false;
+  comparedTableColumns: TrivyTableColumn[] = [... sbomReportComparedTableColumns];
 
   isDependencyTreeViewVisible: boolean = false;
   trivyImage?: ImageInfo;
@@ -355,6 +360,9 @@ export class SbomReportsComponent implements OnInit {
       case "Export SPDX":
         this.exportSbom('spdx','json');
         break;
+      case "Compare with...":
+        this.goToComparePage();
+        break;
       case "Dependency tree":
         this.goToDependencyTree();
         break;
@@ -414,6 +422,12 @@ export class SbomReportsComponent implements OnInit {
         console.error(`Error fetching the file as ${contentType}:`, err);
       }
     });
+  }
+
+  private goToComparePage() {
+    if (!this.fullSbomDataDto || !this.namespacedImageDtos) return;
+
+    this.isTrivyReportsCompareVisible = true;
   }
 
   private goToDependencyTree() {

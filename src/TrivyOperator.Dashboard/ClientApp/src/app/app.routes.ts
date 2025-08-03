@@ -150,20 +150,6 @@ export const routes: Routes = [
   {
     path: 'test1',
     loadComponent: () =>
-      import('./ui-elements/fcose-help/fcose-help.component').then(
-        (m) => m.FcoseHelpComponent),
-    data: { title: 'Test' },
-  },
-  {
-    path: 'test2',
-    loadComponent: () =>
-      import('./sbom-reports-compare/sbom-reports-compare.component').then(
-        (m) => m.SbomReportsCompareComponent),
-    data: { title: 'Test' },
-  },
-  {
-    path: 'test3',
-    loadComponent: () =>
       import('./tests/tests.component').then(
         (m) => m.TestsComponent),
     data: { title: 'Test' },
