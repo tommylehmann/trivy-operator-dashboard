@@ -48,7 +48,8 @@ public class SbomReportImageResourceDto
 
 public class SbomReportDetailDto
 {
-    public Guid Id => GuidUtils.GetDeterministicGuid($"{Purl}");
+    public Guid Id => GuidUtils.GetDeterministicGuid(Purl);
+    public Guid MatchKey => GuidUtils.GetDeterministicGuid($"{(string.IsNullOrEmpty(Purl.Split('@')[0]) ? Name : Purl.Split('@')[0])}");
     public string BomRef { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Purl { get; set; } = string.Empty;

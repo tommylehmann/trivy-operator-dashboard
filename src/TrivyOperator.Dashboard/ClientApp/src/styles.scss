@@ -256,6 +256,11 @@ tr.p-treetable-row-selected p-button.tod-text-primary-color button {
   background: var(--p-button-text-primary-color);
 }
 
+.tod-py0 {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 .tod-h90vw {
   height: 90vh;
 }

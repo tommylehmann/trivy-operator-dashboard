@@ -2373,6 +2373,10 @@ components:
           type: string
           format: uuid
           readOnly: true
+        matchKey:
+          type: string
+          format: uuid
+          readOnly: true
         bomRef:
           type: string
         name:
@@ -2788,6 +2792,10 @@ components:
       type: object
       properties:
         id:
+          type: string
+          format: uuid
+          readOnly: true
+        matchKey:
           type: string
           format: uuid
           readOnly: true

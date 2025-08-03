@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 
-import { ClusterComplianceReportDto } from '../../../api/models/cluster-compliance-report-dto';
 import { SeverityDto } from '../../../api/models/severity-dto';
 import { ClusterComplianceReportService } from '../../../api/services/cluster-compliance-report.service';
 
@@ -17,7 +16,7 @@ import { clusterComplianceReportDenormalizedColumns } from '../constants/cluster
   styleUrl: './cluster-compliance-reports-detailed.component.scss',
 })
 export class ClusterComplianceReportsDetailedComponent implements OnInit {
-  dataDtos?: ClusterComplianceReportDto[];
+  dataDtos?: ClusterComplianceReportDenormalizedDto[];
   severityDtos: SeverityDto[] = [];
   isLoading: boolean = false;
 

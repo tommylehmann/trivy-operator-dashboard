@@ -1,8 +1,17 @@
 export interface TrivyReport<TTrivyReportDetail extends TrivyReportDetail> {
-  uid?: string | null;
-  details?: Array<TTrivyReportDetail> | null;
+  uid: string;
+  details: Array<TTrivyReportDetail>;
 }
 
 export interface TrivyReportDetail {
-  id?: string | null;
+  id: string;
+}
+
+export interface TrivyReportComparable<TTrivyReportDetail extends TrivyReportComparableDetail> {
+  uid: string;
+  details: Array<TrivyReportComparableDetail>;
+}
+
+export interface TrivyReportComparableDetail extends TrivyReportDetail {
+  matchKey: string;
 }

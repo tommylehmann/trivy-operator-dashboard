@@ -45,7 +45,7 @@ export class SbomReportsCompareComponent implements OnInit {
       isSortable: true,
       multiSelectType: 'none',
       style: 'white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 290px;',
-      renderType: 'standard',
+      renderType: 'compareStacked',
     },
     {
       field: 'version',
@@ -54,7 +54,7 @@ export class SbomReportsCompareComponent implements OnInit {
       isSortable: true,
       multiSelectType: 'none',
       style: 'width: 130px; max-width: 130px;',
-      renderType: 'standard',
+      renderType: 'compareStacked',
     },
     {
       field: 'purl',
@@ -62,7 +62,7 @@ export class SbomReportsCompareComponent implements OnInit {
       isFilterable: true,
       isSortable: true,
       multiSelectType: 'none',
-      style: 'width: 440px; max-width: 440px;',
+      style: 'width: 130px; max-width: 130px;',
       renderType: 'standard',
     },
   ];

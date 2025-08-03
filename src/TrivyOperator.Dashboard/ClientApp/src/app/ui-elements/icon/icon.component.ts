@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
@@ -17,13 +17,6 @@ export class IconComponent implements  OnInit {
 
   private httpClientService = inject(HttpClient);
   private sanitizer = inject(DomSanitizer);
-
-  constructor() {
-    effect(() => {
-      console.log("name:", this.name());
-      console.log("class:", this.class());
-    });
-  }
 
   ngOnInit() {
     const path = `assets/icons/${this.name()}.svg`;

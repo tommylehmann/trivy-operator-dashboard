@@ -54,7 +54,8 @@ export interface TrivyTableColumn extends Column {
     | 'multiline'
     | 'action'
     | 'boolean'
-    | 'unPascalCase';
+    | 'unPascalCase'
+    | 'compareStacked';
   extraFields?: string[];
 }
 

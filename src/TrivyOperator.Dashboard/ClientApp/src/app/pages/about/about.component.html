@@ -44,7 +44,7 @@
           <p class="text-lg font-semibold">Version Info</p>
           <div class="p-1">
             <span class="pr-2">Current Version:</span>
-            <p-tag [rounded]="true" [value]="currentVersion ? (currentVersion.fileVersion ?? 'n/a') : 'n/a'" />
+            <p-tag [rounded]="true" [value]="currentVersion ? (currentVersion.fileVersion) : 'n/a'" />
           </div>
           <div class="p-1">
             <span class="pr-2">Latest Version:</span>
@@ -72,10 +72,10 @@
           <div class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3">
             <p-card class="h-full small-header"
                     [ngClass]="{'p-card-bold-subtitle': i === 0}"
-                    [header]="releaseNote.name ?? ''"
-                    subheader="{{ releaseNote.createdAt ?? '' | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
+                    [header]="releaseNote.name"
+                    subheader="{{ releaseNote.createdAt | date: 'yyyy-MM-dd' }} {{ i === 0 ? '(latest)' : '' }}">
               <div class="prose prose-ul">
-                <markdown class="list-disc pl-5" [data]="releaseNote.body ?? ''"></markdown>
+                <markdown class="list-disc pl-5" [data]="releaseNote.body"></markdown>
               </div>
             </p-card>
           </div>
