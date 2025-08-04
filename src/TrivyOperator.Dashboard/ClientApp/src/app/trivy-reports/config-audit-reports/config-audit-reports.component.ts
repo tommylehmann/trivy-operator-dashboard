@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { GetConfigAuditReportDtos$Params } from '../../../api/fn/config-audit-report/get-config-audit-report-dtos';
 import { ConfigAuditReportDto } from '../../../api/models/config-audit-report-dto';
@@ -6,7 +7,6 @@ import { ConfigAuditReportService } from '../../../api/services/config-audit-rep
 import { GenericMasterDetailComponent } from '../../ui-elements/generic-master-detail/generic-master-detail.component';
 import { TrivyFilterData, TrivyTableColumn } from '../../ui-elements/trivy-table/trivy-table.types';
 import { SeverityUtils } from '../../utils/severity.utils';
-import { ActivatedRoute, Router } from '@angular/router';
 import { namespacedColumns } from '../constants/generic.constants';
 import {
   configAuditReportColumns,
@@ -18,6 +18,7 @@ import { GenericReportsCompareComponent } from '../../ui-elements/generic-report
 import { NamespacedImageDto } from '../../ui-elements/namespace-image-selector/namespace-image-selector.types';
 
 import { DialogModule } from 'primeng/dialog';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-config-audit-reports',
@@ -30,7 +31,7 @@ export class ConfigAuditReportsComponent implements OnInit {
   dataDtos: ConfigAuditReportDto[] = [];
   activeNamespaces?: string[] = [];
 
-  mainTableColumns: TrivyTableColumn[] = [...namespacedColumns, ...configAuditReportColumns];
+  mainTableColumns: TrivyTableColumn[] = [... namespacedColumns, ...configAuditReportColumns];
   isMainTableLoading: boolean = true;
 
   detailsTableColumns: TrivyTableColumn[] = [... configAuditReportDetailColumns ];
@@ -47,6 +48,7 @@ export class ConfigAuditReportsComponent implements OnInit {
   private readonly dataDtoService = inject(ConfigAuditReportService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly messageService = inject(MessageService);
 
   ngOnInit() {
     this.activatedRoute.queryParamMap.subscribe(params => {
@@ -94,7 +96,7 @@ export class ConfigAuditReportsComponent implements OnInit {
         this.goToComparePage();
         break;
       default:
-        console.error("sbom - multi action call back - unknown: " + event);
+        console.error("car - multi action call back - unknown: " + event);
     }
   }
 
@@ -107,8 +109,19 @@ export class ConfigAuditReportsComponent implements OnInit {
 
   private goToComparePage() {
     if (!this.dataDtos || !this.selectedTrivyReportDto) return;
+    if (this.selectedTrivyReportDto.criticalCount < 1 && this.selectedTrivyReportDto.highCount < 1 &&
+      this.selectedTrivyReportDto.mediumCount < 1 && this.selectedTrivyReportDto.lowCount < 1) {
+      this.messageService.add({
+        severity: "info",
+        summary: "Nothing to compare",
+        detail: "The selected item has no details, so there is nothing to compare...",
+      });
+
+      return;
+    }
 
     this.compareNamespacedImageDtos = this.dataDtos
+      .filter(car => car.criticalCount > 0 || car.highCount > 0 || car.mediumCount > 0 || car.lowCount > 0)
       .map(car => ({
         uid: car.uid ?? '', resourceNamespace: car.resourceNamespace ?? '',
         mainLabel: car.resourceName, group: car.resourceKind }));

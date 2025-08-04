@@ -1,22 +1,50 @@
-<app-generic-master-detail
-  [activeNamespaces]="activeNamespaces"
-  [dataDtos]="dataDtos"
-  [detailsTableColumns]="detailsTableColumns"
-  [isMainTableLoading]="isMainTableLoading"
-  [mainTableColumns]="mainTableColumns"
-  [splitterStorageKey]="'RBAC Assessment Reports'"
-  (refreshRequested)="onRefreshRequested($event)"
+<app-generic-master-detail [activeNamespaces]="activeNamespaces"
+                           [dataDtos]="dataDtos"
+                           [detailsTableColumns]="detailsTableColumns"
+                           [isMainTableLoading]="isMainTableLoading"
+                           [mainTableColumns]="mainTableColumns"
+                           [splitterStorageKey]="'RBAC Assessment Reports'"
+                           (refreshRequested)="onRefreshRequested($event)"
+                           (mainTableMultiHeaderActionRequested)="onMainTableMultiHeaderActionRequested($event)"
+                           (mainTableSelectedRowChanged)="onMainTableSelectedRowChanged($event)"
 
-  [mainTableIsResetFiltersVisible]="true"
-  [mainTableIsRefreshVisible]="true"
-  [mainTableSelectionMode]="'single'"
-  [mainTableStyle]="{ width: '595px' }"
-  [mainTableStateKey]="'RBAC Assessment Reports - Main'"
-  [mainTableExtraClasses]="'trivy-half'"
+                           [mainTableIsRefreshVisible]="true"
+                           [mainTableSelectionMode]="'single'"
+                           [mainTableStyle]="{ width: '595px' }"
+                           [mainTableStateKey]="'RBAC Assessment Reports - Main'"
+                           [mainTableExtraClasses]="'trivy-half'"
+                           [mainTableMultiHeaderActions]="[
+                             { label: '', icon: 'pi pi-align-justify', specialAction: 'Go to Detailed ⧉' },
+                             { label: 'Compare with...', icon: 'pi pi-copy', enabledIfRowSelected: true },
+                             { label: '', specialAction: 'Clear Sort/Filters' },
+                           ]"
 
-  [detailsIsResetFiltersVisible]="true"
-  [detailsStateKey]="'RBAC Assessment Reports - Details'"
-  [detailsDataKey]="'uid'"
-  [detailsRowExpansionRender]="'messages'"
-  [detailsExtraClasses]="'trivy-half'"
-/>
+                           [detailsIsResetFiltersVisible]="true"
+                           [detailsStateKey]="'RBAC Assessment Reports - Details'"
+                           [detailsDataKey]="'uid'"
+                           [detailsRowExpansionRender]="'messages'"
+                           [detailsExtraClasses]="'trivy-half'" />
+
+@if (selectedTrivyReportDto && isTrivyReportsCompareVisible) {
+  <p-dialog closable="true"
+            closeOnEscape="true"
+            dismissableMask="true"
+            resizable="true"
+            maximizable="true"
+            [breakpoints]="{ '890px': '90vw' }"
+            [contentStyle]="{ height: '95vh' }"
+            header="Compare RBAC Assessment Reports"
+            [modal]="true"
+            [style]="{ width: '90vw' }"
+            [(visible)]="isTrivyReportsCompareVisible" >
+    <app-generic-reports-compare [dataDtos]="dataDtos"
+                                 [comparedTableColumns]="comparedTableColumns"
+                                 [namespacedImageDtos]="compareNamespacedImageDtos"
+                                 [firstSelectedTrivyReportId]="compareFirstSelectedIdId"
+
+                                 [compareIsResetFiltersVisible]="true"
+                                 [compareStateKey]="'RBAC Assessment Reports - Compared'"
+                                 [compareExtraClasses]="'trivy-with-filters'"
+                                 imagePlaceholder="Select RBAC Assessment Report..."/>
+  </p-dialog>
+}

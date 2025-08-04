@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { GetExposedSecretReportImageDtos$Params } from '../../../api/fn/exposed-secret-report/get-exposed-secret-report-image-dtos';
 import { ExposedSecretReportImageDto } from '../../../api/models/exposed-secret-report-image-dto';
@@ -7,9 +8,6 @@ import { GenericMasterDetailComponent } from '../../ui-elements/generic-master-d
 import { TrivyFilterData, TrivyTableColumn, TrivyTableExpandRowData } from '../../ui-elements/trivy-table/trivy-table.types';
 import { SeverityUtils } from '../../utils/severity.utils';
 
-import { DialogModule } from 'primeng/dialog';
-import { TableModule } from 'primeng/table';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ReportHelper, TrivyReportImageDto } from '../abstracts/trivy-report-image';
 import { VulnerabilityReportImageResourceDto } from '../../../api/models/vulnerability-report-image-resource-dto';
 import { namespacedColumns } from '../constants/generic.constants';
@@ -22,6 +20,10 @@ import {
 import { GenericReportsCompareComponent } from '../../ui-elements/generic-reports-compare/generic-reports-compare.component';
 import { TrivyDependencyComponent, ImageInfo } from '../../trivy-dependency/trivy-dependency.component';
 import { NamespacedImageDto } from '../../ui-elements/namespace-image-selector/namespace-image-selector.types';
+
+import { DialogModule } from 'primeng/dialog';
+import { TableModule } from 'primeng/table';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-exposed-secret-reports',
@@ -59,6 +61,7 @@ export class ExposedSecretReportsComponent implements OnInit {
   private readonly dataDtoService = inject(ExposedSecretReportService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly messageService = inject(MessageService);
 
   ngOnInit() {
     this.activatedRoute.queryParamMap.subscribe(params => {
@@ -155,21 +158,32 @@ export class ExposedSecretReportsComponent implements OnInit {
         this.goToDependencyTree();
         break;
       default:
-        console.error("sbom - multi action call back - unknown: " + event);
+        console.error("esr - multi action call back - unknown: " + event);
     }
   }
 
   private goToDetailedPage() {
     const url = this.router.serializeUrl(
-      this.router.createUrlTree(['/vulnerability-reports-detailed'])
+      this.router.createUrlTree(['/exposed-secret-reports-detailed'])
     );
     window.open(url, '_blank');
   }
 
   private goToComparePage() {
     if (!this.dataDtos || !this.selectedTrivyReportDto) return;
+    if (this.selectedTrivyReportDto.criticalCount < 1 && this.selectedTrivyReportDto.highCount < 1 &&
+      this.selectedTrivyReportDto.mediumCount < 1 && this.selectedTrivyReportDto.lowCount < 1) {
+      this.messageService.add({
+        severity: "info",
+        summary: "Nothing to compare",
+        detail: "The selected item has no details, so there is nothing to compare...",
+      });
+
+      return;
+    }
 
     this.compareNamespacedImageDtos = this.dataDtos
+      .filter(esr => esr.criticalCount > 0 || esr.highCount > 0 || esr.mediumCount > 0 || esr.lowCount > 0)
       .map(esr => ({
         uid: esr.uid ?? '', resourceNamespace: esr.resourceNamespace ?? '',
         mainLabel: `${esr.imageName ?? ''}:${esr.imageTag ?? '' }`}));
