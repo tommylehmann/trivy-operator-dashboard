@@ -68,7 +68,6 @@ export class GenericReportsCompareComponent<
 
     const detailSet = new Map<string, TrivyReportDetailComparedDto>();
 
-    // Parse first report
     this._dataDtos
       ?.find(tr => tr.uid === this._firstSelectedTrivyReportId)
       ?.details?.forEach(detail => {
@@ -87,7 +86,6 @@ export class GenericReportsCompareComponent<
       }
     });
 
-    // Parse second report
     this._dataDtos
       ?.find(tr => tr.uid === this._secondSelectedTrivyReportId)
       ?.details?.forEach(detail => {

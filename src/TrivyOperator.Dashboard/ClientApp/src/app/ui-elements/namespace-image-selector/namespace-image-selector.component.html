@@ -1,6 +1,6 @@
 <div class="grid grid-cols-12 gap-2 items-stretch">
   <div class="col-span-4 flex w-full">
-    <p-select placeholder="Select a Namespace"
+    <p-select [placeholder]="namespacePlaceholder()"
               class="text-sm w-full"
               [filter]="true"
               [options]="activeNamespaces"
@@ -11,7 +11,7 @@
   </div>
   <div class="col-span-8 flex items-center gap-2 justify-center">
     <p-select optionLabel="imageNameTag"
-              placeholder="Select an Image"
+              [placeholder]="imagePlaceholder()"
               class="text-sm w-full"
               appendTo="body"
               [filter]="true"

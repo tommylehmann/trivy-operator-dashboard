@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TrivyOperator.Dashboard.Domain.Trivy.ExposedSecretReport;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
@@ -46,6 +47,8 @@ public class ExposedSecretReportImageResourceDto
 
 public class ExposedSecretReportDetailDto
 {
+    public Guid Id => GuidUtils.GetDeterministicGuid($"{SeverityId}{Category}{RuleId}{Target}");
+    public Guid MatchKey => Id;
     public string Category { get; init; } = string.Empty;
     public string Match { get; init; } = string.Empty;
     public string RuleId { get; init; } = string.Empty;

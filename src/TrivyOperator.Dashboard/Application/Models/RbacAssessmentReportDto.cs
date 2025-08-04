@@ -1,4 +1,6 @@
-﻿using TrivyOperator.Dashboard.Domain.Trivy.RbacAssessmentReport;
+﻿using System.Data;
+using TrivyOperator.Dashboard.Domain.Trivy.RbacAssessmentReport;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
@@ -16,7 +18,8 @@ public class RbacAssessmentReportDto
 
 public class RbacAssessmentReportDetailDto
 {
-    public Guid Uid { get; init; } = Guid.NewGuid();
+    public Guid Id => GuidUtils.GetDeterministicGuid($"{SeverityId}{Category}{CheckId}");
+    public Guid MatchKey => Id;
     public string Category { get; init; } = string.Empty;
     public string CheckId { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;

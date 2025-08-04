@@ -1818,9 +1818,14 @@ components:
     ConfigAuditReportDetailDto:
       type: object
       properties:
-        uid:
+        id:
           type: string
           format: uuid
+          readOnly: true
+        matchKey:
+          type: string
+          format: uuid
+          readOnly: true
         category:
           type: string
         checkId:
@@ -2096,6 +2101,14 @@ components:
     ExposedSecretReportDetailDto:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        matchKey:
+          type: string
+          format: uuid
+          readOnly: true
         category:
           type: string
         match:
@@ -2292,9 +2305,14 @@ components:
     RbacAssessmentReportDetailDto:
       type: object
       properties:
-        uid:
+        id:
           type: string
           format: uuid
+          readOnly: true
+        matchKey:
+          type: string
+          format: uuid
+          readOnly: true
         category:
           type: string
         checkId:

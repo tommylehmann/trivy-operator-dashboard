@@ -1,4 +1,6 @@
-﻿using TrivyOperator.Dashboard.Domain.Trivy.ConfigAuditReport;
+﻿using OpenTelemetry.Resources;
+using TrivyOperator.Dashboard.Domain.Trivy.ConfigAuditReport;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
@@ -17,7 +19,8 @@ public class ConfigAuditReportDto
 
 public class ConfigAuditReportDetailDto
 {
-    public Guid Uid { get; init; } = Guid.NewGuid();
+    public Guid Id => GuidUtils.GetDeterministicGuid($"{SeverityId}{CheckId}");
+    public Guid MatchKey => Id;
     public string Category { get; init; } = string.Empty;
     public string CheckId { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;

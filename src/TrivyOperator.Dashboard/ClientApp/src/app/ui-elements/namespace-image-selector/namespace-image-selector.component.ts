@@ -25,6 +25,9 @@ export class NamespaceImageSelectorComponent implements OnInit {
   disabled = input<boolean>(false);
   selectedImageId = model<string | undefined>();
 
+  namespacePlaceholder = input<string>('Select namespace');
+  imagePlaceholder = input<string>('Select image');
+
   selectedNamespace?: string;
 
   protected activeNamespaces?: string[];
