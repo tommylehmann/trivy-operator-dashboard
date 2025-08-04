@@ -32,6 +32,9 @@ export class GenericReportsCompareComponent<
   compareStateKey = input<string | undefined>(undefined);
   compareExtraClasses = input<string | undefined>(undefined);
 
+  namespacePlaceholder = input<string>('Select namespace');
+  imagePlaceholder = input<string>('Select image');
+
   private _dataDtos?: TTrivyReportComparableDto[];
   private _groupedFields: string[] = [];
   private _firstSelectedTrivyReportId?: string;

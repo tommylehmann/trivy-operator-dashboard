@@ -178,7 +178,7 @@ export class SbomReportsComponent implements OnInit {
     this.namespacedImageDtos = this.dataDtos
       ?.map((x) => ({
         uid: x.uid ?? '', resourceNamespace: x.resourceNamespace ?? '',
-        imageName: x.imageName ?? '', imageTag: x.imageTag ?? '',
+        mainLabel: `${x.imageName ?? ''}:${x.imageTag ?? ''}`,
         icon: x.hasVulnerabilities ? 'security' : undefined,
       } as NamespacedImageDto)) ?? [];
   }

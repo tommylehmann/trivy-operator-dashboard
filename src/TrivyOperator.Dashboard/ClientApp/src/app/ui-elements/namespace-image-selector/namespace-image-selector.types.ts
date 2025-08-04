@@ -1,7 +1,7 @@
 export interface NamespacedImageDto {
   uid: string;
   resourceNamespace: string;
-  imageName: string;
-  imageTag: string;
+  mainLabel: string;
+  group?: string;
   icon?: string;
 }

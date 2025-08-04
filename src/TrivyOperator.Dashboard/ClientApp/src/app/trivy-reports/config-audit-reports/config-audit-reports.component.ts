@@ -6,14 +6,23 @@ import { ConfigAuditReportService } from '../../../api/services/config-audit-rep
 import { GenericMasterDetailComponent } from '../../ui-elements/generic-master-detail/generic-master-detail.component';
 import { TrivyFilterData, TrivyTableColumn } from '../../ui-elements/trivy-table/trivy-table.types';
 import { SeverityUtils } from '../../utils/severity.utils';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { namespacedColumns } from '../constants/generic.constants';
-import { configAuditReportColumns, configAuditReportDetailColumns } from '../constants/config-audit-reports.constants';
+import {
+  configAuditReportColumns,
+  configAuditReportComparedTableColumns,
+  configAuditReportDetailColumns,
+} from '../constants/config-audit-reports.constants';
+
+import { GenericReportsCompareComponent } from '../../ui-elements/generic-reports-compare/generic-reports-compare.component';
+import { NamespacedImageDto } from '../../ui-elements/namespace-image-selector/namespace-image-selector.types';
+
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-config-audit-reports',
   standalone: true,
-  imports: [GenericMasterDetailComponent],
+  imports: [GenericMasterDetailComponent, DialogModule, GenericReportsCompareComponent],
   templateUrl: './config-audit-reports.component.html',
   styleUrl: './config-audit-reports.component.scss',
 })
@@ -24,13 +33,19 @@ export class ConfigAuditReportsComponent implements OnInit {
   mainTableColumns: TrivyTableColumn[] = [...namespacedColumns, ...configAuditReportColumns];
   isMainTableLoading: boolean = true;
 
-  detailsTableColumns: TrivyTableColumn[] = [...configAuditReportDetailColumns];
+  detailsTableColumns: TrivyTableColumn[] = [... configAuditReportDetailColumns ];
 
   queryUid?: string;
   isSingleMode: boolean = false;
-  singleSelectDataDto?: ConfigAuditReportDto;
+  selectedTrivyReportDto?: ConfigAuditReportDto;
+
+  isTrivyReportsCompareVisible: boolean = false;
+  compareFirstSelectedIdId?: string;
+  compareNamespacedImageDtos?: NamespacedImageDto[];
+  comparedTableColumns: TrivyTableColumn[] = [... configAuditReportComparedTableColumns];
 
   private readonly dataDtoService = inject(ConfigAuditReportService);
+  private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
 
   ngOnInit() {
@@ -54,7 +69,8 @@ export class ConfigAuditReportsComponent implements OnInit {
     this.activeNamespaces = Array
       .from(new Set(dtos.map(dto => dto.resourceNamespace ?? "N/A")))
       .sort();
-    this.singleSelectDataDto = dtos.find(x => x.uid == this.queryUid);
+    this.selectedTrivyReportDto = dtos.find(x => x.uid == this.queryUid);
+    this.compareNamespacedImageDtos = undefined;
     this.isMainTableLoading = false;
   }
 
@@ -67,5 +83,41 @@ export class ConfigAuditReportsComponent implements OnInit {
       excludedSeverities: excludedSeverities.length > 0 ? excludedSeverities.join(',') : undefined,
     };
     this.getDataDtos(params);
+  }
+
+  onMainTableMultiHeaderActionRequested(event: string) {
+    switch (event) {
+      case "goToDetailedPage":
+        this.goToDetailedPage();
+        break;
+      case "Compare with...":
+        this.goToComparePage();
+        break;
+      default:
+        console.error("sbom - multi action call back - unknown: " + event);
+    }
+  }
+
+  private goToDetailedPage() {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/config-audit-reports-detailed'])
+    );
+    window.open(url, '_blank');
+  }
+
+  private goToComparePage() {
+    console.log("mama");
+    if (!this.dataDtos || !this.selectedTrivyReportDto) return;
+
+    this.compareNamespacedImageDtos = this.dataDtos
+      .map(car => ({
+        uid: car.uid ?? '', resourceNamespace: car.resourceNamespace ?? '',
+        mainLabel: car.resourceName, group: car.resourceKind }));
+    this.compareFirstSelectedIdId = this.selectedTrivyReportDto.uid;
+    this.isTrivyReportsCompareVisible = true;
+  }
+
+  onMainTableSelectedRowChanged(event: ConfigAuditReportDto | null) {
+    this.selectedTrivyReportDto = event ?? undefined;
   }
 }

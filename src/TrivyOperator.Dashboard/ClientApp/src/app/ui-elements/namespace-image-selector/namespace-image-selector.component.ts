@@ -10,7 +10,8 @@ import { NamespacedImageDto } from './namespace-image-selector.types';
 
 interface ImageDto {
   uid: string;
-  imageNameTag: string;
+  group?: string;
+  mainLabel: string;
   icon?: string;
 }
 
@@ -87,17 +88,22 @@ export class NamespaceImageSelectorComponent implements OnInit {
     this.imageDtos = this.dataDtos()
       ?.filter((x) => x.resourceNamespace == this.selectedNamespace)
       .map((x) => ({
-        uid: x.uid ?? '', imageNameTag: NamespaceImageSelectorComponent.getImageNameTag(x) ?? "",
-        icon: x.icon,
+        uid: x.uid ?? '', mainLabel: x.mainLabel,
+        group: x.group, icon: x.icon,
       } as ImageDto))
       .sort((a, b) => {
-        if (a.imageNameTag < b.imageNameTag) {
-          return -1;
-        } else if (a.imageNameTag > b.imageNameTag) {
-          return 1;
-        } else {
-          return 0;
-        }
+        // Normalize undefined groups
+        const groupA = a.group ?? '';
+        const groupB = b.group ?? '';
+
+        if (groupA < groupB) return -1;
+        if (groupA > groupB) return 1;
+
+        // If groups are equal, sort by mainLabel
+        if (a.mainLabel < b.mainLabel) return -1;
+        if (a.mainLabel > b.mainLabel) return 1;
+
+        return 0;
       });
     // if cleared ns select
     if (this.imageDtos?.length == 0) {
@@ -124,12 +130,5 @@ export class NamespaceImageSelectorComponent implements OnInit {
     this.selectedNamespace = undefined;
     this.imageDtos = undefined;
     this.selectedImageDto = undefined;
-  }
-
-  private static getImageNameTag(value: NamespacedImageDto) : string | undefined {
-    if (value.imageName && value.imageTag) {
-      return `${value.imageName}:${value.imageTag}`
-    }
-    return undefined;
   }
 }

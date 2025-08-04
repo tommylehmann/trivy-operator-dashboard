@@ -21,13 +21,6 @@ export const routes: Routes = [
     data: { title: 'Vulnerability Reports Detailed' },
   },
   {
-    path: 'vulnerability-reports-compare',
-    loadComponent: () =>
-      import('./vulnerability-reports-compare/vulnerability-reports-compare.component').then(
-        (m) => m.VulnerabilityReportsCompareComponent),
-    data: { title: 'Vulnerability Reports Compare' },
-  },
-  {
     path: 'config-audit-reports',
     loadComponent: () =>
       import('./trivy-reports/config-audit-reports/config-audit-reports.component').then(

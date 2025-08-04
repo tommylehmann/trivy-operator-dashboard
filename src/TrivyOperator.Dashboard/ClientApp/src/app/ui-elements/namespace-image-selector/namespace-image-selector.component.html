@@ -10,7 +10,7 @@
               (onChange)="filterImageDtos()" />
   </div>
   <div class="col-span-8 flex items-center gap-2 justify-center">
-    <p-select optionLabel="imageNameTag"
+    <p-select optionLabel="mainLabel"
               [placeholder]="imagePlaceholder()"
               class="text-sm w-full"
               appendTo="body"
@@ -21,7 +21,10 @@
               [(ngModel)]="selectedImageDto">
       <ng-template let-imageDto pTemplate="imageDtos">
         <div class="flex items-center gap-2 w-full overflow-hidden text-sm">
-          <div class="truncate whitespace-nowrap">{{ imageDto.imageNameTag }}</div>
+          @if (imageDto.group) {
+            <p-tag rounded [value]="imageDto.group"/>
+          }
+          <div class="truncate whitespace-nowrap">{{ imageDto.mainLabel }}</div>
           @if (imageDto.icon) {
             <div class="ml-auto">
               <p-tag rounded class="flex items-center">
