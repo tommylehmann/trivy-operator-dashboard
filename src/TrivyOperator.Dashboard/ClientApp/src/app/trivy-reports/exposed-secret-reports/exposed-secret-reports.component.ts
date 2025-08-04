@@ -9,16 +9,24 @@ import { SeverityUtils } from '../../utils/severity.utils';
 
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReportHelper, TrivyReportImageDto } from '../abstracts/trivy-report-image';
 import { VulnerabilityReportImageResourceDto } from '../../../api/models/vulnerability-report-image-resource-dto';
 import { namespacedColumns } from '../constants/generic.constants';
-import { exposedSecretReportColumns, exposedSecretReportDetailColumns } from '../constants/exposed-secret-reports.constants';
+import {
+  exposedSecretReportColumns,
+  exposedSecretReportComparedTableColumns,
+  exposedSecretReportDetailColumns,
+} from '../constants/exposed-secret-reports.constants';
+
+import { GenericReportsCompareComponent } from '../../ui-elements/generic-reports-compare/generic-reports-compare.component';
+import { TrivyDependencyComponent, ImageInfo } from '../../trivy-dependency/trivy-dependency.component';
+import { NamespacedImageDto } from '../../ui-elements/namespace-image-selector/namespace-image-selector.types';
 
 @Component({
   selector: 'app-exposed-secret-reports',
   standalone: true,
-  imports: [GenericMasterDetailComponent, DialogModule, TableModule],
+  imports: [GenericMasterDetailComponent, GenericReportsCompareComponent, TrivyDependencyComponent, DialogModule, TableModule],
   templateUrl: './exposed-secret-reports.component.html',
   styleUrl: './exposed-secret-reports.component.scss',
 })
@@ -37,9 +45,19 @@ export class ExposedSecretReportsComponent implements OnInit {
   queryNamespaceName?: string;
   queryDigest?: string;
   isSingleMode: boolean = false;
-  singleSelectDataDto?: ExposedSecretReportImageDto;
+  selectedTrivyReportDto?: ExposedSecretReportImageDto;
+
+  isTrivyReportsCompareVisible: boolean = false;
+  compareFirstSelectedIdId?: string;
+  compareNamespacedImageDtos?: NamespacedImageDto[];
+  comparedTableColumns: TrivyTableColumn[] = [... exposedSecretReportComparedTableColumns];
+
+  isDependencyTreeViewVisible: boolean = false;
+  trivyImage?: ImageInfo;
+  trivyDependencyDialogTitle: string = "";
 
   private readonly dataDtoService = inject(ExposedSecretReportService);
+  private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
 
   ngOnInit() {
@@ -65,7 +83,7 @@ export class ExposedSecretReportsComponent implements OnInit {
       .from(new Set(dtos.map(dto => dto.resourceNamespace ?? "N/A")))
       .sort();
     if (this.isSingleMode) {
-      this.singleSelectDataDto = dtos
+      this.selectedTrivyReportDto = dtos
         .find(x => x.imageDigest == this.queryDigest && x.resourceNamespace == this.queryNamespaceName);
     }
     this.isMainTableLoading = false;
@@ -123,5 +141,57 @@ export class ExposedSecretReportsComponent implements OnInit {
         ],
       ]
     }
+  }
+
+  onMainTableMultiHeaderActionRequested(event: string) {
+    switch (event) {
+      case "goToDetailedPage":
+        this.goToDetailedPage();
+        break;
+      case "Compare with...":
+        this.goToComparePage();
+        break;
+      case "Dependency tree":
+        this.goToDependencyTree();
+        break;
+      default:
+        console.error("sbom - multi action call back - unknown: " + event);
+    }
+  }
+
+  private goToDetailedPage() {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/vulnerability-reports-detailed'])
+    );
+    window.open(url, '_blank');
+  }
+
+  private goToComparePage() {
+    if (!this.dataDtos || !this.selectedTrivyReportDto) return;
+
+    this.compareNamespacedImageDtos = this.dataDtos
+      .map(esr => ({
+        uid: esr.uid ?? '', resourceNamespace: esr.resourceNamespace ?? '',
+        mainLabel: `${esr.imageName ?? ''}:${esr.imageTag ?? '' }`}));
+    this.compareFirstSelectedIdId = this.selectedTrivyReportDto.uid;
+    this.isTrivyReportsCompareVisible = true;
+  }
+
+  private goToDependencyTree() {
+    const digest = this.selectedTrivyReportDto?.imageDigest;
+    const namespace = this.selectedTrivyReportDto?.resourceNamespace;
+    if (digest && namespace) {
+      const imageRepository = this.selectedTrivyReportDto?.imageRepository ?? 'n/a';
+      const imageName = this.selectedTrivyReportDto?.imageName ?? 'n/a';
+      const imageTag = this.selectedTrivyReportDto?.imageTag ?? 'n/a';
+      const imageNamespace = this.selectedTrivyReportDto?.resourceNamespace ?? 'n/a';
+      this.trivyDependencyDialogTitle = `Dependency Tree for Image ${imageRepository}/${imageName}:${imageTag} in ${imageNamespace}`;
+      this.trivyImage = { digest: digest, namespaceName: namespace };
+      this.isDependencyTreeViewVisible = true;
+    }
+  }
+
+  onMainTableSelectedRowChanged(event: ExposedSecretReportImageDto | null) {
+    this.selectedTrivyReportDto = event ?? undefined;
   }
 }

@@ -106,7 +106,6 @@ export class ConfigAuditReportsComponent implements OnInit {
   }
 
   private goToComparePage() {
-    console.log("mama");
     if (!this.dataDtos || !this.selectedTrivyReportDto) return;
 
     this.compareNamespacedImageDtos = this.dataDtos

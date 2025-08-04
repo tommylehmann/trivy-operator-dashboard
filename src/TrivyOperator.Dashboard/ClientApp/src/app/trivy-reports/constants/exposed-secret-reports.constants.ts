@@ -221,3 +221,24 @@ export const exposedSecretReportDenormalizedColumns: readonly TrivyTableColumn[]
   },
 ];
 
+export const exposedSecretReportComparedTableColumns: readonly TrivyTableColumn[] = [
+  {
+    field: 'first',
+    header: '1st',
+    isFilterable: false,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 90px; max-width: 90px;',
+    renderType: 'boolean',
+  },
+  {
+    field: 'second',
+    header: '2nd',
+    isFilterable: false,
+    isSortable: true,
+    multiSelectType: 'none',
+    style: 'width: 90px; max-width: 90px;',
+    renderType: 'boolean',
+  },
+  ... exposedSecretReportDetailColumns,
+];
