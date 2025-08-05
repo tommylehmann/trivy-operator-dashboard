@@ -117,6 +117,7 @@ export class TrivyTableComponent<TData> implements OnInit {
 
   selectedDataDtos?: any;
   isTableRowsSelected = false;
+  private _lastSingleSelectDataDto?: TData | undefined;
   singleSelectDataDto = input<TData | undefined>();
 
   tableStateKey?: string;
@@ -147,9 +148,8 @@ export class TrivyTableComponent<TData> implements OnInit {
       this._dataDtos = this.dataDtos() ?? [];
       this.updateMultiHeaderActionOnDataChanged();
       this.newData();
-      const currentSingleSelectDataDto = this.singleSelectDataDto();
-      if (currentSingleSelectDataDto) {
-        this.scrollToDto(currentSingleSelectDataDto);
+      if (this._lastSingleSelectDataDto) {
+        this.scrollToDto(this._lastSingleSelectDataDto);
       }
     });
     effect(() => {
@@ -162,7 +162,9 @@ export class TrivyTableComponent<TData> implements OnInit {
       this._csvFileName = this.csvFileName();
     });
     effect(() => {
-      const value = this.singleSelectDataDto()
+      const value = this.singleSelectDataDto();
+      this._lastSingleSelectDataDto = value;
+
       if (this.selectedDataDtos === value) {
         return;  // avoid (re)selection
       }
