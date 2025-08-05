@@ -148,9 +148,6 @@ export class TrivyTableComponent<TData> implements OnInit {
       this._dataDtos = this.dataDtos() ?? [];
       this.updateMultiHeaderActionOnDataChanged();
       this.newData();
-      if (this._lastSingleSelectDataDto) {
-        this.scrollToDto(this._lastSingleSelectDataDto);
-      }
     });
     effect(() => {
       const rowExpandDataResponse = this.rowExpandData();
@@ -194,8 +191,6 @@ export class TrivyTableComponent<TData> implements OnInit {
     this.isTableRowsSelected = false;
     this.updateMultiHeaderActionSelectionChanged();
   }
-
-
 
   onSelectionChange(event: any): void {
     this.isTableRowsSelected = this.selectedDataDtos ? this.selectedDataDtos.length > 0 : false;

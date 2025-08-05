@@ -71,7 +71,9 @@ export class ConfigAuditReportsComponent implements OnInit {
     this.activeNamespaces = Array
       .from(new Set(dtos.map(dto => dto.resourceNamespace ?? "N/A")))
       .sort();
-    this.selectedTrivyReportDto = dtos.find(x => x.uid == this.queryUid);
+    if (this.queryUid) {
+      this.selectedTrivyReportDto = dtos.find(x => x.uid == this.queryUid);
+    }
     this.compareNamespacedImageDtos = undefined;
     this.isMainTableLoading = false;
   }

@@ -427,7 +427,7 @@
                (onHide)="onOverlayToggle()"
                (onShow)="onOverlayToggle()" >
       <div class="flex-col gap-4 w-60">
-        <div class="row w-full tex-xs">
+        <div class="row w-full tex-xs pb-2">
           <p-select #filterNamespacesSelect
                     placeholder="Select a Namespace"
                     class="w-full text-sm"
@@ -437,7 +437,7 @@
                     [(ngModel)]="filterRefreshActiveNamespace" />
         </div>
         <hr />
-        <div class="row">
+        <div class="py-2">
           <span>Severities</span>
           <div>
             <div class="flex-col gap-0 mt-2">
@@ -455,18 +455,9 @@
           </div>
         </div>
         <hr />
-        <div class="row">
-          <div class="grid grid-cols-12 gap-4">
-            <div class="col-span-6">
-              <p-button icon="pi pi-refresh"
-                        label="Refresh"
-                        raised
-                        size="small"
-                        class="w-full"
-                        text
-                        (onClick)="onFilterData()" />
-            </div>
-            <div class="col-span-6">
+        <div class="py-2 w-full">
+          <div class="grid grid-cols-2 gap-4 w-full">
+            <div class="w-full">
               <p-button icon="pi pi-replay"
                         label="Reset"
                         raised
@@ -474,6 +465,15 @@
                         class="w-full"
                         text
                         (onClick)="onFilterReset()" />
+            </div>
+            <div class="w-full">
+              <p-button icon="pi pi-refresh"
+                        label="Refresh"
+                        raised
+                        size="small"
+                        class="w-full"
+                        text
+                        (onClick)="onFilterData()" />
             </div>
           </div>
         </div>

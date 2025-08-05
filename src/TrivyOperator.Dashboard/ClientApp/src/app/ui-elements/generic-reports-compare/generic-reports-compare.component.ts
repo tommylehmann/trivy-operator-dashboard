@@ -56,7 +56,6 @@ export class GenericReportsCompareComponent<
     this._groupedFields = this.comparedTableColumns()
       .filter(col => col.renderType == 'compareStacked')
       .map(col => col.field);
-    console.log(this._groupedFields);
   }
 
   compareSelectedTrivyReports() {

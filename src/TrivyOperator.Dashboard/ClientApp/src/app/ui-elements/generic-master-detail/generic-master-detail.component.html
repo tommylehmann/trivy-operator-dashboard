@@ -5,7 +5,7 @@
       <app-trivy-table #mainTable
                        [activeNamespaces]="activeNamespaces()"
                        [dataDtos]="_dataDtos"
-                       [singleSelectDataDto]="singleSelectDataDto()"
+                       [singleSelectDataDto]="_singleSelectDataDto"
                        [isLoading]="_isMainTableLoading"
                        [trivyTableColumns]="mainTableColumns()"
                        (refreshRequested)="onRefreshRequested($event)"

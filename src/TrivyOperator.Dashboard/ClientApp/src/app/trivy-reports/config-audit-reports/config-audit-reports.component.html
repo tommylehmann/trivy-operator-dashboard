@@ -9,8 +9,8 @@
                            (mainTableMultiHeaderActionRequested)="onMainTableMultiHeaderActionRequested($event)"
                            (mainTableSelectedRowChanged)="onMainTableSelectedRowChanged($event)"
 
-                           [mainTableIsRefreshVisible]="true"
-                           [mainTableIsRefreshFilterable]="true"
+                           [mainTableIsRefreshVisible]="!this.queryUid"
+                           [mainTableIsRefreshFilterable]="!this.queryUid"
                            [mainTableSelectionMode]="'single'"
                            [mainTableStyle]="{ width: '775px' }"
                            [mainTableStateKey]="'Config Audit Reports - Main'"

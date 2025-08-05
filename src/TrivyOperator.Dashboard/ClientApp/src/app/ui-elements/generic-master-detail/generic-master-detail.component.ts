@@ -37,6 +37,8 @@ export class GenericMasterDetailComponent<TTrivyReport extends TrivyReport<TTriv
   singleSelectDataDto = input<TTrivyReport | undefined>();
   splitterStorageKey = input<string | undefined>();
 
+  protected _singleSelectDataDto?: TTrivyReport;
+
   refreshRequested = output<TrivyFilterData>();
 
   mainTableRowExpandChange = output<TTrivyReport>();
@@ -94,17 +96,27 @@ export class GenericMasterDetailComponent<TTrivyReport extends TrivyReport<TTriv
       this._isMainTableLoading = this.isMainTableLoading();
     })
     effect(() => {
-      this._dataDtos = this.dataDtos();
-      this.onGetTDataDtos();
+      const dataDtos = this.dataDtos();
+      this.onGetTDataDtos(dataDtos);
     });
-
+    effect(() => {
+      this._singleSelectDataDto = this.singleSelectDataDto();
+    });
   }
 
-  onGetTDataDtos() {
+  onGetTDataDtos(dataDtos: TTrivyReport[]) {
     if (this.mainTable) {
       this.mainTable.onTableClearSelected();
     }
-    this.selectedDataDto = null;
+    this._dataDtos = dataDtos;
+
+    let newSelectedDataDto: TTrivyReport | null = null;
+    if (this.selectedDataDto) {
+      newSelectedDataDto = this._dataDtos.find(dto => dto.uid === this.selectedDataDto?.uid) || null;
+      this._singleSelectDataDto = newSelectedDataDto ?? undefined;
+    }
+    this.selectedDataDto = newSelectedDataDto;
+
     this._isMainTableLoading = false;
   }
 
