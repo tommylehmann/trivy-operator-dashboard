@@ -1,9 +1,10 @@
-﻿using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
+﻿using TrivyOperator.Dashboard.Application.Models.Abstracts;
+using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
-public class SbomReportDto : ISbomReportDto
+public class SbomReportDto : ISbomReportDto<SbomReportDetailDto>
 {
     public Guid Uid { get; set; } = Guid.NewGuid();
     public DateTime CreationTimestamp { get; set; } = DateTime.MinValue;
@@ -16,10 +17,11 @@ public class SbomReportDto : ISbomReportDto
     public string ImageDigest { get; set; } = string.Empty;
     public string ImageRepository { get; set; } = string.Empty;
     public string RootNodeBomRef { get; set; } = string.Empty;
+    public DateTime? UpdateTimestamp { get; init; }
     public SbomReportDetailDto[] Details { get; set; } = [];
 }
 
-public class SbomReportImageDto : ISbomReportDto
+public class SbomReportImageDto : ISbomReportDto<SbomReportDetailDto>
 {
     public Guid Uid { get; set; } = Guid.NewGuid();
     public DateTime CreationTimestamp { get; set; } = DateTime.MinValue;
@@ -46,7 +48,7 @@ public class SbomReportImageResourceDto
     public string ContainerName { get; init; } = string.Empty;
 }
 
-public class SbomReportDetailDto
+public class SbomReportDetailDto : ISBomReportDetailDto
 {
     public Guid Id => GuidUtils.GetDeterministicGuid(Purl);
     public Guid MatchKey => GuidUtils.GetDeterministicGuid($"{(string.IsNullOrEmpty(Purl.Split('@')[0]) ? Name : Purl.Split('@')[0])}");
@@ -68,12 +70,6 @@ public class SbomReportExportDto
 {
     public string NamespaceName { get; set; } = string.Empty;
     public string Digest { get; set; } = string.Empty;
-}
-
-public interface ISbomReportDto
-{
-    string RootNodeBomRef { get; set; }
-    SbomReportDetailDto[] Details { get; set; }
 }
 
 public static partial class SbomReportCrExtensions
@@ -106,6 +102,7 @@ public static partial class SbomReportCrExtensions
                 ? parsedGuid 
                 : new(),
             CreationTimestamp = sbomReportCr.Metadata.CreationTimestamp ?? DateTime.MinValue,
+            UpdateTimestamp = sbomReportCr.Report?.UpdateTimestamp ?? DateTime.MinValue,
             ResourceName =
                 sbomReportCr.Metadata.Labels != null &&
                 sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.resource.name", out string? resourceName)
@@ -195,7 +192,8 @@ public static partial class SbomReportCrExtensions
         return result;
     }
 
-    private static void CleanupPurlsFromBomRefs(ISbomReportDto sbomReportDto)
+    public static void CleanupPurlsFromBomRefs<TSBomReportDetailDto>(ISbomReportDto<TSBomReportDetailDto> sbomReportDto)
+        where TSBomReportDetailDto : ISBomReportDetailDto
     {
         var nonGuidToGuidMap = sbomReportDto.Details
             .Where(d => !Guid.TryParse(d.BomRef, out _))

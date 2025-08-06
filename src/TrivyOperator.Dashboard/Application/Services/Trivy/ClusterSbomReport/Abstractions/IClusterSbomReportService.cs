@@ -5,4 +5,5 @@ namespace TrivyOperator.Dashboard.Application.Services.Trivy.ClusterSbomReport.A
 public interface IClusterSbomReportService
 {
     Task<IEnumerable<ClusterSbomReportDto>> GetClusterSbomReportDtos();
+    Task<IEnumerable<ClusterSbomReportDenormalizedDto>> GetClusterSbomReportDenormalizedDtos();
 }

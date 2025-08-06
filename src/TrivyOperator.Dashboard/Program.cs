@@ -91,6 +91,7 @@ builder.Services.AddClusterComplianceReportServices(configuration.GetSection("Ku
 builder.Services.AddClusterVulnerabilityReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddRbacAssessmentReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddSbomReportServices(configuration.GetSection("Kubernetes"));
+builder.Services.AddClusterSbomReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddUiCommons();
 builder.Services.AddOthers();
 builder.Services.AddOpenTelemetry(configuration.GetSection("OpenTelemetry"), applicationNameForOtlp);

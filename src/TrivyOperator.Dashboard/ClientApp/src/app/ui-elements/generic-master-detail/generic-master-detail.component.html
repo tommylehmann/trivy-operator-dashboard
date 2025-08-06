@@ -38,6 +38,7 @@
       <app-trivy-table class="row"
                        [activeNamespaces]="activeNamespaces()"
                        [dataDtos]="selectedDataDto?.details ?? []"
+                       [isLoading]="_isMainTableLoading"
                        [trivyTableColumns]="detailsTableColumns()"
                        (multiHeaderActionRequested)="onDetailsTableMultiHeaderActionRequested($event)"
 

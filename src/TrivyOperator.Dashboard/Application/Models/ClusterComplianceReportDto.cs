@@ -1,5 +1,6 @@
 ﻿using TrivyOperator.Dashboard.Domain.Trivy;
 using TrivyOperator.Dashboard.Domain.Trivy.ClusterComplianceReport;
+using TrivyOperator.Dashboard.Domain.Trivy.VulnerabilityReport;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
@@ -85,7 +86,9 @@ public static class ClusterComplianceReportCrExtensions
         return new ClusterComplianceReportDto
         {
             Name = clusterComplianceReportCr.Metadata.Name,
-            Uid = new Guid(clusterComplianceReportCr.Metadata.Uid),
+            Uid = Guid.TryParse(clusterComplianceReportCr.Metadata.Uid, out Guid parsedGuid)
+                ? parsedGuid
+                : new(),
             Description = clusterComplianceReportCr.Spec.Compliance.Description,
             Platform = clusterComplianceReportCr.Spec.Compliance.Platform,
             RelatedResources =
@@ -110,7 +113,7 @@ public static class ClusterComplianceReportCrExtensions
         };
     }
 
-    public static IEnumerable<ClusterComplianceReportDenormalizedDto> ToClusterComplianceReportDenormalizedDto(
+    public static IEnumerable<ClusterComplianceReportDenormalizedDto> ToClusterComplianceReportDenormalizedDtos(
         this ClusterComplianceReportCr clusterComplianceReportCr) =>
         clusterComplianceReportCr.Spec.Compliance.Controls.Select(
                 control => new ClusterComplianceReportDenormalizedDto

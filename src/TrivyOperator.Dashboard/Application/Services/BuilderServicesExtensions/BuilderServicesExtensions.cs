@@ -25,6 +25,8 @@ using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterComplianceReport
 using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterComplianceReport.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterRbacAssessmentReport;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterRbacAssessmentReport.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterSbomReport;
+using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterSbomReport.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterVulnerabilityReport;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterVulnerabilityReport.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ConfigAuditReport;
@@ -289,6 +291,39 @@ public static class BuilderServicesExtensions
         services.AddScoped<IClusterVulnerabilityReportService, ClusterVulnerabilityReportService>();
     }
 
+    public static void AddClusterSbomReportServices(
+        this IServiceCollection services, IConfiguration kubernetesConfiguration)
+    {
+        bool? useServices = kubernetesConfiguration.GetValue<bool?>("TrivyUseClusterSbomReport");
+
+        if (useServices == null || !(bool)useServices)
+        {
+            services.AddScoped<IClusterSbomReportService, ClusterSbomReportNullService>();
+            services.AddTransient<IConcurrentDictionaryCache<ClusterSbomReportCr>, ConcurrentDictionaryCache<ClusterSbomReportCr>>();
+            return;
+        }
+
+        services
+            .AddSingleton<IConcurrentDictionaryCache<ClusterSbomReportCr>,
+                ConcurrentDictionaryCache<ClusterSbomReportCr>>();
+        services
+            .AddSingleton<IKubernetesBackgroundQueue<ClusterSbomReportCr>,
+                KubernetesBackgroundQueue<ClusterSbomReportCr>>();
+        services.AddSingleton<IClusterScopedWatcher<ClusterSbomReportCr>,
+            ClusterScopedWatcher<CustomResourceList<ClusterSbomReportCr>, ClusterSbomReportCr,
+            IKubernetesBackgroundQueue<ClusterSbomReportCr>, WatcherEvent<ClusterSbomReportCr>>>();
+
+        services.AddSingleton<IClusterScopedKubernetesEventCoordinator,
+            ClusterScopedKubernetesEventCoordinator<IKubernetesEventDispatcher<ClusterSbomReportCr>,
+                IClusterScopedWatcher<ClusterSbomReportCr>, ClusterSbomReportCr>>();
+        services.AddSingleton<IKubernetesEventDispatcher<ClusterSbomReportCr>,
+            KubernetesEventDispatcher<ClusterSbomReportCr, IKubernetesBackgroundQueue<ClusterSbomReportCr>>>();
+        services.AddSingleton<IKubernetesEventProcessor<ClusterSbomReportCr>, CacheRefresher<ClusterSbomReportCr>>();
+        services.AddSingleton<IKubernetesEventProcessor<ClusterSbomReportCr>, WatcherState<ClusterSbomReportCr>>();
+        services.AddSingleton<IKubernetesEventProcessor<ClusterSbomReportCr>, WatcherStateAlertRefresh<ClusterSbomReportCr>>();
+        services.AddScoped<IClusterSbomReportService, ClusterSbomReportService>();
+    }
+
     public static void AddRbacAssessmentReportServices(
         this IServiceCollection services, IConfiguration kubernetesConfiguration)
     {
@@ -348,6 +383,8 @@ public static class BuilderServicesExtensions
         services.AddSingleton<IKubernetesEventProcessor<SbomReportCr>, WatcherStateAlertRefresh<SbomReportCr>>();
         services.AddScoped<ISbomReportService, SbomReportService>();
     }
+
+    
 
     public static void AddWatcherStateServices(this IServiceCollection services)
     {

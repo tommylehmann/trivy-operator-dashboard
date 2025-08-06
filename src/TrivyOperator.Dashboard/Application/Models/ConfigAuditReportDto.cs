@@ -6,7 +6,7 @@ namespace TrivyOperator.Dashboard.Application.Models;
 
 public class ConfigAuditReportDto
 {
-    public Guid Uid { get; init; }
+    public Guid Uid { get; init; } = new Guid();
     public string ResourceName { get; init; } = string.Empty;
     public string ResourceNamespace { get; init; } = string.Empty;
     public string ResourceKind { get; init; } = string.Empty;
@@ -14,6 +14,7 @@ public class ConfigAuditReportDto
     public long HighCount { get; init; }
     public long MediumCount { get; init; }
     public long LowCount { get; init; }
+    public DateTime? UpdateTimestamp { get; init; }
     public ConfigAuditReportDetailDto[] Details { get; set; } = [];
 }
 
@@ -79,7 +80,10 @@ public static class ConfigAuditReportCrExtensions
 
         ConfigAuditReportDto configAuditReportDto = new()
         {
-            Uid = new Guid(configAuditReportCr.Metadata.Uid ?? string.Empty),
+            Uid = Guid.TryParse(configAuditReportCr.Metadata.Uid, out Guid parsedGuid)
+                ? parsedGuid
+                : new(),
+            UpdateTimestamp = configAuditReportCr.Report?.UpdateTimestamp ?? DateTime.MinValue,
             ResourceName =
                 configAuditReportCr.Metadata.Labels != null &&
                 configAuditReportCr.Metadata.Labels.TryGetValue(

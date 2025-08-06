@@ -10,6 +10,7 @@ public class ClusterRbacAssessmentReportDto
     public long HighCount { get; init; }
     public long MediumCount { get; init; }
     public long LowCount { get; init; }
+    public DateTime? UpdateTimestamp { get; init; }
     public ClusterRbacAssessmentReportDetailDto[] Details { get; init; } = [];
 }
 
@@ -76,7 +77,10 @@ public static class ClusterRbacAssessmentReportCrExtensions
 
         ClusterRbacAssessmentReportDto clusterRbacAssessmentReportDto = new()
         {
-            Uid = new Guid(clusterRbacAssessmentReportCr.Metadata.Uid ?? string.Empty),
+            Uid = Guid.TryParse(clusterRbacAssessmentReportCr.Metadata.Uid, out Guid parsedGuid)
+                ? parsedGuid
+                : new(),
+            UpdateTimestamp = clusterRbacAssessmentReportCr.Report?.UpdateTimestamp ?? DateTime.MinValue,
             ResourceName =
                 clusterRbacAssessmentReportCr.Metadata.Annotations != null &&
                 clusterRbacAssessmentReportCr.Metadata.Annotations.TryGetValue(

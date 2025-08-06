@@ -6,13 +6,14 @@ namespace TrivyOperator.Dashboard.Application.Models;
 
 public class RbacAssessmentReportDto
 {
-    public Guid Uid { get; init; } = Guid.Empty;
+    public Guid Uid { get; init; } = Guid.NewGuid();
     public string ResourceName { get; init; } = string.Empty;
     public string ResourceNamespace { get; init; } = string.Empty;
     public long CriticalCount { get; init; }
     public long HighCount { get; init; }
     public long MediumCount { get; init; }
     public long LowCount { get; init; }
+    public DateTime? CreationTimestamp { get; init; }
     public RbacAssessmentReportDetailDto[] Details { get; set; } = [];
 }
 
@@ -69,7 +70,10 @@ public static class RbacAssessmentReportCrExtensions
 
         RbacAssessmentReportDto rbacAssessmentReportDto = new()
         {
-            Uid = new Guid(rbacAssessmentReportCr.Metadata.Uid ?? string.Empty),
+            Uid = Guid.TryParse(rbacAssessmentReportCr.Metadata.Uid, out Guid parsedGuid)
+                ? parsedGuid
+                : new(),
+            CreationTimestamp = rbacAssessmentReportCr.Metadata.CreationTimestamp ?? DateTime.MinValue,
             ResourceName =
                 rbacAssessmentReportCr.Metadata.Annotations != null &&
                 rbacAssessmentReportCr.Metadata.Annotations.TryGetValue(

@@ -21,7 +21,7 @@ public class ClusterComplianceReportService(IConcurrentDictionaryCache<ClusterCo
     {
         IEnumerable<ClusterComplianceReportCr> cachedValues = [.. cache.SelectMany(kvp => kvp.Value.Values),];
         IEnumerable<ClusterComplianceReportDenormalizedDto> values = cachedValues
-            .SelectMany(x => x.ToClusterComplianceReportDenormalizedDto());
+            .SelectMany(x => x.ToClusterComplianceReportDenormalizedDtos());
 
         return Task.FromResult(values);
     }

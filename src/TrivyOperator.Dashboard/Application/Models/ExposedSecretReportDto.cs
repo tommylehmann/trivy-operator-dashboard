@@ -6,7 +6,7 @@ namespace TrivyOperator.Dashboard.Application.Models;
 
 public class ExposedSecretReportDto
 {
-    public Guid Uid { get; init; } = Guid.Empty;
+    public Guid Uid { get; init; } = Guid.NewGuid();
     public string ResourceName { get; init; } = string.Empty;
     public string ResourceNamespace { get; init; } = string.Empty;
     public string ResourceKind { get; init; } = string.Empty;
@@ -19,6 +19,7 @@ public class ExposedSecretReportDto
     public long HighCount { get; init; }
     public long MediumCount { get; init; }
     public long LowCount { get; init; }
+    public DateTime? UpdateTimestamp { get; init; }
     public ExposedSecretReportDetailDto[] Details { get; set; } = [];
 }
 
@@ -122,7 +123,10 @@ public static class ExposedSecretReportCrExtensions
 
         ExposedSecretReportDto exposedSecretReportDto = new()
         {
-            Uid = new Guid(exposedSecretReportCr.Metadata.Uid ?? string.Empty),
+            Uid = Guid.TryParse(exposedSecretReportCr.Metadata.Uid, out Guid parsedGuid)
+                ? parsedGuid
+                : new(),
+            UpdateTimestamp = exposedSecretReportCr.Report?.UpdateTimestamp ?? DateTime.MinValue,
             ResourceName =
                 exposedSecretReportCr.Metadata.Labels != null &&
                 exposedSecretReportCr.Metadata.Labels.TryGetValue(

@@ -27,11 +27,11 @@ Rearrange BuilderServicesExtensions.cs
 
 Proper 200, 404 etc codes in controllers and proper error controll
 
-Add CreationDate in all CRs and dtos
+Add CreationDate in all CRs and dtos (CreationTimestamp vs UpdateTimestamp)
 
 Github versions - Timed Hosted Service - alert if error
 
-IEnumerable all the way
+(next) change uid in trivy report image dto to latest one (not generated)
 
 ## Both
 

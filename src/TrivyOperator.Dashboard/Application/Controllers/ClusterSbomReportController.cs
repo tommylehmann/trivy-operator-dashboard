@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterSbomReport.Abstractions;
+using TrivyOperator.Dashboard.Application.Services.Trivy.VulnerabilityReport;
 
 namespace TrivyOperator.Dashboard.Application.Controllers;
 
@@ -14,4 +15,11 @@ public class ClusterSbomReportController(IClusterSbomReportService clusterSbomRe
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
     public async Task<IEnumerable<ClusterSbomReportDto>> Get() =>
         await clusterSbomReportService.GetClusterSbomReportDtos();
+
+    [HttpGet("denormalized", Name = "GetClusterSbomReportDenormalizedDtos")]
+    [ProducesResponseType<IEnumerable<ClusterSbomReportDenormalizedDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+    public async Task<IEnumerable<ClusterSbomReportDenormalizedDto>> GetDenormalized() =>
+        await clusterSbomReportService.GetClusterSbomReportDenormalizedDtos();
 }
