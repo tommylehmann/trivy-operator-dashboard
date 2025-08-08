@@ -71,21 +71,20 @@
         <td>
           @if (rowData.isLeaf) {
             <small class="tod-text-muted-color">
-              Category: <b>{{ rowData.statistics?.[0]?.category || '' }}</b>
-            </small>
-            <br />
+              Category: <span class="font-bold">{{ rowData.statistics?.[0]?.category || '' }}</span>
+            </small><br />
             <span>{{ rowData.message || '' }}</span>
           } @else {
             @if (rowData.isExpanded) {
               <span class="tod-text-muted-color">
-                Categories statistics: <b>{{ rowData.statistics ?? [] | genericObjectArraySummary }}</b>
+                Categories statistics: <span class="font-bold">{{ rowData.statistics ?? [] | genericObjectArraySummary }}</span>
               </span>
             } @else {
               <small class="tod-text-muted-color">
-                Children: <b>{{ rowData.childrenLabels || '' }}</b>
+                Children: <span class="font-bold">{{ rowData.childrenLabels || '' }}</span>
               </small><br />
               <small class="tod-text-muted-color">
-                Categories statistics: <b>{{ rowData.statistics ?? [] | genericObjectArraySummary }}</b>
+                Categories statistics: <span class="font-bold">{{ rowData.statistics ?? [] | genericObjectArraySummary }}</span>
               </small>
             }
           }

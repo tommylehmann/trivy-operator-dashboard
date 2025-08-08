@@ -282,12 +282,16 @@
               }
               @case ('compareStacked') {
                 @if (rowData[col.field]?.split('|').length === 2) {
-                  @let first = rowData[col.field].split('|')[0];
-                  @let second = rowData[col.field].split('|')[1];
-                  <small><span class="tod-text-muted-color">1st: </span>{{ first }}</small><br/>
-                  <small><span class="tod-text-muted-color">2nd: </span>{{ second }}</small>
+                  @let first = rowData[col.field].split('|')[0].split('__').join(', ');
+                  @let second = rowData[col.field].split('|')[1].split('__').join(', ');
+                  <small class="tod-text-muted-color">1st: <span class="font-bold">{{ first }}</span></small><br/>
+                  <small class="tod-text-muted-color">2nd: <span class="font-bold">{{ second }}</span></small>
                 } @else {
-                  <span class="truncate-ellipsis">{{ rowData[col.field] }}</span>
+                  @let splitData = rowData[col.field].split('__');
+                  @if (splitData.length > 1) {
+                    <small class="tod-text-muted-color font-semibold">{{ splitData.length }} Versions</small>
+                  }
+                  <span class="truncate-ellipsis">{{ rowData[col.field].split('__').join(', ') }}</span>
                 }
               }
             }
