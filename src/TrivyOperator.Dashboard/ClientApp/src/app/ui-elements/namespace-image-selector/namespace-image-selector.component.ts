@@ -21,7 +21,7 @@ interface ImageDto {
   templateUrl: './namespace-image-selector.component.html',
   styleUrl: './namespace-image-selector.component.scss'
 })
-export class NamespaceImageSelectorComponent implements OnInit {
+export class NamespaceImageSelectorComponent {
   dataDtos = input.required<NamespacedImageDto[] | undefined>();
   disabled = input<boolean>(false);
   selectedImageId = model<string | undefined>();
@@ -67,9 +67,6 @@ export class NamespaceImageSelectorComponent implements OnInit {
       const imageId = this.selectedImageId();
       this.autoselectNamespace();
     });
-  }
-
-  ngOnInit() {
   }
 
   autoselectNamespace() {

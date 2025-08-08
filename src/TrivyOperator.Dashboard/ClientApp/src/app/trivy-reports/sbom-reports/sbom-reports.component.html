@@ -95,7 +95,8 @@
             dismissableMask="true"
             resizable="true"
             [breakpoints]="{ '1700px': '1360px', '576px': '90vw' }"
-            [style]="{ width: '1360px', height: '90vh' }"
+            [contentStyle]="{ height: '95vh' }"
+            [style]="{ width: '1360px', height: '95vh' }"
             [maximizable]="true"
             [header]="`SBOM Reports Details - ${fullSbomDataDto.imageName}:${fullSbomDataDto.imageTag}`"
             [modal]="true"
@@ -135,31 +136,32 @@
             }
           </div>
         </div>
-        <div class="h-full flex-col">
-          <p-treeTable [value]="sbomReportDetailLicensesTreeNodes"
-                       [scrollable]="true"
-                       [virtualScroll]="true"
-                       [virtualScrollItemSize]="49"
-                       scrollHeight="flex"
-                       class="p-treetable-sm text-sm">
-            <ng-template pTemplate="header">
-              <tr style="height: 49px">
-                <th ttSortableColumn="name">License<p-treeTableSortIcon field="name" /></th>
-                <th class="text-right" style="width: 55px; max-width: 55px;">Count</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-              <tr [ttRow]="rowNode" style="height: 49px">
-                <td>
-                  <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-                  {{ rowData.name }}
-                </td>
-                <td class="text-right" style="width: 55px; max-width: 55px;">
-                  {{ rowData.count }}
-                </td>
-              </tr>
-            </ng-template>
-          </p-treeTable>
+        <div class="h-full flex flex-col">
+            <p-treeTable [value]="sbomReportDetailLicensesTreeNodes"
+                         [scrollable]="true"
+                         [virtualScroll]="true"
+                         [virtualScrollItemSize]="49"
+                         scrollHeight="flex"
+                         class="p-treetable-sm text-sm">
+              <ng-template pTemplate="header">
+                <tr style="height: 49px">
+                  <th ttSortableColumn="name">License<p-treeTableSortIcon field="name" /></th>
+                  <th class="text-right" style="width: 55px; max-width: 55px;">Count</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                <tr [ttRow]="rowNode" style="height: 49px">
+                  <td>
+                    <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                    {{ rowData.name }}
+                  </td>
+                  <td class="text-right" style="width: 55px; max-width: 55px;">
+                    {{ rowData.count }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-treeTable>
+
         </div>
       </div>
       <div class="col-span-12 md:col-span-8 h-full flex flex-col">

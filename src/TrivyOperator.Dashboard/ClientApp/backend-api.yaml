@@ -283,6 +283,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+  /api/cluster-sbom-reports/denormalized:
+    get:
+      tags:
+        - ClusterSbomReport
+      operationId: GetClusterSbomReportDenormalizedDtos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClusterSbomReportDenormalizedDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /api/cluster-vulnerability-reports:
     get:
       tags:
@@ -1587,6 +1613,10 @@ components:
         lowCount:
           type: integer
           format: int64
+        updateTimestamp:
+          type: string
+          format: date-time
+          nullable: true
         details:
           type: array
           items:
@@ -1605,12 +1635,52 @@ components:
           type: integer
           format: int32
       additionalProperties: false
+    ClusterSbomReportDenormalizedDto:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        creationTimestamp:
+          type: string
+          format: date-time
+        imageName:
+          type: string
+        imageTag:
+          type: string
+        imageRepository:
+          type: string
+        rootNodeBomRef:
+          type: string
+        bomRef:
+          type: string
+        name:
+          type: string
+        purl:
+          type: string
+        version:
+          type: string
+        dependenciesCount:
+          type: integer
+          format: int64
+        propertiesCount:
+          type: integer
+          format: int64
+      additionalProperties: false
     ClusterSbomReportDetailDto:
       type: object
       properties:
-        bomRef:
+        id:
           type: string
           format: uuid
+          readOnly: true
+        matchKey:
+          type: string
+          format: uuid
+          readOnly: true
+        bomRef:
+          type: string
         name:
           type: string
         purl:
@@ -1621,19 +1691,62 @@ components:
           type: array
           items:
             type: string
-            format: uuid
+        properties:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        criticalCount:
+          type: integer
+          format: int64
+        highCount:
+          type: integer
+          format: int64
+        mediumCount:
+          type: integer
+          format: int64
+        lowCount:
+          type: integer
+          format: int64
+        unknownCount:
+          type: integer
+          format: int64
       additionalProperties: false
     ClusterSbomReportDto:
       type: object
       properties:
         uid:
           type: string
+          format: uuid
+        updateTimestamp:
+          type: string
+          format: date-time
         imageName:
           type: string
         imageTag:
           type: string
         imageRepository:
           type: string
+        rootNodeBomRef:
+          type: string
+        hasVulnerabilities:
+          type: boolean
+        criticalCount:
+          type: integer
+          format: int64
+        highCount:
+          type: integer
+          format: int64
+        mediumCount:
+          type: integer
+          format: int64
+        lowCount:
+          type: integer
+          format: int64
+        unknownCount:
+          type: integer
+          format: int64
         details:
           type: array
           items:
@@ -1778,6 +1891,10 @@ components:
         noneCount:
           type: integer
           format: int64
+        updateTimestamp:
+          type: string
+          format: date-time
+          nullable: true
         details:
           type: array
           items:
@@ -1870,6 +1987,10 @@ components:
         lowCount:
           type: integer
           format: int64
+        updateTimestamp:
+          type: string
+          format: date-time
+          nullable: true
         details:
           type: array
           items:
@@ -2157,6 +2278,10 @@ components:
         lowCount:
           type: integer
           format: int64
+        updateTimestamp:
+          type: string
+          format: date-time
+          nullable: true
         details:
           type: array
           items:
@@ -2355,6 +2480,10 @@ components:
         lowCount:
           type: integer
           format: int64
+        creationTimestamp:
+          type: string
+          format: date-time
+          nullable: true
         details:
           type: array
           items:
@@ -2460,6 +2589,10 @@ components:
           type: string
         rootNodeBomRef:
           type: string
+        updateTimestamp:
+          type: string
+          format: date-time
+          nullable: true
         details:
           type: array
           items:

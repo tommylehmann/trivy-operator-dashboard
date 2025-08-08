@@ -1,6 +1,7 @@
 ﻿using System.Web;
 using TrivyOperator.Dashboard.Application.Models.Abstracts;
 using TrivyOperator.Dashboard.Domain.Trivy.ClusterSbomReport;
+using TrivyOperator.Dashboard.Utils;
 
 namespace TrivyOperator.Dashboard.Application.Models;
 
@@ -23,6 +24,8 @@ public class ClusterSbomReportDto : ISbomReportDto<ClusterSbomReportDetailDto>
 
 public class ClusterSbomReportDetailDto : ISBomReportDetailDto
 {
+    public Guid Id => GuidUtils.GetDeterministicGuid(Purl);
+    public Guid MatchKey => GuidUtils.GetDeterministicGuid($"{(string.IsNullOrEmpty(Purl.Split('@')[0]) ? Name : Purl.Split('@')[0])}");
     public string BomRef { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Purl { get; set; } = string.Empty;
