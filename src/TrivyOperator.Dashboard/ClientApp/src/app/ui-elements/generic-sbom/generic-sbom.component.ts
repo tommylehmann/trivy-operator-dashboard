@@ -1,18 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, effect, HostListener, inject, model, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+// import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, effect, HostListener, inject, input, model, OnInit, output } from '@angular/core';
 
-import { SbomReportDto } from '../../../api/models/sbom-report-dto';
-import { SbomReportDetailDto } from '../../../api/models/sbom-report-detail-dto';
-import { SbomReportImageDto } from '../../../api/models/sbom-report-image-dto';
-import { SbomReportService } from '../../../api/services/sbom-report.service';
 import { NodeDataDto } from '../../ui-elements/fcose/fcose.types';
-import { SbomDetailExtendedDto } from './sbom-reports.types';
-import { sbomReportComparedTableColumns, sbomReportDetailColumns } from '../constants/sbom-reports.constans';
+import { GenericSbomReportDto, GenericSbomReportDetailDto, GenericSbomDetailExtendedDto } from './generic-sbom.types';
+import { genericSbomReportComparedColumns, genericSbomReportDetailColumns } from './generic-sbom.constans';
 
 import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
-import { SeverityNameByIdPipe } from '../../pipes/severity-name-by-id.pipe';
 import { VulnerabilityCountPipe } from '../../pipes/vulnerability-count.pipe';
 
 import { FcoseComponent } from '../../ui-elements/fcose/fcose.component';
@@ -21,158 +14,122 @@ import { NamespacedImageDto } from '../../ui-elements/namespace-image-selector/n
 import { TrivyTableComponent } from '../../ui-elements/trivy-table/trivy-table.component';
 import { TrivyTableColumn, TrivyTableExpandRowData } from '../../ui-elements/trivy-table/trivy-table.types';
 
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
-import { PanelModule } from 'primeng/panel';
-import { SelectModule } from 'primeng/select';
 import { SplitterModule } from 'primeng/splitter';
-import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { TreeTableModule } from 'primeng/treetable';
-import { TreeNode } from 'primeng/api';
 
 import { GenericReportsCompareComponent } from '../../ui-elements/generic-reports-compare/generic-reports-compare.component';
-import { ImageInfo, TrivyDependencyComponent } from '../../trivy-dependency/trivy-dependency.component';
-import { SbomReportBaseDto } from '../../trivy-reports/abstracts/sbom-report-base';
+// import { ImageInfo, TrivyDependencyComponent } from '../../trivy-dependency/trivy-dependency.component';
+import { TrivyDependencyComponent } from '../../trivy-dependency/trivy-dependency.component';
 
 
 @Component({
   selector: 'app-generic-sbom',
-  imports: [],
+  imports: [
+    DialogModule,
+    FcoseComponent,
+    GenericReportsCompareComponent,
+    NamespaceImageSelectorComponent,
+    SeverityCssStyleByIdPipe,
+    SplitterModule,
+    TagModule,
+    TrivyTableComponent,
+    VulnerabilityCountPipe,
+  ],
   templateUrl: './generic-sbom.component.html',
   styleUrl: './generic-sbom.component.scss'
 })
-export class GenericSbomComponent implements OnInit {
-  // region main data - SbomReportDtos, activeNS, fullSbomDataDto, table data
-  fullSbomDataDto?: SbomReportBaseDto;
-  isTableLoading: boolean = false;
-  // endregion
+export class GenericSbomComponent {
+  dataDtos = input<GenericSbomReportDto[]>([]);
+  fullSbomDataDto = input<GenericSbomReportDto | undefined>();
+  isStatic = input<boolean>(false);
 
-  // region namespaced image selector component
-  namespacedImageDtos?: NamespacedImageDto[];
+  isTableLoading = model<boolean>(false);
   selectedImageId = model<string | undefined>();
-  // endregion
+
+  multiActionEventChange = output<string>();
+  refreshRequestedChange = output<void>();
+  fullSbomDataDtoRequestedChange = output<void>();
+
+  protected _fullSbomDataDto?: GenericSbomReportDto;
+
+  namespacedImageDtos?: NamespacedImageDto[];
+
   // region dependsOnTable data
-  selectedSbomDetailDto?: SbomDetailExtendedDto;
-  dependsOnBoms?: SbomDetailExtendedDto[];
-  deletedDependsOnBom: SbomDetailExtendedDto[] = [];
+  selectedSbomDetailDto?: GenericSbomDetailExtendedDto;
+  dependsOnBoms?: GenericSbomDetailExtendedDto[];
+  deletedDependsOnBom: GenericSbomDetailExtendedDto[] = [];
 
-  dependsOnTableColumns: TrivyTableColumn[] = [...sbomReportDetailColumns];
+  dependsOnTableColumns: TrivyTableColumn[] = [...genericSbomReportDetailColumns];
   // endregion
 
-  // region Full Sbom Report details
-  isSbomReportOverviewDialogVisible: boolean = false;
-  sbomReportDetailStatistics: Array<number | undefined> = [];
-  sbomReportDetailPropertiesTreeNodes: TreeNode[] = [];
-  sbomReportDetailLicensesTreeNodes: TreeNode[] = [];
-  // endregion
-
-  hoveredSbomDetailDto?: SbomReportDetailDto;
+  hoveredSbomDetailDto?: GenericSbomReportDetailDto;
   nodeDataDtos: NodeDataDto[] = [];
   selectedSbomDetailBomRef?: string;
-
   private readonly _rootNodeId: string = '00000000-0000-0000-0000-000000000000';
 
-  queryNamespaceName?: string;
-  queryDigest?: string;
-  isStatic: boolean = false;
-
   isTrivyReportsCompareVisible: boolean = false;
-  comparedTableColumns: TrivyTableColumn[] = [... sbomReportComparedTableColumns];
-
-  isDependencyTreeViewVisible: boolean = false;
-  trivyImage?: ImageInfo;
-  trivyDependencyDialogTitle: string = "";
+  comparedTableColumns: TrivyTableColumn[] = [... genericSbomReportComparedColumns];
 
   screenSize: string = this.getScreenSize();
 
-  private readonly service = inject(SbomReportService);
-  private readonly http = inject(HttpClient);
-  private readonly router = inject(Router);
-  private readonly activatedRoute = inject(ActivatedRoute);
-
   constructor() {
     effect(() => {
-      const selectedImageId = this.selectedImageId();
-      // TODO - generic sbom
-      // ask for fullSbomDto
+      const dataDtos = this.dataDtos();
+      if (dataDtos && dataDtos.length > 0) {
+        this.getNamespacedImageDtos();
+      }
+      // not clear what to do if isStatic. old code:
+      // if (this.isStatic()) {
+      //   const queryDto = dtos
+      //     .find(x => x.imageDigest == this.queryDigest && x.resourceNamespace == this.queryNamespaceName);
+      //   if (queryDto) {
+      //     this.selectedImageId.set(queryDto.uid);
+      //   }
+      // }
+    });
 
-      if (this.fullSbomDataDto) {
+    effect(() => {
+      const fullSbomDataDto = this.fullSbomDataDto();
+      this._fullSbomDataDto = fullSbomDataDto;
+      if (fullSbomDataDto) {
+        this.getDataDtosByNodeId(fullSbomDataDto.rootNodeBomRef ?? "");
+        this.onActiveNodeIdChange(fullSbomDataDto.rootNodeBomRef ?? "");
+      }
+    });
+
+    effect(() => {
+      const selectedImageId = this.selectedImageId();
+      // avoid re-selecting the same image
+      if (selectedImageId === this._fullSbomDataDto?.uid) return;
+
+      if (this._fullSbomDataDto) {
+        this.fullSbomDataDtoRequestedChange.emit();
         this.resetAllRelatedData();
       }
     });
-  }
 
-  ngOnInit() {
-    this.activatedRoute.queryParamMap.subscribe(params => {
-      this.queryNamespaceName = params.get('namespaceName') ?? undefined;
-      this.queryDigest = params.get('digest') ?? undefined;
-    });
 
-    this.isStatic = !!(this.queryNamespaceName && this.queryDigest);
-
-    this.getTableDataDtos();
-  }
-
-  // #region get data from api
-  getTableDataDtos() {
-    this.service.getSbomReportImageDtos().subscribe({
-      next: (res) => this.onGetDataDtos(res),
-      error: (err) => console.error(err),
-    });
-  }
-
-  getFullSbomDto(digest?: string, selectedNamespace?: string) {
-    if (digest && selectedNamespace) {
-      this.service.getSbomReportDtoByDigestNamespace({ digest: digest, namespaceName: selectedNamespace }).subscribe({
-        next: (res) => this.onGetSbomReportDtoByDigestNamespace(res),
-        error: (err) => console.error(err),
-      });
-    }
-    // this.resetAllRelatedData();
-  }
-
-  onGetSbomReportDtoByDigestNamespace(fullSbomDataDto: SbomReportDto) {
-    this.fullSbomDataDto = fullSbomDataDto;
-    this.onActiveNodeIdChange(fullSbomDataDto.rootNodeBomRef ?? "");
-  }
-
-  onGetDataDtos(dtos: SbomReportImageDto[]) {
-    this.dataDtos = dtos;
-    this.getNamespacedImageDtos();
-    if (this.isStatic) {
-      const queryDto = dtos
-        .find(x => x.imageDigest == this.queryDigest && x.resourceNamespace == this.queryNamespaceName);
-      if (queryDto) {
-        this.selectedImageId.set(queryDto.uid);
-      }
-
-    }
   }
 
   onRefreshRequested() {
-    this.dataDtos = undefined;
     this.namespacedImageDtos = undefined;
     this.resetAllRelatedData();
 
-    this.getTableDataDtos();
+    this.refreshRequestedChange.emit();
   }
 
   private resetAllRelatedData() {
-    this.fullSbomDataDto = undefined;
+    // this.fullSbomDataDto = undefined;
     this.dependsOnBoms = undefined;
     this.deletedDependsOnBom = [];
     this.nodeDataDtos = [];
-    this.sbomReportDetailLicensesTreeNodes = [];
-    this.sbomReportDetailPropertiesTreeNodes = [];
-    this.sbomReportDetailStatistics = [];
   }
 
   getNamespacedImageDtos() {
-    this.namespacedImageDtos = this.dataDtos
+    this.namespacedImageDtos = this.dataDtos()
       ?.map((x) => ({
-        uid: x.uid ?? '', resourceNamespace: x.resourceNamespace ?? '',
+        uid: x.uid ?? '', resourceNamespace: x.resourceNamespace ?? 'N/A',
         mainLabel: `${x.imageName ?? ''}:${x.imageTag ?? ''}`,
         icon: x.hasVulnerabilities ? 'security' : undefined,
       } as NamespacedImageDto)) ?? [];
@@ -181,13 +138,14 @@ export class GenericSbomComponent implements OnInit {
 
   // #region Get Parent and Children Nodes
   private getDataDtosByNodeId(nodeId: string) {
-    this.isTableLoading = true;
+    this.isTableLoading.set(true);
     this.dependsOnBoms = undefined;
     this.deletedDependsOnBom = [];
-    const sbomDetailDtos: SbomDetailExtendedDto[] = [];
-    const rootSbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == nodeId);
+    const sbomDetailDtos: GenericSbomDetailExtendedDto[] = [];
+    const rootSbomDetailDto = this.fullSbomDataDto()
+      ?.details?.find((x) => x.bomRef == nodeId);
     if (rootSbomDetailDto) {
-      const rootSbomExtended: SbomDetailExtendedDto = {
+      const rootSbomExtended: GenericSbomDetailExtendedDto = {
         ...rootSbomDetailDto,
         level: 'Base',
         group: this.getGroupFromSbomReportDetail(rootSbomDetailDto),
@@ -206,14 +164,14 @@ export class GenericSbomComponent implements OnInit {
         groupName: x.group,
         isMain: x.bomRef == nodeId,
       })) ?? [];
-    this.isTableLoading = false;
+    this.isTableLoading.set(false);
   }
 
-  private getDirectParentsSbomDtos(sded: SbomDetailExtendedDto, sdeds: SbomDetailExtendedDto[]) {
-    const parents = this.fullSbomDataDto?.details?.
+  private getDirectParentsSbomDtos(sded: GenericSbomDetailExtendedDto, sdeds: GenericSbomDetailExtendedDto[]) {
+    const parents = this.fullSbomDataDto()?.details?.
     filter((x) => x.dependsOn?.includes(sded.bomRef ?? ""))
       .map((y) => {
-        const parentSbom: SbomDetailExtendedDto = {
+        const parentSbom: GenericSbomDetailExtendedDto = {
           ...y,
           level: 'Ancestor',
           group: this.getGroupFromSbomReportDetail(y),
@@ -225,7 +183,7 @@ export class GenericSbomComponent implements OnInit {
     sdeds.push(...parents);
   }
 
-  private getChildrenSbomDtos(sded: SbomDetailExtendedDto, baseBomref: string, sdeds: SbomDetailExtendedDto[]) {
+  private getChildrenSbomDtos(sded: GenericSbomDetailExtendedDto, baseBomref: string, sdeds: GenericSbomDetailExtendedDto[]) {
     if (!sded) {
       return;
     }
@@ -239,10 +197,10 @@ export class GenericSbomComponent implements OnInit {
         newDetailIds.push(id);
       }
     });
-    const newSbomDetailDtos = this.fullSbomDataDto?.details?.
+    const newSbomDetailDtos = this.fullSbomDataDto()?.details?.
     filter((x) => newDetailIds.includes(x.bomRef ?? ''))
       .map((y) => {
-        const childSbom: SbomDetailExtendedDto = {
+        const childSbom: GenericSbomDetailExtendedDto = {
           ...y,
           level: sded.bomRef == baseBomref ? 'Child' : 'Descendant',
           group: this.getGroupFromSbomReportDetail(y),
@@ -268,15 +226,16 @@ export class GenericSbomComponent implements OnInit {
   // #endregion
 
   onHoveredNodeDtoChange(nodeId: string | undefined) {
-    this.hoveredSbomDetailDto = this.getSbomDetailDtoByBomref(nodeId);
+    this.hoveredSbomDetailDto = this.getSbomDetailDtoByBomRef(nodeId);
   }
 
-  private getSbomDetailDtoByBomref(bomref: string | undefined): SbomReportDetailDto | undefined {
-    return this.fullSbomDataDto?.details?.find(x => x.bomRef == bomref);
+  private getSbomDetailDtoByBomRef(bomRef: string | undefined): GenericSbomReportDetailDto | undefined {
+    return this.fullSbomDataDto()?.details?.find(x => x.bomRef == bomRef);
   }
 
   onActiveNodeIdChange(event: string) {
-    const sbomDetailDto = this.fullSbomDataDto?.details?.find((x) => x.bomRef == event);
+    const sbomDetailDto = this.fullSbomDataDto()
+      ?.details?.find((x) => x.bomRef == event);
     if (sbomDetailDto) {
       this.getDataDtosByNodeId(event);
       const selectedSbomDetailDto = this.dependsOnBoms?.find(x => x.level == 'Base');
@@ -285,7 +244,7 @@ export class GenericSbomComponent implements OnInit {
     }
   }
 
-  private getGroupFromSbomReportDetail(dto: SbomReportDetailDto): string {
+  private getGroupFromSbomReportDetail(dto: GenericSbomReportDetailDto): string {
     if (dto.properties?.find(x => x[1] == "nuget")) {
       return `${dto.name?.split('.')[0] ?? ""} (nuget)`;
     }
@@ -298,7 +257,7 @@ export class GenericSbomComponent implements OnInit {
     return "";
   }
 
-  onTableSelectedRowChange(data: SbomDetailExtendedDto[]) {
+  onTableSelectedRowChange(data: GenericSbomDetailExtendedDto[]) {
     if (data.length == 0) {
       this.selectedSbomDetailDto = undefined;
       this.selectedSbomDetailBomRef = undefined;
@@ -334,70 +293,43 @@ export class GenericSbomComponent implements OnInit {
 
   onMultiHeaderActionRequested(event: string) {
     switch (event) {
-      case "goToDetailedPage":
-        this.goToDetailedPage();
-        break;
-      case "Info":
-        this.onSbomReportOverviewDialogOpen();
-        break;
+      // case "goToDetailedPage":
+      //   // TODO - change to effect
+      //   // this.goToDetailedPage();
+      //   break;
+      // case "Info":
+      //   // TODO - change to effect
+      //   // this.onSbomReportOverviewDialogOpen();
+      //   break;
       case "Dive In":
         const bomRefId = this.selectedSbomDetailDto?.bomRef ?? undefined;
         if (bomRefId) {
           this.onActiveNodeIdChange(bomRefId);
         }
         break;
-      case "Export CycloneDX JSON":
-        this.exportSbom('cyclonedx','json');
-        break;
-      case "Export CycloneDX XML":
-        this.exportSbom('cyclonedx','xml');
-        break;
-      case "Export SPDX":
-        this.exportSbom('spdx','json');
-        break;
+      // case "Export CycloneDX JSON":
+      //   // TODO - change to effect
+      //   // this.exportSbom('cyclonedx','json');
+      //   break;
+      // case "Export CycloneDX XML":
+      //   // TODO - change to effect
+      //   // this.exportSbom('cyclonedx','xml');
+      //   break;
+      // case "Export SPDX":
+      //   // TODO - change to effect
+      //   // this.exportSbom('spdx','json');
+      //   break;
       case "Compare with...":
         this.goToComparePage();
         break;
-      case "Dependency tree":
-        this.goToDependencyTree();
-        break;
+      // case "Dependency tree":
+      //   // TODO - change to effect
+      //   // this.goToDependencyTree();
+      //   break;
       default:
-        console.error("sbom - multi action call back - unknown: " + event);
+        // let the parent handle it
+        this.multiActionEventChange.emit(event);
     }
-  }
-
-  onSbomReportOverviewDialogOpen() {
-    if (this.sbomReportDetailPropertiesTreeNodes.length == 0) {
-      this.sbomReportDetailPropertiesTreeNodes = this.getSbomReportPropertyTreeNodes();
-    }
-    if (this.sbomReportDetailLicensesTreeNodes.length == 0) {
-      this.sbomReportDetailLicensesTreeNodes = this.getSbomReportLicenseTreeNodes();
-    }
-    if (this.sbomReportDetailStatistics.length == 0) {
-      this.sbomReportDetailStatistics.push(
-        this.fullSbomDataDto?.details
-          .filter(det => det.criticalCount > 0)
-          .reduce((sum, item) => sum + item.criticalCount, 0) ?? -1);
-      this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details
-        .filter(det => det.highCount > 0)
-        .reduce((sum, item) => sum + item.highCount, 0) ?? -1);
-      this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details
-        .filter(det => det.mediumCount > 0)
-        .reduce((sum, item) => sum + item.mediumCount, 0) ?? -1);
-      this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details
-        .filter(det => det.lowCount > 0)
-        .reduce((sum, item) => sum + item.lowCount, 0) ?? -1);
-      this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details
-        .filter(det => det.unknownCount > 0)
-        .reduce((sum, item) => sum + item.unknownCount, 0) ?? -1);
-
-      this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.length ?? 0);
-      this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.map(item => item.dependsOn)
-        .filter((deps): deps is Array<string> => Array.isArray(deps))
-        .reduce((sum, deps) => sum + deps.length, 0) ?? 0);
-    }
-
-    this.isSbomReportOverviewDialogVisible = true;
   }
 
   private goToComparePage() {
@@ -406,104 +338,8 @@ export class GenericSbomComponent implements OnInit {
     this.isTrivyReportsCompareVisible = true;
   }
 
-  /**
-   * Get Properties TreeNodes
-   * First, it creates a Map<> with all PropertyName and {propertyValue, usedBy} - usedBy is the SbomDetail Name
-   * Then, for each one, it creates a Set<> with propertyValue and then counts children
-   * the final usedByCount for each propertyName is a unique sum of all usedBy children
-   */
-  private getSbomReportPropertyTreeNodes(): TreeNode[] {
-    const tree: TreeNode[] = [];
-
-    const dataMap = new Map<string, { propValue: string, usedBy: string }[]>();
-
-    this.fullSbomDataDto?.details?.forEach(item => {
-      const usedBy = item.name ?? "unknown";
-
-      item.properties?.forEach(property => {
-        const propName = property[0] ?? "unknown";
-        const propValue = property[1] ?? "unknown";
-
-        if (!dataMap.has(propName)) {
-          dataMap.set(propName, []);
-        }
-
-        dataMap.get(propName)!.push({ propValue, usedBy });
-      });
-    });
-
-    dataMap.forEach((entries, propName) => {
-      const uniqueUsedBySet = new Set<string>();
-
-      const propNameNode: TreeNode = {
-        data: { name: propName, usedByCount: 0 },
-        children: []
-      };
-
-      const propValueUsedByMap = new Map<string, Set<string>>();
-      entries.forEach(entry => {
-        uniqueUsedBySet.add(entry.usedBy);
-
-        if (!propValueUsedByMap.has(entry.propValue)) {
-          propValueUsedByMap.set(entry.propValue, new Set<string>());
-        }
-        propValueUsedByMap.get(entry.propValue)!.add(entry.usedBy);
-      });
-
-      propValueUsedByMap.forEach((usedBySet, propValue) => {
-        const propValueNode: TreeNode = {
-          data: { name: propValue, usedByCount: usedBySet.size },
-          children: []
-        };
-
-        usedBySet.forEach(usedBy => {
-          propValueNode.children!.push({
-            data: { name: usedBy, usedByCount: undefined },
-            children: []
-          });
-        });
-
-        propNameNode.children!.push(propValueNode);
-      });
-
-      propNameNode.data.usedByCount = uniqueUsedBySet.size;
-
-      tree.push(propNameNode);
-    });
-
-    return tree;
-  }
-
-  private getSbomReportLicenseTreeNodes(): TreeNode[] {
-    const licenseMap = new Map<string, Set<string>>();
-
-    this.fullSbomDataDto?.details?.forEach(item => {
-      (item.licenses || []).forEach(license => {
-        if (!licenseMap.has(license)) {
-          licenseMap.set(license, new Set<string>());
-        }
-        licenseMap.get(license)!.add(item.name ?? "unknown");
-      });
-    });
-
-    const tree: TreeNode[] = [];
-    licenseMap.forEach((names, license) => {
-      const licenseNode: TreeNode = {
-        data: { name: license, count: names.size },
-        children: Array.from(names).map(name => ({
-          data: { name: name, count: undefined },
-          children: []
-        }))
-      };
-      tree.push(licenseNode);
-    });
-
-    return tree;
-  }
-  // endregion
-
-  rowExpandResponse?: TrivyTableExpandRowData<SbomDetailExtendedDto>;
-  onRowExpandChange(dto: SbomDetailExtendedDto) {
+  rowExpandResponse?: TrivyTableExpandRowData<GenericSbomDetailExtendedDto>;
+  onRowExpandChange(dto: GenericSbomDetailExtendedDto) {
     this.rowExpandResponse = {
       rowKey: dto,
       colStyles: [
