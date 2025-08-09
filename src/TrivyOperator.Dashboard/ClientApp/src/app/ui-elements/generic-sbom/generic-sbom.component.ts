@@ -41,6 +41,7 @@ export class GenericSbomComponent {
   fullSbomDataDto = input<GenericSbomReportDto | undefined>();
   isStatic = input<boolean>(false);
   multiHeaderActions = input<MultiHeaderAction[]>([]);
+  stateKey = input.required<string>();
 
   isTableLoading = model<boolean>(false);
   selectedImageId = model<string | undefined>();

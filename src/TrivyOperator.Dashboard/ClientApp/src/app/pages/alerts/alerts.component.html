@@ -22,15 +22,15 @@
 </app-trivy-toolbar>
 
 <div class="h-[85vh] flex flex-col tod-content-border">
-  <div class="overflow-auto flex-grow">
+  <div class="overflow-auto h-full tod-content-background">
   <p-treeTable [value]="treeData"
-               scrollable="true"
+               [virtualScrollItemSize]="53"
                scrollHeight="flex"
                [resizableColumns]="true"
                (onNodeExpand)="onNodeExpand($event)"
                (onNodeCollapse)="onNodeCollapse($event)"
                columnResizeMode="expand"
-               class="p-treetable-sm text-sm w-full">
+               class="p-treetable-sm text-sm">
     <ng-template pTemplate="colgroup">
       <colgroup>
         <col class="w-[350px]" />

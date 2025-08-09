@@ -11,15 +11,17 @@ import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.p
 import { SeverityNameByIdPipe } from '../../pipes/severity-name-by-id.pipe';
 import { VulnerabilityCountPipe } from '../../pipes/vulnerability-count.pipe';
 
+import { CardModule} from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-cluster-sbom-reports',
   imports: [GenericSbomComponent,
     SeverityCssStyleByIdPipe, SeverityNameByIdPipe, VulnerabilityCountPipe,
-    DialogModule, TagModule, TreeTableModule],
+    CardModule, DialogModule, TagModule, TreeTableModule, TableModule],
   templateUrl: './cluster-sbom-reports.component.html',
   styleUrl: './cluster-sbom-reports.component.scss'
 })

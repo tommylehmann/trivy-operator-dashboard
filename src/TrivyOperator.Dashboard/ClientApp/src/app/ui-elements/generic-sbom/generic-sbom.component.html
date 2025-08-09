@@ -1,6 +1,6 @@
 <p-splitter class="tod-splitter-no-borders tod-no-background mb-8"
             [layout]="screenSize == 'sm' ? 'vertical' : 'horizontal'"
-            [panelSizes]="[35, 65]" stateStorage="local" [stateKey]="screenSize !== 'sm' ? 'splitter.SBOM Reports' : undefined">
+            [panelSizes]="[35, 65]" stateStorage="local" [stateKey]="screenSize !== 'sm' ? `splitter.${stateKey()}` : undefined">
   <ng-template #panel>
     <div class="w-full">
       <div class="pb-2">
@@ -22,7 +22,7 @@
                          [isRefreshVisible]="!isStatic()"
                          [selectionMode]="'single'"
                          [style]="{ width: '930px' }"
-                         [stateKey]="'SBOM Reports - Depends On'"
+                         [stateKey]="`${stateKey()} - Depends On`"
                          [dataKey]="'bomRef'"
                          [rowExpansionRender]="'table'"
                          [extraClasses]="'trivy-with-filters-half'"
@@ -82,7 +82,7 @@
             maximizable="true"
             [breakpoints]="{ '890px': '90vw' }"
             [contentStyle]="{ height: '95vh' }"
-            header="Compare SBOM Reports"
+            [header]="`Compare ${stateKey()}`"
             [modal]="true"
             [style]="{ width: '90vw' }"
             [(visible)]="isTrivyReportsCompareVisible" >
@@ -92,7 +92,7 @@
                                  [firstSelectedTrivyReportId]="fullSbomDataDto()?.uid"
 
                                  [compareIsResetFiltersVisible]="true"
-                                 [compareStateKey]="'Sbom Reports - Compared'"
+                                 [compareStateKey]="`${stateKey()} - Compared`"
                                  [compareExtraClasses]="'trivy-with-filters'" />
   </p-dialog>
 }

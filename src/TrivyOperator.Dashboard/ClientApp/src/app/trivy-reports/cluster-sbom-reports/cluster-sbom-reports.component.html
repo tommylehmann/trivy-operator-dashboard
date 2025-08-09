@@ -3,6 +3,7 @@
                   [isStatic]="false"
                   [isTableLoading]="false"
                   [selectedImageId]="selectedImageId"
+                  [stateKey]="'Cluster SBOM Reports'"
                   [multiHeaderActions]="[
                     { label: '', icon: 'pi pi-align-justify', specialAction: 'Go to Detailed ⧉' },
                     { label: 'Info', icon: 'pi pi-info-circle', enabledIfDataLoaded: true },
@@ -22,11 +23,11 @@
             closeOnEscape="true"
             dismissableMask="true"
             resizable="true"
-            [breakpoints]="{ '1700px': '1360px', '576px': '90vw' }"
+            [breakpoints]="{ '1700px': '1600px', '576px': '90vw' }"
             [contentStyle]="{ height: '95vh' }"
-            [style]="{ width: '1360px', height: '95vh' }"
+            [style]="{ width: '1600px', height: '95vh' }"
             [maximizable]="true"
-            [header]="`SBOM Reports Details - ${selectedSbomReportImageDto.imageName}:${selectedSbomReportImageDto.imageTag}`"
+            [header]="`Cluster SBOM Reports Details - ${selectedSbomReportImageDto.imageName}:${selectedSbomReportImageDto.imageTag}`"
             [modal]="true"
             [(visible)]="isSbomReportOverviewDialogVisible">
 
@@ -65,16 +66,14 @@
           </div>
         </div>
       </div>
-      <div class="col-span-12 md:col-span-8 h-full flex flex-col">
-        <div class="h-full flex-col">
+      <div class="col-span-12 md:col-span-8 h-[85vh] flex flex-col">
+        <div class="overflow-auto h-full">
           <p-treeTable [value]="sbomReportDetailPropertiesTreeNodes"
-                       [scrollable]="true"
-                       [virtualScroll]="true"
                        [virtualScrollItemSize]="49"
                        scrollHeight="flex"
-                       class="p-treetable-sm text-sm">
+                       class="p-treetable-sm text-sm h-[85vh]">
             <ng-template pTemplate="header">
-              <tr style="height: 49px">
+              <tr style="height: 49px" class="sticky top-0 bg-white z-10">
                 <th ttSortableColumn="name">Property<p-treeTableSortIcon field="name" /></th>
                 <th class="text-right" style="width: 55px; max-width: 55px;">Count</th>
               </tr>
