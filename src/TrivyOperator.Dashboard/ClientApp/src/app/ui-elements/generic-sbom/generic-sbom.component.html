@@ -19,28 +19,14 @@
                          [rowExpandData]="rowExpandResponse"
                          (rowExpandDataChange)="onRowExpandChange($event)"
 
-                         [isRefreshVisible]="true"
+                         [isRefreshVisible]="!isStatic()"
                          [selectionMode]="'single'"
                          [style]="{ width: '930px' }"
                          [stateKey]="'SBOM Reports - Depends On'"
                          [dataKey]="'bomRef'"
                          [rowExpansionRender]="'table'"
                          [extraClasses]="'trivy-with-filters-half'"
-                         [multiHeaderActions]="[
-                           { label: '', icon: 'pi pi-align-justify', specialAction: 'Go to Detailed ⧉' },
-                           { label: 'Info', icon: 'pi pi-info-circle', enabledIfDataLoaded: true },
-                           { label: 'Dive In', icon: 'pi pi-arrow-down-right', enabledIfRowSelected: true },
-                           { label: 'Export CycloneDX JSON', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
-                           { label: 'Export CycloneDX XML', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
-                           { label: 'Export SPDX', icon: 'pi pi-file-export', enabledIfDataLoaded: true },
-                           { label: 'Compare with...', icon: 'pi pi-copy', enabledIfRowSelected: true },
-                           { label: 'Dependency tree', icon: 'pi pi-sitemap', enabledIfDataLoaded: true },
-                           { label: '', specialAction: 'Clear Selection' },
-                           { label: '', specialAction: 'Clear Sort/Filters' },
-                           { label: '', specialAction: 'Collapse All' }
-                         ]"
-
-        />
+                         [multiHeaderActions]="multiHeaderActions()" />
       </div>
     </div>
   </ng-template>

@@ -1,27 +1,24 @@
 // import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, effect, HostListener, inject, input, model, OnInit, output } from '@angular/core';
+import { Component, effect, HostListener, input, model, output } from '@angular/core';
 
-import { NodeDataDto } from '../../ui-elements/fcose/fcose.types';
+import { NodeDataDto } from '../fcose/fcose.types';
 import { GenericSbomReportDto, GenericSbomReportDetailDto, GenericSbomDetailExtendedDto } from './generic-sbom.types';
 import { genericSbomReportComparedColumns, genericSbomReportDetailColumns } from './generic-sbom.constans';
 
 import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
 import { VulnerabilityCountPipe } from '../../pipes/vulnerability-count.pipe';
 
-import { FcoseComponent } from '../../ui-elements/fcose/fcose.component';
-import { NamespaceImageSelectorComponent } from '../../ui-elements/namespace-image-selector/namespace-image-selector.component';
-import { NamespacedImageDto } from '../../ui-elements/namespace-image-selector/namespace-image-selector.types';
-import { TrivyTableComponent } from '../../ui-elements/trivy-table/trivy-table.component';
-import { TrivyTableColumn, TrivyTableExpandRowData } from '../../ui-elements/trivy-table/trivy-table.types';
+import { FcoseComponent } from '../fcose/fcose.component';
+import { NamespaceImageSelectorComponent } from '../namespace-image-selector/namespace-image-selector.component';
+import { NamespacedImageDto } from '../namespace-image-selector/namespace-image-selector.types';
+import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
+import { MultiHeaderAction, TrivyTableColumn, TrivyTableExpandRowData } from '../trivy-table/trivy-table.types';
 
 import { DialogModule } from 'primeng/dialog';
 import { SplitterModule } from 'primeng/splitter';
 import { TagModule } from 'primeng/tag';
 
-import { GenericReportsCompareComponent } from '../../ui-elements/generic-reports-compare/generic-reports-compare.component';
-// import { ImageInfo, TrivyDependencyComponent } from '../../trivy-dependency/trivy-dependency.component';
-import { TrivyDependencyComponent } from '../../trivy-dependency/trivy-dependency.component';
-
+import { GenericReportsCompareComponent } from '../generic-reports-compare/generic-reports-compare.component';
 
 @Component({
   selector: 'app-generic-sbom',
@@ -43,6 +40,7 @@ export class GenericSbomComponent {
   dataDtos = input<GenericSbomReportDto[]>([]);
   fullSbomDataDto = input<GenericSbomReportDto | undefined>();
   isStatic = input<boolean>(false);
+  multiHeaderActions = input<MultiHeaderAction[]>([]);
 
   isTableLoading = model<boolean>(false);
   selectedImageId = model<string | undefined>();
@@ -79,14 +77,6 @@ export class GenericSbomComponent {
       if (dataDtos && dataDtos.length > 0) {
         this.getNamespacedImageDtos();
       }
-      // not clear what to do if isStatic. old code:
-      // if (this.isStatic()) {
-      //   const queryDto = dtos
-      //     .find(x => x.imageDigest == this.queryDigest && x.resourceNamespace == this.queryNamespaceName);
-      //   if (queryDto) {
-      //     this.selectedImageId.set(queryDto.uid);
-      //   }
-      // }
     });
 
     effect(() => {
@@ -183,7 +173,7 @@ export class GenericSbomComponent {
     sdeds.push(...parents);
   }
 
-  private getChildrenSbomDtos(sded: GenericSbomDetailExtendedDto, baseBomref: string, sdeds: GenericSbomDetailExtendedDto[]) {
+  private getChildrenSbomDtos(sded: GenericSbomDetailExtendedDto, baseBomRef: string, sdeds: GenericSbomDetailExtendedDto[]) {
     if (!sded) {
       return;
     }
@@ -202,13 +192,13 @@ export class GenericSbomComponent {
       .map((y) => {
         const childSbom: GenericSbomDetailExtendedDto = {
           ...y,
-          level: sded.bomRef == baseBomref ? 'Child' : 'Descendant',
+          level: sded.bomRef == baseBomRef ? 'Child' : 'Descendant',
           group: this.getGroupFromSbomReportDetail(y),
         }
         return childSbom;
       }) ?? [];
     sdeds.push(...newSbomDetailDtos);
-    newSbomDetailDtos.forEach((sbomDetailDto) => this.getChildrenSbomDtos(sbomDetailDto, baseBomref, sdeds));
+    newSbomDetailDtos.forEach((sbomDetailDto) => this.getChildrenSbomDtos(sbomDetailDto, baseBomRef, sdeds));
   }
   // #endregion
 

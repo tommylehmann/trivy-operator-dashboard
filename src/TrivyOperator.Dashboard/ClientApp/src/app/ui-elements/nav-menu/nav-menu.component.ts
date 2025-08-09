@@ -172,6 +172,15 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             },
           },
           {
+            label: 'SBOMs',
+            icon: 'graph_3',
+            disabled: !this.enabledTrivyReports.includes('csr'),
+            command: () => {
+              this.router.navigate(['/cluster-sbom-reports']);
+              this.isDrawerVisible = false;
+            },
+          },
+          {
             label: 'RBAC Assessments',
             icon: 'admin_panel_settings',
             disabled: !this.enabledTrivyReports.includes('crar'),

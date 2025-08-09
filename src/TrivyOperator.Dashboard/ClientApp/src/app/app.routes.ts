@@ -141,6 +141,12 @@ export const routes: Routes = [
     data: { title: 'SBOM Reports Detailed' },
   },
   {
+    path: 'cluster-sbom-reports',
+    loadComponent: () => import('./trivy-reports/cluster-sbom-reports/cluster-sbom-reports.component').then(
+      (m) => m.ClusterSbomReportsComponent),
+    data: { title: 'Cluster SBOM Reports' },
+  },
+  {
     path: 'test1',
     loadComponent: () =>
       import('./tests/tests.component').then(

@@ -21,7 +21,7 @@ public class ClusterSbomReportService(
             .Select(cr => cr.ToClusterSbomReportDto())
             .GroupJoin(
                 chachedCvrValues,
-                sbom => sbom.RootNodeBomRef,
+                sbom => sbom.Uid.ToString(),
                 cvr => cvr.Metadata.OwnerReferences?.FirstOrDefault()?.Uid ?? "unknown",
                 (sbom, cvrGroup) =>
                 {
@@ -36,12 +36,12 @@ public class ClusterSbomReportService(
                         sbomDto.LowCount = cvr.Report?.Summary?.LowCount ?? -1;
                         sbomDto.UnknownCount = cvr.Report?.Summary?.UnknownCount ?? -1;
 
-                        foreach (var cvrVulnerability in cvr.Report?.Vulnerabilities ?? [])
+                        foreach (Vulnerability cvrVulnerability in cvr.Report?.Vulnerabilities ?? [])
                         {
-                            var sbomDtoBoomRef = sbomDto
+                            var sbomDtoBoomRefs = sbomDto
                             .Details
-                            .FirstOrDefault(detail => detail.Purl == cvrVulnerability.PackagePurl);
-                            if (sbomDtoBoomRef != null)
+                            .Where(detail => detail.Name == cvrVulnerability.Resource && detail.Version == cvrVulnerability.InstalledVersion);
+                            foreach (var sbomDtoBoomRef in sbomDtoBoomRefs)
                             {
                                 switch (cvrVulnerability.Severity)
                                 {
