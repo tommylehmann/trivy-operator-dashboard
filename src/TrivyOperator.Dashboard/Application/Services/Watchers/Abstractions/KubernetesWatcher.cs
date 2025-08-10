@@ -2,6 +2,7 @@
 using k8s.Autorest;
 using k8s.Models;
 using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 using TrivyOperator.Dashboard.Application.Services.BackgroundQueues.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
 using TrivyOperator.Dashboard.Application.Services.WatcherEvents;
@@ -27,7 +28,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
     protected readonly TBackgroundQueue BackgroundQueue = backgroundQueue;
     protected readonly double maxBackoffSeconds = 60;
     protected readonly int resourceListPageSize = 500;
-    protected readonly Dictionary<string, TaskWithCts> Watchers = [];
+    protected readonly ConcurrentDictionary<string, TaskWithCts> Watchers = [];
 
     public Task Add(CancellationToken cancellationToken, string watcherKey = CacheUtils.DefaultCacheRefreshKey)
     {
@@ -44,15 +45,17 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
             typeof(TKubernetesObject).Name,
             watcherKey);
         CancellationTokenSource cts = new();
-        TaskWithCts watcherWithCts = new()
-        {
-            Task = CreateWatch(
-                watcherKey,
-                CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cts.Token).Token),
-            Cts = cts,
-        };
+        CancellationTokenSource linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cts.Token);
+        TaskWithCts watcherWithCts = new(CreateWatch(watcherKey, linkedCts.Token), cts, linkedCts);
 
-        Watchers.Add(watcherKey, watcherWithCts);
+        if (!Watchers.TryAdd(watcherKey, watcherWithCts))
+        {
+            logger.LogWarning(
+                "Watcher for {kubernetesObjectType} and key {watcherKey} already exists. Ignoring Add req.",
+                typeof(TKubernetesObject).Name,
+                watcherKey);
+            return Task.CompletedTask;
+        }
 
         return Task.CompletedTask;
     }
@@ -64,7 +67,7 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
             typeof(TKubernetesObject).Name,
             watcherKey);
         await EnqueueWatcherEvent(watcherKey, WatcherEventType.Flushed, cancellationToken);
-        if (Watchers.TryGetValue(watcherKey, out TaskWithCts taskWithCts))
+        if (Watchers.TryGetValue(watcherKey, out TaskWithCts? taskWithCts))
         {
             await taskWithCts.Cts.CancelAsync();
             try
@@ -84,7 +87,18 @@ public abstract class KubernetesWatcher<TKubernetesObjectList, TKubernetesObject
                     watcherKey,
                     ex.Message);
             }
-            Watchers.Remove(watcherKey);
+            finally
+            {
+                Watchers.TryRemove(watcherKey, out _);
+                taskWithCts.Dispose();
+            }
+        }
+        else
+        {
+            logger.LogWarning(
+                "Watcher for {kubernetesObjectType} and key {watcherKey} not found. Ignoring Delete req.",
+                typeof(TKubernetesObject).Name,
+                watcherKey);
         }
     }
 
