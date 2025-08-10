@@ -245,6 +245,10 @@ export class GenericSbomComponent {
     if (dto.properties?.find(x => x[1] == "gobinary")) {
       return `${dto.name?.split('/')[0] ?? ""} (gobinary)`;
     }
+    const todGroup = dto.properties?.find(x => x[0] == "tod.group");
+    if (todGroup && todGroup[1]) {
+      return `${todGroup[1]}`;
+    }
     return "";
   }
 

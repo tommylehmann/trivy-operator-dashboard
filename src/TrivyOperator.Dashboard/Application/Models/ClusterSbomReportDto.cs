@@ -24,7 +24,27 @@ public class ClusterSbomReportDto : ISbomReportDto<ClusterSbomReportDetailDto>
 
 public class ClusterSbomReportDetailDto : ISBomReportDetailDto
 {
-    public Guid Id => GuidUtils.GetDeterministicGuid(Purl);
+    public Guid Id
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Purl))
+            {
+                if (Guid.TryParse(BomRef, out Guid bomRefGuid))
+                {
+                    return bomRefGuid;
+                }
+                else
+                {
+                    return GuidUtils.GetDeterministicGuid(BomRef);
+                }
+            }
+            else
+            {
+                return GuidUtils.GetDeterministicGuid(Purl);
+            }
+        }
+    }
     public Guid MatchKey => GuidUtils.GetDeterministicGuid($"{(string.IsNullOrEmpty(Purl.Split('@')[0]) ? Name : Purl.Split('@')[0])}");
     public string BomRef { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
@@ -89,6 +109,7 @@ public static class ClusterSbomReportCrExtensions
             Details = [.. details],
         };
         SbomReportCrExtensions.CleanupPurlsFromBomRefs(result);
+        GroupDetails(result);
 
         return result;
 
@@ -120,6 +141,56 @@ public static class ClusterSbomReportCrExtensions
 
         return result;
     }
+
+    private static void GroupDetails(ClusterSbomReportDto dto)
+    {
+        Dictionary<string, ClusterSbomReportDetailDto> dtoLookup = dto.Details.ToDictionary(x => x.BomRef, x => x);
+
+        var filteredDtos = dto.Details.Where(dto =>
+            dto.Properties.Any(p => p.Length >= 2 && p[0] == "resource:Type" && p[1] == "node") &&
+            dto.Properties.Any(p => p.Length >= 1 && p[0] == "NodeRole"));
+
+        foreach (var detail in filteredDtos ?? [])
+        {
+            Dictionary<string, ClusterSbomReportDetailDto> allChildren = new() { { detail.BomRef, detail } };
+            GetDescendants(detail, dtoLookup, allChildren);
+            foreach (var child in allChildren)
+            {
+                child.Value.Properties = [.. child.Value.Properties, ["tod.group", $"node {detail.Name}"]];
+            }
+        }
+
+        
+    }
+
+    private static void GetDescendants(
+        ClusterSbomReportDetailDto rootDto,
+        Dictionary<string, ClusterSbomReportDetailDto> dtoLookup,
+        Dictionary<string, ClusterSbomReportDetailDto> allChildren)
+    {
+        var visited = new HashSet<string>();
+
+        void Traverse(string bomRef)
+        {
+            if (visited.Contains(bomRef)) return;
+            visited.Add(bomRef);
+
+            if (dtoLookup.TryGetValue(bomRef, out var dto))
+            {
+                allChildren[bomRef] = dto;
+                foreach (var childRef in dto.DependsOn)
+                {
+                    Traverse(childRef);
+                }
+            }
+        }
+
+        foreach (var dep in rootDto.DependsOn)
+        {
+            Traverse(dep);
+        }
+    }
+
 
     private static ComponentsComponent[] GetAllComponents(ClusterSbomReportCr clusterSbomReportCr) =>
         clusterSbomReportCr.Report?.Components.Metadata.Component != null

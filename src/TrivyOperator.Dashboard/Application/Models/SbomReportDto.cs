@@ -1,4 +1,5 @@
-﻿using TrivyOperator.Dashboard.Application.Models.Abstracts;
+﻿using System.Diagnostics;
+using TrivyOperator.Dashboard.Application.Models.Abstracts;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Utils;
 
@@ -197,26 +198,38 @@ public static partial class SbomReportCrExtensions
     {
         var nonGuidToGuidMap = sbomReportDto.Details
             .Where(d => !Guid.TryParse(d.BomRef, out _))
-            .ToDictionary(d => d.BomRef, d => Guid.NewGuid().ToString());
+            .ToDictionary(d => d.BomRef, d => GuidUtils.GetDeterministicGuid(d.BomRef).ToString());
+
+        Debug.WriteLine($"For {sbomReportDto.RootNodeBomRef} found {nonGuidToGuidMap.Count} non-GUID BomRefs to convert to GUIDs.");
+        foreach (var bomRef in nonGuidToGuidMap)
+        {
+            Debug.WriteLine($"  BomRef: {bomRef.Key} -> {bomRef.Value}");
+        }
+
+
+        if (nonGuidToGuidMap.Count == 0)
+        {
+            return; // No non-GUID BomRefs to convert
+        }
 
         foreach (var detail in sbomReportDto.Details)
         {
-            if (nonGuidToGuidMap.TryGetValue(detail.BomRef, out string? valueFroBomRef))
+            if (nonGuidToGuidMap.TryGetValue(detail.BomRef, out string? valueFromBomRef))
             {
-                detail.BomRef = valueFroBomRef;
+                detail.BomRef = valueFromBomRef;
             }
 
             for (int i = 0; i < detail.DependsOn.Length; i++)
             {
-                if (nonGuidToGuidMap.TryGetValue(detail.DependsOn[i], out string? valueFroDependsOn))
+                if (nonGuidToGuidMap.TryGetValue(detail.DependsOn[i], out string? valueFromDependsOn))
                 {
-                    detail.DependsOn[i] = valueFroDependsOn;
+                    detail.DependsOn[i] = valueFromDependsOn;
                 }
             }
         }
-        if (nonGuidToGuidMap.TryGetValue(sbomReportDto.RootNodeBomRef, out string? valueFroRootNodeBomRef))
+        if (nonGuidToGuidMap.TryGetValue(sbomReportDto.RootNodeBomRef, out string? valueFromRootNodeBomRef))
         {
-            sbomReportDto.RootNodeBomRef = valueFroRootNodeBomRef;
+            sbomReportDto.RootNodeBomRef = valueFromRootNodeBomRef;
         }
     }
 }
