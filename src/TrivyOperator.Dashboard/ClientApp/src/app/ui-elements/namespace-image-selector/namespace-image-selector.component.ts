@@ -15,6 +15,8 @@ interface ImageDto {
   icon?: string;
 }
 
+export const nonExistingNamespace = 'N/A';
+
 @Component({
   selector: 'app-namespace-image-selector',
   imports: [FormsModule, ButtonModule, SelectModule, TagModule, IconComponent],
@@ -30,6 +32,7 @@ export class NamespaceImageSelectorComponent {
   imagePlaceholder = input<string>('Select image');
 
   selectedNamespace?: string;
+  nonExistingNamespace = nonExistingNamespace;
 
   protected activeNamespaces?: string[];
   protected imageDtos?: ImageDto[];

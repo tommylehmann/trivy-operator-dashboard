@@ -200,13 +200,6 @@ public static partial class SbomReportCrExtensions
             .Where(d => !Guid.TryParse(d.BomRef, out _))
             .ToDictionary(d => d.BomRef, d => GuidUtils.GetDeterministicGuid(d.BomRef).ToString());
 
-        Debug.WriteLine($"For {sbomReportDto.RootNodeBomRef} found {nonGuidToGuidMap.Count} non-GUID BomRefs to convert to GUIDs.");
-        foreach (var bomRef in nonGuidToGuidMap)
-        {
-            Debug.WriteLine($"  BomRef: {bomRef.Key} -> {bomRef.Value}");
-        }
-
-
         if (nonGuidToGuidMap.Count == 0)
         {
             return; // No non-GUID BomRefs to convert

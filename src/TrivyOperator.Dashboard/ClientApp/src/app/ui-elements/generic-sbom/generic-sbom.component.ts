@@ -9,7 +9,7 @@ import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.p
 import { VulnerabilityCountPipe } from '../../pipes/vulnerability-count.pipe';
 
 import { FcoseComponent } from '../fcose/fcose.component';
-import { NamespaceImageSelectorComponent } from '../namespace-image-selector/namespace-image-selector.component';
+import { NamespaceImageSelectorComponent, nonExistingNamespace } from '../namespace-image-selector/namespace-image-selector.component';
 import { NamespacedImageDto } from '../namespace-image-selector/namespace-image-selector.types';
 import { TrivyTableComponent } from '../trivy-table/trivy-table.component';
 import { MultiHeaderAction, TrivyTableColumn, TrivyTableExpandRowData } from '../trivy-table/trivy-table.types';
@@ -120,7 +120,7 @@ export class GenericSbomComponent {
   getNamespacedImageDtos() {
     this.namespacedImageDtos = this.dataDtos()
       ?.map((x) => ({
-        uid: x.uid ?? '', resourceNamespace: x.resourceNamespace ?? 'N/A',
+        uid: x.uid ?? '', resourceNamespace: x.resourceNamespace ?? nonExistingNamespace,
         mainLabel: `${x.imageName ?? ''}:${x.imageTag ?? ''}`,
         icon: x.hasVulnerabilities ? 'security' : undefined,
       } as NamespacedImageDto)) ?? [];

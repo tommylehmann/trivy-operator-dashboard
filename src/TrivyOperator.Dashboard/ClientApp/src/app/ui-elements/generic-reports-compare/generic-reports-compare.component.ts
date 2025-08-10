@@ -1,4 +1,4 @@
-import { Component, effect, input, model, OnInit } from '@angular/core';
+import { Component, effect, input, model, OnInit, output } from '@angular/core';
 
 import { NamespaceImageSelectorComponent } from '../namespace-image-selector/namespace-image-selector.component';
 import { NamespacedImageDto } from '../namespace-image-selector/namespace-image-selector.types';
@@ -34,6 +34,15 @@ export class GenericReportsCompareComponent<
 
   namespacePlaceholder = input<string>('Select namespace');
   imagePlaceholder = input<string>('Select image');
+
+  // Indicates that dataDtos are just minimal for selection, but not for comparison
+  isDependantOnExternalData = input<boolean>(false);
+
+  firstSelectedDto = model<TTrivyReportComparableDto | undefined>();
+  secondSelectedDto = model<TTrivyReportComparableDto | undefined>();
+
+  firstDtoRequested = output<string>();
+  secondDtoRequested = output<string>();
 
   private _dataDtos?: TTrivyReportComparableDto[];
   private _groupedFields: string[] = [];

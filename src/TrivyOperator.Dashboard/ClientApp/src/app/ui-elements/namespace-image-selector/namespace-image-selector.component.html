@@ -5,7 +5,7 @@
               [filter]="true"
               [options]="activeNamespaces"
               [showClear]="true"
-              [disabled]="disabled()"
+              [disabled]="disabled() || selectedNamespace === nonExistingNamespace"
               [(ngModel)]="selectedNamespace"
               (onChange)="filterImageDtos()" />
   </div>
