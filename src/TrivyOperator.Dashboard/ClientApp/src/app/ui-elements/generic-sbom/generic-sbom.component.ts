@@ -2,7 +2,7 @@
 import { Component, effect, HostListener, input, model, output } from '@angular/core';
 
 import { NodeDataDto } from '../fcose/fcose.types';
-import { GenericSbomReportDto, GenericSbomReportDetailDto, GenericSbomDetailExtendedDto } from './generic-sbom.types';
+import { GenericSbomReportDto, GenericSbomReportDetailDto, GenericSbomReportMinimalDto } from './generic-sbom.types';
 import { genericSbomReportComparedColumns, genericSbomReportDetailColumns } from './generic-sbom.constans';
 
 import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
@@ -37,13 +37,14 @@ import { GenericReportsCompareComponent } from '../generic-reports-compare/gener
   styleUrl: './generic-sbom.component.scss'
 })
 export class GenericSbomComponent {
-  dataDtos = input<GenericSbomReportDto[]>([]);
+  dataDtos = input<GenericSbomReportMinimalDto[] | undefined>();
   fullSbomDataDto = input<GenericSbomReportDto | undefined>();
   isStatic = input<boolean>(false);
   multiHeaderActions = input<MultiHeaderAction[]>([]);
   stateKey = input.required<string>();
-  compareFirstSelectedDto = model<GenericSbomReportDto | undefined>();
-  compareSecondSelectedDto = model<GenericSbomReportDto | undefined>();
+  isCompareDependantOnExternalData = input<boolean>(false);
+  compareFirstSelectedDto = input<GenericSbomReportDto | undefined>();
+  compareSecondSelectedDto = input<GenericSbomReportDto | undefined>();
 
   isTableLoading = model<boolean>(false);
   selectedImageId = model<string | undefined>();
@@ -51,6 +52,7 @@ export class GenericSbomComponent {
   multiActionEventChange = output<string>();
   refreshRequestedChange = output<void>();
   fullSbomDataDtoRequestedChange = output<void>();
+
 
   compareFirstDtoRequested = output<string>();
   compareSecondDtoRequested = output<string>();
@@ -60,9 +62,9 @@ export class GenericSbomComponent {
   namespacedImageDtos?: NamespacedImageDto[];
 
   // region dependsOnTable data
-  selectedSbomDetailDto?: GenericSbomDetailExtendedDto;
-  dependsOnBoms?: GenericSbomDetailExtendedDto[];
-  deletedDependsOnBom: GenericSbomDetailExtendedDto[] = [];
+  selectedSbomDetailDto?: GenericSbomReportDetailDto;
+  dependsOnBoms?: GenericSbomReportDetailDto[];
+  deletedDependsOnBom: GenericSbomReportDetailDto[] = [];
 
   dependsOnTableColumns: TrivyTableColumn[] = [...genericSbomReportDetailColumns];
   // endregion
@@ -137,11 +139,11 @@ export class GenericSbomComponent {
     this.isTableLoading.set(true);
     this.dependsOnBoms = undefined;
     this.deletedDependsOnBom = [];
-    const sbomDetailDtos: GenericSbomDetailExtendedDto[] = [];
+    const sbomDetailDtos: GenericSbomReportDetailDto[] = [];
     const rootSbomDetailDto = this.fullSbomDataDto()
       ?.details?.find((x) => x.bomRef == nodeId);
     if (rootSbomDetailDto) {
-      const rootSbomExtended: GenericSbomDetailExtendedDto = {
+      const rootSbomExtended: GenericSbomReportDetailDto = {
         ...rootSbomDetailDto,
         level: 'Base',
         group: this.getGroupFromSbomReportDetail(rootSbomDetailDto),
@@ -163,11 +165,11 @@ export class GenericSbomComponent {
     this.isTableLoading.set(false);
   }
 
-  private getDirectParentsSbomDtos(sded: GenericSbomDetailExtendedDto, sdeds: GenericSbomDetailExtendedDto[]) {
+  private getDirectParentsSbomDtos(sded: GenericSbomReportDetailDto, sdeds: GenericSbomReportDetailDto[]) {
     const parents = this.fullSbomDataDto()?.details?.
     filter((x) => x.dependsOn?.includes(sded.bomRef ?? ""))
       .map((y) => {
-        const parentSbom: GenericSbomDetailExtendedDto = {
+        const parentSbom: GenericSbomReportDetailDto = {
           ...y,
           level: 'Ancestor',
           group: this.getGroupFromSbomReportDetail(y),
@@ -179,7 +181,7 @@ export class GenericSbomComponent {
     sdeds.push(...parents);
   }
 
-  private getChildrenSbomDtos(sded: GenericSbomDetailExtendedDto, baseBomRef: string, sdeds: GenericSbomDetailExtendedDto[]) {
+  private getChildrenSbomDtos(sded: GenericSbomReportDetailDto, baseBomRef: string, sdeds: GenericSbomReportDetailDto[]) {
     if (!sded) {
       return;
     }
@@ -196,7 +198,7 @@ export class GenericSbomComponent {
     const newSbomDetailDtos = this.fullSbomDataDto()?.details?.
     filter((x) => newDetailIds.includes(x.bomRef ?? ''))
       .map((y) => {
-        const childSbom: GenericSbomDetailExtendedDto = {
+        const childSbom: GenericSbomReportDetailDto = {
           ...y,
           level: sded.bomRef == baseBomRef ? 'Child' : 'Descendant',
           group: this.getGroupFromSbomReportDetail(y),
@@ -257,7 +259,7 @@ export class GenericSbomComponent {
     return "";
   }
 
-  onTableSelectedRowChange(data: GenericSbomDetailExtendedDto[]) {
+  onTableSelectedRowChange(data: GenericSbomReportDetailDto[]) {
     if (data.length == 0) {
       this.selectedSbomDetailDto = undefined;
       this.selectedSbomDetailBomRef = undefined;
@@ -291,41 +293,25 @@ export class GenericSbomComponent {
     this.dependsOnBoms = [...(this.dependsOnBoms || []), ...undeletedSboms];
   }
 
+  onCompareFirstDtoRequested(uid: string) {
+    this.compareFirstDtoRequested.emit(uid);
+  }
+
+  onCompareSecondDtoRequested(uid: string) {
+    this.compareSecondDtoRequested.emit(uid);
+  }
+
   onMultiHeaderActionRequested(event: string) {
     switch (event) {
-      // case "goToDetailedPage":
-      //   // TODO - change to effect
-      //   // this.goToDetailedPage();
-      //   break;
-      // case "Info":
-      //   // TODO - change to effect
-      //   // this.onSbomReportOverviewDialogOpen();
-      //   break;
       case "Dive In":
         const bomRefId = this.selectedSbomDetailDto?.bomRef ?? undefined;
         if (bomRefId) {
           this.onActiveNodeIdChange(bomRefId);
         }
         break;
-      // case "Export CycloneDX JSON":
-      //   // TODO - change to effect
-      //   // this.exportSbom('cyclonedx','json');
-      //   break;
-      // case "Export CycloneDX XML":
-      //   // TODO - change to effect
-      //   // this.exportSbom('cyclonedx','xml');
-      //   break;
-      // case "Export SPDX":
-      //   // TODO - change to effect
-      //   // this.exportSbom('spdx','json');
-      //   break;
       case "Compare with...":
         this.goToComparePage();
         break;
-      // case "Dependency tree":
-      //   // TODO - change to effect
-      //   // this.goToDependencyTree();
-      //   break;
       default:
         // let the parent handle it
         this.multiActionEventChange.emit(event);
@@ -338,8 +324,8 @@ export class GenericSbomComponent {
     this.isTrivyReportsCompareVisible = true;
   }
 
-  rowExpandResponse?: TrivyTableExpandRowData<GenericSbomDetailExtendedDto>;
-  onRowExpandChange(dto: GenericSbomDetailExtendedDto) {
+  rowExpandResponse?: TrivyTableExpandRowData<GenericSbomReportDetailDto>;
+  onRowExpandChange(dto: GenericSbomReportDetailDto) {
     this.rowExpandResponse = {
       rowKey: dto,
       colStyles: [

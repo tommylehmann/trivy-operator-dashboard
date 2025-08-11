@@ -3,7 +3,7 @@
                   [isStatic]="isStatic"
                   [isTableLoading]="false"
                   [selectedImageId]="selectedImageId"
-
+                  [isCompareDependantOnExternalData]="true"
                   [compareFirstSelectedDto]="compareFirstSelectedDto"
                   [compareSecondSelectedDto]="compareSecondSelectedDto"
                   [stateKey]="'SBOM Reports'"
@@ -109,7 +109,7 @@
                    class="p-datatable-sm text-sm p-0"
                    [virtualScrollItemSize]="49"
                    [scrollable]="true"
-                   [value]="selectedSbomReportImageDto?.resources ?? []">
+                   [value]="imageResourceDtos ?? []">
             <ng-template pTemplate="header">
               <tr style="height: 49px">
                 <th pSortableColumn="name" style="width: 55%">

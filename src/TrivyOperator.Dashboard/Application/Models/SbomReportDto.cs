@@ -56,8 +56,14 @@ public class SbomReportImageMinimalDto
     public string ImageName { get; set; } = string.Empty;
     public string ImageTag { get; set; } = string.Empty;
     public string ImageDigest { get; set; } = string.Empty;
+    public string ImageRepository { get; set; } = string.Empty;
     public string ResourceNamespace { get; init; } = string.Empty;
     public bool HasVulnerabilities { get; set; } = false;
+    public long CriticalCount { get; set; } = -1;
+    public long HighCount { get; set; } = -1;
+    public long MediumCount { get; set; } = -1;
+    public long LowCount { get; set; } = -1;
+    public long UnknownCount { get; set; } = -1;
 }
 
 public class SbomReportDetailDto : ISBomReportDetailDto
@@ -214,7 +220,27 @@ public static partial class SbomReportCrExtensions
             ImageName = firstSbomReportCr.Report?.Artifact?.Repository ?? string.Empty,
             ImageTag = firstSbomReportCr.Report?.Artifact?.Tag ?? string.Empty,
             ImageDigest = firstSbomReportCr.Report?.Artifact?.Digest ?? string.Empty,
+            ImageRepository = firstSbomReportCr.Report?.Registry?.Server ?? string.Empty,
             ResourceNamespace = firstSbomReportCr.Metadata.NamespaceProperty,
+        };
+    }
+
+    public static SbomReportImageResourceDto ToSbomReportImageResourceDto(this SbomReportCr sbomReportCr)
+    {
+        return new SbomReportImageResourceDto
+        {
+            Name = sbomReportCr.Metadata.Labels != null &&
+                   sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.resource.name", out string? resourceName)
+                ? resourceName
+                : string.Empty,
+            Kind = sbomReportCr.Metadata.Labels != null &&
+                   sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.resource.kind", out string? resourceKind)
+                ? resourceKind
+                : string.Empty,
+            ContainerName = sbomReportCr.Metadata.Labels != null &&
+                            sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.container.name", out string? containerName)
+                ? containerName
+                : string.Empty,
         };
     }
 

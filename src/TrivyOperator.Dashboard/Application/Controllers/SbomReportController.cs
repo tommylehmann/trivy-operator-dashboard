@@ -110,4 +110,11 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
     public async Task<IEnumerable<string>> GetActiveNamespaces() =>
         await sbomReportService.GetActiveNamespaces();
+
+    [HttpGet("digest/image-resources", Name = "GetSbomReportImageResourceDtosByDigestAndNamespace")]
+    [ProducesResponseType<IEnumerable<SbomReportImageResourceDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+    public async Task<IEnumerable<SbomReportImageResourceDto>> GetImageResourceDtosByDigestAndNamespace([FromQuery] string digest, [FromQuery] string namespaceName) =>
+        await sbomReportService.GetSbomReportImageResourceDtosByDigestAndNamespace(digest, namespaceName);
 }

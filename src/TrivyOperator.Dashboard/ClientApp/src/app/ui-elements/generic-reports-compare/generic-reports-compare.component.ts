@@ -49,23 +49,32 @@ export class GenericReportsCompareComponent<
   private _firstSelectedTrivyReportId?: string;
   private _secondSelectedTrivyReportId?: string;
 
+  private _isDependantOnExternalData?: boolean;
+  private _firstSelectedDto?: TTrivyReportComparableDto;
+  private _secondSelectedDto?: TTrivyReportComparableDto;
+
   constructor() {
     effect(() => {
+      this._isDependantOnExternalData = this.isDependantOnExternalData();
+    });
+    effect(() => {
       this._firstSelectedTrivyReportId = this.firstSelectedTrivyReportId();
-      if (this.isDependantOnExternalData()) {
-        this.firstSelectedDto.set(undefined);
+      if (this._isDependantOnExternalData) {
+        //this.firstSelectedDto.set(undefined);
         if (this._firstSelectedTrivyReportId) {
           this.firstDtoRequested.emit(this._firstSelectedTrivyReportId);
+          console.log("first emit: ", this._firstSelectedTrivyReportId);
         }
       }
       this.compareSelectedTrivyReports();
     });
     effect(() => {
       this._secondSelectedTrivyReportId = this.secondSelectedTrivyReportId();
-      if (this.isDependantOnExternalData()) {
-        this.secondSelectedDto.set(undefined);
+      if (this._isDependantOnExternalData) {
+        //this.secondSelectedDto.set(undefined);
         if (this._secondSelectedTrivyReportId) {
           this.secondDtoRequested.emit(this._secondSelectedTrivyReportId);
+          console.log("second emit: ", this._secondSelectedTrivyReportId);
         }
       }
       this.compareSelectedTrivyReports();
@@ -75,11 +84,13 @@ export class GenericReportsCompareComponent<
       this.compareSelectedTrivyReports();
     });
     effect(() => {
-      const firstDto = this.firstSelectedDto();
+      this._firstSelectedDto = this.firstSelectedDto();
+      console.log("firstDto: ", this._firstSelectedDto?.uid);
       this.compareSelectedTrivyReports();
     });
     effect(() => {
-      const secondDto = this.secondSelectedDto();
+      this._secondSelectedDto = this.secondSelectedDto();
+      console.log("secondDto: ", this._secondSelectedDto?.uid);
       this.compareSelectedTrivyReports();
     });
   }
@@ -91,7 +102,9 @@ export class GenericReportsCompareComponent<
   }
 
   compareSelectedTrivyReports() {
-    if (!this._dataDtos ||
+    console.log("compareSelectedTrivyReports - first: ", this._firstSelectedDto?.uid);
+    console.log("compareSelectedTrivyReports - second: ", this._secondSelectedDto?.uid);
+    if ((!this._dataDtos && !this._isDependantOnExternalData) ||
       (!this._firstSelectedTrivyReportId && !this._secondSelectedTrivyReportId)
     ) {
       if (this.trivyReportDetailsCompared) {
@@ -102,8 +115,8 @@ export class GenericReportsCompareComponent<
 
     const detailSet = new Map<string, TrivyReportDetailComparedDto>();
 
-    const firstDto = this.isDependantOnExternalData()
-      ? this.firstSelectedDto()
+    const firstDto = this._isDependantOnExternalData
+      ? this._firstSelectedDto
       : this._dataDtos
       ?.find(tr => tr.uid === this._firstSelectedTrivyReportId);
 
@@ -125,8 +138,8 @@ export class GenericReportsCompareComponent<
       });
     }
 
-    const secondDto = this.isDependantOnExternalData()
-      ? this.secondSelectedDto()
+    const secondDto = this._isDependantOnExternalData
+      ? this._secondSelectedDto
       : this._dataDtos?.find(tr => tr.uid === this._secondSelectedTrivyReportId);
 
     if (secondDto) {

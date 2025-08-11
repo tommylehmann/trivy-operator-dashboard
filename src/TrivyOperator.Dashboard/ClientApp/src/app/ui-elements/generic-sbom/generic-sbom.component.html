@@ -86,13 +86,18 @@
             [modal]="true"
             [style]="{ width: '90vw' }"
             [(visible)]="isTrivyReportsCompareVisible" >
-    <app-generic-reports-compare [dataDtos]="dataDtos()"
+    <app-generic-reports-compare [dataDtos]="[]"
                                  [comparedTableColumns]="comparedTableColumns"
                                  [namespacedImageDtos]="namespacedImageDtos"
                                  [firstSelectedTrivyReportId]="fullSbomDataDto()?.uid"
 
+                                 [isDependantOnExternalData]="isCompareDependantOnExternalData()"
+                                 [firstSelectedDto]="compareFirstSelectedDto()"
+                                 [secondSelectedDto]="compareSecondSelectedDto()"
                                  [compareIsResetFiltersVisible]="true"
                                  [compareStateKey]="`${stateKey()} - Compared`"
-                                 [compareExtraClasses]="'trivy-with-filters'" />
+                                 [compareExtraClasses]="'trivy-with-filters'"
+                                 (firstDtoRequested)="onCompareFirstDtoRequested($event)"
+                                 (secondDtoRequested)="onCompareSecondDtoRequested($event)" />
   </p-dialog>
 }

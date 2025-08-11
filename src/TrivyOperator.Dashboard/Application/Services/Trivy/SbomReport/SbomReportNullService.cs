@@ -26,5 +26,6 @@ public class SbomReportNullService : ISbomReportService
     public void CleanupFile(string fileName) { }
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult<IEnumerable<string>>([]);
-    
+    public Task<IEnumerable<SbomReportImageResourceDto>> GetSbomReportImageResourceDtosByDigestAndNamespace(string digest, string namespaceName) => 
+        Task.FromResult<IEnumerable<SbomReportImageResourceDto>>([]);
 }

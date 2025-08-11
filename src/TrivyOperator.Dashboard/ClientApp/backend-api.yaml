@@ -1086,6 +1086,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+  /api/sbom-reports/digest/image-resources:
+    get:
+      tags:
+        - SbomReport
+      operationId: GetSbomReportImageResourceDtosByDigestAndNamespace
+      parameters:
+        - name: digest
+          in: query
+          schema:
+            type: string
+        - name: namespaceName
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SbomReportImageResourceDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /api/severities:
     get:
       tags:
@@ -2696,10 +2731,27 @@ components:
           type: string
         imageDigest:
           type: string
+        imageRepository:
+          type: string
         resourceNamespace:
           type: string
         hasVulnerabilities:
           type: boolean
+        criticalCount:
+          type: integer
+          format: int64
+        highCount:
+          type: integer
+          format: int64
+        mediumCount:
+          type: integer
+          format: int64
+        lowCount:
+          type: integer
+          format: int64
+        unknownCount:
+          type: integer
+          format: int64
       additionalProperties: false
     SbomReportImageResourceDto:
       type: object

@@ -4,7 +4,7 @@ import { SbomReportService } from '../../../api/services/sbom-report.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SbomReportDto } from '../../../api/models/sbom-report-dto';
-import { SbomReportImageDto } from '../../../api/models/sbom-report-image-dto';
+import { SbomReportImageResourceDto } from '../../../api/models/sbom-report-image-resource-dto';
 
 import { GenericSbomComponent } from '../../ui-elements/generic-sbom/generic-sbom.component';
 import { TreeNode } from 'primeng/api';
@@ -18,6 +18,7 @@ import { DialogModule } from 'primeng/dialog';
 import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { TreeTableModule } from 'primeng/treetable';
+import { SbomReportImageMinimalDto } from '../../../api/models/sbom-report-image-minimal-dto';
 
 @Component({
   selector: 'app-sbom-reports',
@@ -30,10 +31,11 @@ import { TreeTableModule } from 'primeng/treetable';
   styleUrl: './sbom-reports.component.scss',
 })
 export class SbomReportsComponent implements OnInit {
-  dataDtos: SbomReportImageDto[] = [];
+  dataDtos: SbomReportImageMinimalDto[] = [];
   fullSbomDataDto?: SbomReportDto;
+  imageResourceDtos?: SbomReportImageResourceDto[];
   selectedImageId?: string;
-  selectedSbomReportImageDto?: SbomReportImageDto;
+  selectedSbomReportImageDto?: SbomReportImageMinimalDto;
 
   queryNamespaceName?: string;
   queryDigest?: string;
@@ -70,13 +72,13 @@ export class SbomReportsComponent implements OnInit {
   }
 
   getTableDataDtos() {
-    this.service.getSbomReportImageDtos().subscribe({
+    this.service.getSbomReportImageMinimalDtos().subscribe({
       next: (res) => this.onGetDataDtos(res),
       error: (err) => console.error(err),
     });
   }
 
-  onGetDataDtos(dtos: SbomReportImageDto[]) {
+  onGetDataDtos(dtos: SbomReportImageMinimalDto[]) {
     this.dataDtos = dtos;
     if (this.isStatic) {
       const queryDto = dtos
@@ -99,6 +101,14 @@ export class SbomReportsComponent implements OnInit {
           next: (res) => this.onGetSbomReportDtoByDigestNamespace(res),
           error: (err) => console.error(err),
         });
+      this.service
+        .getSbomReportImageResourceDtosByDigestAndNamespace({
+          digest: this.selectedSbomReportImageDto.imageDigest,
+          namespaceName: this.selectedSbomReportImageDto.resourceNamespace })
+        .subscribe({
+          next: (res) => this.imageResourceDtos = res,
+          error: (err) => console.error(err),
+        });
     }
   }
 
@@ -111,11 +121,35 @@ export class SbomReportsComponent implements OnInit {
   }
 
   onCompareFirstDtoRequested(id: string) {
-
+    console.log("sbom - onCompareFirstDtoRequested: ", id);
+    const dto = this.dataDtos.find((dto) => dto.uid === id);
+    if (dto) {
+      this.service.getSbomReportDtoByDigestNamespace({
+        digest: dto.imageDigest,
+        namespaceName: dto.resourceNamespace
+      }).subscribe({
+        next: (res) => {
+          this.compareFirstSelectedDto = res;
+        },
+        error: (err) => console.error(err),
+      });
+    }
   }
 
   onCompareSecondDtoRequested(id: string) {
-
+    console.log("sbom - onCompareSecondDtoRequested: ", id);
+    const dto = this.dataDtos.find((dto) => dto.uid === id);
+    if (dto) {
+      this.service.getSbomReportDtoByDigestNamespace({
+        digest: dto.imageDigest,
+        namespaceName: dto.resourceNamespace
+      }).subscribe({
+        next: (res) => {
+          this.compareSecondSelectedDto = res;
+        },
+        error: (err) => console.error(err),
+      });
+    }
   }
 
   onMultiActionEventChange(value: string) {
@@ -156,7 +190,6 @@ export class SbomReportsComponent implements OnInit {
       this.sbomReportDetailStatistics.push(this.selectedSbomReportImageDto?.mediumCount ?? -1);
       this.sbomReportDetailStatistics.push(this.selectedSbomReportImageDto?.lowCount ?? -1);
       this.sbomReportDetailStatistics.push(this.selectedSbomReportImageDto?.unknownCount ?? -1);
-
       this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.length ?? 0);
       this.sbomReportDetailStatistics.push(this.fullSbomDataDto?.details?.map(item => item.dependsOn)
         .filter((deps): deps is Array<string> => Array.isArray(deps))

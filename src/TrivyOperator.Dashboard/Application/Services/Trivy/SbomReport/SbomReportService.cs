@@ -119,7 +119,11 @@ public class SbomReportService(
                 {
                     var vr = vrMatches.FirstOrDefault();
                     dto.HasVulnerabilities = vr != null;
-
+                    dto.CriticalCount = vr?.CriticalCount ?? -1;
+                    dto.HighCount = vr?.HighCount ?? -1;
+                    dto.MediumCount = vr?.MediumCount ?? -1;
+                    dto.LowCount = vr?.LowCount ?? -1;
+                    dto.UnknownCount = vr?.UnknownCount ?? -1;
                     return dto;
                 });
         return Task.FromResult(dtos);
@@ -295,6 +299,18 @@ public class SbomReportService(
 
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult<IEnumerable<string>>([.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key),]);
+
+    public Task<IEnumerable<SbomReportImageResourceDto>> GetSbomReportImageResourceDtosByDigestAndNamespace(
+        string digest, string namespaceName)
+    {
+        IEnumerable<SbomReportCr> cachedValues = [.. cache
+            .Where(kvp => kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.Values),];
+        IEnumerable<SbomReportImageResourceDto> dtos = cachedValues
+            .Where(x => x.Report?.Artifact?.Digest == digest)
+            .Select(x => x.ToSbomReportImageResourceDto());
+        return Task.FromResult(dtos);
+    }
 
     private void SetVulnerabilityReportStatistics(SbomReportDto sbomReportDto)
     {

@@ -15,5 +15,6 @@ public interface ISbomReportService
     Task<string> CreateCycloneDxExportZipFile(SbomReportExportDto[] exportSboms, string fileType = "json");
     void CleanupFile(string fileName);
     Task<IEnumerable<string>> GetActiveNamespaces();
-    
+    Task<IEnumerable<SbomReportImageResourceDto>> GetSbomReportImageResourceDtosByDigestAndNamespace(
+        string digest, string namespaceName);
 }
