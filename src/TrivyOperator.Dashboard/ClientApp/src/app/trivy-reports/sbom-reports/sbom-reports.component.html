@@ -3,6 +3,9 @@
                   [isStatic]="isStatic"
                   [isTableLoading]="false"
                   [selectedImageId]="selectedImageId"
+
+                  [compareFirstSelectedDto]="compareFirstSelectedDto"
+                  [compareSecondSelectedDto]="compareSecondSelectedDto"
                   [stateKey]="'SBOM Reports'"
                   [multiHeaderActions]="[
                     { label: '', icon: 'pi pi-align-justify', specialAction: 'Go to Detailed ⧉' },
@@ -20,7 +23,9 @@
 
                   (multiActionEventChange)="onMultiActionEventChange($event)"
                   (refreshRequestedChange)="onRefreshRequestedChange()"
-                  (selectedImageIdChange)="onSelectedImageIdChange($event)" />
+                  (selectedImageIdChange)="onSelectedImageIdChange($event)"
+                  (compareFirstDtoRequested)="onCompareFirstDtoRequested($event)"
+                  (compareSecondDtoRequested)="onCompareSecondDtoRequested($event)"/>
 
 @if(fullSbomDataDto) {
   <p-dialog closable="true"

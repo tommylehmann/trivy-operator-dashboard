@@ -42,6 +42,8 @@ export class GenericSbomComponent {
   isStatic = input<boolean>(false);
   multiHeaderActions = input<MultiHeaderAction[]>([]);
   stateKey = input.required<string>();
+  compareFirstSelectedDto = model<GenericSbomReportDto | undefined>();
+  compareSecondSelectedDto = model<GenericSbomReportDto | undefined>();
 
   isTableLoading = model<boolean>(false);
   selectedImageId = model<string | undefined>();
@@ -49,6 +51,9 @@ export class GenericSbomComponent {
   multiActionEventChange = output<string>();
   refreshRequestedChange = output<void>();
   fullSbomDataDtoRequestedChange = output<void>();
+
+  compareFirstDtoRequested = output<string>();
+  compareSecondDtoRequested = output<string>();
 
   protected _fullSbomDataDto?: GenericSbomReportDto;
 

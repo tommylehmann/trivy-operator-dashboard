@@ -84,11 +84,7 @@ export class FcoseComponent implements AfterViewInit, OnInit {
   private fcoseLayoutOptions: FcoseLayoutOptions = {
     name: 'fcose',
     nodeRepulsion: (node: NodeSingular) => {
-      if (node.parent().nonempty()) {
-        return 100;
-      } else {
         return 20000;
-      }
     },
     numIter: 2500,
     animate: false,
@@ -99,8 +95,10 @@ export class FcoseComponent implements AfterViewInit, OnInit {
     tilingPaddingHorizontal: 100,
     tilingPaddingVertical: 100,
     idealEdgeLength: (edge: EdgeSingular) => {
-      const denominator = edge.source().parent().nonempty() ? 4 : 1;
-      console.log('denom', denominator);
+      let denominator = 1;
+      if (edge.source().parent().nonempty()) denominator = 8;
+      if (edge.target().parent().nonempty()) denominator = 4;
+
       return this.idealEdgeLength() / denominator;
     },
     edgeElasticity: (edge: EdgeSingular) => {

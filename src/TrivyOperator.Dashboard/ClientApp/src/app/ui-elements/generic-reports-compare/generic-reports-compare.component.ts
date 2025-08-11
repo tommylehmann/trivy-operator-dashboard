@@ -52,11 +52,34 @@ export class GenericReportsCompareComponent<
   constructor() {
     effect(() => {
       this._firstSelectedTrivyReportId = this.firstSelectedTrivyReportId();
+      if (this.isDependantOnExternalData()) {
+        this.firstSelectedDto.set(undefined);
+        if (this._firstSelectedTrivyReportId) {
+          this.firstDtoRequested.emit(this._firstSelectedTrivyReportId);
+        }
+      }
+      this.compareSelectedTrivyReports();
+    });
+    effect(() => {
       this._secondSelectedTrivyReportId = this.secondSelectedTrivyReportId();
+      if (this.isDependantOnExternalData()) {
+        this.secondSelectedDto.set(undefined);
+        if (this._secondSelectedTrivyReportId) {
+          this.secondDtoRequested.emit(this._secondSelectedTrivyReportId);
+        }
+      }
       this.compareSelectedTrivyReports();
     });
     effect(() => {
       this._dataDtos = this.dataDtos();
+      this.compareSelectedTrivyReports();
+    });
+    effect(() => {
+      const firstDto = this.firstSelectedDto();
+      this.compareSelectedTrivyReports();
+    });
+    effect(() => {
+      const secondDto = this.secondSelectedDto();
       this.compareSelectedTrivyReports();
     });
   }
@@ -79,42 +102,51 @@ export class GenericReportsCompareComponent<
 
     const detailSet = new Map<string, TrivyReportDetailComparedDto>();
 
-    this._dataDtos
-      ?.find(tr => tr.uid === this._firstSelectedTrivyReportId)
-      ?.details?.forEach(detail => {
-      const existing = detailSet.get(detail.matchKey);
-      if (existing) {
-        this.mergeValues(existing, detail, true);
-      } else {
-        const clone = { ...detail, first: true };
-        this._groupedFields.forEach(field => {
-          const value = this.getPropertyAsString(clone, field);
-          if (value) {
-            (clone as any)[field] = value;
-          }
-        });
-        detailSet.set(detail.matchKey, clone);
-      }
-    });
+    const firstDto = this.isDependantOnExternalData()
+      ? this.firstSelectedDto()
+      : this._dataDtos
+      ?.find(tr => tr.uid === this._firstSelectedTrivyReportId);
 
-    this._dataDtos
-      ?.find(tr => tr.uid === this._secondSelectedTrivyReportId)
-      ?.details?.forEach(detail => {
-      const existing = detailSet.get(detail.matchKey);
-      if (existing) {
-        existing.second = true;
-        this.mergeValues(existing, detail, false);
-      } else {
-        const clone = { ...detail, second: true };
-        this._groupedFields.forEach(field => {
-          const value = this.getPropertyAsString(clone, field);
-          if (value) {
-            (clone as any)[field] = value;
-          }
-        });
-        detailSet.set(detail.matchKey, clone);
-      }
-    });
+    if (firstDto) {
+      firstDto.details?.forEach(detail => {
+        const existing = detailSet.get(detail.matchKey);
+        if (existing) {
+          this.mergeValues(existing, detail, true);
+        } else {
+          const clone = { ...detail, first: true };
+          this._groupedFields.forEach(field => {
+            const value = this.getPropertyAsString(clone, field);
+            if (value) {
+              (clone as any)[field] = value;
+            }
+          });
+          detailSet.set(detail.matchKey, clone);
+        }
+      });
+    }
+
+    const secondDto = this.isDependantOnExternalData()
+      ? this.secondSelectedDto()
+      : this._dataDtos?.find(tr => tr.uid === this._secondSelectedTrivyReportId);
+
+    if (secondDto) {
+      secondDto.details?.forEach(detail => {
+        const existing = detailSet.get(detail.matchKey);
+        if (existing) {
+          existing.second = true;
+          this.mergeValues(existing, detail, false);
+        } else {
+          const clone = { ...detail, second: true };
+          this._groupedFields.forEach(field => {
+            const value = this.getPropertyAsString(clone, field);
+            if (value) {
+              (clone as any)[field] = value;
+            }
+          });
+          detailSet.set(detail.matchKey, clone);
+        }
+      });
+    }
 
     detailSet.forEach(item => {
       if (this._firstSelectedTrivyReportId) {

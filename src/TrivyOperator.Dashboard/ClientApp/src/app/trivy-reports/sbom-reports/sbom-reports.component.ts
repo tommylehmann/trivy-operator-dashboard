@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, model, OnInit, output } from '@angular/core';
 
 import { SbomReportService } from '../../../api/services/sbom-report.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -38,6 +38,9 @@ export class SbomReportsComponent implements OnInit {
   queryNamespaceName?: string;
   queryDigest?: string;
   isStatic: boolean = false;
+
+  compareFirstSelectedDto? : SbomReportDto;
+  compareSecondSelectedDto? : SbomReportDto;
 
   // region dialog related vars
   isSbomReportOverviewDialogVisible: boolean = false;
@@ -105,6 +108,14 @@ export class SbomReportsComponent implements OnInit {
 
   onRefreshRequestedChange() {
     this.getTableDataDtos();
+  }
+
+  onCompareFirstDtoRequested(id: string) {
+
+  }
+
+  onCompareSecondDtoRequested(id: string) {
+
   }
 
   onMultiActionEventChange(value: string) {
