@@ -67,6 +67,13 @@ public class SbomReportController(ISbomReportService sbomReportService) : Contro
     public async Task<IActionResult> GetGroupedByImage([FromQuery] string? digest, [FromQuery] string? namespaceName) =>
         Ok(await sbomReportService.GetSbomReportImageDtos(digest, namespaceName));
 
+    [HttpGet("grouped-by-image/minimal", Name = "GetSbomReportImageMinimalDtos")]
+    [ProducesResponseType<IEnumerable<SbomReportImageMinimalDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetGroupedByImageMinimal([FromQuery] string? namespaceName) =>
+        Ok(await sbomReportService.GetSbomReportImageMinimalDtos(namespaceName));
+
     [HttpPost("export", Name = "ExportSbomReport")]
     [Produces("application/zip")]
     [ProducesResponseType<FileStreamResult>(StatusCodes.Status200OK)]

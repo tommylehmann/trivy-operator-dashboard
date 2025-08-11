@@ -981,6 +981,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+  /api/sbom-reports/grouped-by-image/minimal:
+    get:
+      tags:
+        - SbomReport
+      operationId: GetSbomReportImageMinimalDtos
+      parameters:
+        - name: namespaceName
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SbomReportImageMinimalDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
   /api/sbom-reports/export:
     post:
       tags:
@@ -2652,6 +2683,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SbomReportDetailDto'
+      additionalProperties: false
+    SbomReportImageMinimalDto:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+        imageName:
+          type: string
+        imageTag:
+          type: string
+        imageDigest:
+          type: string
+        resourceNamespace:
+          type: string
+        hasVulnerabilities:
+          type: boolean
       additionalProperties: false
     SbomReportImageResourceDto:
       type: object

@@ -11,6 +11,8 @@ public class SbomReportNullService : ISbomReportService
         Task.FromResult<IEnumerable<SbomReportImageDto>>([]);
     public Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid) =>
         Task.FromResult<SbomReportDto?>(null);
+    public Task<IEnumerable<SbomReportImageMinimalDto>> GetSbomReportImageMinimalDtos(string? namespaceName = null) =>
+        Task.FromResult<IEnumerable<SbomReportImageMinimalDto>>([]);
     public Task<SbomReportDto?> GetFullSbomReportDtoByUidNamespace(string uid, string namespaceName) =>
         Task.FromResult<SbomReportDto?>(null);
     public Task<SbomReportDto?> GetFullSbomReportDtoByDigestNamespace(string digest, string namespaceName) =>
@@ -24,4 +26,5 @@ public class SbomReportNullService : ISbomReportService
     public void CleanupFile(string fileName) { }
     public Task<IEnumerable<string>> GetActiveNamespaces() =>
         Task.FromResult<IEnumerable<string>>([]);
+    
 }

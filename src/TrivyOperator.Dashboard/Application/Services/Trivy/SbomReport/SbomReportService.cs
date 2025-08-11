@@ -83,6 +83,48 @@ public class SbomReportService(
         return Task.FromResult(dtos);
     }
 
+    public Task<IEnumerable<SbomReportImageMinimalDto>> GetSbomReportImageMinimalDtos(string? namespaceName = null)
+    {
+        IEnumerable<SbomReportCr> cachedValues = [.. cache
+            .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.Values),];
+        IEnumerable<VulnerabilityReportCr> cachedVrValues = [.. vrCache
+            .Where(kvp => string.IsNullOrEmpty(namespaceName) || kvp.Key == namespaceName)
+            .SelectMany(kvp => kvp.Value.Values),];
+        var vrDigests = cachedVrValues
+            .GroupBy(vr => new
+            {
+                ImageDigest = vr.Report?.Artifact?.Digest ?? string.Empty,
+                ResourceNamespace = vr.Metadata.NamespaceProperty,
+            })
+            .Select(group => new {
+                group.Key.ImageDigest,
+                group.Key.ResourceNamespace,
+                CriticalCount = group.FirstOrDefault()?.Report?.Summary?.CriticalCount ?? -1,
+                HighCount = group.FirstOrDefault()?.Report?.Summary?.HighCount ?? -1,
+                MediumCount = group.FirstOrDefault()?.Report?.Summary?.MediumCount ?? -1,
+                LowCount = group.FirstOrDefault()?.Report?.Summary?.LowCount ?? -1,
+                UnknownCount = group.FirstOrDefault()?.Report?.Summary?.UnknownCount ?? -1,
+            });
+        IEnumerable<SbomReportImageMinimalDto> dtos = cachedValues
+            .GroupBy(sbom => new ImageGroupKey(
+                sbom.Report?.Artifact?.Digest,
+                sbom.Namespace()))
+            .Select(group => group.ToSbomReportImageMinimalDto())
+            .GroupJoin(
+                vrDigests,
+                dto => new { dto.ImageDigest, dto.ResourceNamespace, },
+                vr => new { vr.ImageDigest, vr.ResourceNamespace, },
+                (dto, vrMatches) =>
+                {
+                    var vr = vrMatches.FirstOrDefault();
+                    dto.HasVulnerabilities = vr != null;
+
+                    return dto;
+                });
+        return Task.FromResult(dtos);
+    }
+
     public async Task<SbomReportDto?> GetFullSbomReportDtoByUid(string uid)
     {
         string[] namespaceNames = [.. cache.Where(x => !x.Value.IsEmpty).Select(x => x.Key),];

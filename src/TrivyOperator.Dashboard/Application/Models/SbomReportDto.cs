@@ -50,6 +50,16 @@ public class SbomReportImageResourceDto
     public string ContainerName { get; init; } = string.Empty;
 }
 
+public class SbomReportImageMinimalDto
+{
+    public Guid Uid { get; set; } = Guid.NewGuid();
+    public string ImageName { get; set; } = string.Empty;
+    public string ImageTag { get; set; } = string.Empty;
+    public string ImageDigest { get; set; } = string.Empty;
+    public string ResourceNamespace { get; init; } = string.Empty;
+    public bool HasVulnerabilities { get; set; } = false;
+}
+
 public class SbomReportDetailDto : ISBomReportDetailDto
 {
     public Guid Id => GuidUtils.GetDeterministicGuid(Purl);
@@ -143,8 +153,8 @@ public static partial class SbomReportCrExtensions
 
     public static SbomReportImageDto ToSbomReportImageDto(this IGrouping<ImageGroupKey, SbomReportCr> groupedSbomReportCr)
     {
-        SbomReportCr[] sbomReportCrs = [.. groupedSbomReportCr];
-        SbomReportCr firstSbomReportCr = sbomReportCrs.First();
+        //SbomReportCr[] sbomReportCrs = [.. groupedSbomReportCr];
+        SbomReportCr firstSbomReportCr = groupedSbomReportCr.First();
         ComponentsComponent[] allComponents = firstSbomReportCr.Report?.Components.Metadata.Component != null
             ? [.. firstSbomReportCr.Report?.Components.ComponentsComponents ?? [], firstSbomReportCr.Report?.Components.Metadata.Component!]
             : [.. firstSbomReportCr.Report?.Components.ComponentsComponents ?? []];
@@ -172,7 +182,7 @@ public static partial class SbomReportCrExtensions
             ImageTag = firstSbomReportCr.Report?.Artifact?.Tag ?? string.Empty,
             ImageDigest = firstSbomReportCr.Report?.Artifact?.Digest ?? string.Empty,
             ImageRepository = firstSbomReportCr.Report?.Registry?.Server ?? string.Empty,
-            Resources = [.. sbomReportCrs.Select(sbomReportCr => new SbomReportImageResourceDto
+            Resources = [.. groupedSbomReportCr.Select(sbomReportCr => new SbomReportImageResourceDto
             {
                 Name = sbomReportCr.Metadata.Labels != null &&
                 sbomReportCr.Metadata.Labels.TryGetValue("trivy-operator.resource.name", out string? resourceName)
@@ -192,6 +202,20 @@ public static partial class SbomReportCrExtensions
         };
         CleanupPurlsFromBomRefs(result);
         return result;
+    }
+
+    public static SbomReportImageMinimalDto ToSbomReportImageMinimalDto(this IGrouping<ImageGroupKey, SbomReportCr> groupedSbomReportCr)
+    {
+        //SbomReportCr[] sbomReportCrs = [.. groupedSbomReportCr];
+        SbomReportCr firstSbomReportCr = groupedSbomReportCr.First();
+        return new SbomReportImageMinimalDto
+        {
+            Uid = Guid.TryParse(firstSbomReportCr.Metadata.Uid, out var parsedGuid) ? parsedGuid : new(),
+            ImageName = firstSbomReportCr.Report?.Artifact?.Repository ?? string.Empty,
+            ImageTag = firstSbomReportCr.Report?.Artifact?.Tag ?? string.Empty,
+            ImageDigest = firstSbomReportCr.Report?.Artifact?.Digest ?? string.Empty,
+            ResourceNamespace = firstSbomReportCr.Metadata.NamespaceProperty,
+        };
     }
 
     public static void CleanupPurlsFromBomRefs<TSBomReportDetailDto>(ISbomReportDto<TSBomReportDetailDto> sbomReportDto)
