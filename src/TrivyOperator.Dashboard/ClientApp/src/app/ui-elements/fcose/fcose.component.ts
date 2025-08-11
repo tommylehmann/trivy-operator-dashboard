@@ -87,7 +87,6 @@ export class FcoseComponent implements AfterViewInit, OnInit {
       if (node.parent().nonempty()) {
         return 100;
       } else {
-        // Node is not in a group
         return 20000;
       }
     },

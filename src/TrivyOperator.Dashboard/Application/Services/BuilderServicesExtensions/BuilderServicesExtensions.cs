@@ -21,6 +21,8 @@ using TrivyOperator.Dashboard.Application.Services.KubernetesEventDispatchers.Ab
 using TrivyOperator.Dashboard.Application.Services.Namespaces;
 using TrivyOperator.Dashboard.Application.Services.Namespaces.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Options;
+using TrivyOperator.Dashboard.Application.Services.RawDomainQueryServices;
+using TrivyOperator.Dashboard.Application.Services.RawDomainQueryServices.Abstracts;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterComplianceReport;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterComplianceReport.Abstractions;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ClusterRbacAssessmentReport;
@@ -434,12 +436,13 @@ public static class BuilderServicesExtensions
                 provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
                 provider.GetRequiredService<IAlertsService>(),
                 "MultiBucket", ["Hey!", "Yo!", "No way, Jose!"], "subLevel|mama", 3));
-
         services.AddSingleton<IHostedService>(provider =>
             new MultiBucketTimedHostedService(
                 provider.GetRequiredService<ILogger<MultiBucketTimedHostedService>>(),
                 provider.GetRequiredService<IAlertsService>(),
                 "MultiBucket", ["Hey!", "Yo!", "Yes way, Jose!"], "subLevel|dada", 3));
+
+        services.AddScoped<IRawDomainQueryService, RawDomainQueryService>();
 #endif
     }
 
