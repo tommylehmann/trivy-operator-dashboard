@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TrivyOperator.Dashboard.Application.Services.Trivy;
 using TrivyOperator.Dashboard.Domain.Trivy.ExposedSecretReport;
 using TrivyOperator.Dashboard.Utils;
 
@@ -170,7 +171,7 @@ public static class ExposedSecretReportCrExtensions
     }
 
     public static ExposedSecretReportImageDto ToExposedSecretReportImageDto(
-        this IGrouping<string?, ExposedSecretReportCr> groupedExposedSecretReportCr,
+        this IGrouping<ImageGroupKey, ExposedSecretReportCr> groupedExposedSecretReportCr,
         IEnumerable<int>? excludedSeverities = null)
     {
         excludedSeverities ??= [];

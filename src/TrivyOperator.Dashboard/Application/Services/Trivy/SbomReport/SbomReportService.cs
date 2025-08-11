@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using k8s.Models;
+using Microsoft.Extensions.Options;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -58,7 +59,9 @@ public class SbomReportService(
             });
         IEnumerable<SbomReportImageDto> dtos = cachedValues
             .Where(vr => string.IsNullOrEmpty(digest) || vr.Report?.Artifact?.Digest == digest)
-            .GroupBy(sbom => sbom.Report?.Artifact?.Digest)
+            .GroupBy(sbom => new ImageGroupKey(
+                sbom.Report?.Artifact?.Digest,
+                sbom.Namespace()))
             .Select(group => group.ToSbomReportImageDto())
             .GroupJoin(
                 vrDigests,

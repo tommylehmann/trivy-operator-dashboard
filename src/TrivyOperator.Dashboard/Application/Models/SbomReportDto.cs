@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using TrivyOperator.Dashboard.Application.Models.Abstracts;
+using TrivyOperator.Dashboard.Application.Services.Trivy;
 using TrivyOperator.Dashboard.Domain.Trivy.SbomReport;
 using TrivyOperator.Dashboard.Utils;
 
@@ -140,7 +141,7 @@ public static partial class SbomReportCrExtensions
         return result;
     }
 
-    public static SbomReportImageDto ToSbomReportImageDto(this IGrouping<string?, SbomReportCr> groupedSbomReportCr)
+    public static SbomReportImageDto ToSbomReportImageDto(this IGrouping<ImageGroupKey, SbomReportCr> groupedSbomReportCr)
     {
         SbomReportCr[] sbomReportCrs = [.. groupedSbomReportCr];
         SbomReportCr firstSbomReportCr = sbomReportCrs.First();

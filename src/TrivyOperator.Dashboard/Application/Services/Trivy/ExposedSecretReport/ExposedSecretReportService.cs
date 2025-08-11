@@ -1,4 +1,5 @@
-﻿using TrivyOperator.Dashboard.Application.Models;
+﻿using k8s.Models;
+using TrivyOperator.Dashboard.Application.Models;
 using TrivyOperator.Dashboard.Application.Services.Trivy.ExposedSecretReport.Abstractions;
 using TrivyOperator.Dashboard.Domain.Trivy;
 using TrivyOperator.Dashboard.Domain.Trivy.ExposedSecretReport;
@@ -65,19 +66,21 @@ public class ExposedSecretReportService(IConcurrentDictionaryCache<ExposedSecret
             .SelectMany(kvp => kvp.Value.Values),];
 
         IEnumerable<ExposedSecretReportImageDto> exposedSecretReportImageDtos = cachedValues
-            .GroupBy(esr => esr.Report?.Artifact?.Digest)
-                    .Select(group => group.ToExposedSecretReportImageDto())
-                    .Select(
-                        esrDto =>
-                        {
-                            esrDto.Details = [.. esrDto.Details.Join(
-                                    incudedSeverities,
-                                    vulnerability => vulnerability.SeverityId,
-                                    id => id,
-                                    (vulnerability, _) => vulnerability),];
-                            return esrDto;
-                        })
-                    .Where(esrDto => excludedSeveritiesArray.Length == 0 || esrDto.Details.Length != 0);
+            .GroupBy(esr => new ImageGroupKey(
+                esr.Report?.Artifact?.Digest,
+                esr.Namespace()))
+            .Select(group => group.ToExposedSecretReportImageDto())
+            .Select(
+                esrDto =>
+                {
+                    esrDto.Details = [.. esrDto.Details.Join(
+                            incudedSeverities,
+                            vulnerability => vulnerability.SeverityId,
+                            id => id,
+                            (vulnerability, _) => vulnerability),];
+                    return esrDto;
+                })
+            .Where(esrDto => excludedSeveritiesArray.Length == 0 || esrDto.Details.Length != 0);
 
         return Task.FromResult(exposedSecretReportImageDtos);
     }
@@ -89,7 +92,9 @@ public class ExposedSecretReportService(IConcurrentDictionaryCache<ExposedSecret
             .SelectMany(kvp => kvp.Value.Values),];
         ExposedSecretReportImageDto? exposedSecretReportImageDto = cachedValues
                 .Where(x => x.Report?.Artifact?.Digest == digest)
-                .GroupBy(x => x.Report?.Artifact?.Digest)
+                .GroupBy(esr => new ImageGroupKey(
+                    esr.Report?.Artifact?.Digest,
+                    esr.Namespace()))
                 .Select(group => group.ToExposedSecretReportImageDto())
                 .FirstOrDefault();
         return Task.FromResult(exposedSecretReportImageDto);
