@@ -18,7 +18,7 @@ import {
 } from '../constants/exposed-secret-reports.constants';
 
 import { GenericReportsCompareComponent } from '../../ui-elements/generic-reports-compare/generic-reports-compare.component';
-import { TrivyDependencyComponent, ImageInfo } from '../../trivy-dependency/trivy-dependency.component';
+import { TrivyDependencyComponent, ImageInfo } from '../../ui-elements/trivy-dependency/trivy-dependency.component';
 import { NamespacedImageDto } from '../../ui-elements/namespace-image-selector/namespace-image-selector.types';
 
 import { DialogModule } from 'primeng/dialog';

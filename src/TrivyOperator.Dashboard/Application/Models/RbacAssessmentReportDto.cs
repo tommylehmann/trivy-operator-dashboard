@@ -19,8 +19,8 @@ public class RbacAssessmentReportDto
 
 public class RbacAssessmentReportDetailDto
 {
-    public Guid Id => GuidUtils.GetDeterministicGuid($"{SeverityId}{Category}{CheckId}");
-    public Guid MatchKey => Id;
+    public Guid Id => Guid.NewGuid();
+    public Guid MatchKey => GuidUtils.GetDeterministicGuid($"{SeverityId}{Category}{CheckId}");
     public string Category { get; init; } = string.Empty;
     public string CheckId { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;

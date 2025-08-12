@@ -1636,9 +1636,14 @@ components:
     ClusterRbacAssessmentReportDetailDto:
       type: object
       properties:
-        uid:
+        id:
           type: string
           format: uuid
+          readOnly: true
+        matchKey:
+          type: string
+          format: uuid
+          readOnly: true
         category:
           type: string
         checkId:
@@ -1880,6 +1885,11 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
+        matchKey:
+          type: string
+          format: uuid
+          readOnly: true
         fixedVersion:
           type: string
         installedVersion:

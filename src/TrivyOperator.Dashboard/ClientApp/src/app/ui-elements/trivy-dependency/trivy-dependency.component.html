@@ -4,8 +4,11 @@
     <div class="trivy-tree-table trivy-half overflow-auto" >
       <p-treeTable [value]="treeNodes"
                    [resizableColumns]="true"
+                   [scrollable]="true"
+                   [virtualScroll]="true"
+                   [virtualScrollItemSize]="49"
+                   scrollHeight="flex"
                    columnResizeMode="expand"
-                   [autoLayout]="true"
                    selectionMode="single"
                    [(selection)]="selectedTreeNode"
                    (onNodeSelect)="onTreeTableNodeSelect($event)"

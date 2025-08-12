@@ -1,10 +1,10 @@
 import { Component, effect, HostListener, input, OnInit } from '@angular/core';
 
-import { FcoseComponent } from '../ui-elements/fcose/fcose.component';
-import { NodeDataDto } from '../ui-elements/fcose/fcose.types';
+import { FcoseComponent } from '../fcose/fcose.component';
+import { NodeDataDto } from '../fcose/fcose.types';
 
-import { TrivyReportDependencyService } from '../../api/services/trivy-report-dependency.service';
-import { TrivyReportDependencyDto } from '../../api/models/trivy-report-dependency-dto';
+import { TrivyReportDependencyService } from '../../../api/services/trivy-report-dependency.service';
+import { TrivyReportDependencyDto } from '../../../api/models/trivy-report-dependency-dto';
 
 import { ButtonModule } from 'primeng/button'
 import { SplitterModule } from 'primeng/splitter';
@@ -12,9 +12,9 @@ import { TagModule } from 'primeng/tag';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNode, TreeTableNode } from 'primeng/api';
 
-import { SeverityCssStyleByIdPipe } from '../pipes/severity-css-style-by-id.pipe';
-import { VulnerabilityCountPipe } from '../pipes/vulnerability-count.pipe';
-import { TrivyReportDependencyDetailDto } from "../../api/models/trivy-report-dependency-detail-dto";
+import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
+import { VulnerabilityCountPipe } from '../../pipes/vulnerability-count.pipe';
+import { TrivyReportDependencyDetailDto } from "../../../api/models/trivy-report-dependency-detail-dto";
 import { Router } from '@angular/router';
 
 interface TrivyReportTreeNodeData {

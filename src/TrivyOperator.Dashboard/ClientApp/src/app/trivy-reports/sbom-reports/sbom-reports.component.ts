@@ -8,7 +8,7 @@ import { SbomReportImageResourceDto } from '../../../api/models/sbom-report-imag
 
 import { GenericSbomComponent } from '../../ui-elements/generic-sbom/generic-sbom.component';
 import { TreeNode } from 'primeng/api';
-import { ImageInfo, TrivyDependencyComponent } from '../../trivy-dependency/trivy-dependency.component';
+import { ImageInfo, TrivyDependencyComponent } from '../../ui-elements/trivy-dependency/trivy-dependency.component';
 
 import { SeverityCssStyleByIdPipe } from '../../pipes/severity-css-style-by-id.pipe';
 import { SeverityNameByIdPipe } from '../../pipes/severity-name-by-id.pipe';
@@ -121,7 +121,6 @@ export class SbomReportsComponent implements OnInit {
   }
 
   onCompareFirstDtoRequested(id: string) {
-    console.log("sbom - onCompareFirstDtoRequested: ", id);
     const dto = this.dataDtos.find((dto) => dto.uid === id);
     if (dto) {
       this.service.getSbomReportDtoByDigestNamespace({
@@ -137,7 +136,6 @@ export class SbomReportsComponent implements OnInit {
   }
 
   onCompareSecondDtoRequested(id: string) {
-    console.log("sbom - onCompareSecondDtoRequested: ", id);
     const dto = this.dataDtos.find((dto) => dto.uid === id);
     if (dto) {
       this.service.getSbomReportDtoByDigestNamespace({

@@ -62,7 +62,6 @@ export class GenericReportsCompareComponent<
         this._firstSelectedDto = undefined;
         if (this._firstSelectedTrivyReportId) {
           this.firstDtoRequested.emit(this._firstSelectedTrivyReportId);
-          console.log("first emit: ", this._firstSelectedTrivyReportId);
         }
       }
       this.compareSelectedTrivyReports();
@@ -73,7 +72,6 @@ export class GenericReportsCompareComponent<
         this._secondSelectedDto = undefined;
         if (this._secondSelectedTrivyReportId) {
           this.secondDtoRequested.emit(this._secondSelectedTrivyReportId);
-          console.log("second emit: ", this._secondSelectedTrivyReportId);
         }
       }
       this.compareSelectedTrivyReports();
@@ -84,12 +82,10 @@ export class GenericReportsCompareComponent<
     });
     effect(() => {
       this._firstSelectedDto = this.firstSelectedDto();
-      console.log("firstDto: ", this._firstSelectedDto?.uid);
       this.compareSelectedTrivyReports();
     });
     effect(() => {
       this._secondSelectedDto = this.secondSelectedDto();
-      console.log("secondDto: ", this._secondSelectedDto?.uid);
       this.compareSelectedTrivyReports();
     });
   }
@@ -101,8 +97,6 @@ export class GenericReportsCompareComponent<
   }
 
   compareSelectedTrivyReports() {
-    console.log("compareSelectedTrivyReports - first: ", this._firstSelectedDto?.uid);
-    console.log("compareSelectedTrivyReports - second: ", this._secondSelectedDto?.uid);
     if ((!this._dataDtos && !this._isDependantOnExternalData) ||
       (!this._firstSelectedTrivyReportId && !this._secondSelectedTrivyReportId)
     ) {
