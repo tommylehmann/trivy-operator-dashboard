@@ -35,6 +35,9 @@ export class ClusterSbomReportsComponent implements OnInit  {
   sbomReportDetailStatistics: Array<number | undefined> = [];
   sbomReportDetailPropertiesTreeNodes: TreeNode[] = [];
 
+  compareFirstSelectedDto? : ClusterSbomReportDto;
+  compareSecondSelectedDto? : ClusterSbomReportDto;
+
   // endregion
 
   private readonly service = inject(ClusterSbomReportService);
@@ -57,6 +60,14 @@ export class ClusterSbomReportsComponent implements OnInit  {
 
   onSelectedImageIdChange(imageId: string | undefined) {
     this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid === imageId);
+  }
+
+  onCompareFirstDtoRequested(id: string) {
+    this.compareFirstSelectedDto = this.dataDtos?.find(x => x.uid === id);
+  }
+
+  onCompareSecondDtoRequested(id: string) {
+    this.compareSecondSelectedDto = this.dataDtos?.find(x => x.uid === id);
   }
 
   onRefreshRequestedChange() {

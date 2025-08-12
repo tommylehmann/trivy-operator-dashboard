@@ -37,9 +37,8 @@ export class GenericReportsCompareComponent<
 
   // Indicates that dataDtos are just minimal for selection, but not for comparison
   isDependantOnExternalData = input<boolean>(false);
-
-  firstSelectedDto = model<TTrivyReportComparableDto | undefined>();
-  secondSelectedDto = model<TTrivyReportComparableDto | undefined>();
+  firstSelectedDto = input<TTrivyReportComparableDto | undefined>();
+  secondSelectedDto = input<TTrivyReportComparableDto | undefined>();
 
   firstDtoRequested = output<string>();
   secondDtoRequested = output<string>();
@@ -60,7 +59,7 @@ export class GenericReportsCompareComponent<
     effect(() => {
       this._firstSelectedTrivyReportId = this.firstSelectedTrivyReportId();
       if (this._isDependantOnExternalData) {
-        //this.firstSelectedDto.set(undefined);
+        this._firstSelectedDto = undefined;
         if (this._firstSelectedTrivyReportId) {
           this.firstDtoRequested.emit(this._firstSelectedTrivyReportId);
           console.log("first emit: ", this._firstSelectedTrivyReportId);
@@ -71,7 +70,7 @@ export class GenericReportsCompareComponent<
     effect(() => {
       this._secondSelectedTrivyReportId = this.secondSelectedTrivyReportId();
       if (this._isDependantOnExternalData) {
-        //this.secondSelectedDto.set(undefined);
+        this._secondSelectedDto = undefined;
         if (this._secondSelectedTrivyReportId) {
           this.secondDtoRequested.emit(this._secondSelectedTrivyReportId);
           console.log("second emit: ", this._secondSelectedTrivyReportId);

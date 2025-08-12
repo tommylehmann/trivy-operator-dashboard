@@ -3,6 +3,9 @@
                   [isStatic]="false"
                   [isTableLoading]="false"
                   [selectedImageId]="selectedImageId"
+                  [isCompareDependantOnExternalData]="true"
+                  [compareFirstSelectedDto]="compareFirstSelectedDto"
+                  [compareSecondSelectedDto]="compareSecondSelectedDto"
                   [stateKey]="'Cluster SBOM Reports'"
                   [multiHeaderActions]="[
                     { label: '', icon: 'pi pi-align-justify', specialAction: 'Go to Detailed ⧉' },
@@ -16,7 +19,9 @@
 
                   (multiActionEventChange)="onMultiActionEventChange($event)"
                   (refreshRequestedChange)="onRefreshRequestedChange()"
-                  (selectedImageIdChange)="onSelectedImageIdChange($event)" />
+                  (selectedImageIdChange)="onSelectedImageIdChange($event)"
+                  (compareFirstDtoRequested)="onCompareFirstDtoRequested($event)"
+                  (compareSecondDtoRequested)="onCompareSecondDtoRequested($event)" />
 
 @if(selectedSbomReportImageDto) {
   <p-dialog closable="true"

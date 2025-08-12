@@ -24,16 +24,7 @@ public class SbomReportWatcher(
     {
         if (kubernetesObject.Report != null)
         {
-            kubernetesObject.Report.Components.ComponentsComponents = [.. kubernetesObject.Report.Components.ComponentsComponents
-                .Select(x => new ComponentsComponent
-                {
-                    BomRef = x.BomRef,
-                    Name = x.Name,
-                    Version = x.Version,
-                    Supplier = x.Supplier,
-                    Purl = x.Purl,
-                    Type = x.Type,
-                }),];
+            kubernetesObject.Report.Components.ComponentsComponents = [];
             kubernetesObject.Report.Components.Dependencies = [];
         }
 
