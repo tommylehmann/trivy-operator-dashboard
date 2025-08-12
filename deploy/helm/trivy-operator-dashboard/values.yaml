@@ -23,6 +23,10 @@ openTelemetry:
   enabled: false
   otelEndpoint: 
   otelProtocol: grpc
+  consoleEnabled: false
+  aspNetCoreInstrumentationEnabled: true
+  runtimeInstrumentationEnabled: true
+  prometheusExporterPort:  # 8901
 
 # if needed extra environment values can be provided here
 extraEnvValues: []

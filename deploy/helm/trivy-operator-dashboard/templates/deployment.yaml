@@ -35,6 +35,8 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
+        - name: MAINAPPPORT
+          value: {{ .Values.service.port | quote }}
         - name: KUBERNETES__KUBECONFIGFILENAME
           value: {{ .Values.kubernetes.kubeConfigFileName }}
         - name: KUBERNETES__NAMESPACELIST
@@ -67,10 +69,16 @@ spec:
           value: {{ .Values.openTelemetry.otelEndpoint | quote }}
         - name: OPENTELEMETRY__OTELPROTOCOL
           value: {{ .Values.openTelemetry.otelProtocol | quote }}
+        - name: OPENTELEMETRY__CONSOLEENABLED
+          value: {{ .Values.openTelemetry.consoleEnabled | quote }}
+        - name: OPENTELEMETRY__ASPNETCOREINSTRUMENTATIONENABLED
+          value: {{ .Values.openTelemetry.aspNetCoreInstrumentationEnabled | quote }}
+        - name: OPENTELEMETRY__RUNTIMEINSTRUMENTATIONENABLED
+          value: {{ .Values.openTelemetry.runtimeInstrumentationEnabled | quote }}
+        - name: OPENTELEMETRY__PROMETHEUSEXPORTERPORT
+          value: {{ .Values.openTelemetry.prometheusExporterPort | quote }}
         - name: SERILOG__MINIMUMLEVEL__DEFAULT
           value: {{ .Values.logging.level }}
-        - name: ASPNETCORE_URLS
-          value: http://+:{{ .Values.service.port }}
         {{- range .Values.extraEnvValues }}
         - name: {{ .name }}
           value: {{ .value | quote }}
@@ -79,6 +87,11 @@ spec:
         - name: http
           containerPort: {{ .Values.service.port }}
           protocol: TCP
+        {{- if .Values.openTelemetry.prometheusExporterPort }}
+        - name: metrics
+          containerPort: {{ .Values.openTelemetry.prometheusExporterPort }}
+          protocol: TCP
+        {{- end }}
         volumeMounts:
         - mountPath: /tmp
           name: tmp-volume

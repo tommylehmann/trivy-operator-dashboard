@@ -1,4 +1,5 @@
 ﻿using k8s.Models;
+using Microsoft.Extensions.Diagnostics.Metrics;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -503,6 +504,10 @@ public static class BuilderServicesExtensions
 
         string fileVersion = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "0.0";
         string? otelEndpoint = configuration.GetValue<string>("OtelEndpoint");
+        bool? isConsoleEnabled = configuration.GetValue<bool?>("ConsoleEnabled");
+        bool? isAspNetCoreEnabled = configuration.GetValue<bool?>("AspNetCoreInstrumentationEnabled");
+        bool? isRuntimeEnabled = configuration.GetValue<bool?>("RuntimeInstrumentationEnabled");
+        int? metricsPort = configuration.GetValue<int>("PrometheusExporterPort");
         double[]? histogramBounds = configuration.GetValue<double[]>("HistogramBoundsInMs") ?? [200, 500, 1000, 5000];
 
         services.AddSingleton<IMetricsService>(provider => new MetricsService(applicationName));
@@ -516,13 +521,12 @@ public static class BuilderServicesExtensions
                         {
                             { "service.version", fileVersion }
                         }))
-                    .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation();
-                if (string.IsNullOrWhiteSpace(otelEndpoint))
+                if (isConsoleEnabled ?? false)
                 {
                     tracingBuilder.AddConsoleExporter();
                 }
-                else
+                if (!string.IsNullOrWhiteSpace(otelEndpoint))
                 {
                     tracingBuilder.AddOtlpExporter(options =>
                     {
@@ -532,25 +536,30 @@ public static class BuilderServicesExtensions
                             : OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                     });
                 }
-                    
+                if (isAspNetCoreEnabled ?? false)
+                {
+                    tracingBuilder.AddAspNetCoreInstrumentation(options =>
+                    {
+                        options.Filter = context =>
+                        {
+                            var path = context.Request.Path.Value;
+                            return !((path?.StartsWith("/healthz") ?? false) || (path?.StartsWith("/metrics") ?? false));
+                        };
+                    });
+                }
+
             })
             .WithMetrics(metricsBuilder =>
             {
                 metricsBuilder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(applicationName))
-                    .AddRuntimeInstrumentation()
-                    .AddAspNetCoreInstrumentation()
                     .AddView("*", new ExplicitBucketHistogramConfiguration
                     {
                         Boundaries = histogramBounds,
                         // defaults: [ 0, 5, 10, 25, 50, 75, 100, 250, 500, 750, 1000, 2500, 5000, 7500, 10000 ]
                     })
                     .AddMeter($"{applicationName}.metrics");
-                if (string.IsNullOrWhiteSpace(otelEndpoint))
-                {
-                    metricsBuilder.AddConsoleExporter();
-                }
-                else
+                if (!string.IsNullOrWhiteSpace(otelEndpoint))
                 {
                     metricsBuilder.AddOtlpExporter(options =>
                     {
@@ -559,6 +568,22 @@ public static class BuilderServicesExtensions
                             ? OpenTelemetry.Exporter.OtlpExportProtocol.Grpc
                             : OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                     });
+                }
+                if (isConsoleEnabled ?? false)
+                {
+                    metricsBuilder.AddConsoleExporter();
+                }
+                if (isAspNetCoreEnabled ?? false)
+                {
+                    metricsBuilder.AddAspNetCoreInstrumentation();
+                }
+                if (isRuntimeEnabled ?? false)
+                {
+                    metricsBuilder.AddRuntimeInstrumentation();
+                }
+                if (metricsPort is not null)
+                {
+                    metricsBuilder.AddPrometheusExporter();
                 }
             });
     }

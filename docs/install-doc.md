@@ -53,9 +53,17 @@ In helm values file, the following parameters are app related:
 | openTelemetry | enabled                             | enables or disables OpenTelemetry instrumentatio |
 | openTelemetry | otelEndpoint                        | otel endpoint. normally, it is http://otel-endpoint(:port). if empty, and **enabled** is true, console will be used |
 | openTelemetry | otelProtocol                        | the protocol used for otel writer. can be **grpc** or **http** |
+| openTelemetry | consoleEnabled                      | enables or disables console output. Not recommended for production |
+| openTelemetry | aspNetCoreInstrumentationEnabled    | enables or disables ASPNET instrumentation |
+| openTelemetry | runtimeInstrumentationEnabled       | enables or disables runtime instrumentation |
+| openTelemetry | prometheusExporterPort              | port for Prometheus metrics export. Experimental; prefer using OpenTelemetry for Prometheus metrics |
 
 
-> **Note:** the above described parameters have correspondence in appsettings.json. That file is for dev purposes
+> **Notes:** 
+> - **Configuration Mapping:**  
+> The parameters described above have corresponding entries in appsettings.json. This file is primarily intended for development purposes and should not be used for production configuration.
+> - **Security Recommendation:**  
+> It is highly recommended that the Prometheus exporter port, if used, be different from the MainAppPort. This separation enhances security by reducing the risk of exposing internal metrics endpoints on public-facing ports.
 
 ## Considerations
 

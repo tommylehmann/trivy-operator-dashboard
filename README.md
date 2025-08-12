@@ -27,9 +27,9 @@ The application exposes the following reports:
 - Cluster Vulnerability Report
 - RBAC Assessment Report
 - SBOM Reports
+- Cluster SBOM Reports
 
-All of them consist of dashboards (for view at a glance), browse and inspect findings (with table filters, sorts),
-export data.
+All of them consist of dashboards (for view at a glance), browse and inspect findings (with table filters, sorts), export data, compare.
 
 ![](docs/imgs/app.gif)
 
@@ -39,7 +39,7 @@ This app is fully operational, with new features currently in development.
 
 At the start of summer of '24, two friends convened on a terrace. One voiced concerns about the
 labor-intensive process of manually parsing vulnerabilities. As they discussed the challenges, a pivotal question
-arose: "Should *we* do it? Why not?" This moment marked the beginning of this journey to streamline and automate the
+arose: "Should *we* do it? Why not!" This moment marked the beginning of this journey to streamline and automate the
 process. What we had in mind:
 
 1. **Security is Imperative:** In our professional life, our dedication to security led us to create Trivy Operator
@@ -72,8 +72,7 @@ robust and reliable dashboard that meets
 immediate needs and serves the community effectively.
 
 > **Important:** Given the sensitivity of the data being handled, we recommend implementing external authentication
-> measures. Options include (and not limited to) basic authentication on ingress (not recommended, just as a last
-> resort)
+> measures. Options include (and not limited to) basic authentication on ingress (not recommended, just as a last resort)
 > or, preferably, using [oauth2-proxy container](https://quay.io/repository/oauth2-proxy/oauth2-proxy) (project
 > on [GitHub](https://github.com/oauth2-proxy/oauth2-proxy)) for enhanced security.
 
@@ -90,23 +89,21 @@ Tested under:
 | App name       | Version(s)              |
 |----------------|-------------------------|
 | Kubernetes     | 1.30 - 1.32; Linux; x64 |
-| Trivy Operator | 0.23                    |
+| Trivy Operator | 0.23 - 0.27             |
 | Windows        | 11; x64, arm64          |
 
 Browsers: tested mainly using Edge. Also tested on Chrome, Firefox and Opera.
 
 Recommended resolution: 1080p (1920x1080)
 > **Note on resolution:** although we are safe to state that Trivy Operator Dashboard is a Business Application (that
-> handles and displays extensive datasets) and that it should be used on desktop or laptop monitors, the app scales ok
-> in
+> handles and displays extensive datasets) and that it should be used on desktop or laptop monitors, the app scales ok in
 > both directions. On a phone the user experience may be less than optimal, but it is usable. On larger display, as some
 > might say, "the bigger, the better".
 
 ### Known bugs
 
 - When a Dropdown Filter (such as Namespaces or Severities) gets cleared by its Clear button or by table's Clear
-  Sort/Filters, the table displays unfiltered data, but the Filter still acts like is Filtering. It is a well-known bug
-  from Primeng.
+  Sort/Filters, the table displays unfiltered data, but the Filter still acts like is Filtering. It is a well-known bug from Primeng.
 
 ## For Community - More Info
 
@@ -121,7 +118,6 @@ Recommended resolution: 1080p (1920x1080)
 ## Acknowledgements
 
 **Personal:** I would like to give my sincere thanks to the following persons who have helped me to get here:
-
 - **Dănuț** - For his technical guidance and explanations.
 - **Florin** - For his insights regarding the app and endurance with its bugs.
 - **Alina** - My better half, for tolerating my long programming evenings.

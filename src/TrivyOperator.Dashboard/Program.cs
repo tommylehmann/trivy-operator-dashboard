@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using TrivyOperator.Dashboard.Application.Hubs;
 using TrivyOperator.Dashboard.Application.Services.BuilderServicesExtensions;
+using TrivyOperator.Dashboard.Utils;
 using TrivyOperator.Dashboard.Utils.JsonConverters;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
@@ -96,6 +97,23 @@ builder.Services.AddUiCommons();
 builder.Services.AddOthers();
 builder.Services.AddOpenTelemetry(configuration.GetSection("OpenTelemetry"), applicationNameForOtlp);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    if (builder.Environment.IsProduction())
+    {
+        string? configMainPort = builder.Configuration["MainAppPort"];
+        string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
+        int mainPort = PortUtils.GetValidatedPort(configMainPort) ?? 8900;
+        int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
+
+        options.ListenAnyIP(mainPort);
+        if (configMetricsPort is not null && mainPort != metricsPort)
+        {
+            options.ListenAnyIP(metricsPort);
+        }
+    }
+});
+
 WebApplication app = builder.Build();
 
 IHostApplicationLifetime appLifetime = app.Lifetime;
@@ -122,10 +140,21 @@ app.MapStaticAssets();
 app.UseRouting();
 app.UseCors();
 app.UseSerilogRequestLogging();
-if (!app.Environment.IsProduction())
+if (app.Environment.IsProduction())
+{
+    string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
+    int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
+    if (configMetricsPort is not null)
+        app.UseOpenTelemetryPrometheusScrapingEndpoint(
+            context => context.Request.Path == "/metrics"
+                && context.Connection.LocalPort == metricsPort
+        );
+}
+else
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseOpenTelemetryPrometheusScrapingEndpoint();
 }
 
 app.MapControllers();
