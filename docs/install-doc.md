@@ -62,6 +62,8 @@ In helm values file, the following parameters are app related:
 > **Notes:** 
 > - **Configuration Mapping:**  
 > The parameters described above have corresponding entries in appsettings.json. This file is primarily intended for development purposes and should not be used for production configuration.
+> - **Open Telemetry and metrics**
+> If an OpenTelemetry URL is provided, the Prometheus metrics port should not be used, as OpenTelemetry already supplies the metrics - using both will result in duplication.
 > - **Security Recommendation:**  
 > It is highly recommended that the Prometheus exporter port, if used, be different from the MainAppPort. This separation enhances security by reducing the risk of exposing internal metrics endpoints on public-facing ports.
 

@@ -167,12 +167,12 @@ The backend uses Kubernetes Watchers to get the changes in real-time. Their stat
 
 If any alerts are triggered, you can access them by clicking the Notification Bell in the top menu bar. Alerts are organized in a tree format **(1)**, beginning with their severity level, issuer, and subsequent hierarchy levels. Each line includes a count **(5)**, and levels can be expanded or collapsed using control **(2)**.
 
-- when a node is expanded but not a leaf **(3)**, only the categories and counts are shown.
-- when a node is collapsed **(4)**, all child categories and their respective counts are displayed in a stacked view.
-- when a node is a leaf **(5)**, the actual alert message and its category are displayed.
+- when a node is expanded, but it is not a leaf **(3)**, only the categories and their counts are shown.
+- when a node is collapsed **(4)**, all children and categories with their respective counts are displayed in a stacked view.
+- when a node is a leaf **(5)**, the actual alert message and its category are displayed, also stacked.
 
 ![](imgs/alerts.png)
-<br>*Watcher Status*
+<br>*Alerts*
 
 > **Note:** This above image displays synthetic data generated for illustrative purposes.
 
