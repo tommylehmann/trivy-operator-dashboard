@@ -4,8 +4,6 @@
     <div class="trivy-tree-table trivy-half overflow-auto" >
       <p-treeTable [value]="treeNodes"
                    [resizableColumns]="true"
-                   [scrollable]="true"
-                   [virtualScroll]="true"
                    [virtualScrollItemSize]="49"
                    scrollHeight="flex"
                    columnResizeMode="expand"
@@ -28,7 +26,7 @@
           </colgroup>
         </ng-template>
         <ng-template pTemplate="header" let-rowNode>
-          <tr>
+          <tr class="sticky top-0 bg-white z-10">
             <th ttResizableColumn>Object Type</th>
             <th ttResizableColumn>Description</th>
             <th ttResizableColumn style="width: 60px">C</th>
