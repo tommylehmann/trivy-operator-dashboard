@@ -16,14 +16,14 @@ On the left are some tables related to various statistics **(1)**, and on the ri
 ![](imgs/vr-home.png)
 <br>*Main Overview page*
 
-Also, some other info can be seen here, by pressing the **More** buttons **(3)**.
+Also, some other info can be seen here, by pressing the `More` buttons **(3)**.
 
 ![](imgs/vr-home-details.png)
 <br>*More on Severities*
 
-The **Refresh Data** button **(4)** reloads data from the backend.
+The `Refresh Data` button **(4)** reloads data from the backend.
 
-The **Distinct values** **(5)** groups identical values in order to provide a clearer understanding of the reports; i.e. in Vulnerability Reports Statistics, severities are shown as distinct (unique) values, which means that if the same Vulnerability is found in many containers, it will be counted as one.
+The `Distinct values` **(5)** groups identical values in order to provide a clearer understanding of the reports; i.e. in Vulnerability Reports Statistics, severities are shown as distinct (unique) values, which means that if the same Vulnerability is found in many containers, it will be counted as one.
 
 ### Inspect mode (Browse)
 
@@ -37,7 +37,7 @@ In all tables you can find various action buttons **(4)**, most of the columns c
 ![](imgs/vr-filter.png)
 <br>*Server-side filter*
 
-Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button, which provides access to various Trivy Report–specific actions. As an example, in the case of Vulnerability Reports, as specific actions, we have Go to Detailed, Go to SBOM (related one) and Compare Vulnerabilities.
+Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button, which provides access to various Trivy Report–specific actions, beside standard ones, like Clear sort/filters or Collapse all. As an example, in the case of Vulnerability Reports, as specific actions, we have Go to Detailed, Dependency tree and Compare.
 
 > **Note:** A '⧉' icon next to a menu item indicates that the action will open in a new browser tab.
 
@@ -53,14 +53,26 @@ In this mode, all data is denormalized in a single large table, with all info fr
 ![](imgs/vr-detailed.png)
 <br>*Detailed page*
 
-### Compare
+### Compare Trivy Reports
 
-If needed, two Trivy Reports can be compared to quickly identify differences. The comparison is performed by displaying report details side by side and using compound keys for existence-based comparison. For example, in Vulnerability Reports, the comparison key includes both the CVE and the associated Resource.
+If needed, two Trivy Reports can be compared to quickly identify differences. The comparison is performed by displaying report details side by side and using compound keys for existence-based comparison. For example, in Vulnerability Reports, the comparison key includes the CVE, the associated Resource, and its version.
 
 ![](imgs/vr-compare.png)
 <br>*Vulnerability Reports Compare page*
 
-> **Note:** Currently, only Vulnerability Report comparison is available. Additional comparison features may be introduced in future releases based on demand. For instance, while SBOM comparison functionality exists, it is not currently activated, as its current form does not provide sufficient business value. Improvements are planned for a future release.
+The items belonging to **(1)** will appear as `True` in the `1st` column **(3)**, and those from **(2)** will appear in the `2nd` column **(4)**. An important detail to note is that if there are differences in values - such as the Installed Version in Vulnerability Reports - they will be displayed stacked for clarity **(5)**. Additionally, there are cases where the same item appears multiple times within a single Trivy Report (e.g., the same component listed with different versions). These versions will also be shown, stacked if necessary. A good example can be seen in SBOM Compare **(6)**, where the same component has multiple versions.
+
+![](imgs/sbom-compare.png)
+<br>*SBOM Reports Compare page*
+
+### Trivy Reports Dependency
+
+To get an at-a-glance view of all Trivy Reports related to an image within a namespace, you can use Trivy Reports Dependency. This view allows easy navigation to specific Trivy Reports using the `Open` button.
+
+![](imgs/trivy-report-dependency.png)
+<br>*Trivy Reports Dependency page*
+
+> Note: Since the dependency tree is centered around the container image, it is accessible from Vulnerability Reports, Exposed Secrets Reports, and SBOM Reports. However, it is not available from Config Audit Reports, as a single audit report may be associated with a resource (e.g., a ReplicaSet) that includes multiple containers - and therefore, multiple images.
 
 ## SBOM Reports
 
@@ -69,7 +81,7 @@ Unlike other reports, SBOM Reports are not well-suited for a simple master-detai
 ![](imgs/sbom.png)
 <br>*SBOM page*
 
-The table includes **Image selection** **(3)**, **Refresh** button **(4)**, **Multi action** button **(5)** and the list of BomRefs - for any of them, properties can be visualized **(6)**. Whenever possible, info from related Vulnerability Report is provided also here.
+The table includes Image selection **(3)**, Refresh button **(4)**, Multi action button **(5)** and the list of BomRefs - for any of them, properties can be visualized **(6)**. Whenever possible, info from related Vulnerability Report is provided also here.
 
 ![](imgs/sbom-img-selection.png)
 <br>*Image Selection **(3)*** - The shield icon next to the image name indicates that a Vulnerability Report is also available
@@ -113,7 +125,7 @@ It consists of 3 sections:
 - **Red** - Selected node and adjacent nodes (neighbors)
 - **Blue** - Hovered node and adjacent nodes (neighbors)
 - **Gray** - Group of nodes. It appears slightly transparent.
-- **White** - Other nodes
+- **Other colors** - Nodes with specific roles. Non-white colors signal functional distinctions
 
 #### Shapes
 
@@ -147,7 +159,22 @@ The backend uses Kubernetes Watchers to get the changes in real-time. Their stat
 ![](imgs/watcher-status.png)
 <br>*Watcher Status*
 
-> **Note:** If any watcher is in an error state, an alert will be triggered, and a Notification Bell appears in the top menu bar.
+> **Notes:**
+> - If any watcher is in an error state, an alert will be triggered, and a Notification Bell appears in the top menu bar
+> - Although watchers are monitored by a Watchdog, they can be forcefully recreated from this interface if necessary, as a last resort
+
+### Alerts
+
+If any alerts are triggered, you can access them by clicking the Notification Bell in the top menu bar. Alerts are organized in a tree format **(1)**, beginning with their severity level, issuer, and subsequent hierarchy levels. Each line includes a count **(5)**, and levels can be expanded or collapsed using control **(2)**.
+
+- when a node is expanded but not a leaf **(3)**, only the categories and counts are shown.
+- when a node is collapsed **(4)**, all child categories and their respective counts are displayed in a stacked view.
+- when a node is a leaf **(5)**, the actual alert message and its category are displayed.
+
+![](imgs/alerts.png)
+<br>*Watcher Status*
+
+> **Note:** This above image displays synthetic data generated for illustrative purposes.
 
 ### Settings
 
