@@ -153,4 +153,9 @@ export const routes: Routes = [
         (m) => m.TestsComponent),
     data: { title: 'Test' },
   },
+  {
+    path: '**',
+    redirectTo: '',
+    pathMatch: 'full',
+  }
 ];

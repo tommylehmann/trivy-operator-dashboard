@@ -11,13 +11,15 @@ To run, the app needs a Kubernetes cluster. If the app is started without any ad
 
 If, for any reason, `watch` on `namespaces` cannot be provided, then the ones for `apiGroup aquasecurity.github.io` are still required, and the value for parameter `namespaceList` must be provided (more info in [Specific Parameters](#specific-parameters)).
 
-> **Note:** why `watch` on `namespaces` is needed: the app starts a watcher on `namespaces` as it needs to be aware of any changes, and to start (or stop) the subsequent watchers on newer (or deleted) namespaces accordingly
+> **Note: Why `watch` on `namespaces`**  
+> The app starts a watcher on `namespaces` as it needs to be aware of any changes, and to start (or stop) the subsequent watchers on newer (or deleted) namespaces accordingly
 
 ## Installation
 
 The recommended way of installation is via helm. The files are provided in `deploy/helm`. The helm is a "standard" one (as obtained by `helm create` command and added specific values and files).
 
-> **Note:** The file `deploy/static/trivy-operator-dashboard.yaml` is a render of the mentioned helm with default values.
+> **Note: Static deploy file**  
+> The file `deploy/static/trivy-operator-dashboard.yaml` is a render of the mentioned helm with default values
 
 Steps:
 
@@ -50,28 +52,29 @@ In helm values file, the following parameters are app related:
 | kubernetes    | trivyUseClusterSbomReport           | enables or disables Cluster SBOM Report module; if false, the watchers are disabled |
 | gitHub        | serverCheckForUpdates               | enables or disables the backend check for new versions and cache release information. |
 | gitHub        | checkForUpdatesIntervalInMinutes    | the time interval in minutes used by the backend for new version polling |
-| openTelemetry | enabled                             | enables or disables OpenTelemetry instrumentatio |
-| openTelemetry | otelEndpoint                        | otel endpoint. normally, it is http://otel-endpoint(:port). if empty, and **enabled** is true, console will be used |
-| openTelemetry | otelProtocol                        | the protocol used for otel writer. can be **grpc** or **http** |
+| openTelemetry | enabled                             | enables or disables OpenTelemetry instrumentation |
+| openTelemetry | otelEndpoint                        | otel endpoint. normally, it is http://otel-endpoint(:port) |
+| openTelemetry | otelProtocol                        | the protocol used for otel writer. can be `grpc` or `http` |
 | openTelemetry | consoleEnabled                      | enables or disables console output. Not recommended for production |
 | openTelemetry | aspNetCoreInstrumentationEnabled    | enables or disables ASPNET instrumentation |
 | openTelemetry | runtimeInstrumentationEnabled       | enables or disables runtime instrumentation |
 | openTelemetry | prometheusExporterPort              | port for Prometheus metrics export. Experimental; prefer using OpenTelemetry for Prometheus metrics |
 
 
-> **Notes:** 
-> - **Configuration Mapping:**  
-> The parameters described above have corresponding entries in appsettings.json. This file is primarily intended for development purposes and should not be used for production configuration.
-> - **Open Telemetry and metrics**
-> If an OpenTelemetry URL is provided, the Prometheus metrics port should not be used, as OpenTelemetry already supplies the metrics - using both will result in duplication.
-> - **Security Recommendation:**  
-> It is highly recommended that the Prometheus exporter port, if used, be different from the MainAppPort. This separation enhances security by reducing the risk of exposing internal metrics endpoints on public-facing ports.
+> **Note: Configuration Mapping**  
+> The parameters described above have corresponding entries in appsettings.json. This file is primarily intended for development purposes and should not be used for production configuration
+
+> **Note: Open Telemetry and metrics**  
+> If an OpenTelemetry URL is provided, the Prometheus metrics port should not be used, as OpenTelemetry already supplies the metrics - using both will result in duplication
+
+> **Note: Security Recommendation:**  
+> It is highly recommended that the Prometheus exporter port, if used, be different from the MainAppPort. This separation enhances security by reducing the risk of exposing internal metrics endpoints on public-facing ports. If in doubt, use the recommended ports: 8900 for the app and 8901 for Prometheus
 
 ## Considerations
 
 ### Resources (Requests/Limits)
 
-The app utilizes caching to deliver fast responses. By storing all data in memory, it significantly reduces the need for repetitive Kubernetes API queries, thereby enhancing performance and minimizing latency, without significant memory overhead. Even though the provided (and commented) resources values are more than enough for some hundreds of scaned images (educated guess is that 500 is a safe number), please do adjust the values based on your needs.
+The app uses caching to deliver fast responses. By storing all data in memory, it significantly reduces the need for repetitive Kubernetes API queries, thereby enhancing performance and minimizing latency, without significant memory overhead. Even though the provided (and commented) resources values are more than enough for some hundreds of scaned images (educated guess is that 500 is a safe number), please do adjust the values based on your needs.
 
 ### Running the App
 
@@ -91,6 +94,7 @@ extraEnvValues:
 ```
 Any other Serilog related parameters can be modified in the same way.
 
-> **Note:** writing directly to container storage without utilizing volumes is strongly discouraged for several critical reasons, including data persistence, security, and resource management. To activate this feature safely and effectively, it is essential to attach a volume to the pod; this is not in the scope of this document
+> **Note: Serilog File Sink**  
+> Writing directly to container storage without utilizing volumes is strongly discouraged for several critical reasons, including data persistence, security, and resource management. To activate this feature safely and effectively, it is essential to attach a volume to the pod; this is not in the scope of this document
 
 Related to Serilog sinks, only Console and File are present at runtime. If other ones are needed, you can do a custom build of the app or provide them in the image or in the container (via configmap, or init container) and add the needed environment variables in `extraEnvValues` from `values.yaml` file. Also, they are not in the scope of this document.

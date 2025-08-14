@@ -2,14 +2,14 @@
 
 ## Trivy Reports
 
-All Trivy Reports can be seen in three ways: Overview mode (in Home), 
+Trivy Reports can be seen in three ways: Overview mode (in Home), 
 Inspect mode (Browse) and Detailed. Each is described in detail below.
 
 > **Note:** All examples in this documentation are from Vulnerability Reports pages, as all Trivy Reports related pages are similar as layout and functionalities, with one big exception, SBOM Reports.
 
 ### Home - Overview mode
 
-It is the "at a glance" page, where various statistics related to Trivy Reports can be seen.
+It is the "at-a-glance" page, where various statistics related to Trivy Reports can be seen.
 
 On the left are some tables related to various statistics **(1)**, and on the right (where applicable) are some graphs **(2)** to give an idea how they stand.
 
@@ -37,7 +37,7 @@ In all tables you can find various action buttons **(4)**, most of the columns c
 ![](imgs/vr-filter.png)
 <br>*Server-side filter*
 
-Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button, which provides access to various Trivy Report–specific actions, beside standard ones, like Clear sort/filters or Collapse all. As an example, in the case of Vulnerability Reports, as specific actions, we have Go to Detailed, Dependency tree and Compare.
+Also, most of the **Inspect mode (Browse)** pages have a **Multi action** button, which provides access to various Trivy Report–specific actions, beside standard ones, like `Clear sort/filters` or `Collapse all`. As an example, in the case of Vulnerability Reports, as specific actions, we have `Go to Detailed`, `Dependency tree` and `Compare`.
 
 > **Note:** A '⧉' icon next to a menu item indicates that the action will open in a new browser tab.
 
@@ -48,7 +48,7 @@ Depending on the case, some tables support row expansion **(7)**, if more info c
 
 ### Detailed
 
-In this mode, all data is denormalized in a single large table, with all info from Reports. Filtering, sorting and CSV export are available.
+In this mode, all data is denormalized in a single large table, with all info from Reports. Filtering, sorting and CSV export are available. This view is ideal when data needs to be accessed or used outside the application.
 
 ![](imgs/vr-detailed.png)
 <br>*Detailed page*
@@ -67,7 +67,7 @@ The items belonging to **(1)** will appear as `True` in the `1st` column **(3)**
 
 ### Trivy Reports Dependency
 
-To get an at-a-glance view of all Trivy Reports related to an image within a namespace, you can use Trivy Reports Dependency. This view allows easy navigation to specific Trivy Reports using the `Open` button.
+To get an "at-a-glance" view of all Trivy Reports related to an image within a namespace, you can use Trivy Reports Dependency. This view allows easy navigation to specific Trivy Reports using the `Open` button.
 
 ![](imgs/trivy-report-dependency.png)
 <br>*Trivy Reports Dependency page*
@@ -81,15 +81,15 @@ Unlike other reports, SBOM Reports are not well-suited for a simple master-detai
 ![](imgs/sbom.png)
 <br>*SBOM page*
 
-The table includes Image selection **(3)**, Refresh button **(4)**, Multi action button **(5)** and the list of BomRefs - for any of them, properties can be visualized **(6)**. Whenever possible, info from related Vulnerability Report is provided also here.
+The table includes Image selection **(3)**, `Refresh` button **(4)**, Multi action button **(5)** and the list of BomRefs - for any of them, properties can be visualized **(6)**. Whenever possible, info from related Vulnerability Report is provided also here.
 
 ![](imgs/sbom-img-selection.png)
 <br>*Image Selection **(3)*** - The shield icon next to the image name indicates that a Vulnerability Report is also available
 
 **Multi action** button contains many useful actions. Specific to SBOM:
-- **Info** will display an in-depth information page. See *Info page* below
-- **Dive In** will change the current root element in table and in graph (with redraw)
-- **Export to CycloneDX** (XML or JSON) and **Export to SPDX** (JSON)
+- `Info` will display an in-depth information page. See *Info page* below
+- `Dive In` will change the current root element in table and in graph (with redraw)
+- `Export to CycloneDX` (XML or JSON) and `Export to SPDX` (JSON)
 
 > **Note:** SBOMs can be exported in CycloneDX format (XML and JSON) on both the Inspect/Browse and Detailed/Denormalized pages (bulk export). SPDX format (JSON) is available only on the Inspect/Browse page and is currently experimental.
 
@@ -111,7 +111,7 @@ It consists of 3 sections:
 ![](imgs/sbom-graph-toolbar.png)
 <br>*SBOM Graph*
 1. Toolbar. Here, various actions can be performed over the graph:
-    - **Zoom In**, **Zoom Out** and **Fit** - These actions are self-explanatory
+    - `Zoom In`, `Zoom Out` and `Fit` - These actions are self-explanatory
     - search for nodes by a string in their name
     - "edit" part of the graph. More info a bit down, in *Interaction with Graph* 
 2. Navigation - History of **Dive In** actions performed on the graph. A **Dive in** action is drawing only the part of the graph that contains the descendants (direct or indirect) of the selected node that becomes the new root
@@ -165,7 +165,7 @@ The backend uses Kubernetes Watchers to get the changes in real-time. Their stat
 
 ### Alerts
 
-If any alerts are triggered, you can access them by clicking the Notification Bell in the top menu bar. Alerts are organized in a tree format **(1)**, beginning with their severity level, issuer, and subsequent hierarchy levels. Each line includes a count **(5)**, and levels can be expanded or collapsed using control **(2)**.
+If any alerts are triggered, you can access them by clicking the Notification Bell in the top menu bar. Alerts are organized in a tree format **(1)**, beginning with their severity level, issuer, and subsequent hierarchy levels. Each line includes a count **(5)**, and levels can also be expanded or collapsed using control **(2)**. For **Info**
 
 - when a node is expanded, but it is not a leaf **(3)**, only the categories and their counts are shown.
 - when a node is collapsed **(4)**, all children and categories with their respective counts are displayed in a stacked view.
@@ -174,7 +174,7 @@ If any alerts are triggered, you can access them by clicking the Notification Be
 ![](imgs/alerts.png)
 <br>*Alerts*
 
-> **Note:** This above image displays synthetic data generated for illustrative purposes.
+> **Note:** The above image displays synthetic data generated for illustrative purposes.
 
 ### Settings
 

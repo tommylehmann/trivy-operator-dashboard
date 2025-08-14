@@ -9,12 +9,10 @@ MainAppInitService
 Generic
 - replace all functions/methods from htmls with pipes
 - chase all styles and replace with classes
-- change TrivyTableColumn[] to const in trivy-table-definitions
 - change where aplicable to lazy loading of components in pages (ie vr compare in vr, home pages). maybe deferred load?
-- change material-symbols font to svgs
-- check isLoading
 - add updatedate, imagedigest
 - treat onError - getDataDtos()
+- use NavigationExtras.state insted of query params
 
 Extend Settings Service (maybe cross tab communication?)
 
