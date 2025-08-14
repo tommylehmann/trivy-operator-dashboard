@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Serilog;
+using Serilog.Events;
 using Serilog.Extensions.Logging;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -142,7 +143,16 @@ app.UseStaticFiles();
 app.MapStaticAssets();
 app.UseRouting();
 app.UseCors();
-app.UseSerilogRequestLogging();
+app.UseSerilogRequestLogging(options =>
+{
+    options.GetLevel = (httpContext, elapsed, ex) =>
+    {
+        if (httpContext.Request.Path.StartsWithSegments("/metrics"))
+            return LogEventLevel.Verbose;
+
+        return LogEventLevel.Information;
+    };
+});
 if (app.Environment.IsProduction())
 {
     string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
