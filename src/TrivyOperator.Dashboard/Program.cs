@@ -26,7 +26,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(
         ApplicationName = applicationName,
         ContentRootPath = Directory.GetCurrentDirectory(),
         WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"),
-    });
+    }
+);
 
 IConfiguration configuration = CreateConfiguration();
 builder.Configuration.Sources.Clear();
@@ -52,36 +53,35 @@ builder.WebHost.UseShutdownTimeout(TimeSpan.FromSeconds(10));
 builder.WebHost.ConfigureKestrel(options => { options.AddServerHeader = false; });
 
 builder.Services.Configure<JsonOptions>(options => ConfigureJsonSerializerOptions(options.SerializerOptions));
-builder.Services.Configure<ForwardedHeadersOptions>(
-    options =>
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
         options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
                                    ForwardedHeaders.XForwardedProto |
                                    ForwardedHeaders.XForwardedHost;
         options.KnownNetworks.Clear();
         options.KnownProxies.Clear();
-    });
+    }
+);
 
 builder.Services.AddControllersWithViews(ConfigureMvcOptions)
     .AddJsonOptions(options => ConfigureJsonSerializerOptions(options.JsonSerializerOptions));
 builder.Services.AddHttpClient();
 builder.Services.AddProblemDetails();
-builder.Services.AddEndpointsApiExplorer();
-if (builder.Environment.IsDevelopment())
+if (!builder.Environment.IsProduction())
 {
+    builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
-    {
-        c.SupportNonNullableReferenceTypes();
-    });
+        {
+            c.SupportNonNullableReferenceTypes();
+        }
+    );
 }
 
 // SignalR: CORS with credentials must be allowed in order for cookie-based sticky sessions to work correctly. They must be enabled even when authentication isn't used.
-builder.Services.AddCors(
-    options => options.AddDefaultPolicy(
-        configurePolicy => configurePolicy.SetIsOriginAllowed(_ => true)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials()));
+builder.Services.AddCors(options => options.AddDefaultPolicy(configurePolicy =>
+        configurePolicy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials()
+    )
+);
 
 builder.Services.AddCommons(configuration);
 builder.Services.AddDomainServices();
@@ -102,21 +102,22 @@ builder.Services.AddOthers();
 builder.Services.AddOpenTelemetry(configuration.GetSection("OpenTelemetry"), applicationNameForOtlp);
 
 builder.WebHost.ConfigureKestrel(options =>
-{
-    if (builder.Environment.IsProduction())
     {
-        string? configMainPort = builder.Configuration["MainAppPort"];
-        string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
-        int mainPort = PortUtils.GetValidatedPort(configMainPort) ?? 8900;
-        int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
-
-        options.ListenAnyIP(mainPort);
-        if (configMetricsPort is not null && mainPort != metricsPort)
+        if (builder.Environment.IsProduction())
         {
-            options.ListenAnyIP(metricsPort);
+            string? configMainPort = builder.Configuration["MainAppPort"];
+            string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
+            int mainPort = PortUtils.GetValidatedPort(configMainPort) ?? 8900;
+            int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
+
+            options.ListenAnyIP(mainPort);
+            if (configMetricsPort is not null && mainPort != metricsPort)
+            {
+                options.ListenAnyIP(metricsPort);
+            }
         }
     }
-});
+);
 
 WebApplication app = builder.Build();
 
@@ -127,14 +128,14 @@ appLifetime.ApplicationStopped.Register(OnStopped);
 
 // Configure the HTTP request pipeline. Middleware order: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-9.0#middleware-order
 app.UseForwardedHeaders();
-if (!app.Environment.IsProduction())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
+if (app.Environment.IsProduction())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
 }
 
 //app.UseHttpsRedirection();
@@ -144,24 +145,21 @@ app.MapStaticAssets();
 app.UseRouting();
 app.UseCors();
 app.UseSerilogRequestLogging(options =>
-{
-    options.GetLevel = (httpContext, elapsed, ex) =>
     {
-        if (httpContext.Request.Path.StartsWithSegments("/metrics"))
-            return LogEventLevel.Verbose;
-
-        return LogEventLevel.Information;
-    };
-});
+        options.GetLevel = (httpContext, _, _) => httpContext.Request.Path.StartsWithSegments("/metrics")
+            ? LogEventLevel.Verbose : LogEventLevel.Information;
+    }
+);
 if (app.Environment.IsProduction())
 {
     string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
     int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
     if (configMetricsPort is not null)
-        app.UseOpenTelemetryPrometheusScrapingEndpoint(
-            context => context.Request.Path == "/metrics"
-                && context.Connection.LocalPort == metricsPort
+    {
+        app.UseOpenTelemetryPrometheusScrapingEndpoint(context =>
+            context.Request.Path == "/metrics" && context.Connection.LocalPort == metricsPort
         );
+    }
 }
 else
 {
@@ -172,14 +170,20 @@ else
 
 app.MapControllers();
 app.MapHub<AlertsHub>("/alerts-hub");
-app.MapHealthChecks("/healthz/live", new HealthCheckOptions
-{
-    Predicate = check => check.Name == "watchers-liveness",
-});
-app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
-{
-    Predicate = check => check.Name == "watchers-readiness",
-});
+app.MapHealthChecks(
+    "/healthz/live",
+    new HealthCheckOptions
+    {
+        Predicate = check => check.Name == "watchers-liveness",
+    }
+);
+app.MapHealthChecks(
+    "/healthz/ready",
+    new HealthCheckOptions
+    {
+        Predicate = check => check.Name == "watchers-readiness",
+    }
+);
 app.MapFallbackToFile("index.html");
 
 await app.RunAsync().ConfigureAwait(false);
@@ -200,9 +204,10 @@ static IConfiguration CreateConfiguration()
 
     Dictionary<string, string?> inMemorySettings = new()
     {
-        { "FileExport:TempFolder", Path.GetTempPath() },
+        {
+            "FileExport:TempFolder", Path.GetTempPath()
+        },
     };
-
     configurationBuilder.AddInMemoryCollection(inMemorySettings);
     configuration = configurationBuilder.Build();
 
