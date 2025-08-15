@@ -20,8 +20,8 @@ public class ConfigAuditReportDto
 
 public class ConfigAuditReportDetailDto
 {
-    public Guid Id => GuidUtils.GetDeterministicGuid($"{SeverityId}{CheckId}");
-    public Guid MatchKey => Id;
+    public Guid Id => Guid.NewGuid();
+    public Guid MatchKey => GuidUtils.GetDeterministicGuid($"{SeverityId}{CheckId}");
     public string Category { get; init; } = string.Empty;
     public string CheckId { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
