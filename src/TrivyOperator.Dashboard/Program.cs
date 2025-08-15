@@ -16,7 +16,6 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 const string applicationName = "TrivyOperator.Dashboard";
-string applicationNameForOtlp = applicationName.Replace(".", string.Empty).ToLowerInvariant();
 
 Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
@@ -70,9 +69,9 @@ builder.Services.AddProblemDetails();
 if (!builder.Environment.IsProduction())
 {
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(c =>
+    builder.Services.AddSwaggerGen(options =>
         {
-            c.SupportNonNullableReferenceTypes();
+            options.SupportNonNullableReferenceTypes();
         }
     );
 }
@@ -99,21 +98,27 @@ builder.Services.AddSbomReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddClusterSbomReportServices(configuration.GetSection("Kubernetes"));
 builder.Services.AddUiCommons();
 builder.Services.AddOthers();
-builder.Services.AddOpenTelemetry(configuration.GetSection("OpenTelemetry"), applicationNameForOtlp);
+builder.Services.AddOpenTelemetry(
+    configuration.GetSection("OpenTelemetry"),
+    applicationName.Replace(".", string.Empty).ToLowerInvariant()
+);
 
 builder.WebHost.ConfigureKestrel(options =>
     {
         if (builder.Environment.IsProduction())
         {
             string? configMainPort = builder.Configuration["MainAppPort"];
-            string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
             int mainPort = PortUtils.GetValidatedPort(configMainPort) ?? 8900;
-            int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
-
             options.ListenAnyIP(mainPort);
-            if (configMetricsPort is not null && mainPort != metricsPort)
+
+            string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
+            if (configMetricsPort is not null)
             {
-                options.ListenAnyIP(metricsPort);
+                int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
+                if (mainPort != metricsPort)
+                {
+                    options.ListenAnyIP(metricsPort);
+                }
             }
         }
     }
@@ -144,18 +149,15 @@ app.UseStaticFiles();
 app.MapStaticAssets();
 app.UseRouting();
 app.UseCors();
-app.UseSerilogRequestLogging(options =>
-    {
-        options.GetLevel = (httpContext, _, _) => httpContext.Request.Path.StartsWithSegments("/metrics")
-            ? LogEventLevel.Verbose : LogEventLevel.Information;
-    }
+app.UseSerilogRequestLogging(options => options.GetLevel = (httpContext, _, _) =>
+    httpContext.Request.Path.StartsWithSegments("/metrics") ? LogEventLevel.Verbose : LogEventLevel.Information
 );
 if (app.Environment.IsProduction())
 {
     string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
-    int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
     if (configMetricsPort is not null)
     {
+        int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
         app.UseOpenTelemetryPrometheusScrapingEndpoint(context =>
             context.Request.Path == "/metrics" && context.Connection.LocalPort == metricsPort
         );
@@ -195,7 +197,6 @@ static IConfiguration CreateConfiguration()
         .AddJsonFile("serilog.config.json", true)
         .AddEnvironmentVariables();
     IConfiguration configuration = configurationBuilder.Build();
-
     string? tempFolder = configuration.GetSection("FileExport")["TempFolder"];
     if (!string.IsNullOrEmpty(tempFolder))
     {
