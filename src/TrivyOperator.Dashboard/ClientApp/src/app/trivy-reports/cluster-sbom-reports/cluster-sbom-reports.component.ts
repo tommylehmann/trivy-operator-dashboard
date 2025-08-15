@@ -59,7 +59,11 @@ export class ClusterSbomReportsComponent implements OnInit  {
   }
 
   onSelectedImageIdChange(imageId: string | undefined) {
-    this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid === imageId);
+    setTimeout(() => {
+      this.selectedSbomReportImageDto = this.dataDtos?.find(x => x.uid === imageId);
+    }, 0);
+    this.sbomReportDetailPropertiesTreeNodes = [];
+    this.sbomReportDetailStatistics = [];
   }
 
   onCompareFirstDtoRequested(id: string) {
@@ -131,6 +135,8 @@ export class ClusterSbomReportsComponent implements OnInit  {
       item.properties?.forEach(property => {
         const propName = property[0] ?? "unknown";
         const propValue = property[1] ?? "unknown";
+
+        if (propName === "tod.group") return;
 
         if (!dataMap.has(propName)) {
           dataMap.set(propName, []);

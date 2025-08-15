@@ -114,6 +114,9 @@ export class SbomReportsComponent implements OnInit {
 
   onGetSbomReportDtoByDigestNamespace(fullSbomDataDto: SbomReportDto) {
     this.fullSbomDataDto = fullSbomDataDto;
+    this.sbomReportDetailPropertiesTreeNodes = [];
+    this.sbomReportDetailLicensesTreeNodes = [];
+    this.sbomReportDetailStatistics = [];
   }
 
   onRefreshRequestedChange() {
@@ -267,6 +270,8 @@ export class SbomReportsComponent implements OnInit {
       item.properties?.forEach(property => {
         const propName = property[0] ?? "unknown";
         const propValue = property[1] ?? "unknown";
+
+        if (propName === "tod.group") return;
 
         if (!dataMap.has(propName)) {
           dataMap.set(propName, []);
