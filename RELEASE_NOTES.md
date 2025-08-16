@@ -48,3 +48,13 @@ Version 1.6 Gaia (June 2025)
 * True support for kubernetes healthz probes (readiness and liveness)
 > **Where’s version 1.5?** We’ve jumped a beat - this release includes 120+ commits, which felt a bit much for a mere point upgrade. The bulk of the changes come from the Angular and PrimeNG upgrades, which triggered significant refactoring across the board. 
 <br>And in case you're wondering… there are no known Greek (demi)gods whose names start with **F** - so mythologically speaking, version 1.5 simply wasn’t meant to be :-)
+
+Version 1.7 Helios (August 2025)
+------------------------
+* Cluster SBOM - displays Software Bill of Materials of the entire cluster.
+* Trivy Reports Dependency - provides a centralized view of all Trivy Reports related to a container image. Available from Vulnerability, Exposed Secrets, and SBOM reports.
+* Alerts Page - alerts are accessible via the Notification Bell and organized in a hierarchical tree format with severity, issuer, and category levels. Includes expandable/collapsible nodes and stacked views for detailed counts and messages.
+* Prometheus Integration (Experimental) - adds support for exposing dashboard metrics directly to Prometheus.
+* Compare Reports - now available across all report types. Uses compound keys for accurate side-by-side comparisons. Differences in values (e.g., installed versions) are displayed in stacked format.
+* Watcher Status - includes item counts and supports forceful recreation of watchers.
+* Technological Upgrades - migrated to Angular 20 and PrimeNG 20, with associated codebase refactors for compatibility and performance improvements.
