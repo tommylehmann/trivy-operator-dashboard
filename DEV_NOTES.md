@@ -2,15 +2,15 @@
 
 ## Windows with Visual Studio
 
-- Install [Visual Studio 2022 version 17.11.5 or newer](https://visualstudio.microsoft.com/vs/):
+- Install [Visual Studio 2022 version 17.14.12 or newer](https://visualstudio.microsoft.com/vs/):
     - Select the following workloads:
         - `ASP.NET and web development` workload.
 
 ## Prerequisites
 
-- a valid kube config file should be available for Kubernetes cluster access
-- if needed, the [k8s.create.kubeconfig.for.sa.ps1](tools/k8s.create.kubeconfig.for.sa.ps1) script can be used for
-  creation of custom kube config file(s)
+- A valid kube config file should be available for Kubernetes cluster access.
+- If needed, the [k8s.create.kubeconfig.for.sa.ps1](tools/k8s.create.kubeconfig.for.sa.ps1) script can be used for
+  creation of custom kube config file(s).
 
 # Frontend
 
@@ -18,9 +18,9 @@
 
 - Install [nvm version 1.1.12](https://github.com/coreybutler/nvm-windows/releases/tag/1.1.12):
     - Install Node.js LTS:
-        - `nvm install 22.11.0`.
+        - `nvm install 24.6.0`.
     - Use Node.js LTS:
-        - `nvm use 22.11.0`.
+        - `nvm use 24.6.0`.
 
 ## Development server
 
@@ -35,7 +35,7 @@ Run `ng generate component component-name` to generate a new component. You can 
 `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
 ```sh
-ng g component fetch-data-new --skip-tests --style=scss
+ng g component fetch-data --skip-tests --style=scss
 ```
 
 ### Update OpenAPI specification for new endpoints
@@ -44,9 +44,16 @@ ng g component fetch-data-new --skip-tests --style=scss
 npm run update-endpoints:local
 ```
 
+### Update Angular
+
+```sh
+ng update @angular/cli @angular/core
+```
+
 ### Update npm packages
 
 ```sh
+npm install -g npm-check-updates
 ncu
 ncu -u
 npm install
