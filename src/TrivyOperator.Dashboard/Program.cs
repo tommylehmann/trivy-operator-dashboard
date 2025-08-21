@@ -32,24 +32,14 @@ IConfiguration configuration = CreateConfiguration();
 builder.Configuration.Sources.Clear();
 builder.Configuration.AddConfiguration(configuration);
 
-LoggerConfiguration loggerConfiguration = new LoggerConfiguration().ReadFrom.Configuration(configuration);
-loggerConfiguration.Enrich.FromLogContext();
-loggerConfiguration.Enrich.WithMachineName();
-loggerConfiguration.Enrich.WithThreadId();
-loggerConfiguration.Enrich.WithProperty("Application", applicationName);
-Log.Logger = loggerConfiguration.CreateLogger();
-SerilogLoggerFactory serilogLoggerFactory = new(Log.Logger);
-Logger = serilogLoggerFactory.CreateLogger<Program>();
+ConfigureLogging(configuration);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Log.Logger);
-
-AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
-TaskScheduler.UnobservedTaskException += TaskSchedulerUnobservedTaskException;
 
 builder.Host.UseSerilog(Log.Logger);
 
 builder.WebHost.UseShutdownTimeout(TimeSpan.FromSeconds(10));
-builder.WebHost.ConfigureKestrel(options => { options.AddServerHeader = false; });
+builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
 
 builder.Services.Configure<JsonOptions>(options => ConfigureJsonSerializerOptions(options.SerializerOptions));
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -61,11 +51,14 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
         options.KnownProxies.Clear();
     }
 );
-
-builder.Services.AddControllersWithViews(ConfigureMvcOptions)
-    .AddJsonOptions(options => ConfigureJsonSerializerOptions(options.JsonSerializerOptions));
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddProblemDetails();
+// SignalR: CORS with credentials must be allowed in order for cookie-based sticky sessions to work correctly. They must be enabled even when authentication isn't used.
+builder.Services.AddCors(options => options.AddDefaultPolicy(configurePolicy =>
+        configurePolicy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials()
+    )
+);
 if (!builder.Environment.IsProduction())
 {
     builder.Services.AddEndpointsApiExplorer();
@@ -76,26 +69,23 @@ if (!builder.Environment.IsProduction())
     );
 }
 
-// SignalR: CORS with credentials must be allowed in order for cookie-based sticky sessions to work correctly. They must be enabled even when authentication isn't used.
-builder.Services.AddCors(options => options.AddDefaultPolicy(configurePolicy =>
-        configurePolicy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials()
-    )
-);
-
+builder.Services.AddControllersWithViews(ConfigureMvcOptions)
+    .AddJsonOptions(options => ConfigureJsonSerializerOptions(options.JsonSerializerOptions));
 builder.Services.AddCommons(configuration);
 builder.Services.AddDomainServices();
 builder.Services.AddAlertsServices();
 builder.Services.AddWatcherStateServices();
-builder.Services.AddV1NamespaceServices(configuration.GetSection("Kubernetes"));
-builder.Services.AddClusterRbacAssessmentReportServices(configuration.GetSection("Kubernetes"));
-builder.Services.AddConfigAuditReportServices(configuration.GetSection("Kubernetes"));
-builder.Services.AddExposedSecretReportServices(configuration.GetSection("Kubernetes"));
-builder.Services.AddVulnerabilityReportServices(configuration.GetSection("Kubernetes"));
-builder.Services.AddClusterComplianceReportServices(configuration.GetSection("Kubernetes"));
-builder.Services.AddClusterVulnerabilityReportServices(configuration.GetSection("Kubernetes"));
-builder.Services.AddRbacAssessmentReportServices(configuration.GetSection("Kubernetes"));
-builder.Services.AddSbomReportServices(configuration.GetSection("Kubernetes"));
-builder.Services.AddClusterSbomReportServices(configuration.GetSection("Kubernetes"));
+IConfigurationSection k8SConfigurationSection = configuration.GetSection("Kubernetes");
+builder.Services.AddV1NamespaceServices(k8SConfigurationSection);
+builder.Services.AddClusterRbacAssessmentReportServices(k8SConfigurationSection);
+builder.Services.AddConfigAuditReportServices(k8SConfigurationSection);
+builder.Services.AddExposedSecretReportServices(k8SConfigurationSection);
+builder.Services.AddVulnerabilityReportServices(k8SConfigurationSection);
+builder.Services.AddClusterComplianceReportServices(k8SConfigurationSection);
+builder.Services.AddClusterVulnerabilityReportServices(k8SConfigurationSection);
+builder.Services.AddRbacAssessmentReportServices(k8SConfigurationSection);
+builder.Services.AddSbomReportServices(k8SConfigurationSection);
+builder.Services.AddClusterSbomReportServices(k8SConfigurationSection);
 builder.Services.AddUiCommons();
 builder.Services.AddOthers();
 builder.Services.AddOpenTelemetry(
@@ -105,31 +95,34 @@ builder.Services.AddOpenTelemetry(
 
 builder.WebHost.ConfigureKestrel(options =>
     {
-        if (builder.Environment.IsProduction())
+        if (!builder.Environment.IsProduction())
         {
-            string? configMainPort = builder.Configuration["MainAppPort"];
-            int mainPort = PortUtils.GetValidatedPort(configMainPort) ?? 8900;
-            options.ListenAnyIP(mainPort);
+            return;
+        }
 
-            string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
-            if (configMetricsPort is not null)
-            {
-                int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
-                if (mainPort != metricsPort)
-                {
-                    options.ListenAnyIP(metricsPort);
-                }
-            }
+        string? configMainPort = builder.Configuration["MainAppPort"];
+        int mainPort = PortUtils.GetValidatedPort(configMainPort) ?? 8900;
+        options.ListenAnyIP(mainPort);
+
+        string? configMetricsPort = builder.Configuration["OpenTelemetry:PrometheusExporterPort"];
+        if (configMetricsPort is null)
+        {
+            return;
+        }
+
+        int metricsPort = PortUtils.GetValidatedPort(configMetricsPort) ?? 8901;
+        if (mainPort != metricsPort)
+        {
+            options.ListenAnyIP(metricsPort);
         }
     }
 );
 
 WebApplication app = builder.Build();
 
-IHostApplicationLifetime appLifetime = app.Lifetime;
-appLifetime.ApplicationStarted.Register(OnStarted);
-appLifetime.ApplicationStopping.Register(OnStopping);
-appLifetime.ApplicationStopped.Register(OnStopped);
+app.Lifetime.ApplicationStarted.Register(OnStarted);
+app.Lifetime.ApplicationStopping.Register(OnStopping);
+app.Lifetime.ApplicationStopped.Register(OnStopped);
 
 // Configure the HTTP request pipeline. Middleware order: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-9.0#middleware-order
 app.UseForwardedHeaders();
@@ -143,6 +136,7 @@ else
     app.UseDeveloperExceptionPage();
 }
 
+// Apps deployed in a reverse proxy configuration allow the proxy to handle connection security (HTTPS). If the proxy also handles HTTPS redirection, there's no need to use HTTPS Redirection Middleware.
 //app.UseHttpsRedirection();
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -189,6 +183,7 @@ app.MapHealthChecks(
 app.MapFallbackToFile("index.html");
 
 await app.RunAsync().ConfigureAwait(false);
+
 return 0;
 
 static IConfiguration CreateConfiguration()
@@ -213,6 +208,20 @@ static IConfiguration CreateConfiguration()
     configuration = configurationBuilder.Build();
 
     return configuration;
+}
+
+static void ConfigureLogging(IConfiguration configuration)
+{
+    LoggerConfiguration loggerConfiguration = new LoggerConfiguration().ReadFrom.Configuration(configuration);
+    loggerConfiguration.Enrich.FromLogContext();
+    loggerConfiguration.Enrich.WithMachineName();
+    loggerConfiguration.Enrich.WithThreadId();
+    loggerConfiguration.Enrich.WithProperty("Application", applicationName);
+    Log.Logger = loggerConfiguration.CreateLogger();
+    SerilogLoggerFactory serilogLoggerFactory = new(Log.Logger);
+    Logger = serilogLoggerFactory.CreateLogger<Program>();
+    AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+    TaskScheduler.UnobservedTaskException += TaskSchedulerUnobservedTaskException;
 }
 
 static void ConfigureJsonSerializerOptions(JsonSerializerOptions options)
