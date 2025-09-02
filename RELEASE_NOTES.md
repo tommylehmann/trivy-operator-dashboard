@@ -19,7 +19,8 @@ Version 1.6 Gaia (June 2025)
 * Core backend now runs on the latest .NET 9, accompanied by significant stability refactors and architectural cleanup.
 * True support for kubernetes healthz probes (readiness and liveness)
 > **Where’s version 1.5?** We’ve jumped a beat - this release includes 120+ commits, which felt a bit much for a mere point upgrade. The bulk of the changes come from the Angular and PrimeNG upgrades, which triggered significant refactoring across the board. 
-<br>And in case you're wondering… there are no known Greek (demi)gods whose names start with **F** - so mythologically speaking, version 1.5 simply wasn’t meant to be :-)
+>
+>And in case you're wondering… there are no known Greek (demi)gods whose names start with **F** - so mythologically speaking, version 1.5 simply wasn’t meant to be :-)
 
 Version 1.4 Erebus (April 2025)
 ------------------------
