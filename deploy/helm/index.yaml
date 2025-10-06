@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  trivy-operator-dashboard:
+  - apiVersion: v2
+    appVersion: "1.7"
+    created: "2025-10-06T09:43:42.5942493+02:00"
+    description: A Helm chart for Trivy Operator Dashboard
+    digest: 354c00a87ebd23f65418b05992974c53a6fd25b99c4846e7f905f3be8d2f5f21
+    name: trivy-operator-dashboard
+    type: application
+    urls:
+    - trivy-operator-dashboard-1.7.tgz
+    version: "1.7"
+generated: "2025-10-06T09:43:42.5936799+02:00"
